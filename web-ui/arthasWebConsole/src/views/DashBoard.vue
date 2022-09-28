@@ -35,7 +35,7 @@ import {
 } from 'echarts/renderers';
 import { dispose, ECharts } from 'echarts/core';
 import permachine from '@/machines/perRequestMachine';
-import { resolve } from 'path';
+import { onBeforeRouteLeave } from 'vue-router';
 
 type EChartsOption = echarts.ComposeOption<
   DatasetComponentOption | PieSeriesOption
@@ -136,7 +136,7 @@ const transformMemory = (result: ArthasResResult) => {
     bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
   }
 }
-const transformThread = (result: ArthasResResult,end:number) => {
+const transformThread = (result: ArthasResResult, end: number) => {
   if (result.type !== "dashboard") return;
   // result.threads.filter((v, i) => i < pri.value).forEach(thread => {
   //   // threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
@@ -144,7 +144,7 @@ const transformThread = (result: ArthasResResult,end:number) => {
   //   Object.entries(thread).map(([k, v]) => map.set(k, v.toString().trim() || "-"))
   //   tableResults.unshift(map)
   // })
-  
+
   for (let i = 0; i < end && i < result.threads.length; i++) {
     const thread = result.threads[i]
     const map = new Map()
@@ -446,10 +446,6 @@ onMounted(() => {
 onBeforeUnmount(async () => {
   loop.close()
   clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
-
-  fetchS
-    .interruptJob()
-
 })
 </script>
 

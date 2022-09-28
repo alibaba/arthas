@@ -56,10 +56,16 @@ const getSource = () => {
 </script>
 <template>
   <form class="mb-4 flex items-center justify-between">
-    <label class="flex flex-1 items-center"> ognl:
-      <div class="flex-1 flex justify-center ">
+    <label class="flex flex-1 items-center"> ognl
+      <div class="w-full cursor-default 
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus-within:outline
+        outline-2
+        min-w-[15rem]
+        mx-2
+        hover:shadow-md transition">
         <input type="text" v-model="express"
-          class="border focus-visible:outline-none  mx-2 w-full rounded-lg p-2 hover:shadow-md focus-visible:shadow-md focus:shadow-md transition">
+          class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
       <button class="input-btn-style mr-2" @click.prevent="setDepth">depth:{{depth}}</button>
       <button class="input-btn-style mr-2" @click.prevent="setClassLoader" v-if="hashcode === ''">ClassLoaderClass:{{classloaderName}}</button>

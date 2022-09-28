@@ -170,7 +170,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
           <div class="input-btn-style">watching point</div>
           <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full">
             <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
-              <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2">
+              <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2 bg-white">
                 <SwitchLabel class="mr-2">{{mode.name}}:</SwitchLabel>
                 <Switch v-model="mode.enabled.value" :class="mode.enabled.value ? 'bg-blue-400' : 'bg-gray-500'"
                   class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">

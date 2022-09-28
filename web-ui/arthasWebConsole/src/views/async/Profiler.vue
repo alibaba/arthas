@@ -8,7 +8,6 @@ import {
   ListboxOptions,
   ListboxOption,
 } from "@headlessui/vue"
-import { waitFor } from 'xstate/lib/waitFor';
 import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
 import { fetchStore } from '@/stores/fetch';
@@ -17,7 +16,6 @@ import { rejects } from 'assert';
 const fetchM = useInterpret(permachine)
 const publicS = publicStore()
 const fetchS = fetchStore()
-
 let eventList = reactive([] as string[]);
 let selectEvent = ref("cpu")
 let includesVal = reactive(new Set<string>())
@@ -30,6 +28,7 @@ let profilerStatus = ref({
 })
 let outputPath = ref("")
 let samples = ref(0)
+const support = ref(false)
 let fileformat = ref("%t-%p.html")
 const getStatusLoop = fetchS.getPollingLoop(() => {
   const statusM = interpret(permachine)
@@ -39,6 +38,7 @@ const getStatusLoop = fetchS.getPollingLoop(() => {
     sessionId: "",
   }).then(
     res => {
+      support.value = true
       if (res) {
         let result = (res as CommonRes).body.results[0]
         if (result.type == "profiler") {
@@ -49,8 +49,7 @@ const getStatusLoop = fetchS.getPollingLoop(() => {
         }
       }
     },
-    reject=>{
-      console.log("ji")
+    reject => {
       getStatusLoop.close()
     }
   )
@@ -127,7 +126,7 @@ const transformStartProps = () => {
   }
 }
 const startSubmit = () => {
-  const { start, evenOption, includeOption, excludeOption,file } = transformStartProps()
+  const { start, evenOption, includeOption, excludeOption, file } = transformStartProps()
 
 
   fetchS.baseSubmit(fetchM, {
@@ -149,12 +148,12 @@ const stopProfiler = () => fetchS.baseSubmit(fetchM, {
 
       let reg = /arthas-output\/.*/
       let arr = reg.exec(result.outputFile)
-      if(arr &&arr.length > 0) {
-        let url = window.origin +"/"+ arr[0]
+      if (arr && arr.length > 0) {
+        let url = window.origin + "/" + arr[0]
         window.open(url)
       }
     }
-    
+
   }
 )
 const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
@@ -163,7 +162,7 @@ const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
 }).then(
   restartInit
 )
-const toOutputDir = ()=>window.open(window.location.origin +  "/arthas-output/")
+const toOutputDir = () => window.open(window.location.origin + "/arthas-output/")
 onBeforeMount(async () => {
   publicS.inputVal = ""
   includesVal.clear()
@@ -199,50 +198,55 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex py-2 border-b-2  border-gray-300">
-    <h3 class="text-lg w-40">status: </h3>
-    <div class="mx-2">
-      <div>{{profilerStatus.message}}</div>
-      <div v-if="profilerStatus.is">{{samples}} samples</div>
-    </div>
-
-  </div>
-  <div class="flex border-b-2  border-gray-300 items-center py-2" v-if="!profilerStatus.is">
-    <h3 class="text-lg w-40">How to start: </h3>
-    <Listbox v-model="selectEvent">
-      <div class=" relative mx-2">
-        <ListboxButton class="input-btn-style w-52 "> even:
-          {{ selectEvent}}
-        </ListboxButton>
-        <ListboxOptions
-          class=" absolute w-52 mt-2 border py-2 rounded-md hover:shadow-xl transition bg-white max-h-80 overflow-y-auto">
-          <ListboxOption v-for="(e,i) in eventList" :key="i" :value="e" v-slot="{active, selected}">
-            <div class=" p-2 transition break-words" :class="{
-            'bg-blue-300 text-white': active,
-            'bg-blue-500 text-white': selected,
-            'text-gray-900': !active && !selected
-            }">
-              {{ e }}
-            </div>
-          </ListboxOption>
-        </ListboxOptions>
+  <template v-if="support">
+    <div class="flex py-2 border-b-2  border-gray-300">
+      <h3 class="text-lg w-40">status: </h3>
+      <div class="mx-2">
+        <div>{{profilerStatus.message}}</div>
+        <div v-if="profilerStatus.is">{{samples}} samples</div>
       </div>
-    </Listbox>
-    <button class="input-btn-style mr-2" @click="changeDuration">duration :{{duration}}</button>
-    <button class="input-btn-style mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
-    <button class="input-btn-style mr-2" @click="changeFile">file :{{fileformat}}</button>
-    <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
-    <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
-    <button class="button-style" @click="startSubmit">start</button>
-  </div>
-  <div class="flex items-center border-b-2 border-gray-300 py-2">
-    <h3 class="text-lg w-40">Resume or stop: </h3>
-    <button class="button-style mx-2" @click="resumeProfiler" v-if="!profilerStatus.is">resume</button>
-    <button class="button-style" @click="stopProfiler" v-if="profilerStatus.is">stop</button>
-  </div>
-  <div class="flex items-center py-2">
-    <h3 class="text-lg w-40">output file path: </h3>
-    <div class=" mx-2">{{ outputPath }}</div>
-    <button class="button-style" @click="toOutputDir">go to the output direction</button>
-  </div>
+
+    </div>
+    <div class="flex border-b-2  border-gray-300 items-center py-2" v-if="!profilerStatus.is">
+      <h3 class="text-lg w-40">How to start: </h3>
+      <Listbox v-model="selectEvent">
+        <div class=" relative mx-2">
+          <ListboxButton class="input-btn-style w-52 "> even:
+            {{ selectEvent}}
+          </ListboxButton>
+          <ListboxOptions
+            class=" absolute w-52 mt-2 border py-2 rounded-md hover:shadow-xl transition bg-white max-h-80 overflow-y-auto">
+            <ListboxOption v-for="(e,i) in eventList" :key="i" :value="e" v-slot="{active, selected}">
+              <div class=" p-2 transition break-words" :class="{
+              'bg-blue-300 text-white': active,
+              'bg-blue-500 text-white': selected,
+              'text-gray-900': !active && !selected
+              }">
+                {{ e }}
+              </div>
+            </ListboxOption>
+          </ListboxOptions>
+        </div>
+      </Listbox>
+      <button class="input-btn-style mr-2" @click="changeDuration">duration :{{duration}}</button>
+      <button class="input-btn-style mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
+      <button class="input-btn-style mr-2" @click="changeFile">file :{{fileformat}}</button>
+      <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
+      <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
+      <button class="button-style" @click="startSubmit">start</button>
+    </div>
+    <div class="flex items-center border-b-2 border-gray-300 py-2">
+      <h3 class="text-lg w-40">Resume or stop: </h3>
+      <button class="button-style mx-2" @click="resumeProfiler" v-if="!profilerStatus.is">resume</button>
+      <button class="button-style" @click="stopProfiler" v-if="profilerStatus.is">stop</button>
+    </div>
+    <div class="flex items-center py-2">
+      <h3 class="text-lg w-40">output file path: </h3>
+      <div class=" mx-2">{{ outputPath }}</div>
+      <button class="button-style" @click="toOutputDir">go to the output direction</button>
+    </div>
+  </template>
+  <!-- <div v-else>
+    Your system is not supported!
+  </div> -->
 </template>

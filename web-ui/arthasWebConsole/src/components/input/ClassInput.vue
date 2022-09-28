@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import machine from '@/machines/consoleMachine';
 import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
-import { publicStore } from '@/stores/public';
 import { ref } from 'vue';
 import { interpret } from 'xstate';
 import AutoComplete from './AutoComplete.vue';
-const { label = "inputClassName", supportedover = false, noClassloader=false } = defineProps<{
+const { label = "className", supportedover = false, noClassloader=false } = defineProps<{
   label?: string,
   submitF: (data: {
     classItem: Item,

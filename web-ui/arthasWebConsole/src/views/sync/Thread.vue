@@ -104,10 +104,7 @@ const statelist: { name: string, value: ThreadState | "" }[] = [
 const threadState = ref(statelist[4])
 const includesVal = reactive(new Set<string>())
 onBeforeMount(() => {
-})
-onUnmounted(() => {
-  // allloop.close()
-  // busyloop.close()
+  getThreads()
 })
 const getThreads = () => {
   let i = leastTime.value > 0 ? "-i " + leastTime.value : ""
@@ -206,21 +203,6 @@ const getSpecialThreads = (threadid: number = -1) => {
   })
 }
 
-// watchEffect(() => {
-//   includesVal.forEach((v1) => {
-//     let [key, vals] = v1.split(":")
-//     const raw = vals.split("")
-//     let includes: string[] = []
-//     if (raw[0] === "[" && raw[raw.length - 1] === "]") {
-//       raw.pop()
-//       raw.shift()
-//       includes = raw.join("").split(',')
-//     } else {
-//       includes = raw.join("").split(',')
-//     }
-//     tableResults.filter((map) => includes.includes(map.get(key.trim())!))
-//   })
-// })
 </script>
 
 <template>
@@ -228,7 +210,7 @@ const getSpecialThreads = (threadid: number = -1) => {
     <div class="flex justify-end items-center h-[10vh]">
 
       <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
-      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:ring ring-blue-500" v-show="count === 0">
+      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:outline outline-2" v-show="count === 0">
         <SwitchLabel>is blocking:</SwitchLabel>
         <Switch v-model="isBlock" :class="isBlock ? 'bg-blue-400' : 'bg-gray-500'"
           class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none mx-2">

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import machine from '@/machines/consoleMachine';
 import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
-import { onBeforeMount, ref } from 'vue';
+import { ref } from 'vue';
 import { interpret } from 'xstate';
 import AutoComplete from './AutoComplete.vue';
-const { label = "class", ncondition = false, nexpress = false, ncount = false } = defineProps<{
+const { label = "className", ncondition = false, nexpress = false, ncount = false } = defineProps<{
   label?: string,
   nexpress?: boolean,
   ncondition?: boolean,
@@ -18,8 +17,6 @@ const { label = "class", ncondition = false, nexpress = false, ncount = false } 
     count: number
   }) => void
 }>()
-// const { getCommonResEffect } = publicStore()
-// const searchClass = useMachine(machine)
 const fetchS = fetchStore()
 const optionClass = ref([] as { name: string, value: string }[])
 const optionMethod = ref([] as { name: string, value: string }[])

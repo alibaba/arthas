@@ -35,12 +35,18 @@ const submitCommand = (e: Event) => {
 
 <template>
   <form class="mb-4 flex items-center justify-between">
-    <label class="flex flex-1 items-center"> path:
-      <div class="flex-1 flex justify-center ">
+    <label class="flex flex-1 items-center"> path
+      <div class="flex-1
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus-within:outline
+        outline-2
+        min-w-[15rem]
+        mx-2
+        hover:shadow-md transition">
         <input type="text" v-model="path"
-          class="border focus-visible:outline-none  mx-2 w-full rounded-lg p-2 hover:shadow-md focus-visible:shadow-md focus:shadow-md transition">
+          class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
-      <div class="flex input-btn-style mr-2">
+      <div class="flex input-btn-style mr-2 focus-within:outline outline-2">
         <div class="mx-2">only live object : </div>
         <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
           class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">

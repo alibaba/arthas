@@ -33,7 +33,7 @@ const disposeClick = (e:Event)=>{
     <transition enter-active-class="transition duration-75 ease-out" enter-from-class="h-0 opacity-0"
       enter-to-class="h-auto opacity-100" leave-active-class="transition duration-75 ease-out"
       leave-from-class="h-auto opacity-100" leave-to-class="h-0 opacity-0">
-      <DisclosurePanel class="text-gray-500 w-10/12" as="ul" :static="open">
+      <DisclosurePanel class="text-gray-500 w-full" as="ul" :static="open">
         <slot name="headerAside" :data="data"></slot>
         <div v-for="([k, v], i) in map" :key="k" class="flex mt-2">
           <Disclosure>

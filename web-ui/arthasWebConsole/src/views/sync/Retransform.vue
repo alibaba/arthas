@@ -5,12 +5,11 @@ import { reactive, ref } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
-import { Disclosure, DisclosureButton, DisclosurePanel, Switch, } from '@headlessui/vue';
+import { Switch, } from '@headlessui/vue';
 import { interpret } from 'xstate';
 import permachine from '@/machines/perRequestMachine';
 const retransformListM = useInterpret(machine)
 const { getPollingLoop } = fetchStore()
-const publiC = publicStore()
 const retransformListMap = reactive(new Map<string, string[]>())
 const fetchS = fetchStore()
 const retransformRes = reactive(new Map<string, string[]>())
@@ -30,9 +29,9 @@ const listLoop = getPollingLoop(() => {
       })
     }
   })
-},{
-  step:2000,
-  globalIntrupt:true
+}, {
+  step: 2000,
+  globalIntrupt: true
 })
 
 
@@ -52,44 +51,39 @@ const onSubmit = () => {
     }
   })
 }
-let list = false
+
 const openList = () => {
-  list = !list
-  if (list) {
-    listLoop.open()
-  } else {
-    listLoop.close()
-  }
+  listLoop.invoke()
 }
 </script>
 
 <template>
-  <CmdResMenu title="entries" :map="retransformListMap" @myclick="openList"></CmdResMenu>
-  <Disclosure class="w-100 flex flex-col mb-2" as="section">
-    <DisclosureButton
-      class="py-2 bg-blue-400  rounded self-start hover:opacity-50 transition-all duration-100 truncate w-80">
-      retransform
-    </DisclosureButton>
-    <DisclosurePanel class=" border-t-2 mt-4">
-      <form class="mt-4 flex items-center justify-between">
-        <label class="flex flex-1 items-center"> retransform :
-          <div class="flex-1 flex justify-center ">
-            <input type="text" v-model="retransformPath"
-              class="border focus-visible:outline-none  m-2 w-full rounded-lg p-2 hover:shadow-md focus-visible:shadow-md focus:shadow-md transition">
-          </div>
-        </label>
-        <button @click.prevent="onSubmit"
-          class="bg-blue-400  rounded mr-4 hover:opacity-50 transition-all truncate p-2">submit</button>
-      </form>
-      <div class="flex items-center mt-2 justify-end mr-4">
-        <span class="mr-4">显式使用?</span>
-        <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
-          class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-          <span aria-hidden="true" :class="enabled ? 'translate-x-6' : '-translate-x-1'"
-            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
-        </Switch>
+  <form class=" flex items-center justify-between mb-2">
+    <label class="flex flex-1 items-center"> retransform
+      <div class="w-full cursor-default 
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus-within:outline
+        outline-2
+        min-w-[15rem]
+        mx-2
+        hover:shadow-md transition">
+        <input type="text" v-model="retransformPath"
+          class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
-      <CmdResMenu title="response" :map="retransformRes" open v-if="retransformRes.size !== 0"></CmdResMenu>
-    </DisclosurePanel>
-  </Disclosure>
+    </label>
+    <div class="flex input-btn-style mr-2 focus-within:outline outline-2">
+      <div class="mx-2">explicitly trigger</div>
+      <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
+        class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
+        <span aria-hidden="true" :class="enabled ? 'translate-x-6' : '-translate-x-1'"
+          class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
+      </Switch>
+    </div>
+    <button @click.prevent="onSubmit"
+      class="bg-blue-400  rounded mr-4 hover:opacity-50 transition-all truncate p-2">submit</button>
+  </form>
+
+  <CmdResMenu title="response" :map="retransformRes" open v-if="retransformRes.size !== 0"></CmdResMenu>
+
+  <CmdResMenu title="entries" :map="retransformListMap" @myclick="openList"></CmdResMenu>
 </template>

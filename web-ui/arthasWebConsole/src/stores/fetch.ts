@@ -145,7 +145,7 @@ export const fetchStore = defineStore("fetch", {
       this.curPolling = pollingLoop;
       return pollingLoop;
     },
-    pullResultsLoop(pollingM: Machine) {
+    pullResultsLoop(pollingM: Machine,globalIntrupt:boolean=true) {
       return this.getPollingLoop(
         () => {
           pollingM.send({
@@ -158,7 +158,7 @@ export const fetchStore = defineStore("fetch", {
           });
         },
         {
-          globalIntrupt: true,
+          globalIntrupt,
         },
       );
     },
@@ -210,7 +210,7 @@ export const fetchStore = defineStore("fetch", {
         });
       }
       this.jobRunning = false;
-      return Promise.reject("interrupt failured");
+      return Promise.reject("There art not  job running");
     },
     openJobRun() {
       this.jobRunning = true;

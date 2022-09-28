@@ -24,12 +24,14 @@ onBeforeUnmount(() => {
     } as AsyncReq
   })
 })
+// :class='{"pointer-events-none":fetchS.jobRunning}'
 </script>
 
 <template>
   <div class=" h-screen flex flex-col">
     <nav-header class="h-[10vh]"></nav-header>
-    <div class=" flex-auto h-[90vh] overflow-auto" :class='{"pointer-events-none":fetchS.jobRunning}'>
+    <div class=" flex-auto h-[90vh] overflow-auto" 
+>
       <div class="flex flex-row h-full">
         <nav-aside></nav-aside>
         <div class="flex-auto overflow-auto h-[90vh]">
