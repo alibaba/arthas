@@ -3,10 +3,7 @@ import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import { useInterpret, useMachine } from '@xstate/vue';
-import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, transformVNodeArgs } from 'vue';
-import { waitFor } from 'xstate/lib/waitFor';
-import { interpret } from "xstate"
-import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import * as echarts from 'echarts/core';
 import {
   TooltipComponent,
@@ -474,20 +471,22 @@ onBeforeUnmount(async () => {
 
           <button class="input-btn-style" @click="setPri">limit:{{pri}}</button>
         </div>
-        <table class="border-collapse border border-slate-400 mx-auto">
-          <thead>
-            <tr>
-              <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
-            </tr>
-          </thead>
-          <tbody class="">
-            <tr v-for="(map, i) in tableResults" :key="i">
-              <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
-                {{map.get(key)}}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="table table-compact w-full group">
+            <thead>
+              <tr>
+                <th class="border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}</th>
+              </tr>
+            </thead>
+            <tbody class="">
+              <tr v-for="(map, i) in tableResults" :key="i">
+                <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
+                  {{map.get(key)}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

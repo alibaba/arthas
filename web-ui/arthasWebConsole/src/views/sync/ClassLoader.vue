@@ -403,10 +403,11 @@ const resetClassloader = () => {
             <div class="flex justify-end mb-2">
               <button class="button-style" @click="getCategorizedByClassType">refresh</button>
             </div>
-            <table class="border-collapse border border-slate-400 mx-auto">
+            <div class="overflow-auto">
+            <table class="table w-full group table-compact">
               <thead>
                 <tr>
-                  <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+                  <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}</th>
                 </tr>
               </thead>
               <tbody class="">
@@ -417,6 +418,7 @@ const resetClassloader = () => {
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </div>

@@ -298,7 +298,8 @@ const searchTt = () => {
 <template>
   <MethodInput :submit-f="submit" ncount ncondition>
   </MethodInput>
-  <div class="flex items-center border-t-2 pt-4 mt-4 justify-between">
+  <div class="divider"></div>
+  <div class="flex items-center justify-between">
     <div class="mr-2">searching records</div>
     <div
       class="flex-1 overflow-hidden rounded-lg bg-white text-left border focus-within:outline outline-2 hover:shadow-md transition">
@@ -323,19 +324,19 @@ const searchTt = () => {
         </template>
       </CmdResMenu>
     </div>
-    <template v-if="enhancer|| tableResults.length > 0">
+    <!-- <template v-if="enhancer|| tableResults.length > 0"> -->
       <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-      <div class="w-full flex justify-center items-center ">
-        <table class="border-collapse border border-slate-400 table-fixed">
+      <div class="w-full flex justify-center items-center overflow-auto flex-1">
+        <table class="table table-compact group w-full">
           <thead>
             <tr>
-              <th class="border border-slate-300 p-1" v-for="(v,i) in keyList" :key="i">{{v}}</th>
-              <th class="border border-slate-300 p-1">invoke</th>
+              <th class="border group-first:z-0" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+              <th class="border">invoke</th>
             </tr>
           </thead>
           <tbody class="">
             <tr v-for="(map, i) in tableResults" :key="i">
-              <td class="border border-slate-300 p-1" v-for="(key,j) in keyList" :key="j">
+              <td class="border" v-for="(key,j) in keyList" :key="j">
                 <template v-if=" key !== 'params'">
                   {{map.get(key)}}
                 </template>
@@ -346,14 +347,14 @@ const searchTt = () => {
                   </div>
                 </div>
               </td>
-              <td class="border border-slate-300 ">
+              <td class="border">
                 <button class="button-style" @click="reTrigger(map.get('index')!)">invoke</button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </template>
+    <!-- </template> -->
   </div>
 
 </template>

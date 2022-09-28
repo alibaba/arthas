@@ -250,11 +250,11 @@ const getSpecialThreads = (threadid: number = -1) => {
           </span>
         </div>
       </div>
-      <div class="overflow-scroll h-[40vh] w-full">
-        <table class="border-collapse border border-slate-400 mx-auto">
+      <div class="overflow-auto h-[40vh] w-full">
+        <table class="table w-full group">
           <thead>
             <tr>
-              <th class="border border-slate-300 p-2">get stackTrace</th>
+              <th class="border border-slate-300 p-2 group-first:z-0">get stackTrace</th>
               <template v-if="count===0">
                 <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
               </template>

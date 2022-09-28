@@ -336,7 +336,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <button class="input-btn-style ml-2" @click="changeCycle">cycle time:{{cycleV}}</button>
     </template>
   </MethodInput>
-  <Enhancer :result="enhancer" v-if="enhancer" class="input-btn-style mb-4"></Enhancer>
+  <Enhancer :result="enhancer" v-if="enhancer" class="mb-4"></Enhancer>
   <div id="monitorchart" class="input-btn-style h-60 w-full pointer-events-auto transition mb-2"></div>
   <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div>
 

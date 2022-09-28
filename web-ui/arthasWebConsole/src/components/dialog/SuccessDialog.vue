@@ -18,7 +18,7 @@ function setIsOpen(value: boolean) {
 
 <template>
   <TransitionRoot :show="store.isSuccess" as="template">
-    <Dialog @close="setIsOpen" class="min-w-max">
+    <Dialog @close="setIsOpen" class="min-w-max z-20">
       <TransitionChild enter="transition-opacity duration-300" enter-from="opacity-0" enter-to="opacity-100"
         leave="transition-opacity duration-300" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-black bg-opacity-25" />

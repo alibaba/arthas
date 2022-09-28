@@ -184,18 +184,17 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         <button class="input-btn-style ml-2" @click="setDepth">depth:{{depth}}</button>
       </template>
     </MethodInput>
-    <div v-if="pollResults.length > 0 || enhancer" class=" pointer-events-auto">
       <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-      <div class="flex justify-center mt-4 pointer-events-auto">
-        <table class="border-collapse border border-slate-400 table-fixed">
+      <div class="flex justify-center mt-4 overflow-auto">
+        <table class="table w-full group">
           <thead>
             <tr>
-              <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+              <th class="border border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i===0}">{{v}}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(map, i) in tableResults" :key="i">
-              <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
+              <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
                 <div v-if=" key !== 'value'">
                   {{map.get(key)}}
                 </div>
@@ -215,5 +214,4 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
           </tbody>
         </table>
       </div>
-    </div>
 </template>

@@ -28,7 +28,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class=" h-screen flex flex-col">
+  <div class=" h-screen flex flex-col relative">
     <nav-header class="h-[10vh]"></nav-header>
     <div class=" flex-auto h-[90vh] overflow-auto" 
 >
@@ -41,7 +41,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
       <err-dialog v-if="publicS.isErr"/>
-      <success-dialog />
+      <success-dialog v-if="publicS.isSuccess"/>
       <input-dialog v-if="publicS.isInput " />
       <warn-dialog v-if="publicS.isWarn"></warn-dialog>
   </div>
