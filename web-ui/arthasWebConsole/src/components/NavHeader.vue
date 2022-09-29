@@ -2,7 +2,7 @@
 import { useMachine } from '@xstate/vue';
 import { waitFor } from 'xstate/lib/waitFor'
 import { onBeforeMount, Ref, ref, watchEffect } from 'vue';
-import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon } from '@heroicons/vue/outline';
+import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon, XCircleIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
 import machine from "@/machines/consoleMachine"
 import { publicStore } from '@/stores/public';
@@ -134,24 +134,25 @@ const tools:[string,()=>void][] = [
         version:{{ version }}
       </div>
       <button v-if="fetchS.jobRunning" @click.prevent="interruptEvent"
-        class="bg-red-600 text-white h-1/2 p-2 rounded hover:bg-red-400 transition mr-4">interrupt</button>
+        class="bg-error text-error-content h-1/2 p-2 rounded hover:bg-red-400 transition mr-4">interrupt</button>
 
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
         <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>
       <button class="hover:opacity-50 h-12 w-12 grid place-items-center  rounded-full mr-2 transition-all"
-        :class="{ 'bg-blue-600 shadow-blue-500': !fetchS.online, 'bg-red-600 shadow-red-500': fetchS.online }">
-        <LogoutIcon class="h-1/2 w-1/2 text-white" @click="logout" v-if="fetchS.online" />
-        <login-icon class="h-1/2 w-1/2 text-white" @click="login" v-else />
+        :class="{ 'bg-primary': !fetchS.online, 'bg-error': fetchS.online }">
+        <LogoutIcon class="h-1/2 w-1/2 text-error-content" @click="logout" v-if="fetchS.online" />
+        <login-icon class="h-1/2 w-1/2 text-primary-content" @click="login" v-else />
       </button>
       <Menu as="div" class="relative mr-4">
         <MenuButton
-          class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-blue-600 hover:rotate-180 duration-300 ease-in-out transition">
-          <MenuIcon class="h-3/4 w-3/4 text-white "></MenuIcon>
+          class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-primary transition">
+          <MenuIcon class="h-3/4 w-3/4 text-primary-content"></MenuIcon>
+          <!-- <XCirleIcon class="h-3/4 w-3/4"></XCirleIcon> -->
         </MenuButton>
         <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 z-10 w-40">
           <MenuItem v-slot="{ active }" v-for="(v,i) in tools" :key="i">
-          <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2">
+          <div :class='{ "bg-blue-500 text-primary-content": active }' class="px-4 py-2">
             <button @click.prevent="v[1]">{{v[0]}}</button>
           </div>
 
