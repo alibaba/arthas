@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue';
-import { waitFor } from 'xstate/lib/waitFor'
 import { onBeforeMount, Ref, ref, watchEffect } from 'vue';
 import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
@@ -134,8 +133,8 @@ const tools:[string,()=>void][] = [
         version:{{ version }}
       </div>
       <button v-if="fetchS.jobRunning" @click.prevent="interruptEvent"
+      
         class="bg-red-600 text-white h-1/2 p-2 rounded hover:bg-red-400 transition mr-4">interrupt</button>
-
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
         <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>

@@ -13,7 +13,10 @@ module.exports = {
         'spin-rev-running':'0.3s linear 0s infinite reverse both running spin'
       },
       
-    }
+    },
+    daisyui: {
+      themes: ["corporate"],
+    },
   },
   plugins: [
     require("daisyui")

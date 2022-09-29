@@ -28,22 +28,21 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class=" h-screen flex flex-col relative">
+  <div class=" h-screen flex flex-col">
     <nav-header class="h-[10vh]"></nav-header>
-    <div class=" flex-auto h-[90vh] overflow-auto" 
->
+    <div class=" flex-auto h-[90vh] overflow-auto">
       <div class="flex flex-row h-full">
-        <nav-aside></nav-aside>
-        <div class="flex-auto overflow-auto h-[90vh]">
+        <nav-aside ></nav-aside>
+        <div class="flex-auto overflow-auto h-[90vh] w-[90vw]">
           <router-view>
           </router-view>
         </div>
       </div>
     </div>
-      <err-dialog v-if="publicS.isErr"/>
-      <success-dialog v-if="publicS.isSuccess"/>
-      <input-dialog v-if="publicS.isInput " />
-      <warn-dialog v-if="publicS.isWarn"></warn-dialog>
-  </div>
 
+  </div>
+  <err-dialog v-if="publicS.isErr" />
+  <success-dialog v-if="publicS.isSuccess" />
+  <input-dialog v-if="publicS.isInput " />
+  <warn-dialog v-if="publicS.isWarn"></warn-dialog>
 </template>

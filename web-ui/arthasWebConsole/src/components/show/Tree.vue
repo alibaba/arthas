@@ -26,7 +26,7 @@ onMounted(() => {
 <template>
   <div :class="classList" v-if="root">
     <Disclosure>
-      <div class="flex items-center mb-2">
+      <div class="flex items-center mb-1">
         <DisclosureButton :class="buttonClass" ref="btn">
           <slot name="meta" :data="root.meta" :active="root.children.length > 0"></slot>
         </DisclosureButton>

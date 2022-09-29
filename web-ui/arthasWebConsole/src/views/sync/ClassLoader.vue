@@ -235,8 +235,8 @@ const resetClassloader = () => {
       }'>
         <!-- 后置为了让用户能注意到右上角的refreshicon -->
         <div class="h-[5vh]m mb-4 justify-end flex">
-          <button @click="resetClassloader" class="button-style mr-2">reset</button>
-          <button @click="getClassLoaderTree" class="button-style">refresh</button>
+          <button @click="resetClassloader" class="btn btn-primary btn-sm mr-1">reset</button>
+          <button @click="getClassLoaderTree" class="btn btn-primary btn-sm">refresh</button>
         </div>
 
         <div class="overflow-auto w-full flex-1">
@@ -244,8 +244,8 @@ const resetClassloader = () => {
             <Tree :root="tree">
               <template #meta="{ data, active }">
                 <!-- <div class="flex items-center"> -->
-                <div class="bg-blue-200 p-2 rounded-r rounded-br mr-2" :class='{
-                  "hover:opacity-50 bg-blue-400":active,
+                <div class="bg-info px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
+                  "hover:opacity-50":active,
                   "bg-red-400":loaderCache.hash=== data[2]
                 }'>
                   {{data[1]}}
@@ -255,23 +255,23 @@ const resetClassloader = () => {
               <template #others="{data}">
                 <div class="items-center flex">
                   <div class="mr-2">
-                    <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                    <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
                       count :
                     </span>
-                    <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                    <span class="bg-base-200 rounded-r px-1 border border-primary-focus">
                       {{data[0]}}
                     </span>
                   </div>
                   <div class="mr-2">
-                    <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                    <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
                       hash :
                     </span>
-                    <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                    <span class="bg-base-200 rounded-r flex-1 px-1 border border-primary-focus">
                       {{data[2]}}
                     </span>
                   </div>
                   <!-- <div class="">count:{{data[0]}}</div> -->
-                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="button-style"
+                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="btn btn-primary btn-xs btn-outline"
                     v-if="data[2]!== 'null'">
                     select classloader
                   </button>
@@ -290,26 +290,26 @@ const resetClassloader = () => {
         <!-- <div class="overflow-auto h-full"> -->
         <div class="mb-2">
           <div class="overflow-auto">
-            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+            <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
               selected classLoader:
             </span>
-            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+            <span class="bg-base-200 rounded-r px-1 border border-primary-focus">
               {{loaderCache.name}}
             </span>
           </div>
           <div class="mr-2">
-            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+            <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
               loadedcount :
             </span>
-            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+            <span class="bg-base-200 rounded-r px-1 border border-primary-focus">
               {{loaderCache.count}}
             </span>
           </div>
           <div class="mr-2">
-            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+            <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
               hash :
             </span>
-            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+            <span class="bg-base-200 rounded-r px-1 border border-primary-focus">
               {{loaderCache.hash}}
             </span>
           </div>

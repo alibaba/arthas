@@ -13,6 +13,7 @@ const store = publicStore()
 
 function setIsOpen(value: boolean) {
   store.isSuccess = value
+
 }
 </script>
 
@@ -45,4 +46,5 @@ function setIsOpen(value: boolean) {
       </div>
     </Dialog>
   </TransitionRoot>
+
 </template>
