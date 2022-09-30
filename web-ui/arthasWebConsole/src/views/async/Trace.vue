@@ -153,15 +153,11 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, cou
   <MethodInput :submit-f="submit" class="mb-2" ncondition ncount>
     <template #others>
 
-      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:outline outline-2 ring-blue-500">
-        <SwitchLabel>skipJDKMethod:</SwitchLabel>
-        <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
-          class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none mx-2">
-          <span aria-hidden="true" :class="enabled ? 'translate-x-6' : '-translate-x-1'"
-            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
-        </Switch>
-      </SwitchGroup>
-      <button class="input-btn-style ml-2" @click="setExclude">exclude: {{excludeClass}}</button>
+      <label class="label cursor-pointer btn-sm border border-neutral ml-2">
+          <span class="label-text uppercase font-bold mr-1">skip JDK Method</span>
+          <input v-model="enabled" type="checkbox" class="toggle"/>
+        </label>
+      <button class="btn btn-outline btn-sm ml-2" @click="setExclude">exclude: {{excludeClass}}</button>
     </template>
   </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">

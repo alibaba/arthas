@@ -67,13 +67,13 @@ const getSource = () => {
         <input type="text" v-model="express"
           class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
-      <button class="input-btn-style mr-2" @click.prevent="setDepth">depth:{{depth}}</button>
-      <button class="input-btn-style mr-2" @click.prevent="setClassLoader" v-if="hashcode === ''">ClassLoaderClass:{{classloaderName}}</button>
-      <button class="input-btn-style mr-2" @click.prevent="setHash" v-if="classloaderName === ''">hashcode:{{hashcode}}</button>
+      <button class="btn btn-sm btn-outline mr-2" @click.prevent="setDepth">depth:{{depth}}</button>
+      <button class="btn btn-sm btn-outline mr-2" @click.prevent="setClassLoader" v-if="hashcode === ''">ClassLoaderClass:{{classloaderName}}</button>
+      <button class="btn btn-sm btn-outline mr-2" @click.prevent="setHash" v-if="classloaderName === ''">hashcode:{{hashcode}}</button>
     </label>
 
     <button @click.prevent="getSource"
-      class="bg-blue-400  rounded mr-4 hover:opacity-50 transition-all truncate p-2">submit</button>
+      class="btn btn-primary btn-sm btn-outline truncate p-2">submit</button>
   </form>
   <div v-if="code !== ''">
     <!-- <CmdResMenu title="classInfo" :map="locationMap"   class="mb-4"></CmdResMenu> -->

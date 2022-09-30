@@ -318,14 +318,13 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
     <template #others>
       <Listbox v-model="mode">
         <div class=" relative mx-2 ">
-          <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
+          <ListboxButton class="btn btn-sm btn-outline w-40">{{ mode.name }}</ListboxButton>
           <ListboxOptions
             class="absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white z-10">
             <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
-              <div class=" p-2 transition " :class="{
-              'bg-blue-300 text-white': active,
-              'bg-blue-500 text-white': selected,
-              'text-gray-900': !active && !selected
+              <div class=" p-2 transition" :class="{
+              'bg-neutral text-neutral-content': active,
+              'bg-neutral-focus text-neutral-content': selected,
               }">
                 {{ am.name }}
               </div>
@@ -333,7 +332,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
           </ListboxOptions>
         </div>
       </Listbox>
-      <button class="input-btn-style ml-2" @click="changeCycle">cycle time:{{cycleV}}</button>
+      <button class="btn btn-sm btn-outline" @click="changeCycle">cycle time:{{cycleV}}</button>
     </template>
   </MethodInput>
   <Enhancer :result="enhancer" v-if="enhancer" class="mb-4"></Enhancer>

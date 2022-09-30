@@ -55,6 +55,12 @@ const modereflist: { enabled: Ref<boolean>, name: string }[] = [
   { enabled: failureInvoke, name: "exception" },
   { enabled: allInvoke, name: "finish" }
 ]
+const selectedMode:{ enabled: Ref<boolean>, name: string }[] = [
+  { enabled: beforeInvoke, name: "before" },
+  { enabled: successInvoke, name: "success" },
+  { enabled: failureInvoke, name: "exception" },
+  { enabled: allInvoke, name: "finish" }
+]
 // const mode = ref(modelist[3])
 
 const transform = (result: CommandResult) => {
@@ -164,54 +170,59 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
 </script>
   
 <template>
-    <MethodInput :submit-f="submit" nexpress ncondition>
-      <template #others>
-        <div class="relative group ml-2">
-          <div class="input-btn-style">watching point</div>
-          <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full">
-            <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
-              <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2 bg-white">
-                <SwitchLabel class="mr-2">{{mode.name}}:</SwitchLabel>
-                <Switch v-model="mode.enabled.value" :class="mode.enabled.value ? 'bg-blue-400' : 'bg-gray-500'"
-                  class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
-                  <span aria-hidden="true" :class="mode.enabled.value ? 'translate-x-6' : '-translate-x-1'"
-                    class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
-                </Switch>
-              </div>
-            </SwitchGroup>
-          </div>
+  <MethodInput :submit-f="submit" nexpress ncondition>
+    <template #others>
+      <div class="relative group ml-2">
+        <div class="btn btn-sm btn-outline">watching point</div>
+        <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full">
+          <!-- <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
+            <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2 bg-white">
+              <SwitchLabel class="mr-2">{{mode.name}}:</SwitchLabel>
+              <Switch v-model="mode.enabled.value" :class="mode.enabled.value ? 'bg-blue-400' : 'bg-gray-500'"
+                class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
+                <span aria-hidden="true" :class="mode.enabled.value ? 'translate-x-6' : '-translate-x-1'"
+                  class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
+              </Switch>
+            </div>
+          </SwitchGroup> -->
+          <label class="label cursor-pointer btn-sm border border-neutral ml-2 bg-base-100" v-for="(mode,i) in modereflist" :key="i">
+            <span class="label-text uppercase font-bold mr-1">{{mode.name}}</span>
+            <input v-model="mode.enabled.value" type="checkbox" class="toggle" />
+          </label>
         </div>
-        <button class="input-btn-style ml-2" @click="setDepth">depth:{{depth}}</button>
-      </template>
-    </MethodInput>
-      <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-      <div class="flex justify-center mt-4 overflow-auto">
-        <table class="table w-full group">
-          <thead>
-            <tr>
-              <th class="border border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i===0}">{{v}}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(map, i) in tableResults" :key="i">
-              <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
-                <div v-if=" key !== 'value'">
-                  {{map.get(key)}}
-                </div>
-
-                <div class="flex flex-col" v-else>
-                  <Tree :root="(map.get('value') as TreeNode)" class="mt-2" button-class=" ">
-                    <template #meta="{ data, active }">
-                      <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
-                        :class='{"hover:bg-blue-300 bg-blue-400":active}'>
-                        {{data}}
-                      </div>
-                    </template>
-                  </Tree>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
+      <button class="btn btn-sm btn-outline ml-2" @click="setDepth">depth:{{depth}}</button>
+    </template>
+  </MethodInput>
+  <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
+  <div class="flex justify-center mt-4 overflow-auto">
+    <table class="table w-full group">
+      <thead>
+        <tr>
+          <th class="border border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i===0}">{{v}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(map, i) in tableResults" :key="i">
+          <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
+            <div v-if=" key !== 'value'">
+              {{map.get(key)}}
+            </div>
+
+            <div class="flex flex-col" v-else>
+              <Tree :root="(map.get('value') as TreeNode)" class="mt-2" button-class=" ">
+                <template #meta="{ data, active }">
+                  <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
+                    :class='{"hover:bg-blue-300 bg-blue-400":active}'>
+                    {{data}}
+                  </div>
+                </template>
+              </Tree>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>

@@ -37,20 +37,20 @@
             leave-to="opacity-0 scale-95">
   
             <DialogPanel
-              class=" w-1/3 h-1/2 bg-white p-10 rounded-xl shadow-xl flex flex-col justify-between items-center min-w-max">
+              class=" w-1/3 h-1/2 bg-base-100 p-10 rounded-xl shadow-xl flex flex-col justify-between items-center min-w-max">
               <DialogTitle>
-                <ExclamationCircleIcon class="w-12 h-12 text-red-500" />
+                <ExclamationCircleIcon class="w-12 h-12 text-warning" />
               </DialogTitle>
               <DialogDescription 
-              class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl overflow-auto"
+              class="flex-auto self-stretch  my-10 rounded p-2 break-all max-w-4xl overflow-auto"
               >
                 {{store.warnMessage}}
               </DialogDescription>
               <div class="flex justify-evenly w-full">
                 <button @click="setIsOpen"
-                  class="border bg-blue-200 w-40 h-10 rounded-full hover:bg-blue-500 transition">OK</button>
+                  class="btn btn-primary rounded-xl">OK</button>
                 <button @click="setIsOpenCancel"
-                  class="border bg-blue-200 w-40 h-10 rounded-full hover:bg-blue-500 transition">Cancel</button>
+                  class="btn btn-primary rounded-xl">Cancel</button>
               </div>
             </DialogPanel>
           </TransitionChild>

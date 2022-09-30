@@ -78,15 +78,15 @@ const tableFilter = computed(() => {
       if (raw[0] === "[" && raw[raw.length - 1] === "]") {
         raw.pop()
         raw.shift()
-      } 
-        incudes = raw.join("").split(',')
+      }
+      incudes = raw.join("").split(',')
 
-      if(key === "name"||key === "group") {
+      if (key === "name" || key === "group") {
         // 字符串是包含
         res = res.filter((map) => {
           let val = map.get(key.trim())!
           // 取对于多个子字符串， 取交集
-          return incudes.every(reg=>val.includes(reg))
+          return incudes.every(reg => val.includes(reg))
         })
       } else res = res.filter((map) => incudes.includes(map.get(key.trim())!))
     }
@@ -210,26 +210,21 @@ const getSpecialThreads = (threadid: number = -1) => {
     <div class="flex justify-end items-center h-[10vh]">
 
       <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
-      <SwitchGroup as="div" class="btn flex ml-2 btn-sm" v-show="count === 0">
-        <SwitchLabel>is blocking:</SwitchLabel>
-        <Switch v-model="isBlock" :class="isBlock ? 'bg-blue-400' : 'bg-gray-500'"
-          class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none mx-2">
-          <span aria-hidden="true" :class="isBlock ? 'translate-x-6' : '-translate-x-1'"
-            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
-        </Switch>
-      </SwitchGroup>
-      <button class="btn ml-2 btn-sm" @click="setleast">sample interval:{{leastTime}}</button>
-      <button v-show="!isBlock" class="btn ml-2 btn-sm" @click="setlimit"> top n threads:{{count}}</button>
+        <label class="label cursor-pointer btn-sm border border-neutral ">
+          <span class="label-text uppercase font-bold mr-1">is blocking:</span>
+          <input v-model="isBlock" type="checkbox" class="toggle"/>
+        </label>
+      <button class="btn ml-2 btn-sm btn-outline" @click="setleast">sample interval:{{leastTime}}</button>
+      <button v-show="!isBlock" class="btn ml-2 btn-sm btn-outline" @click="setlimit"> top n threads:{{count}}</button>
       <Listbox v-model="threadState">
         <div class=" relative mx-2 ">
-          <ListboxButton class="btn w-40 btn-sm">state {{ threadState.name }}</ListboxButton>
+          <ListboxButton class="btn w-40 btn-sm btn-outline">state {{ threadState.name }}</ListboxButton>
           <ListboxOptions
-            class=" z-10 absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
+            class=" z-10 absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-base-100">
             <ListboxOption v-for="(am,i) in statelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
-              'bg-blue-300 text-white': active,
-              'bg-blue-500 text-white': selected,
-              'text-gray-900': !active && !selected
+              'bg-neutral text-neutral-content': active,
+              'bg-neutral-focus text-neutral-content': selected,
               }">
                 {{ am.name }}
               </div>
@@ -237,15 +232,15 @@ const getSpecialThreads = (threadid: number = -1) => {
           </ListboxOptions>
         </div>
       </Listbox>
-      <button class="btn btn-primary btn-sm" @click="getThreads"> get threads</button>
+      <button class="btn btn-primary btn-sm btn-outline" @click="getThreads"> get threads</button>
     </div>
     <div class="w-full h-[50vh] input-btn-style my-2 p-4 flex flex-col">
       <div class="flex h-[8vh] flex-wrap flex-auto">
         <div v-for="(v, i) in Object.entries(infoCount)" :key="i" class="mr-2">
-          <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+          <span class="text-primary-content border border-primary-focus bg-primary-focus w-44 px-2 rounded-l">
             {{ v[0] }}
           </span>
-          <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+          <span class="border border-primary-focus bg-base-200 rounded-r flex-1 px-1">
             {{v[1]}}
           </span>
         </div>
@@ -263,9 +258,9 @@ const getSpecialThreads = (threadid: number = -1) => {
               </template>
             </tr>
           </thead>
-          <tbody class="">
+          <tbody>
             <tr v-for="(map, i) in tableFilter" :key="i">
-              <td class="border border-slate-300 p-2"><button class="button-style"
+              <td class="border border-slate-300 p-2"><button class="btn-outline btn-primary btn btn-sm"
                   @click="getSpecialThreads(parseInt(map.get('id')!))" v-if="map.get('id')!=='-1'">
                   get stackTrace
                 </button></td>

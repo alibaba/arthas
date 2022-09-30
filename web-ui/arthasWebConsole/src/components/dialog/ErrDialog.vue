@@ -32,18 +32,18 @@ onBeforeMount(()=>{fetchStore().curPolling.close()})
           leave-to="opacity-0 scale-95">
 
           <DialogPanel
-            class=" w-1/3 h-1/2 bg-white p-10 rounded-xl shadow-xl flex flex-col justify-between items-center min-w-max">
+            class=" w-1/3 h-1/2 bg-base-100 p-10 rounded-xl shadow-xl flex flex-col justify-between items-center min-w-max">
             <DialogTitle>
-              <ExclamationCircleIcon class="w-12 h-12 text-red-500" />
+              <ExclamationCircleIcon class="w-12 h-12 text-error" />
             </DialogTitle>
             <DialogDescription as="section"
-              class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl overflow-auto">
+              class="flex-auto self-stretch my-10 rounded p-2 break-all max-w-4xl overflow-auto">
               reason:
               {{ store.ErrMessage }}
             </DialogDescription>
 
             <button @click="setIsOpen(false)"
-              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition hover:text-white">OK</button>
+              class="btn btn-primary rounded-xl">OK</button>
           </DialogPanel>
         </TransitionChild>
       </div>

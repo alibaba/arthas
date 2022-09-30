@@ -71,16 +71,19 @@ const openList = () => {
           class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
     </label>
-    <div class="flex input-btn-style mr-2 focus-within:outline outline-2">
+    <!-- <div class="flex input-btn-style mr-2 focus-within:outline outline-2">
       <div class="mx-2">explicitly trigger</div>
       <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
         class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
         <span aria-hidden="true" :class="enabled ? 'translate-x-6' : '-translate-x-1'"
           class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
       </Switch>
-    </div>
-    <button @click.prevent="onSubmit"
-      class="bg-blue-400  rounded mr-4 hover:opacity-50 transition-all truncate p-2">submit</button>
+    </div> -->
+    <label class="label cursor-pointer btn-sm border border-neutral mr-2">
+      <span class="label-text uppercase font-bold mr-1">explicitly trigger</span>
+      <input v-model="enabled" type="checkbox" class="toggle" />
+    </label>
+    <button @click.prevent="onSubmit" class="btn btn-primary btn-sm btn-outline mr-4 truncate">submit</button>
   </form>
 
   <CmdResMenu title="response" :map="retransformRes" open v-if="retransformRes.size !== 0"></CmdResMenu>

@@ -231,10 +231,10 @@ const resetClassloader = () => {
     <div class="flex h-[40vh]">
       <div class="input-btn-style h-full p-4 mb-2 flex flex-col transition-all duration-500" :class='{
         "w-full":loaderCache.hash === "",
-        "w-2/3":loaderCache.hash !==""
+        "w-2/3":loaderCache.hash !== ""
       }'>
         <!-- 后置为了让用户能注意到右上角的refreshicon -->
-        <div class="h-[5vh]m mb-4 justify-end flex">
+        <div class="h-[5vh] mb-4 justify-end flex">
           <button @click="resetClassloader" class="btn btn-primary btn-sm mr-1">reset</button>
           <button @click="getClassLoaderTree" class="btn btn-primary btn-sm">refresh</button>
         </div>
@@ -244,9 +244,9 @@ const resetClassloader = () => {
             <Tree :root="tree">
               <template #meta="{ data, active }">
                 <!-- <div class="flex items-center"> -->
-                <div class="bg-info px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
+                <div class="bg-info  px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
                   "hover:opacity-50":active,
-                  "bg-red-400":loaderCache.hash=== data[2]
+                  "bg-success text-success-content":loaderCache.hash=== data[2]
                 }'>
                   {{data[1]}}
                   <!-- </div> -->
@@ -255,10 +255,10 @@ const resetClassloader = () => {
               <template #others="{data}">
                 <div class="items-center flex">
                   <div class="mr-2">
-                    <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
+                    <span class="bg-primary-focus text-primary-content border border-primary-focus px-2 rounded-l ">
                       count :
                     </span>
-                    <span class="bg-base-200 rounded-r px-1 border border-primary-focus">
+                    <span class="bg-base-200 border border-primary-focus rounded-r px-1 ">
                       {{data[0]}}
                     </span>
                   </div>
@@ -271,7 +271,7 @@ const resetClassloader = () => {
                     </span>
                   </div>
                   <!-- <div class="">count:{{data[0]}}</div> -->
-                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="btn btn-primary btn-xs btn-outline"
+                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="btn btn-primary btn-xs btn-outline opacity-0 group-hover:opacity-100"
                     v-if="data[2]!== 'null'">
                     select classloader
                   </button>
@@ -325,7 +325,7 @@ const resetClassloader = () => {
               <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
                 v-model="classVal" />
             </div>
-            <button @click="loadClass" class="button-style">load class</button>
+            <button @click="loadClass" class="btn btn-primary btn-sm btn-outline">load class</button>
           </div>
           <div class="flex w-full">
             <div class=" cursor-default 
@@ -336,11 +336,11 @@ const resetClassloader = () => {
               <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
                 v-model="resourceVal" />
             </div>
-            <button @click="loadResource" class="button-style">load resource</button>
+            <button @click="loadResource" class="btn btn-primary btn-sm btn-outline">load resource</button>
           </div>
           <div class="h-0 border my-2"></div>
           <div class="flex justify-between">
-            <h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style"
+            <h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="btn btn-primary btn-sm"
               @click="getUrlStats">refresh</button>
           </div>
           <ul class="mt-2 w-full flex flex-col">
@@ -357,7 +357,7 @@ const resetClassloader = () => {
         <div class="overflow-y-scroll h-ful w-full">
           <div class=" mb-2 flex items-center justify-end">
             <h3 class="text-xl flex-1 flex justify-center">urlStats</h3>
-            <button class="button-style" @click="getAllUrlStats">refresh</button>
+            <button class="btn btn-primary btn-sm" @click="getAllUrlStats">refresh</button>
           </div>
           <!-- <div class="overflow-auto h-ful w-full"> -->
           <!-- <Disclosure> -->
@@ -401,7 +401,7 @@ const resetClassloader = () => {
         <div class="input-btn-style w-full mr-2 h-full">
           <div class="overflow-auto flex-1 h-full">
             <div class="flex justify-end mb-2">
-              <button class="button-style" @click="getCategorizedByClassType">refresh</button>
+              <button class="btn btn-primary btn-sm" @click="getCategorizedByClassType">refresh</button>
             </div>
             <div class="overflow-auto">
             <table class="table w-full group table-compact">

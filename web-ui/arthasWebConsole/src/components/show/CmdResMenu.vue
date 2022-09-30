@@ -24,7 +24,7 @@ const disposeClick = (e:Event)=>{
   <Disclosure as="section" class="w-100 flex flex-col mb-2">
     <DisclosureButton 
     @click.prevent="disposeClick"
-    class="py-2 bg-blue-400  rounded hover:opacity-50 transition-all duration-100 truncate"
+    class="bg-info  rounded hover:opacity-50 transition-all duration-100 truncate"
       :class="[buttonWidth]">
       {{ title }}
     </DisclosureButton>

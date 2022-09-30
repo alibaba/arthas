@@ -449,11 +449,11 @@ onBeforeUnmount(async () => {
 <template>
   <div class="p-2 pointer-events-auto flex flex-col h-full">
     <div class="input-btn-style mb-4 h-32 flex flex-wrap flex-col items-start overflow-auto min-h-[6rem]">
-      <div v-for="(cv, ci) in runtimeInfo" :key="ci" class="flex mb-1 w-1/3 pr-2">
-        <span class="bg-blue-500 w-44 px-2 rounded-l">
+      <div v-for="(cv, ci) in runtimeInfo" :key="ci" class="flex mb-1 pr-2">
+        <span class="bg-primary-focus text-primary-content border border-primary-focus w-44 px-2 rounded-l">
           {{ cv[0] }}
         </span>
-        <span class="border-gray-300 bg-blue-100 rounded-r flex-1 pl-2 border bordergre">
+        <span class="bg-base-200 border border-primary-focus rounded-r px-2 flex-1">
           {{cv[1]}}
         </span>
       </div>
@@ -469,7 +469,7 @@ onBeforeUnmount(async () => {
       <div class="input-btn-style overflow-auto flex-1 h-80">
         <div class="flex justify-end mb-2">
 
-          <button class="input-btn-style" @click="setPri">limit:{{pri}}</button>
+          <button class="btn btn-sm btn-outline" @click="setPri">limit:{{pri}}</button>
         </div>
         <div class="overflow-x-auto">
           <table class="table table-compact w-full group">

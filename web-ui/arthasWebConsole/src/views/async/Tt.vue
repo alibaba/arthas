@@ -306,10 +306,10 @@ const searchTt = () => {
       <input type="text" v-model="inputVal"
         class="w-full border-none py-2 pl-3 pr-10 h-full text-gray-900  focus:outline-none">
     </div>
-    <button @click="searchTt" class="mx-2 button-style">search</button>
+    <button @click="searchTt" class="mx-2 btn btn-primary btn-sm btn-outline">search</button>
   </div>
   <div class="flex justify-end">
-    <button class="button-style my-4" @click="alltt">
+    <button class="btn btn-primary btn-sm btn-outline my-4 mr-2" @click="alltt">
       all records
     </button>
   </div>

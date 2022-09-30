@@ -87,7 +87,7 @@ const getInstance = (data:{classItem:Item}) => {
 
   <ClassInput :submit-f="getInstance" class="mb-4" >
     <template #others>
-      <button class="ml-2 input-btn-style" @click="setDepth">depth:{{depth}}</button>
+      <button class="ml-2 btn btn-outline btn-sm" @click="setDepth">depth:{{depth}}</button>
     </template>
   </ClassInput>
   <template v-if="pollResults.length > 0">

@@ -136,7 +136,7 @@ const getAll = () => fetchStore().baseSubmit(interpret(permachine), {
 <template>
   <AutoComplete label="mbeanInfo" :option-items="optionItems" :input-fn="getAll" v-slot="slotP" as="form">
     <button @click.prevent="getMbeanInfo(slotP.selectItem)"
-      class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+      class="btn btn-primary btn-sm btn-outline mx-2 transition">submit</button>
   </AutoComplete>
   <div v-if="className !== ''" class="mt-4">
     <h2 class="flex justify-center my-4 text-xl">{{ className }}</h2>

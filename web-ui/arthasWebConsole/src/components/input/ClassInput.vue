@@ -76,14 +76,14 @@ const filterfn = (_: any, item: Item) => true
       <button @click.prevent="submitF({
         classItem:slotP.selectItem,
         loaderItem:slotP.selectItem
-      })" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+      })" class="btn btn-primary btn-sm btn-outline mx-2 transition">submit</button>
     </template>
     <AutoComplete label="classloader" :option-items="optionClassloders" v-slot="slotQ" v-else>
       <slot name="others"></slot>
       <button @click.prevent="submitF({
         classItem:slotP.selectItem,
         loaderItem:slotQ.selectItem,
-      })" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+      })" class="btn btn-primary btn-sm btn-outline mx-2 transition">submit</button>
     </AutoComplete>
   </AutoComplete>
 </template>

@@ -95,9 +95,9 @@ const filterfn = (_: any, item: Item) => true
     <AutoComplete label="method" :option-items="optionMethod"
       :input-fn="(value: string) => changeMethod(slotClass.selectItem.value as string, value)" :filter-fn="filterfn"
       v-slot="slotMethod">
-      <button v-if="nexpress" class="input-btn-style ml-2" @click="setExpress">express:{{express}}</button>
-      <button v-if="ncondition" class="input-btn-style ml-2" @click="setConditon">condition:{{conditon}}</button>
-      <button v-if="ncount" class="input-btn-style ml-2" @click="setCount">count:{{autoStop}}</button>
+      <button v-if="nexpress" class="btn btn-sm btn-outline ml-2" @click="setExpress">express:{{express}}</button>
+      <button v-if="ncondition" class="btn btn-sm btn-outline ml-2" @click="setConditon">condition:{{conditon}}</button>
+      <button v-if="ncount" class="btn btn-sm btn-outline ml-2" @click="setCount">count:{{autoStop}}</button>
       <slot name="others" :methodItem="slotMethod.selectItem" :classItem="slotClass.selectItem"></slot>
       <button @click.prevent="submitF({
       classItem: slotClass.selectItem, 
@@ -105,7 +105,7 @@ const filterfn = (_: any, item: Item) => true
       conditon,
       express,
       count:autoStop
-      })" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+      })" class="btn btn-primary btn-sm btn-outline mx-2 transition">submit</button>
     </AutoComplete>
 
   </AutoComplete>
