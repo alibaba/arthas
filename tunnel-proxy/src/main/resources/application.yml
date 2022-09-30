@@ -1,0 +1,15 @@
+arthas:
+  tunnel:
+    users:
+      - name: arthas
+        password: 123456
+        roles: '*'
+      - name: user
+        password: 123456
+        roles:
+          - eden-gateway
+          - eden-demo-cola
+      - name: manager
+        password: 123456
+        roles:
+          - eden-demo-cola

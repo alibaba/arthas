@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--设置log4j2的自身log级别为ERROR-->
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出-->
+<!--monitorInterval：监控间隔，例如：monitorInterval=”600” 指log4j2每隔600秒（10分钟），自动监控该配置文件是否有变化，如果变化，则自动根据文件内容重新配置-->
+<configuration status="INFO" monitorInterval="30">
+    <Properties>
+        <!-- 配置日志文件输出目录  默认目录为服务启动目录的同级logs文件夹下，可通过设置系统变量(jvm参数)log.file.path来进行更改-->
+        <Property name="LOG_HOME">${sys:log.file.path:-./logs}</Property>
+        <Property name="LOG_BUSINESS_LEVEL">INFO</Property>
+        <Property name="LOG_LEVEL">INFO</Property>
+    </Properties>
+
+    <!--先定义所有的appender-->
+    <appenders>
+
+        <!--这个输出控制台的配置-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--输出日志的格式-->
+            <PatternLayout pattern="%d [%t] %-5p [%c] - %m%n"/>
+        </Console>
+
+        <!--business的日志记录追加器-->
+        <RollingRandomAccessFile name="businessFile" fileName="${LOG_HOME}/app-business.log" immediateFlush="false"
+                                 append="true"
+                                 filePattern="${LOG_HOME}/app-business-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d [%t] %-5p [%c] - %m%n"/>
+            <!--    接受${LOG_BUSINESS_LEVEL}及其以下等级的日志    -->
+            <Filters>
+                <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="ACCEPT"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1000 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingRandomAccessFile>
+
+        <!--exception的日志记录追加器-->
+        <RollingRandomAccessFile name="exceptionFile" fileName="${LOG_HOME}/app-exception.log" immediateFlush="false"
+                                 append="true"
+                                 filePattern="${LOG_HOME}/app-exception-%d{yyyy-MM-dd}-%i.log.gz">
+            <!--    接受WARN及其以上等级的日志    -->
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+
+            <PatternLayout pattern="%d [%t] %-5p [%c] - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1000 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingRandomAccessFile>
+
+        <Async name="Async">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="businessFile"/>
+            <appender-ref ref="exceptionFile"/>
+        </Async>
+
+    </appenders>
+
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <loggers>
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+        </root>
+
+        <AsyncLogger name="com.wf2311.arthas.tunnel" level="${LOG_BUSINESS_LEVEL}" additivity="false">
+            <appender-ref ref="businessFile"/>
+            <appender-ref ref="exceptionFile"/>
+            <appender-ref ref="Console"/>
+        </AsyncLogger>
+
+    </loggers>
+</configuration>

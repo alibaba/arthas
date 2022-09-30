@@ -1,0 +1,44 @@
+server:
+  port: 9999
+arthas:
+  server:
+    port: 7777
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: arthas-tunnel-proxy
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.40.56:8848 #nacos注册中心地址
+        namespace: testing-2 #对应的namespaceId
+        group: ${spring.application.name} #分组ID，这里使用spring.application.name的值
+        name: application.yaml
+        refresh-enabled: true
+        file-extension: yaml
+      discovery:
+        metadata:
+          uptime: ${server.bootstrap.time}
+          user.name: ${spring.security.user.name}
+          user.password: ${spring.security.user.password}
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ${spring.cloud.nacos.config.namespace}
+        service: ${spring.application.name}
+        enabled: false  #默认不启用服务注册
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      external-file: logs/app-exception.log
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+

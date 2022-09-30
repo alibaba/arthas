@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="static/bootstrap-4.2.1.min.css">
+    <link rel="stylesheet" href="static/bootstrap4-toggle.min.css">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="static/jquery-3.3.1.slim.min.js"></script>
+    <script src="static/jquery-3.3.1.min.js"></script>
+    <script src="static/popper-1.14.6.min.js"></script>
+    <script src="static/bootstrap-4.2.1.min.js"></script>
+<!--    <script src="bootstrap-switch.min.js"></script>-->
+
+    <script src="static/bootstrap4-toggle.min.js"></script>
+
+    <script type="text/javascript">
+        window.addEventListener('resize', function () {
+            var terminalSize = getTerminalSize();
+            ws.send(JSON.stringify({action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows}));
+            xterm.resize(terminalSize.cols, terminalSize.rows);
+        });
+    </script>
+
+    <link href="static/xterm.css" rel="stylesheet"/>
+    <link href="static/main.css" rel="stylesheet"/>
+    <script src="static/xterm.js" type="text/javascript"></script>
+    <script src="static/xweb-console.js"></script>
+    <script src="static/arthas.js"></script>
+    <style>
+        .a-col {
+            padding-right: 5px;
+        }
+    </style>
+    <title>Arthas Console</title>
+</head>
+
+<body>
+<nav class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row bd-navbar">
+    <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="navbar-brand"><img src="static/logo.png"
+                                                                                                   alt="Arthas"
+                                                                                                   title="Welcome to Arthas web console"
+                                                                                                   style="height: 25px;"
+                                                                                                   class="img-responsive"></a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="https://arthas.aliyun.com/doc" target="_blank">文档
+                    <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">在线教程</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://github.com/alibaba/arthas" target="_blank">源码</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout" style="color: red">退出登录</a>
+            </li>
+        </ul>
+    </div>
+
+    <form class="form-inline my-2 my-lg-0">
+        <input type="hidden" id="ip" name="ip" value="127.0.0.1">
+        <input type="hidden" id="port" name="port" value="7777">
+        <div class="a-col">
+            <div class="input-group ">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="service-addon">服务</span>
+                </div>
+                <select id="selectServer" class="form-control selectpicker"></select>
+            </div>
+        </div>
+        <div class="a-col">
+            <div class="input-group ">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="agent-addon">实例</span>
+                </div>
+                <select id="selectAgent" class="form-control selectpicker"></select>
+            </div>
+        </div>
+        <div class="a-col">
+            <input  id="connectType" type="checkbox" checked data-toggle="toggle"  data-on="代理访问" data-off="直连访问" data-onstyle="success" data-offstyle="danger">
+        </div>
+        <div class="col-inline">
+
+            <button title="connect" type="button" class="btn btn-info form-control" onclick="startConnect()">连接</button>
+            <button title="disconnect" type="button" class="btn btn-info form-control" onclick="disconnect()">断开
+            </button>
+<!--                            <a id="arthasOutputA" target="_blank" href="arthas-output/" class="btn btn-info" role="button" onclick="updateArthasOutputLink()">Arthas Output</a>-->
+        </div>
+    </form>
+
+</nav>
+
+<div class="container-fluid px-0">
+    <div class="col px-0" id="terminal-card">
+        <div id="terminal"></div>
+    </div>
+</div>
+
+<div title="fullscreen" id="fullSc" class="fullSc">
+    <button id="fullScBtn" onclick="xtermFullScreen()"><img src="static/fullsc.png"></button>
+</div>
+</body>
+
+</html>
