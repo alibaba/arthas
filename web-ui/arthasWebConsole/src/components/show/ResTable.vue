@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, toRefs } from 'vue';
+import { ref, toRefs } from 'vue';
 
 const _props = defineProps<{
   maplist:Map<string, string>[]

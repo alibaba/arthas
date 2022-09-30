@@ -93,9 +93,9 @@ const getInstance = (data:{classItem:Item}) => {
   <template v-if="pollResults.length > 0">
     <ul class=" pointer-events-auto mt-10">
       <template v-for="(result, i) in pollResults" :key="i">
-        <Tree :root="result" class="mt-2" button-class=" ">
-          <template #meta="{ data, active }">
-            <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br" :class='{"hover:bg-blue-300 bg-blue-400":active}'>
+        <Tree :root="result" class="mt-2">
+          <template #meta="{ data }">
+            <div class="bg-info p-1 mb-1 rounded-r rounded-br">
               {{data}}
             </div>
           </template>

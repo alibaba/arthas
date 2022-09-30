@@ -2,7 +2,6 @@
 import machine from '@/machines/consoleMachine';
 import { useInterpret, useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref, watchEffect } from 'vue';
-import ConfigMenu from '@/components/show/ConfigMenu.vue';
 import OptionConfigMenu from '@/components/show/OptionConfigMenu.vue';
 import SwitchInput from '@/components/input/SwitchInput.vue';
 import { publicStore } from '@/stores/public';
@@ -152,23 +151,19 @@ const getPerCounter = () => fetchS.baseSubmit(useInterpret(permachine), { action
 <template>
   <div class="p-2 h-[90vh] overflow-y-scroll">
     <article>
-      <Disclosure as="section" class="flex w-10/12 mb-2">
-        <DisclosureButton class="bg-blue-200 p-2 w-1/4 break-all">
-          workingDir
-        </DisclosureButton>
-        <DisclosurePanel as="div" static class="flex-auto bg-blue-100 flex flex-col justify-center pl-2">
-          {{ pwd }}
-        </DisclosurePanel>
-      </Disclosure>
+      <div class="flex items-center">
+        <div class="btn-info btn my-2 btn-sm normal-case">workingDir</div>
+        <div class="bg-base-200 w-full text-base-content pl-2"> {{ pwd }}</div>
+      </div>
       <CmdResMenu title="sysenv" :map="sysEnvMap" @click="getSysenv" />
       <CmdResMenu title="sysprop" :map="sysPropMap" @click="getSysprop" />
       <option-config-menu title="vmOption" :list="vmOptionMTree" title-key-name="name">
         <template #item="{ kv, itemTitle, idx }">
           <switch-input :send="vmOptionSend(itemTitle)" :data="{ key: kv[0], value: kv[1] }" v-if="kv[0] === 'value'"
-            :class="{ 'border-t-4': (idx > 0), 'border-white': (idx > 0) }">
+            :class="{ 'border-t-4': (idx > 0), 'border-base-100': (idx > 0) }">
           </switch-input>
-          <div v-else class="flex " :class="{ 'border-t-4': (idx > 0), 'border-white': (idx > 0) }">
-            <div class="bg-blue-200 w-1/5 p-2">{{ kv[0] }}</div>
+          <div v-else class="flex " :class="{ 'border-t-4': (idx > 0), 'border-base-100': (idx > 0) }">
+            <div class="bg-blue-200 w-1/5 p-1">{{ kv[0] }}</div>
             <div class="grid place-items-center w-3/5">{{ kv[1] }}</div>
           </div>
         </template>

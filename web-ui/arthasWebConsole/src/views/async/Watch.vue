@@ -55,7 +55,7 @@ const modereflist: { enabled: Ref<boolean>, name: string }[] = [
   { enabled: failureInvoke, name: "exception" },
   { enabled: allInvoke, name: "finish" }
 ]
-const selectedMode:{ enabled: Ref<boolean>, name: string }[] = [
+const selectedMode: { enabled: Ref<boolean>, name: string }[] = [
   { enabled: beforeInvoke, name: "before" },
   { enabled: successInvoke, name: "success" },
   { enabled: failureInvoke, name: "exception" },
@@ -174,7 +174,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
     <template #others>
       <div class="relative group ml-2">
         <div class="btn btn-sm btn-outline">watching point</div>
-        <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full">
+        <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full pt-2">
           <!-- <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
             <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2 bg-white">
               <SwitchLabel class="mr-2">{{mode.name}}:</SwitchLabel>
@@ -185,12 +185,29 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
               </Switch>
             </div>
           </SwitchGroup> -->
-          <label class="label cursor-pointer btn-sm border border-neutral ml-2 bg-base-100" v-for="(mode,i) in modereflist" :key="i">
+
+          <label class="label cursor-pointer btn-sm border border-neutral ml-2 bg-base-100"
+            v-for="(mode,i) in modereflist" :key="i">
             <span class="label-text uppercase font-bold mr-1">{{mode.name}}</span>
             <input v-model="mode.enabled.value" type="checkbox" class="toggle" />
           </label>
+
         </div>
+
       </div>
+      <!-- <Listbox v-model="modereflist" multiple class="relative" as="div">
+        <ListboxButton as="button" class="btn btn-sm btn-outline ml-2">
+          watching point
+        </ListboxButton>
+        <ListboxOptions class="absolute top-full z-10">
+          <ListboxOption v-for="mode in modereflist" :key="mode.name" :value="mode" v-slot="{active}">
+            <label class="label cursor-pointer bg-base-100">
+              <span class="label-text">{{mode.name}}</span>
+              <input v-model="mode.enabled.value" type="checkbox" class="toggle" />
+            </label>
+          </ListboxOption>
+        </ListboxOptions>
+      </Listbox> -->
       <button class="btn btn-sm btn-outline ml-2" @click="setDepth">depth:{{depth}}</button>
     </template>
   </MethodInput>

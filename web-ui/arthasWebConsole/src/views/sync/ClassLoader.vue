@@ -13,7 +13,8 @@ const fetchS = fetchStore()
 
 const urlStats = ref([] as [
   string,
-  Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>
+  Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>,
+  string
 ][])
 // const tablelResults = reactive([] as Map<string, string | number>[])
 const tableResults = reactive([] as Map<string, string | number>[])
@@ -104,7 +105,8 @@ const getAllUrlStats = () => fetchS.baseSubmit(interpret(permachine), {
               ["hash", [obj.hash]],
               ["unUsedUrls", v.unUsedUrls],
               ["usedUrls", v.usedUrls]
-            ])
+            ]),
+            obj.hash
           ])
         }
       ).catch(err => {
@@ -359,21 +361,10 @@ const resetClassloader = () => {
             <h3 class="text-xl flex-1 flex justify-center">urlStats</h3>
             <button class="btn btn-primary btn-sm" @click="getAllUrlStats">refresh</button>
           </div>
-          <!-- <div class="overflow-auto h-ful w-full"> -->
-          <!-- <Disclosure> -->
-          <!-- <DisclosureButton class="w-full bg-blue-500 h-10 p-2 rounded mb-2 "> -->
-
-          <!-- </DisclosureButton>
-              <DisclosurePanel static> -->
-          <!-- <div class="flex items-center my-2 w-full justify-end">
-                </div> -->
           <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
-            <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-full">
+            <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-full" :button-accent="v[2] === loaderCache.hash">
             </CmdResMenu>
           </div>
-          <!-- </DisclosurePanel>
-            </Disclosure> -->
-          <!-- </div> -->
         </div>
       </div>
       <div class="flex flex-col h-full w-2/3">

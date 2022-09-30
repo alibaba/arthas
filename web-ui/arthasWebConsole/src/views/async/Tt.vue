@@ -192,6 +192,9 @@ getPullResultsEffect(
         
       })
     }
+    if (result.type == "enhancer") {
+      enhancer.value = result
+    }
   })
 onBeforeMount(() => {
   pollingM.send("INIT")
@@ -319,7 +322,7 @@ const searchTt = () => {
       <CmdResMenu title="invoked result" :map="trigerRes" v-if="trigerRes.size > 0">
         <template #headerAside>
           <div class="flex mt-2 justify-end mr-1">
-            <button @click="reTrigger(cacheIdx)" class="button-style p-1">invoke</button>
+            <button @click="reTrigger(cacheIdx)" class="btn btn-primary btn-outline btn-xs p-1">invoke</button>
           </div>
         </template>
       </CmdResMenu>
@@ -348,7 +351,7 @@ const searchTt = () => {
                 </div>
               </td>
               <td class="border">
-                <button class="button-style" @click="reTrigger(map.get('index')!)">invoke</button>
+                <button class="btn btn-primary btn-sm btn-outline" @click="reTrigger(map.get('index')!)">invoke</button>
               </td>
             </tr>
           </tbody>

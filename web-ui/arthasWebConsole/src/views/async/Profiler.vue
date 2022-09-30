@@ -12,7 +12,6 @@ import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
 import { fetchStore } from '@/stores/fetch';
 import { interpret } from 'xstate';
-import { rejects } from 'assert';
 const fetchM = useInterpret(permachine)
 const publicS = publicStore()
 const fetchS = fetchStore()
@@ -229,7 +228,7 @@ onBeforeUnmount(() => {
       </Listbox>
       <button class="btn btn-sm btn-outline mr-2" @click="changeDuration">duration :{{duration}}</button>
       <button class="btn btn-sm btn-outline mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
-      <button class="btn btn-sm btn-outline mr-2" @click="changeFile">file :{{fileformat}}</button>
+      <button class="btn btn-sm btn-outline mr-2" @click="changeFile">file :<span class="normal-case">{{fileformat}}</span></button>
       <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
       <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
       <button class="btn btn-primary btn-sm btn-outline" @click="startSubmit">start</button>
