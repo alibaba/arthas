@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import machine from '@/machines/consoleMachine';
-import { useInterpret, useMachine } from '@xstate/vue';
+import { useInterpret, } from '@xstate/vue';
 import { onBeforeMount, reactive, ref, onUnmounted, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
@@ -210,7 +210,7 @@ const getSpecialThreads = (threadid: number = -1) => {
     <div class="flex justify-end items-center h-[10vh]">
 
       <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
-      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:outline outline-2" v-show="count === 0">
+      <SwitchGroup as="div" class="btn flex ml-2 btn-sm" v-show="count === 0">
         <SwitchLabel>is blocking:</SwitchLabel>
         <Switch v-model="isBlock" :class="isBlock ? 'bg-blue-400' : 'bg-gray-500'"
           class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none mx-2">
@@ -218,13 +218,13 @@ const getSpecialThreads = (threadid: number = -1) => {
             class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
         </Switch>
       </SwitchGroup>
-      <button class="input-btn-style ml-2" @click="setleast">sample interval:{{leastTime}}</button>
-      <button v-show="!isBlock" class="input-btn-style ml-2" @click="setlimit"> top n threads:{{count}}</button>
+      <button class="btn ml-2 btn-sm" @click="setleast">sample interval:{{leastTime}}</button>
+      <button v-show="!isBlock" class="btn ml-2 btn-sm" @click="setlimit"> top n threads:{{count}}</button>
       <Listbox v-model="threadState">
         <div class=" relative mx-2 ">
-          <ListboxButton class="input-btn-style w-40">state {{ threadState.name }}</ListboxButton>
+          <ListboxButton class="btn w-40 btn-sm">state {{ threadState.name }}</ListboxButton>
           <ListboxOptions
-            class=" absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
+            class=" z-10 absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
             <ListboxOption v-for="(am,i) in statelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
               'bg-blue-300 text-white': active,
@@ -237,7 +237,7 @@ const getSpecialThreads = (threadid: number = -1) => {
           </ListboxOptions>
         </div>
       </Listbox>
-      <button class="button-style" @click="getThreads"> get threads</button>
+      <button class="btn btn-primary btn-sm" @click="getThreads"> get threads</button>
     </div>
     <div class="w-full h-[50vh] input-btn-style my-2 p-4 flex flex-col">
       <div class="flex h-[8vh] flex-wrap flex-auto">

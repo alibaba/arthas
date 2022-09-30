@@ -32,7 +32,7 @@ const removeValSet = (val: string, valSet: Set<string>) => {
 
 <template>
   <Menu as="div" class=" relative flex items-center">
-    <MenuButton class=" w-52 hover:shadow-md input-btn-style">{{title}}</MenuButton>
+    <MenuButton class=" w-52 hover:shadow-md btn btn-sm">{{title}}</MenuButton>
     <MenuItems
       class=" absolute w-52 mt-2 border py-2 rounded-md hover:shadow-xl transition bg-white max-h-80 overflow-y-auto top-[100%]">
       <MenuItem v-slot="{active}">
