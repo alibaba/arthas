@@ -1,9 +1,3 @@
-server:
-  port: 9999
-arthas:
-  server:
-    port: 7777
-
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -12,32 +6,36 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 192.168.40.56:8848 #nacos注册中心地址
-        namespace: testing-2 #对应的namespaceId
-        group: ${spring.application.name} #分组ID，这里使用spring.application.name的值
-        name: application.yaml
-        refresh-enabled: true
-        file-extension: yaml
-      discovery:
+        username: nacos
+        password: nacos
+        server-addr: 10.2.2.47:8848
+        namespace: demo
+        group: spring-cloud
+        service: ${spring.application.name}
+        enabled: false
         metadata:
-          uptime: ${server.bootstrap.time}
           user.name: ${spring.security.user.name}
           user.password: ${spring.security.user.password}
-        server-addr: ${spring.cloud.nacos.config.server-addr}
-        namespace: ${spring.cloud.nacos.config.namespace}
-        service: ${spring.application.name}
-        enabled: false  #默认不启用服务注册
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: 10.2.2.47:8848
+        namespace: demo
+        group: spring-cloud
+        refresh-enabled: true
+        file-extension: yaml
+
 management:
+  server:
+    port: 19999
   endpoints:
     web:
+      base-path: /actuator
       exposure:
-        include: '*'
+        include: health,info,prometheus,metrics
   endpoint:
     health:
-      show-details: always
-    logfile:
-      external-file: logs/app-exception.log
-
+      show-details: ALWAYS
   metrics:
     tags:
       application: ${spring.application.name}

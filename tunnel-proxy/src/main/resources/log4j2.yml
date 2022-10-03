@@ -1,0 +1,59 @@
+Configuration:
+  status: WARN
+  monitorInterval: 30
+
+  Properties:
+    Property:
+      - name: file.name
+        value: $${spring:logging.file.name:-app}
+      - name: file.path
+        value: $${spring:logging.file.path:-/var/logs}
+      - name: file.pattern
+        value: "%d | %-5level | %X{traceId} | %X{spanId} | %C{1.}.%M:%L | %t | %msg%n%throwable"
+      - name: console.pattern
+        value: "%d | %-5level | %X{traceId} | %X{spanId} | %C{1.}.%M:%L | %t | %msg%n%throwable"
+
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: ${console.pattern}
+    RollingFile:
+      name: ROLLING_FILE
+      ignoreExceptions: false
+      fileName: ${file.path}/${file.name}.log
+      filePattern: "${file.path}/${file.name}-%d{yyyy-MM-dd}-%i.log.gz"
+      PatternLayout:
+        pattern: ${file.pattern}
+      Policies:
+        TimeBasedTriggeringPolicy:
+          modulate: true
+          interval: 1
+        SizeBasedTriggeringPolicy:
+          size: "20MB"
+      DefaultRolloverStrategy:
+        max: 15
+
+  Loggers:
+    Root:
+      level: INFO
+      includeLocation: true
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: ROLLING_FILE
+    Logger:
+      - name: com.alibaba
+        level: WARN
+      - name: org.springframework
+        level: ERROR
+      - name: org.apache.dubbo
+        level: WARN
+      - name: org.apache.kafka
+        level: WARN
+      - name: org.apache.zookeeper
+        level: WARN
+      - name: org.reflections.Reflections
+        level: WARN
+      - name: org.jboss.resteasy
+        level: WARN

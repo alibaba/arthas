@@ -1,4 +1,13 @@
+logging:
+  file:
+    name: ${spring.application.name}
+
+server:
+  port: 9999
+
 arthas:
+  server:
+    port: 7777
   tunnel:
     users:
       - name: arthas

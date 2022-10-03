@@ -86,6 +86,7 @@
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
         <netty.version>4.1.77.Final</netty.version>
+        <skipTests>false</skipTests>
     </properties>
 
     <dependencyManagement>
