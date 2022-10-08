@@ -98,7 +98,7 @@ public class SpyAPI {
         public abstract void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable);
     }
 
-    static class NopSpy extends AbstractSpy {
+    public static class NopSpy extends AbstractSpy {
 
         @Override
         public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {

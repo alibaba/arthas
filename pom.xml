@@ -510,4 +510,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--<distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://packages.aliyun.com/maven/repository/2217416-release-RhHnxN/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://packages.aliyun.com/maven/repository/2217416-snapshot-GlJpHp/</url>
+        </repository>
+    </distributionManagement>-->
 </project>

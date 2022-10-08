@@ -10,8 +10,8 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>tunnel-proxy</artifactId>
-    <name>tunnel-proxy</name>
+    <artifactId>arthas-tunnel-proxy</artifactId>
+    <name>arthas-tunnel-proxy</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,6 +19,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <arthas.version>3.6.6</arthas.version>
         <spring-cloud.version>3.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <lombok.version>1.18.18</lombok.version>
@@ -46,6 +47,10 @@
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-web</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-boot-starter</artifactId>
                     <groupId>org.springframework.boot</groupId>
                 </exclusion>
             </exclusions>
@@ -170,7 +175,7 @@
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-tunnel-server</artifactId>
-            <version>${revision}</version>
+            <version>${arthas.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-web</artifactId>
@@ -180,17 +185,13 @@
                     <artifactId>lettuce-core</artifactId>
                     <groupId>io.lettuce</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-agent-attach</artifactId>
-            <version>${revision}</version>
+            <version>${arthas.version}</version>
         </dependency>
     </dependencies>
 

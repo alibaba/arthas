@@ -1,9 +1,8 @@
 var registerApplications = null;
 var serverInfo = null;
-var arthasAgentSplit = null;
+var arthasAgentSplit = '@';
 $(document).ready(function () {
     initArthasHtmlTitle();
-    initArthasAgentSplit();
     reloadRegisterApplications();
     initServerInfo();
 });
@@ -29,11 +28,6 @@ function initServerInfo() {
     serverInfo = result;
     $('#ip').val(result.clientConnectHost);
     $('#port').val(result.port);
-}
-
-function initArthasAgentSplit() {
-    var result = reqSync("/api/arthas/agent/split", "get");
-    arthasAgentSplit = result;
 }
 
 

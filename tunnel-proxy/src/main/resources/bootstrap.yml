@@ -4,10 +4,12 @@ spring:
   application:
     name: arthas-tunnel-proxy
   cloud:
+    compatibility-verifier:
+      enabled: false
     nacos:
       config:
         username: nacos
-        password: nacos
+        password: puyiwm
         server-addr: 10.2.2.47:8848
         namespace: demo
         group: spring-cloud
@@ -18,7 +20,7 @@ spring:
           user.password: ${spring.security.user.password}
       discovery:
         username: nacos
-        password: nacos
+        password: puyiwm
         server-addr: 10.2.2.47:8848
         namespace: demo
         group: spring-cloud

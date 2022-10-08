@@ -36,7 +36,7 @@ public class SecurityAutoConfiguration {
 
     @Primary
     @Bean
-    public ReactiveUserDetailsService delegateReactiveUserDetailsService(List<ReactiveUserDetailsService> services) {
+    public ReactiveUserDetailsService reactiveUserDetailsService(List<ReactiveUserDetailsService> services) {
         return new DelegateReactiveUserDetailsService(services);
     }
 

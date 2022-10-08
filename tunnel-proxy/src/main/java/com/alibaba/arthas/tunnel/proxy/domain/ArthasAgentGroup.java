@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 public class ArthasAgentGroup {
 
-    private String serviceId;
+    private String service;
 
-    private List<ArthasAgent> arthasAgents;
+    private List<ArthasAgent> agents;
 }

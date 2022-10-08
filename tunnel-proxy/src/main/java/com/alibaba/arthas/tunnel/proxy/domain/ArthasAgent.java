@@ -18,5 +18,5 @@ public class ArthasAgent {
 
     private String id;
 
-    private AgentInfo agentInfo;
+    private AgentInfo info;
 }

@@ -1,7 +1,6 @@
 var ws;
 var xterm;
 
-/**有修改**/
 $(function () {
     var url = window.location.href;
     var ip = getUrlParam('ip');

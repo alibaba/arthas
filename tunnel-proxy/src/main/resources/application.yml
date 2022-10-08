@@ -5,20 +5,32 @@ logging:
 server:
   port: 9999
 
+spring:
+  cache:
+    type: caffeine
+    cache-names: inMemoryClusterCache
+    caffeine:
+      spec: maximumSize=3000,expireAfterAccess=3600s
+#  redis:
+#    host: 127.0.0.1
+
 arthas:
-  server:
-    port: 7777
   tunnel:
+    server:
+      port: 7777
     users:
-      - name: arthas
+      - name: admin
         password: 123456
         roles: '*'
       - name: user
         password: 123456
         roles:
-          - eden-gateway
-          - eden-demo-cola
-      - name: manager
+          - puyiwm-gateway
+          - puyiwm-uaa
+      - name: user
         password: 123456
         roles:
-          - eden-demo-cola
+          - puyiwm-uaa
+#  embedded-redis:
+#    enabled: false
+#    settings: maxmemory 128M
