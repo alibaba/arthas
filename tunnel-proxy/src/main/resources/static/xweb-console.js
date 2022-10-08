@@ -83,7 +83,6 @@ function initWs(ip, port, agentId) {
     var proxy = document.getElementById('connectType').checked;
     if (proxy) {
         path = protocol + location.hostname + ':' + location.port + '/arthas/' + agentId + '/ws?method=connectArthas&id=' + agentId;
-        // path = 'ws://127.0.0.1:10000/ws?method=connectArthas&id=' + agentId;
     } else {
         path = protocol + ip + ':' + port + '/ws?method=connectArthas&id=' + agentId;
     }

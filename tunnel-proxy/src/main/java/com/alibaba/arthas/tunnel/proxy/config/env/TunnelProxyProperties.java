@@ -24,6 +24,8 @@ public class TunnelProxyProperties {
 
     private String htmlTitle = "Arthas 控制台";
 
+    private String agentSpilt = "@";
+
     private Server server;
 
     @Data

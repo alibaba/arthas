@@ -8,6 +8,7 @@ import com.alibaba.arthas.tunnel.server.TunnelServer;
 import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Slf4j
 @RestController
 public class ArthasController {
 
@@ -59,14 +61,18 @@ public class ArthasController {
         Map<String, AgentInfo> agentInfoMap = tunnelServer.getAgentInfoMap();
         Map<String, List<ArthasAgent>> map = new HashMap<>(16);
         agentInfoMap.forEach((k, v) -> {
-            String[] split = k.split("@", 2);
+            String[] split = k.split(tunnelProxyProperties.getAgentSpilt(), 2);
             String appName = split[0];
-            if (isSuperUser || accessApp(roles, appName)) {
-                List<ArthasAgent> agents = map.computeIfAbsent(appName, k1 -> new ArrayList<>());
-                ArthasAgent agent = new ArthasAgent();
-                agent.setId(split[1]);
-                agent.setInfo(v);
-                agents.add(agent);
+            if (split.length > 1) {
+                if (isSuperUser || accessApp(roles, appName)) {
+                    List<ArthasAgent> agents = map.computeIfAbsent(appName, k1 -> new ArrayList<>());
+                    ArthasAgent agent = new ArthasAgent();
+                    agent.setId(split[1]);
+                    agent.setInfo(v);
+                    agents.add(agent);
+                }
+            } else {
+                log.warn("Ignore app `{}` due to might not set agent id", appName);
             }
         });
         List<ArthasAgentGroup> groups = new ArrayList<>();
