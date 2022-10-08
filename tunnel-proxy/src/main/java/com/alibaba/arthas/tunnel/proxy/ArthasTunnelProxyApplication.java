@@ -17,7 +17,6 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 public class ArthasTunnelProxyApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(ArthasTunnelProxyApplication.class, args);
     }
 }

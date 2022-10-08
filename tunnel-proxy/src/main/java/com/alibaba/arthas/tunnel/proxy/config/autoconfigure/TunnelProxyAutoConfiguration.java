@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Primary;
 @EnableConfigurationProperties(TunnelProxyProperties.class)
 @RequiredArgsConstructor
 @Slf4j
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TunnelProxyAutoConfiguration  {
 
     private final TunnelProxyProperties tunnelProxyProperties;

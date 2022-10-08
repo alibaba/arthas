@@ -22,7 +22,7 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
  * @since 3.6.6
  */
 @Slf4j
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class WebFluxAutoConfiguration implements WebFluxConfigurer {
 
     @Override
