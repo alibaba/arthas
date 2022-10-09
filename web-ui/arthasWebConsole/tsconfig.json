@@ -14,10 +14,10 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*":["src/*"]
+      "@/*":["ui/src/*"]
     },
     "experimentalDecorators": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue","tests/**/*.ts"],
+  "include": ["ui/src/**/*.ts", "ui/src/**/*.d.ts", "ui/src/**/*.tsx", "ui/src/**/*.vue","ui/tests/**/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
