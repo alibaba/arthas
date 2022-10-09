@@ -1,8 +1,8 @@
 package com.alibaba.arthas.tunnel.proxy.web.filter;
 
+import com.alibaba.arthas.tunnel.proxy.config.env.TunnelProxyProperties;
 import com.alibaba.arthas.tunnel.server.AgentInfo;
 import com.alibaba.arthas.tunnel.server.TunnelServer;
-import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.netty.util.CharsetUtil;
@@ -51,7 +51,7 @@ public class WebsocketWebFilter implements WebFilter {
 
     private final TunnelServer tunnelServer;
 
-    private final ArthasProperties arthasProperties;
+    private final TunnelProxyProperties tunnelProxyProperties;
 
     private volatile List<HttpHeadersFilter> headersFilters;
 
@@ -91,7 +91,7 @@ public class WebsocketWebFilter implements WebFilter {
     }
 
     private URI getForwardUrl(URI uri) {
-        ArthasProperties.Server server = arthasProperties.getServer();
+        TunnelProxyProperties.Server server = tunnelProxyProperties.getServer();
         String query = UriUtils.encodeQuery(uri.getQuery(), CharsetUtil.UTF_8.name());
         String url = "ws://" + server.getClientConnectHost() + ":" + server.getPort() + "/ws";
         if (!Strings.isNullOrEmpty(url)) {

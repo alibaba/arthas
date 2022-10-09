@@ -25,12 +25,7 @@ arthas:
       - name: user
         password: 123456
         roles:
-          - puyiwm-gateway
-          - puyiwm-uaa
-      - name: user
-        password: 123456
-        roles:
-          - puyiwm-uaa
+          - eden-gateway
 #  embedded-redis:
 #    enabled: false
 #    settings: maxmemory 128M
