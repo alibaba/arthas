@@ -240,7 +240,7 @@
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>4.0.1</version>
+                        <version>4.9.9</version>
                         <executions>
                             <execution>
                                 <goals>
