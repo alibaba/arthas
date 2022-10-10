@@ -23,7 +23,8 @@
     "vue-router": "4",
     "xstate": "^4.32.1",
     "xterm": "^5.0.0",
-    "xterm-addon-fit": "^0.6.0"
+    "xterm-addon-fit": "^0.6.0",
+    "xterm-addon-webgl": "^0.13.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.2",
