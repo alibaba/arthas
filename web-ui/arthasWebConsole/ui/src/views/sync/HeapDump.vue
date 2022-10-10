@@ -1,0 +1,71 @@
+<script setup lang="ts">
+import machine from '@/machines/consoleMachine';
+import { publicStore } from '@/stores/public';
+import { useMachine } from '@xstate/vue';
+import { onBeforeMount, reactive, ref } from 'vue';
+import { Switch } from "@headlessui/vue"
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+
+const { getCommonResEffect } = publicStore()
+const fetchM = useMachine(machine)
+const path = ref("")
+const enabled = ref(false)
+const map = reactive(new Map())
+onBeforeMount(() => {
+  fetchM.send("INIT")
+})
+getCommonResEffect(fetchM, body => {
+  const result = body.results.filter(result => result.type === "heapdump")[0]
+  if (result.type === "heapdump") {
+    map.clear()
+    map.set("filePath", [result.dumpFile])
+    map.set("live", [result.live])
+  }
+})
+const submitCommand = (e: Event) => {
+  fetchM.send({
+    type: "SUBMIT",
+    value: {
+      action: "exec",
+      command: `heapdump ${enabled.value ? "--live" : ''}${path.value}`
+    }
+  })
+}
+</script>
+
+<template>
+  <form class="mb-4 flex items-center justify-between">
+    <label class="flex flex-1 items-center"> path
+      <div class="flex-1
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus-within:outline
+        outline-2
+        min-w-[15rem]
+        mx-2
+        hover:shadow-md transition">
+        <input type="text" v-model="path"
+          class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
+      </div>
+      <!-- <div class="flex input-btn-style mr-2 focus-within:outline outline-2">
+        <div class="mx-2">only live object : </div>
+        <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
+          class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
+          <span aria-hidden="true" :class="enabled ? 'translate-x-6' : '-translate-x-1'"
+            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
+        </Switch>
+      </div> -->
+      <label class="label cursor-pointer btn-sm border border-neutral mr-2">
+      <span class="label-text uppercase font-bold mr-1">only live object</span>
+      <input v-model="enabled" type="checkbox" class="toggle" />
+    </label>
+    </label>
+
+    <button @click.prevent="submitCommand"
+      class="btn btn-primary btn-sm btn-outline transition-all truncate p-2">dump</button>
+  </form>
+  <CmdResMenu title="dumpRes" open :map="map" v-if="map.size > 0" class="mt-4"></CmdResMenu>
+</template>
+
+<style scoped>
+
+</style>
