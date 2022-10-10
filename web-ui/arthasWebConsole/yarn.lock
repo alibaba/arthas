@@ -3520,6 +3520,11 @@ xterm-addon-fit@^0.6.0:
   resolved "https://registry.npmmirror.com/xterm-addon-fit/-/xterm-addon-fit-0.6.0.tgz#142e1ce181da48763668332593fc440349c88c34"
   integrity sha512-9/7A+1KEjkFam0yxTaHfuk9LEvvTSBi0PZmEkzJqgafXPEXL9pCMAVV7rB09sX6ATRDXAdBpQhZkhKj7CGvYeg==
 
+xterm-addon-webgl@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.npmmirror.com/xterm-addon-webgl/-/xterm-addon-webgl-0.13.0.tgz#b1d42ec454390ad8595aa8c8dde714b98a5eb896"
+  integrity sha512-xL4qBQWUHjFR620/8VHCtrTMVQsnZaAtd1IxFoiKPhC63wKp6b+73a45s97lb34yeo57PoqZhE9Jq5pB++ksPQ==
+
 xterm@^5.0.0:
   version "5.0.0"
   resolved "https://registry.npmmirror.com/xterm/-/xterm-5.0.0.tgz#0af50509b33d0dc62fde7a4ec17750b8e453cc5c"

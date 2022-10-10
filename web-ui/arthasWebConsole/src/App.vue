@@ -2,13 +2,14 @@
 import { onMounted, ref } from "vue";
 import { Terminal } from "xterm"
 import { FitAddon } from 'xterm-addon-fit';
+import {WebglAddon} from "xterm-addon-webgl"
 // import $ from "jquery"
 let ws: WebSocket | undefined;
-let xterm = new Terminal()
+let xterm = new Terminal({allowProposedApi: true})
 const DEFAULT_SCROLL_BACK = 1000
 const MAX_SCROLL_BACK = 9999999
 const MIN_SCROLL_BACK = 1
-
+const webglAddon = new WebglAddon();
 const ip = ref("127.0.0.1")
 const port = ref('3568')
 const iframe = ref(true)
@@ -21,29 +22,13 @@ onMounted(() => {
   port.value = getUrlParam('port') ?? '8563';
   let _iframe = getUrlParam('iframe')
   if (_iframe && _iframe.trim() !== 'false') iframe.value = false
-  // if (ip != '' && ip != null) {
-  //     $('#ip').val(ip);
-  // } else {
-  //     $('#ip').val(window.location.hostname);
-  // }
-  // if (port != '' && port != null) {
-  //     $('#port').val(port);
-  // }
-  // if (port == null && location.port == "8563") {
-  //     $('#port').val(8563);
-  // }
-
-  // var iframe = getUrlParam('iframe');
-  // if (iframe != null && iframe != 'false') {
-  //     $("nav").hide()
-  // }
 
   startConnect(true);
   window.addEventListener('resize', function () {
     if (ws !== undefined && ws !== null) {
       // let terminalSize = getTerminalSize();
       const {cols, rows} = fitAddon.proposeDimensions()!
-      console.log(cols, rows)
+      // console.log(cols, rows)
       ws.send(JSON.stringify({ action: 'resize', cols, rows: rows }));
       // xterm.resize(terminalSize.cols, terminalSize.rows);
       fitAddon.fit();
@@ -62,59 +47,6 @@ function getUrlParam(name: string, url = window.location.href) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-// function getCharSize() {
-//   const tempDiv = document.createElement('div')!
-//   tempDiv.setAttribute('role', 'listitem')
-//   const tempSpan = document.createElement('div')!
-//   tempSpan.innerHTML = 'qwertyuiopasdfghjklzxcvbnm'
-//   tempDiv.append(tempSpan);
-//   document.body.append(tempDiv)
-//   let tempSpanWidth = tempSpan.offsetWidth
-//   let tempDivHeight = tempDiv.offsetHeight
-//   let tempDivWidth = tempDiv.offsetWidth
-//   let tempSpanHeight = tempSpan.offsetHeight
-//   const size = {
-//     width: tempSpanWidth / 26,
-//     height: tempSpanHeight,
-//     left: tempDivWidth - tempSpanWidth,
-//     top: tempDivHeight - tempSpanHeight,
-//   };
-//   tempDiv.remove();
-//   return size;
-// }
-
-// function getWindowSize() {
-//   let e: Window | HTMLElement = window;
-//   let a: 'innerHeight' | 'clientHeight' = 'innerHeight';
-//   let terminalDiv = document.getElementById("terminal-card")!;
-//   let terminalDivRect = terminalDiv.getBoundingClientRect();
-
-//   if (!('innerWidth' in window)) {
-//     a = 'clientHeight';
-//     e = document.documentElement ?? document.body;
-//     return {
-//       width: terminalDivRect.width,
-//       height: e[a] - terminalDivRect.top
-//     };
-//   }
-//   return {
-//     width: terminalDivRect.width,
-//     height: e[a] - terminalDivRect.top
-//   };
-// }
-
-// function getTerminalSize() {
-//   const charSize = getCharSize();
-//   const windowSize = getWindowSize();
-//   console.log('charsize');
-//   console.log(charSize);
-//   console.log('windowSize');
-//   console.log(windowSize);
-//   return {
-//     cols: Math.floor((windowSize.width - charSize.left) / 9),
-//     rows: Math.floor((windowSize.height - charSize.top) / 18)
-//   };
-// }
 
 /** init websocket **/
 function initWs(silent: boolean) {
@@ -134,7 +66,6 @@ function initWs(silent: boolean) {
 
     let scrollback = getUrlParam('scrollback') ?? '0';
 
-    // init xterm
     const {cols, rows} = initXterm(scrollback)
     xterm.onData(function (data) {
       ws?.send(JSON.stringify({ action: 'read', data: data }))
@@ -163,10 +94,14 @@ function initXterm(scrollback: string) {
     screenReaderMode: false,
     // rendererType: 'canvas',
     convertEol: true,
+    allowProposedApi: true,
     scrollback: isValidNumber(scrollNumber) ? scrollNumber : DEFAULT_SCROLL_BACK
   });
-  xterm.loadAddon(fitAddon);
+  xterm.loadAddon(fitAddon)
+  
   xterm.open(document.getElementById('terminal')!);
+
+  xterm.loadAddon(webglAddon)
   // setTimeout(()=>fitAddon.fit(),50);
   fitAddon.fit()
   return {
@@ -202,6 +137,7 @@ function disconnect() {
     ws = undefined;
     xterm.dispose();
     fitAddon.dispose()
+    webglAddon.dispose()
     // $('#fullSc').hide();
     fullSc.value = false
     alert('Connection was closed successfully!');
@@ -298,7 +234,7 @@ function requestFullScreen(element: HTMLElement) {
     </form>
 
   </nav> -->
-  <div class="flex flex-col h-[100vh]">
+  <div class="flex flex-col h-[100vh] resize-none">
     <nav v-if="iframe" class="navbar bg-base-100 flex-row">
       <div class="flex-1">
         <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
