@@ -17,7 +17,6 @@
     "echarts": "^5.3.3",
     "global": "^4.4.0",
     "highlight.js": "^11.6.0",
-    "jquery": "^3.6.1",
     "npminstall": "^6.5.1",
     "pinia": "^2.0.15",
     "popper.js": "^1.16.1",

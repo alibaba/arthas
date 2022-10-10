@@ -23,11 +23,11 @@ const tabs = [
     url: '/config',
     icon: PuzzleIcon
   },
-  {
-    name: 'console',
-    url: '/console',
-    icon: TerminalIcon
-  },
+  // {
+  //   name: 'console',
+  //   url: '/console',
+  //   icon: TerminalIcon
+  // },
 ]
 const router = useRouter()
 const routePath = computed(() => useRoute().path)

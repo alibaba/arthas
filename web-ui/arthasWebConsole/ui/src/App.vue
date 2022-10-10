@@ -15,7 +15,6 @@ const publicS = publicStore()
 onBeforeUnmount(() => {
   const actor = interpret(machine)
   actor.start()
-  console.log('asdfasdf')
   actor.send("INIT")
   actor.send({
     type: "SUBMIT",

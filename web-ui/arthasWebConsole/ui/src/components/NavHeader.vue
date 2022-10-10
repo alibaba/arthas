@@ -123,7 +123,7 @@ const tools:[string,()=>void][] = [
 <template>
   <nav class=" h-[10vh] flex justify-between items-center min-h-max border-b-2 shadow-orange-300">
     <a class="w-40 flex items-center justify-center" href="https://arthas.aliyun.com/doc/commands.html" target="_blank">
-      <img src="@/assets/arthas.png" alt="logo" class=" w-3/4" />
+      <img src="/arthas.png?url" alt="logo" class=" w-3/4" />
     </a>
 
     <div class="flex items-center h-20">

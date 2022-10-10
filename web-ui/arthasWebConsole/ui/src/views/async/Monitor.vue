@@ -340,9 +340,3 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div>
 
 </template>
-
-<style>
-.bg {
-  background: #9836cd;
-}
-</style>

@@ -6,7 +6,8 @@ import { resolve } from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue({
-    reactivityTransform: path.resolve(__dirname, "./ui"),
+    // reactivityTransform: path.resolve(__dirname, "./ui"),
+    // reactivityTransform:true
   })],
   // root:path.resolve(__dirname,"src"),
   resolve: {
