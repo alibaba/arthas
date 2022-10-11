@@ -238,7 +238,7 @@ function requestFullScreen(element: HTMLElement) {
     <nav v-if="iframe" class="navbar bg-base-100 flex-row">
       <div class="flex-1">
         <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
-            src="/logo.png" alt="Arthas" title="Welcome to Arthas web console" class=""></a>
+            src="/arthas.png" alt="Arthas" title="Welcome to Arthas web console" class=""></a>
         <ul class="menu menu-horizontal p-0">
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"

@@ -16,7 +16,6 @@
     "echarts": "^5.3.3",
     "global": "^4.4.0",
     "highlight.js": "^11.6.0",
-    "npminstall": "^6.5.1",
     "pinia": "^2.0.15",
     "typings": "^2.1.1",
     "vue": "^3.2.25",

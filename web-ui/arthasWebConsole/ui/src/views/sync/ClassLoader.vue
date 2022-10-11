@@ -132,6 +132,26 @@ const getClassLoaderTree = () => fetchS.baseSubmit(interpret(permachine), {
 }, err => {
   console.error(err)
 })
+// const getCategorizedByLoaded = () => {
+//   tablelResults.length = 0
+//   fetchS.baseSubmit(interpret(permachine), {
+//     action: "exec",
+//     command: "classloader -l"
+//   }).then(res => {
+//     const result = (res as CommonRes).body.results[0]
+//     if (result.type === "classloader" && !result.tree) {
+//       result.classLoaders.forEach(loader => {
+//         const map = new Map()
+//         for (const key in loader) {
+//           //@ts-ignore
+//           if(key == "name") map.set(key, loader[key].split("@")[0])
+//           else map.set(key, loader[key])
+//         }
+//         tablelResults.push(map)
+//       })
+//     }
+//   })
+// }
 const getCategorizedByClassType = () => {
   tableResults.length = 0
   fetchS.baseSubmit(interpret(permachine), {
