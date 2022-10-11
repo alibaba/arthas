@@ -15,7 +15,6 @@ const publicS = publicStore()
 onBeforeUnmount(() => {
   const actor = interpret(machine)
   actor.start()
-  console.log('asdfasdf')
   actor.send("INIT")
   actor.send({
     type: "SUBMIT",
@@ -24,7 +23,6 @@ onBeforeUnmount(() => {
     } as AsyncReq
   })
 })
-// :class='{"pointer-events-none":fetchS.jobRunning}'
 </script>
 
 <template>

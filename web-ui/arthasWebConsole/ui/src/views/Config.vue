@@ -5,7 +5,6 @@ import { onBeforeMount, reactive, ref, watchEffect } from 'vue';
 import OptionConfigMenu from '@/components/show/OptionConfigMenu.vue';
 import SwitchInput from '@/components/input/SwitchInput.vue';
 import { publicStore } from '@/stores/public';
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue"
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import permachine from '@/machines/perRequestMachine';
@@ -64,10 +63,6 @@ const handleEnvTree = (data: Record<string, string>) => handleTree(data, sysEnvM
 
 const handlePropTree = (data: Record<string, string>) => handleTree(data, sysPropMap)
 
-// 处理可修改参数的树形结构
-// const handleOptionTree = (data:Record<string>)
-
-
 
 watchEffect(() => {
   const response = vmOptionM.state.value.context.response
@@ -77,9 +72,6 @@ watchEffect(() => {
       const result = (response as CommonRes).body.results[0]
 
       if (result.type == "vmoption") {
-        // handlePropTree(result.props).forEach(v => {
-        //   sysPropTree.push(v)
-        // })
         // 先clear一下之前的东西
         vmOptionMTree.length = 0
         console.log(result.vmOptions, "watchEffect!!!")

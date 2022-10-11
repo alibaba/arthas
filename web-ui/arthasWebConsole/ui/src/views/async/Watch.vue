@@ -4,16 +4,6 @@ import { useInterpret, useMachine } from '@xstate/vue';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption,
-  Switch,
-  SwitchLabel,
-  SwitchGroup,
-  SwitchDescription
-} from "@headlessui/vue"
 import { onBeforeMount, onBeforeUnmount, reactive, Ref, ref, watchEffect } from 'vue';
 import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
@@ -38,13 +28,6 @@ const keyList = [
   "value",
 ]
 const tranOgnl = (s: string): string[] => s.split("\n")
-// type Mode = "-f" | "-s" | "-e" | "-b"
-// const modelist: { name: string, value: Mode }[] = [
-//   { name: "before method being invoked", value: "-b" },
-//   { name: "when method encountering exceptions", value: "-e" },
-//   { name: "when method exits normally", value: "-s" },
-//   { name: "when method exits", value: "-f" }
-// ]
 const beforeInvoke = ref(false)
 const successInvoke = ref(false)
 const failureInvoke = ref(false)
@@ -55,13 +38,6 @@ const modereflist: { enabled: Ref<boolean>, name: string }[] = [
   { enabled: failureInvoke, name: "exception" },
   { enabled: allInvoke, name: "finish" }
 ]
-const selectedMode: { enabled: Ref<boolean>, name: string }[] = [
-  { enabled: beforeInvoke, name: "before" },
-  { enabled: successInvoke, name: "success" },
-  { enabled: failureInvoke, name: "exception" },
-  { enabled: allInvoke, name: "finish" }
-]
-// const mode = ref(modelist[3])
 
 const transform = (result: CommandResult) => {
   const map = new Map();
@@ -175,16 +151,6 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <div class="relative group ml-2">
         <div class="btn btn-sm btn-outline">watching point</div>
         <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full pt-2">
-          <!-- <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
-            <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2 bg-white">
-              <SwitchLabel class="mr-2">{{mode.name}}:</SwitchLabel>
-              <Switch v-model="mode.enabled.value" :class="mode.enabled.value ? 'bg-blue-400' : 'bg-gray-500'"
-                class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
-                <span aria-hidden="true" :class="mode.enabled.value ? 'translate-x-6' : '-translate-x-1'"
-                  class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
-              </Switch>
-            </div>
-          </SwitchGroup> -->
 
           <label class="label cursor-pointer btn-sm border border-neutral ml-2 bg-base-100"
             v-for="(mode,i) in modereflist" :key="i">
@@ -195,19 +161,6 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         </div>
 
       </div>
-      <!-- <Listbox v-model="modereflist" multiple class="relative" as="div">
-        <ListboxButton as="button" class="btn btn-sm btn-outline ml-2">
-          watching point
-        </ListboxButton>
-        <ListboxOptions class="absolute top-full z-10">
-          <ListboxOption v-for="mode in modereflist" :key="mode.name" :value="mode" v-slot="{active}">
-            <label class="label cursor-pointer bg-base-100">
-              <span class="label-text">{{mode.name}}</span>
-              <input v-model="mode.enabled.value" type="checkbox" class="toggle" />
-            </label>
-          </ListboxOption>
-        </ListboxOptions>
-      </Listbox> -->
       <button class="btn btn-sm btn-outline ml-2" @click="setDepth">depth:{{depth}}</button>
     </template>
   </MethodInput>
@@ -230,8 +183,11 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
             <div class="flex flex-col" v-else>
               <Tree :root="(map.get('value') as TreeNode)" class="mt-2" button-class=" ">
                 <template #meta="{ data, active }">
-                  <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
-                    :class='{"hover:bg-blue-300 bg-blue-400":active}'>
+                  <div 
+                    class="bg-info  px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
+                  "hover:opacity-50":active
+                }'
+                    >
                     {{data}}
                   </div>
                 </template>

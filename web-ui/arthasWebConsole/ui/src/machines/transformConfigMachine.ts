@@ -1,14 +1,11 @@
 import { assign, createMachine } from "xstate";
 import { respond } from "xstate/lib/actions";
-// import { publicStore } from "@/stores/public";
 type Output = object;
 interface CTX {
   inputValue: string;
   output?: Output;
   notJSON: symbol;
   err: string;
-  // 暂时先anyscript
-  // publicStore?: any,
 }
 type ET =
   | {

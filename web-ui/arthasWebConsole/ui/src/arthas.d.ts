@@ -18,13 +18,6 @@ type JobId<T extends Record<string, any>> = T extends T
 type SessionId<T extends Record<string, any>> = T extends T
   ? MergeObj<T, { sessionId?: string }>
   : never;
-// type Command<T extends Record<string|"results", any>> = T extends T
-//   ?  T["results"][0] extends JobId<CommandResult>
-//     ? "command" extends keyof T["results"][0]
-//       ? MergeObj<T, {command: T["results"][0]["command"]}>
-//       : never
-//     : MergeObj<T, { command: never }>
-//   : never;
 type Command<T extends Record<string | "results", any>> = T extends T
   ? MergeObj<T, { command: string }>
   : never;

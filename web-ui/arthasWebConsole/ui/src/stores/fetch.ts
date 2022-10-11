@@ -11,7 +11,6 @@ const getEffect = (
   fn: (res: ArthasRes) => void,
 ) =>
   watchEffect(() => {
-    // console.dir(M.state.value.context.response)
     if (M.state.value.context.response) {
       const response = M.state.value.context.response;
       //防止触发额外的副作用,因为输入时context会改变，导致多执行一次effect。。。
@@ -186,15 +185,8 @@ export const fetchStore = defineStore("fetch", {
         if (body.results.length > 0) {
           body.results.forEach((result) => {
             // 对于既不是状态形状
-            // console.dir(result)
-            // if(result.type !=="status") {
-            //   console.log("st",result.jobId)
-            //   if(!this.jobIdSet.has(result.jobId.toString())) {
             // 错误已经在machine那里拦截了
             fn(result);
-            //     this.jobIdSet.add(result.jobId.toString())
-            //   }
-            // }
           });
         }
       });

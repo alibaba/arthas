@@ -99,14 +99,6 @@ const resetAllClass = () => {
   }).then(response => {
     const result = (response as CommonRes).body.results[0]
     if (result.type === "reset") {
-      // let res = new Map()
-      // Object.entries(result.affect).forEach(([k, v]) => {
-      //   res.set(k, k === "cost" ? [`${v}ms`] : [v])
-      // })
-      // let message = ""
-      // for(const key in result.affect) {
-      //   m
-      // }
       publicS.isSuccess=true
     publicS.SuccessMessage = JSON.stringify(result.affect)
     }
@@ -123,7 +115,7 @@ const tools:[string,()=>void][] = [
 <template>
   <nav class=" h-[10vh] flex justify-between items-center min-h-max border-b-2 shadow-orange-300">
     <a class="w-40 flex items-center justify-center" href="https://arthas.aliyun.com/doc/commands.html" target="_blank">
-      <img src="@/assets/arthas.png" alt="logo" class=" w-3/4" />
+      <img src="/arthas.png" alt="logo" class=" w-3/4" />
     </a>
 
     <div class="flex items-center h-20">

@@ -39,9 +39,6 @@ type ET =
   | {
     type: "INIT";
   }
-  // | {
-  //   type: "CLEAR_RESARR";
-  // }
   | {
     type: "";
   };
