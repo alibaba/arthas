@@ -14,12 +14,12 @@
 
 "@heroicons/vue@^1.0.6":
   version "1.0.6"
-  resolved "https://registry.npmjs.org/@heroicons/vue/-/vue-1.0.6.tgz#d8b90734b436eb5a87f40cc300b64a0fb0031f7f"
+  resolved "https://registry.npmjs.org/@heroicons/vue/-/vue-1.0.6.tgz"
   integrity sha512-ng2YcCQrdoQWEFpw+ipFl2rZo8mZ56v0T5+MyfQQvNqfKChwgP6DMloZLW+rl17GEcHkE3H82UTAMKBKZr4+WA==
 
 "@highlightjs/vue-plugin@^2.1.0":
   version "2.1.0"
-  resolved "https://registry.npmmirror.com/@highlightjs/vue-plugin/-/vue-plugin-2.1.0.tgz#b7c41e3597a46975665b10cad57882cbde1d1594"
+  resolved "https://registry.npmmirror.com/@highlightjs/vue-plugin/-/vue-plugin-2.1.0.tgz"
   integrity sha512-E+bmk4ncca+hBEYRV2a+1aIzIV0VSY/e5ArjpuSN9IO7wBJrzUE2u4ESCwrbQD7sAy+jWQjkV5qCCWgc+pu7CQ==
 
 "@nodelib/fs.scandir@2.1.5":
@@ -575,7 +575,7 @@ has@^1.0.3:
 
 highlight.js@^11.6.0:
   version "11.6.0"
-  resolved "https://registry.npmmirror.com/highlight.js/-/highlight.js-11.6.0.tgz#a50e9da05763f1bb0c1322c8f4f755242cff3f5a"
+  resolved "https://registry.npmmirror.com/highlight.js/-/highlight.js-11.6.0.tgz"
   integrity sha512-ig1eqDzJaB0pqEvlPVIpSSyMaO92bH1N2rJpLMN/nX396wTpDA4Eq0uK+7I/2XG17pFaaKE0kjV/XPeGt7Evjw==
 
 is-arrayish@^0.3.1:
@@ -979,7 +979,7 @@ xterm-addon-webgl@^0.13.0:
 
 xterm@^5.0.0:
   version "5.0.0"
-  resolved "https://registry.npmmirror.com/xterm/-/xterm-5.0.0.tgz#0af50509b33d0dc62fde7a4ec17750b8e453cc5c"
+  resolved "https://registry.npmmirror.com/xterm/-/xterm-5.0.0.tgz"
   integrity sha512-tmVsKzZovAYNDIaUinfz+VDclraQpPUnAME+JawosgWRMphInDded/PuY0xmU5dOhyeYZsI0nz5yd8dPYsdLTA==
 
 yaml@^1.10.2:
