@@ -167,7 +167,9 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, cou
         <Tree :root="result" class=" border-t-2 mb-4 pt-4">
           <!-- 具体信息的表达 -->
           <template #meta="{ data, active }">
-            <div class="bg-info p-1 mb-1 rounded-r rounded-br">
+            <div class="bg-info  px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
+                  "hover:opacity-50":active,
+                }'>
               {{data.join(" ")}}
             </div>
           </template>

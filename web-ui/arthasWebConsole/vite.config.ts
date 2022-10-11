@@ -6,7 +6,7 @@ import * as path from "path";
 export default defineConfig({
   plugins: [vue({
     // reactivityTransform: path.resolve(__dirname, "./ui"),
-    // reactivityTransform:true
+    reactivityTransform:true
   })],
   // root:path.resolve(__dirname,"src"),
   resolve: {
