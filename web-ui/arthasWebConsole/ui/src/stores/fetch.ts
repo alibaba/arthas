@@ -202,7 +202,7 @@ export const fetchStore = defineStore("fetch", {
         });
       }
       this.jobRunning = false;
-      return Promise.reject("There art not  job running");
+      return Promise.reject("There are not jobs running");
     },
     openJobRun() {
       this.jobRunning = true;

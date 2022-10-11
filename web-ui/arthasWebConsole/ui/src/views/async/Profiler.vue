@@ -197,7 +197,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <template v-if="!support">
+  <template v-if="support">
     <div class="flex py-2 border-b-2  border-gray-300">
       <h3 class="text-lg w-40">status: </h3>
       <div class="mx-2">
@@ -210,15 +210,16 @@ onBeforeUnmount(() => {
       <h3 class="text-lg w-40">How to start: </h3>
       <Listbox v-model="selectEvent">
         <div class=" relative mx-2">
-          <ListboxButton class="btn btn-sm btn-outline w-52 "> even:
-            {{ selectEvent}}
+          <ListboxButton class="btn btn-sm btn-outline"> even:
+            <span class="normal-case">{{ selectEvent}}</span>
           </ListboxButton>
           <ListboxOptions
-            class=" absolute w-52 mt-2 border py-2 rounded-md hover:shadow-xl transition bg-white max-h-80 overflow-y-auto">
+            class=" absolute w-52 mt-2 border py-2 rounded-md hover:shadow-xl transition max-h-80 overflow-y-auto bg-base-100">
             <ListboxOption v-for="(e,i) in eventList" :key="i" :value="e" v-slot="{active, selected}">
-              <div class=" p-2 transition break-words text-base-100" :class="{
+              <div class=" p-2 transition break-words" :class="{
               'bg-neutral text-neutral-content': active,
               'bg-neutral-focus text-neutral-content': selected,
+              ' text-neutral':!active && !selected
               }">
                 {{ e }}
               </div>
@@ -228,14 +229,16 @@ onBeforeUnmount(() => {
       </Listbox>
       <button class="btn btn-sm btn-outline mr-2" @click="changeDuration">duration :{{duration}}</button>
       <button class="btn btn-sm btn-outline mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
-      <button class="btn btn-sm btn-outline mr-2" @click="changeFile">file :<span class="normal-case">{{fileformat}}</span></button>
+      <button class="btn btn-sm btn-outline mr-2" @click="changeFile">file :<span
+          class="normal-case">{{fileformat}}</span></button>
       <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
       <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
       <button class="btn btn-primary btn-sm btn-outline" @click="startSubmit">start</button>
     </div>
     <div class="flex items-center border-b-2 border-gray-300 py-2">
       <h3 class="text-lg w-40">Resume or stop: </h3>
-      <button class="btn btn-primary btn-sm btn-outline mx-2" @click="resumeProfiler" v-if="!profilerStatus.is">resume</button>
+      <button class="btn btn-primary btn-sm btn-outline mx-2" @click="resumeProfiler"
+        v-if="!profilerStatus.is">resume</button>
       <button class="btn btn-primary btn-sm btn-outline" @click="stopProfiler" v-if="profilerStatus.is">stop</button>
     </div>
     <div class="flex items-center py-2">
@@ -244,4 +247,7 @@ onBeforeUnmount(() => {
       <button class="btn btn-primary btn-sm btn-outline ml-2" @click="toOutputDir">go to the output direction</button>
     </div>
   </template>
+  <div v-else>
+    Your system is not supported!
+  </div>
 </template>
