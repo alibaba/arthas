@@ -5,20 +5,22 @@ import { FitAddon } from 'xterm-addon-fit';
 import {WebglAddon} from "xterm-addon-webgl"
 
 let ws: WebSocket | undefined;
-let xterm = new Terminal({allowProposedApi: true})
+
 const DEFAULT_SCROLL_BACK = 1000
 const MAX_SCROLL_BACK = 9999999
 const MIN_SCROLL_BACK = 1
-const webglAddon = new WebglAddon();
-const ip = ref("127.0.0.1")
-const port = ref('3568')
+const ARTHAS_PORT = '8563'
+const ip = ref("")
+const port = ref('')
 const iframe = ref(true)
 const fullSc = ref(true)
-let fitAddon = new FitAddon();
+const fitAddon = new FitAddon();
+const webglAddon = new WebglAddon();
+let xterm = new Terminal({allowProposedApi: true})
 
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
-  port.value = getUrlParam('port') ?? '8563';
+  port.value = getUrlParam('port') ?? ARTHAS_PORT;
   let _iframe = getUrlParam('iframe')
   if (_iframe && _iframe.trim() !== 'false') iframe.value = false
 
