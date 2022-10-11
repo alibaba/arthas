@@ -5,10 +5,8 @@ import * as path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue({
-    // reactivityTransform: path.resolve(__dirname, "./ui"),
     reactivityTransform:true
   })],
-  // root:path.resolve(__dirname,"src"),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./ui/src/"),

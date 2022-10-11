@@ -327,7 +327,6 @@ const searchTt = () => {
         </template>
       </CmdResMenu>
     </div>
-    <!-- <template v-if="enhancer|| tableResults.length > 0"> -->
       <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
       <div class="w-full flex justify-center items-center overflow-auto flex-1">
         <table class="table table-compact group w-full">
@@ -357,7 +356,6 @@ const searchTt = () => {
           </tbody>
         </table>
       </div>
-    <!-- </template> -->
   </div>
 
 </template>

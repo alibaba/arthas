@@ -42,7 +42,6 @@ onBeforeMount(() => {
 })
 </script>
 <template>
-  <!-- <div class="flex flex-col items-center w-full"> -->
   <div class="mb-4">
     <ClassInput :submit-f="getSource"></ClassInput>
   </div>

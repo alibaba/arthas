@@ -3,7 +3,6 @@ import machine from '@/machines/consoleMachine';
 import { publicStore } from '@/stores/public';
 import { useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref } from 'vue';
-import { Switch } from "@headlessui/vue"
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 
 const { getCommonResEffect } = publicStore()

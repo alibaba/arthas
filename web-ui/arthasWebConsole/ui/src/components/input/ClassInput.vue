@@ -16,7 +16,6 @@ const { label = "className", supportedover = false, noClassloader=false } = defi
 const optionClass = ref([] as { name: string, value: string }[])
 const optionClassloders = ref([] as { name: string, value: string }[])
 const fetchS = fetchStore()
-// const selectedClassItem = ref({ name: "", value: "" } as Item)
 const changeValue = (value: string) => {
   const searchClass = interpret(permachine)
   if (value.length > 2) {

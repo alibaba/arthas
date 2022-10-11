@@ -6,7 +6,6 @@ import { fetchStore } from '@/stores/fetch';
 import { useMachine, useInterpret } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import Enhancer from '@/components/show/Enhancer.vue';
-import { publicStore } from '@/stores/public';
 import {transfromStore} from "@/stores/resTransform"
 const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)

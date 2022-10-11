@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import permachine from '@/machines/perRequestMachine';
-import {
-  Switch,
-  SwitchLabel,
-  SwitchGroup
-} from "@headlessui/vue"
 import { useInterpret, useMachine } from '@xstate/vue';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
@@ -74,27 +69,6 @@ getCommonResEffect(pollingM, body => {
     body.results.forEach(result => {
       if (result.type === "trace") {
 
-        // const trans = (root: TraceNode): Map<string, string[]> => {
-        //   /** 用于cmdRes */
-        //   const map = new Map(Object
-        //     .entries(root)
-        //     .filter(([k, v]) => "children" !== k)
-        //     .map(([k, v]) => [k, [v.toString()]]
-        //     )
-        //   ) as Map<string, string[]>
-        //   /**显示简略信息 */
-        //   let title = ""
-        //   if (root.type === "throw") {
-        //     title = "throw"
-        //   } else if (root.type === "thread") {
-        //     title = `${root.timestamp} ${root.threadName}`
-        //   } else {
-        //     title = `[${root.totalCost}ms]${root.className}::${root.methodName}`
-        //   }
-        //   map.set("title", [title])
-        //   return map
-        // }
-
         const root: TreeNode = {
           children: result.root?.children?.map(ch => dfs(ch, null)) || [],
           meta: trans(result.root, null)
@@ -109,7 +83,6 @@ getCommonResEffect(pollingM, body => {
         console.log(result)
         // 自动关停，目前有bug，应为interrupt也会出现statusCode，应该计数，目前还没办法解决
         if (result.statusCode === 0) {
-          // statusCount--
           console.log("close!!!")
           // loop.close()
         }

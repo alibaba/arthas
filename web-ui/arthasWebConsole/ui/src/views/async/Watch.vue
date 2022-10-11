@@ -4,16 +4,6 @@ import { useInterpret, useMachine } from '@xstate/vue';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption,
-  Switch,
-  SwitchLabel,
-  SwitchGroup,
-  SwitchDescription
-} from "@headlessui/vue"
 import { onBeforeMount, onBeforeUnmount, reactive, Ref, ref, watchEffect } from 'vue';
 import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
@@ -38,13 +28,6 @@ const keyList = [
   "value",
 ]
 const tranOgnl = (s: string): string[] => s.split("\n")
-// type Mode = "-f" | "-s" | "-e" | "-b"
-// const modelist: { name: string, value: Mode }[] = [
-//   { name: "before method being invoked", value: "-b" },
-//   { name: "when method encountering exceptions", value: "-e" },
-//   { name: "when method exits normally", value: "-s" },
-//   { name: "when method exits", value: "-f" }
-// ]
 const beforeInvoke = ref(false)
 const successInvoke = ref(false)
 const failureInvoke = ref(false)
@@ -55,13 +38,6 @@ const modereflist: { enabled: Ref<boolean>, name: string }[] = [
   { enabled: failureInvoke, name: "exception" },
   { enabled: allInvoke, name: "finish" }
 ]
-const selectedMode: { enabled: Ref<boolean>, name: string }[] = [
-  { enabled: beforeInvoke, name: "before" },
-  { enabled: successInvoke, name: "success" },
-  { enabled: failureInvoke, name: "exception" },
-  { enabled: allInvoke, name: "finish" }
-]
-// const mode = ref(modelist[3])
 
 const transform = (result: CommandResult) => {
   const map = new Map();

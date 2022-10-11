@@ -5,7 +5,6 @@ import { onBeforeMount, onUnmounted, reactive, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from '@/stores/public';
 import { fetchStore } from '@/stores/fetch';
-import { number } from 'echarts/core';
 const fetchM = useMachine(machine)
 const { getPollingLoop } = fetchStore()
 const { getCommonResEffect } = publicStore()

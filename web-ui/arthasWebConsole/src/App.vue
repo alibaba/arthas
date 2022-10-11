@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { Terminal } from "xterm"
 import { FitAddon } from 'xterm-addon-fit';
 import {WebglAddon} from "xterm-addon-webgl"
-// import $ from "jquery"
+
 let ws: WebSocket | undefined;
 let xterm = new Terminal({allowProposedApi: true})
 const DEFAULT_SCROLL_BACK = 1000
@@ -17,7 +17,6 @@ const fullSc = ref(true)
 let fitAddon = new FitAddon();
 
 onMounted(() => {
-  // var url = window.location.href;
   ip.value = getUrlParam('ip') ?? window.location.hostname;
   port.value = getUrlParam('port') ?? '8563';
   let _iframe = getUrlParam('iframe')
@@ -26,18 +25,14 @@ onMounted(() => {
   startConnect(true);
   window.addEventListener('resize', function () {
     if (ws !== undefined && ws !== null) {
-      // let terminalSize = getTerminalSize();
       const {cols, rows} = fitAddon.proposeDimensions()!
-      // console.log(cols, rows)
       ws.send(JSON.stringify({ action: 'resize', cols, rows: rows }));
-      // xterm.resize(terminalSize.cols, terminalSize.rows);
       fitAddon.fit();
     }
   });
 });
 
 /** get params in url **/
-// 可以使用urlparam类取代
 function getUrlParam(name: string, url = window.location.href) {
   name = name.replace(/[\[\]]/g, '\\$&');
   const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -59,10 +54,7 @@ function initWs(silent: boolean) {
     !silent && alert('Connect error');
   };
   ws.onopen = function () {
-    console.log('open');
-    // $('#fullSc').show();
     fullSc.value = true
-    // var terminalSize = getTerminalSize()
 
     let scrollback = getUrlParam('scrollback') ?? '0';
 
@@ -89,10 +81,7 @@ function initWs(silent: boolean) {
 function initXterm(scrollback: string) {
   let scrollNumber = parseInt(scrollback, 10)
   xterm = new Terminal({
-    // cols,
-    // rows,
     screenReaderMode: false,
-    // rendererType: 'canvas',
     convertEol: true,
     allowProposedApi: true,
     scrollback: isValidNumber(scrollNumber) ? scrollNumber : DEFAULT_SCROLL_BACK
@@ -102,7 +91,6 @@ function initXterm(scrollback: string) {
   xterm.open(document.getElementById('terminal')!);
 
   xterm.loadAddon(webglAddon)
-  // setTimeout(()=>fitAddon.fit(),50);
   fitAddon.fit()
   return {
     cols: xterm.cols,
@@ -151,10 +139,7 @@ function xtermFullScreen() {
   var ele = document.getElementById('terminal-card')!;
   requestFullScreen(ele);
   ele.onfullscreenchange = (e:Event)=>{
-    // if(!document.fullscreenElement) {
       fitAddon.fit()
-      console.log()
-    // }
   }
 }
 
@@ -176,64 +161,6 @@ function requestFullScreen(element: HTMLElement) {
 </script>
 
 <template>
-  <!-- <nav v-if="iframe" class="
-  navbar navbar-expand navbar-light flex-column flex-md-row bd-navbar bg-light
-  ">
-    <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="navbar-brand"><img src="/logo.png"
-        alt="Arthas" title="Welcome to Arthas web console" style="height: 25px;" class="img-responsive"></a>
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="https://arthas.aliyun.com/doc" target="_blank">Documentation
-            <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
-            Tutorials</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="https://github.com/alibaba/arthas" target="_blank">Github</a>
-        </li>
-      </ul>
-    </div>
-
-    <form class="form-inline my-2 my-lg-0">
-      <div class="col">
-        <div class="input-group ">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="ip-addon">IP</span>
-          </div>
-          <input v-model="ip" type="text" class="form-control" name="ip" id="ip" placeholder="please enter ip address"
-            aria-label="ip" aria-describedby="ip-addon">
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="input-group ">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="port-addon">Port</span>
-          </div>
-          <input v-model="port" type="text" class="form-control" name="port" id="port" placeholder="please enter port"
-            aria-label="port" aria-describedby="port-addon">
-        </div>
-      </div>
-
-      <div class="col-inline">
-        <button title="connect" type="button" class="btn btn-info form-control mr-1"
-          @click="startConnect(true)">Connect</button>
-        <button title="disconnect" type="button" class="btn btn-info form-control mr-1"
-          @click="disconnect">Disconnect</button>
-        <a target="_blank" href="arthas-output/" class="btn btn-info" role="button">Arthas Output</a>
-      </div>
-    </form>
-
-  </nav> -->
   <div class="flex flex-col h-[100vh] resize-none">
     <nav v-if="iframe" class="navbar bg-base-100 flex-row">
       <div class="flex-1">
@@ -297,11 +224,6 @@ function requestFullScreen(element: HTMLElement) {
 #terminal:-webkit-full-screen {
   background-color: rgb(255, 255, 12);
 }
-
-/* .container {
-  width: 100%;
-  min-height: 600px;
-} */
 
 .fullSc {
   z-index: 10000;
