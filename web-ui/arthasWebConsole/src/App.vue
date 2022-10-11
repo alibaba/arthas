@@ -33,13 +33,9 @@ onMounted(() => {
 });
 
 /** get params in url **/
-function getUrlParam(name: string, url = window.location.href) {
-  name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-    results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+function getUrlParam(name: string) {
+  const urlparam = new URLSearchParams(window.location.search)
+  return urlparam.get(name)
 }
 
 
