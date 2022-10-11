@@ -18,6 +18,7 @@
     },
     "experimentalDecorators": true
   },
+
   "include": [
     "ui/src/**/*.ts", "ui/src/**/*.d.ts", "ui/src/**/*.tsx", "ui/src/**/*.vue","ui/tests/**/*.ts",
     "src/**/*.vue", "src/**/*.ts","src/**/*.d.ts"

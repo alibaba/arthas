@@ -185,6 +185,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         </div>
 
       </div>
+
       <button class="btn btn-sm btn-outline ml-2" @click="setDepth">depth:{{depth}}</button>
     </template>
   </MethodInput>

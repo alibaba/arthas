@@ -132,7 +132,6 @@ const getClassLoaderTree = () => fetchS.baseSubmit(interpret(permachine), {
 }, err => {
   console.error(err)
 })
-
 const getCategorizedByClassType = () => {
   tableResults.length = 0
   fetchS.baseSubmit(interpret(permachine), {

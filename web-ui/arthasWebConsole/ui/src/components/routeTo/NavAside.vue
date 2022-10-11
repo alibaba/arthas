@@ -28,7 +28,6 @@ const tabs = [
   //   url: '/console',
   //   icon: TerminalIcon
   // },
-
 ]
 const router = useRouter()
 const routePath = computed(() => useRoute().path)
