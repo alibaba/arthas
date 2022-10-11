@@ -40,7 +40,7 @@ import {
 import {
   SVGRenderer
 } from 'echarts/renderers';
-import { ECharts, number } from 'echarts/core';
+import { ECharts} from 'echarts/core';
 
 echarts.use(
   [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, DataZoomComponent, BarChart, LineChart, SVGRenderer, UniversalTransition]
@@ -57,23 +57,12 @@ const loop = pullResultsLoop(pollingM)
 const enhancer = ref(undefined as undefined | EnchanceResult)
 const cycleV = ref(120)
 const publicS = publicStore()
-type KMD = | keyof MonitorData
-// const keyList: string[] = [
-//   "className",
-//   "methodName",
-//   "cost",
-//   "success",
-//   "failed",
-//   "fail-rate",
-//   "total",
-// ]
 const modelist: { name: string, value: string }[] = [
   { name: "before", value: "-b" },
   { name: "finish", value: "" }
 ]
 const mode = ref(modelist[1])
 
-// const tableResults = reactive([] as Map<string, string[] | string>[])
 
 const chartContext: {
   count: number,
@@ -133,9 +122,6 @@ const chartOption = {
       type: 'bar',
       stack: 'count',
       data: [],
-      // itemStyle: {
-      //   color: "#9836cd"
-      // }
     },
     {
       name: 'failure',

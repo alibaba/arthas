@@ -1,13 +1,11 @@
 <script setup lang="ts">
 // import machine from '@/machines/consoleMachine';
 import { useInterpret, } from '@xstate/vue';
-import { onBeforeMount, reactive, ref, onUnmounted, watchEffect } from 'vue';
-import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
 import {
-  Switch, SwitchLabel, SwitchGroup,
   Listbox, ListboxButton, ListboxOptions, ListboxOption
 } from '@headlessui/vue';
 import { transfromStore } from "@/stores/resTransform"
@@ -123,18 +121,14 @@ const getThreads = () => {
   }).then(res => {
     const result = (res as CommonRes).body.results[0]
 
-    // threadInfo.value = result.threadInfo
     if (result.type === "thread") {
 
       stackTrace.length = 0
 
       if (n === "") {
-        // result.threadStateCount.
         result.threadStats.forEach(thread => {
           const map = new Map()
-          // Object.entries(thread).forEach(([k, v]) => map.set(k, v.toString().trim() || "-"))
           for (const key in thread) {
-            // if(key === 'id') map.set(key, thread[key as thkey])
             map.set(key, thread[key as keyof ThreadStats].toString().trim() || "-")
           }
           tableResults.unshift(map)
@@ -150,12 +144,8 @@ const getThreads = () => {
         }
       } else {
         result.busyThreads.forEach((thread) => {
-          // allMap.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
-          // if (v.id > 0) optionThread.push({ name: v.name, value: v.id })
           const map = new Map()
-          // Object.entries(thread).forEach(([k, v]) => map.set(k, v.toString().trim() || "-"))
           for (const key in thread) {
-            // if(key === 'id') map.set(key, thread[key as thkey])
             map.set(key, thread[key as thkey].toString().trim() || "-")
           }
           tableResults.unshift(map)
@@ -186,17 +176,12 @@ const setleast = publiC.inputDialogFactory(
 
 const getSpecialThreads = (threadid: number = -1) => {
   let threadName = threadid > 0 ? `${threadid}` : ""
-  // let i = leastTime.value > 0 ? "-i " + leastTime.value : ""
-  // let n = count.value > 0 ? "-n " + count.value : ""
-  // const b = isBlock.value ? "-b" : ""
-  // let state = threadState.value.value === "" ? "" : `--state ${threadState.value.value}`
   fetchS.baseSubmit(FetchService, {
     action: "exec",
     command: `thread ${threadName}`
   }).then(res => {
     const result = (res as CommonRes).body.results[0]
     if (result.type === "thread") {
-      // threadInfo.value = result.threadInfo
       stackTrace.length = 0
       result.threadInfo.stackTrace.forEach(stack => stackTrace.unshift(transformS.transformStackTrace(stack)))
     }

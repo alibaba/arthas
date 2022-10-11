@@ -3,7 +3,6 @@ import machine from '@/machines/consoleMachine';
 import { publicStore } from '@/stores/public';
 import { useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref } from 'vue';
-import { Switch } from "@headlessui/vue"
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 
 const { getCommonResEffect } = publicStore()
@@ -46,6 +45,7 @@ const submitCommand = (e: Event) => {
         <input type="text" v-model="path"
           class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
+
       <label class="label cursor-pointer btn-sm border border-neutral mr-2">
       <span class="label-text uppercase font-bold mr-1">only live object</span>
       <input v-model="enabled" type="checkbox" class="toggle" />

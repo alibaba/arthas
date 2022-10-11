@@ -32,7 +32,6 @@ import {
 } from 'echarts/renderers';
 import { dispose, ECharts } from 'echarts/core';
 import permachine from '@/machines/perRequestMachine';
-import { onBeforeRouteLeave } from 'vue-router';
 
 type EChartsOption = echarts.ComposeOption<
   DatasetComponentOption | PieSeriesOption

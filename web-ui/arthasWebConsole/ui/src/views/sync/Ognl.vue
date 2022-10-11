@@ -76,7 +76,6 @@ const getSource = () => {
       class="btn btn-primary btn-sm btn-outline truncate p-2">submit</button>
   </form>
   <div v-if="code !== ''">
-    <!-- <CmdResMenu title="classInfo" :map="locationMap"   class="mb-4"></CmdResMenu> -->
     <div class="w-10/12 rounded-xl border p-4 bg-[#f6f6f6] hover:shadow-gray-400 mx-auto shadow-lg transition mb-4">
       <highlightjs language="bash" :code="code" />
     </div>

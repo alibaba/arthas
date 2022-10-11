@@ -4,7 +4,6 @@ import {
   DisclosureButton,
   DisclosurePanel
 } from "@headlessui/vue"
-// import SelectInput from "./SelectInput.vue";
 
 defineProps<{
   title: string,

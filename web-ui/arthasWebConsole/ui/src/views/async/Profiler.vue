@@ -244,7 +244,4 @@ onBeforeUnmount(() => {
       <button class="btn btn-primary btn-sm btn-outline ml-2" @click="toOutputDir">go to the output direction</button>
     </div>
   </template>
-  <!-- <div v-else>
-    Your system is not supported!
-  </div> -->
 </template>

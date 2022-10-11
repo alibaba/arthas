@@ -16,7 +16,6 @@ const urlStats = ref([] as [
   Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>,
   string
 ][])
-// const tablelResults = reactive([] as Map<string, string | number>[])
 const tableResults = reactive([] as Map<string, string | number>[])
 const loaderCache = ref({ name: "", hash: "", count: "" } as Record<"name" | "hash" | "count", string>)
 const classLoaderTree = reactive([] as TreeNode[])
@@ -31,9 +30,7 @@ const hashCode = computed(() => {
 const selectedClassLoadersUrlStats = ref([] as string[])
 const classVal = ref("")
 const resourceVal = ref("")
-// const keylList = [
-//   "name", "loadedCount", "hash", "parent"
-// ]
+
 const keyList = [
   "name", "numberOfInstance", "loadedCount"
 ]
@@ -132,7 +129,6 @@ const getClassLoaderTree = () => fetchS.baseSubmit(interpret(permachine), {
 }, err => {
   console.error(err)
 })
-
 const getCategorizedByClassType = () => {
   tableResults.length = 0
   fetchS.baseSubmit(interpret(permachine), {
@@ -349,27 +345,6 @@ const resetClassloader = () => {
         </div>
       </div>
       <div class="flex flex-col h-full w-2/3">
-        <!-- <div class="input-btn-style w-full mr-2 h-1/2">
-          <div class="overflow-auto flex-1 h-full">
-            <div class="flex justify-end mb-2">
-              <button class="button-style" @click="getCategorizedByLoaded">refresh</button>
-            </div>
-            <table class="border-collapse border border-slate-400 mx-auto">
-              <thead>
-                <tr>
-                  <th class="border border-slate-300 p-2" v-for="(v,i) in keylList" :key="i">{{v}}</th>
-                </tr>
-              </thead>
-              <tbody class="">
-                <tr v-for="(map, i) in tablelResults" :key="i">
-                  <td class="border border-slate-300 p-2" v-for="(key,j) in keylList" :key="j">
-                    {{map.get(key)}}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div> -->
         <div class="input-btn-style w-full mr-2 h-full">
           <div class="overflow-auto flex-1 h-full">
             <div class="flex justify-end mb-2">

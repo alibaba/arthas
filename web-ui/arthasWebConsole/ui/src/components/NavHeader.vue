@@ -99,14 +99,6 @@ const resetAllClass = () => {
   }).then(response => {
     const result = (response as CommonRes).body.results[0]
     if (result.type === "reset") {
-      // let res = new Map()
-      // Object.entries(result.affect).forEach(([k, v]) => {
-      //   res.set(k, k === "cost" ? [`${v}ms`] : [v])
-      // })
-      // let message = ""
-      // for(const key in result.affect) {
-      //   m
-      // }
       publicS.isSuccess=true
     publicS.SuccessMessage = JSON.stringify(result.affect)
     }

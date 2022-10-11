@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// import "bootstrap";
-=======
-import "bootstrap";
->>>>>>> master
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from "jquery"
 import "xterm/css/xterm.css"

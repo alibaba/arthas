@@ -23,7 +23,6 @@ onBeforeUnmount(() => {
     } as AsyncReq
   })
 })
-// :class='{"pointer-events-none":fetchS.jobRunning}'
 </script>
 
 <template>
