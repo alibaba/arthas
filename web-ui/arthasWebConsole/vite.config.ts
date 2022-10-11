@@ -14,14 +14,7 @@ export default defineConfig({
   },
   build: {
     emptyOutDir: true,
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        //生产环境时移除console
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: "esbuild",
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
@@ -35,6 +28,9 @@ export default defineConfig({
       
     },
   },
+  esbuild:{
+    drop:["console","debugger"]
+  },
   define:{
     '__VUE_OPTIONS_API__':false
   },
@@ -42,7 +38,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8563",
+        target: "http://localhost:8888",
         changeOrigin: true,
       },
     },
