@@ -135,12 +135,6 @@ const transformMemory = (result: ArthasResResult) => {
 }
 const transformThread = (result: ArthasResResult, end: number) => {
   if (result.type !== "dashboard") return;
-  // result.threads.filter((v, i) => i < pri.value).forEach(thread => {
-  //   // threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
-  //   const map = new Map()
-  //   Object.entries(thread).map(([k, v]) => map.set(k, v.toString().trim() || "-"))
-  //   tableResults.unshift(map)
-  // })
 
   for (let i = 0; i < end && i < result.threads.length; i++) {
     const thread = result.threads[i]
