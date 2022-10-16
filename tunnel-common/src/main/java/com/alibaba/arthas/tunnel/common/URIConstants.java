@@ -5,7 +5,7 @@ package com.alibaba.arthas.tunnel.common;
  * @author hengyunabc 2020-10-22
  *
  */
-public class URIConstans {
+public class URIConstants {
 
     /**
      * @see MethodConstants

@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.alibaba.arthas.tunnel.common.MethodConstants;
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
-import com.alibaba.arthas.tunnel.common.URIConstans;
+import com.alibaba.arthas.tunnel.common.URIConstants;
 import com.alibaba.arthas.tunnel.server.AgentInfo;
 import com.alibaba.arthas.tunnel.server.TunnelServer;
 
@@ -67,9 +67,9 @@ public class ProxyController {
 
             tunnelServer.addProxyRequestPromise(requestId, httpResponsePromise);
 
-            URI uri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
-                    .queryParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY).queryParam(URIConstans.ID, agentId)
-                    .queryParam(URIConstans.TARGET_URL, targetUrl).queryParam(URIConstans.PROXY_REQUEST_ID, requestId)
+            URI uri = UriComponentsBuilder.newInstance().scheme(URIConstants.RESPONSE).path("/")
+                    .queryParam(URIConstants.METHOD, MethodConstants.HTTP_PROXY).queryParam(URIConstants.ID, agentId)
+                    .queryParam(URIConstants.TARGET_URL, targetUrl).queryParam(URIConstants.PROXY_REQUEST_ID, requestId)
                     .build().toUri();
 
             agentCtx.channel().writeAndFlush(new TextWebSocketFrame(uri.toString()));

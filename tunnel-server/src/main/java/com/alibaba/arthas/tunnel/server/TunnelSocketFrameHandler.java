@@ -21,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.alibaba.arthas.tunnel.common.MethodConstants;
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
-import com.alibaba.arthas.tunnel.common.URIConstans;
+import com.alibaba.arthas.tunnel.common.URIConstants;
 import com.alibaba.arthas.tunnel.server.utils.HttpUtils;
 
 import io.netty.channel.Channel;
@@ -63,7 +63,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("websocket handshake complete, uri: {}", uri);
 
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
-            String method = parameters.getFirst(URIConstans.METHOD);
+            String method = parameters.getFirst(URIConstants.METHOD);
 
             if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
@@ -71,7 +71,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 agentRegister(ctx, handshake, uri);
             }
             if (MethodConstants.OPEN_TUNNEL.equals(method)) { // from arthas agent open tunnel
-                String clientConnectionId = parameters.getFirst(URIConstans.CLIENT_CONNECTION_ID);
+                String clientConnectionId = parameters.getFirst(URIConstants.CLIENT_CONNECTION_ID);
                 openTunnel(ctx, clientConnectionId);
             }
         } else {
@@ -89,16 +89,16 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(text).build()
                     .getQueryParams();
 
-            String method = parameters.getFirst(URIConstans.METHOD);
+            String method = parameters.getFirst(URIConstants.METHOD);
 
             /**
              * <pre>
-             * 1. 之前http proxy请求已发送到 tunnel cleint，这里接收到 tunnel client的结果，并解析出SimpleHttpResponse
-             * 2. 需要据 URIConstans.PROXY_REQUEST_ID 取出当时的 Promise，再设置SimpleHttpResponse进去
+             * 1. 之前http proxy请求已发送到 tunnel client，这里接收到 tunnel client的结果，并解析出SimpleHttpResponse
+             * 2. 需要据 URIConstants.PROXY_REQUEST_ID 取出当时的 Promise，再设置SimpleHttpResponse进去
              * </pre>
              */
             if (MethodConstants.HTTP_PROXY.equals(method)) {
-                final String requestIdRaw = parameters.getFirst(URIConstans.PROXY_REQUEST_ID);
+                final String requestIdRaw = parameters.getFirst(URIConstants.PROXY_REQUEST_ID);
                 final String requestId;
                 if (requestIdRaw != null) {
                     requestId = URLDecoder.decode(requestIdRaw, "utf-8");
@@ -106,14 +106,14 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                     requestId = null;
                 }
                 if (requestId == null) {
-                    logger.error("error, need {}, text: {}", URIConstans.PROXY_REQUEST_ID, text);
+                    logger.error("error, need {}, text: {}", URIConstants.PROXY_REQUEST_ID, text);
                     return;
                 }
                 logger.info("received http proxy response, requestId: {}", requestId);
 
                 Promise<SimpleHttpResponse> promise = tunnelServer.findProxyRequestPromise(requestId);
 
-                final String dataRaw = parameters.getFirst(URIConstans.PROXY_RESPONSE_DATA);
+                final String dataRaw = parameters.getFirst(URIConstants.PROXY_RESPONSE_DATA);
                 final String data;
                 if (dataRaw != null) {
                     data = URLDecoder.decode(dataRaw, "utf-8");
@@ -123,7 +123,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                     promise.setSuccess(simpleHttpResponse);
                 } else {
                     data = null;
-                    promise.setFailure(new Exception(URIConstans.PROXY_RESPONSE_DATA + " is null! reuqestId: " + requestId));
+                    promise.setFailure(new Exception(URIConstants.PROXY_RESPONSE_DATA + " is null! reuqestId: " + requestId));
                 }
             }
         }
@@ -151,9 +151,9 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("random clientConnectionId: " + clientConnectionId);
             // URI uri = new URI("response", null, "/",
             //        "method=" + MethodConstants.START_TUNNEL + "&id=" + agentId.get(0) + "&clientConnectionId=" + clientConnectionId, null);
-            URI uri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
-                    .queryParam(URIConstans.METHOD, MethodConstants.START_TUNNEL).queryParam(URIConstans.ID, agentId)
-                    .queryParam(URIConstans.CLIENT_CONNECTION_ID, clientConnectionId).build().toUri();
+            URI uri = UriComponentsBuilder.newInstance().scheme(URIConstants.RESPONSE).path("/")
+                    .queryParam(URIConstants.METHOD, MethodConstants.START_TUNNEL).queryParam(URIConstants.ID, agentId)
+                    .queryParam(URIConstants.CLIENT_CONNECTION_ID, clientConnectionId).build().toUri();
 
             logger.info("startTunnel response: " + uri);
 
@@ -223,7 +223,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         Map<String, List<String>> parameters = queryDecoder.parameters();
 
         String appName = null;
-        List<String> appNameList = parameters.get(URIConstans.APP_NAME);
+        List<String> appNameList = parameters.get(URIConstants.APP_NAME);
         if (appNameList != null && !appNameList.isEmpty()) {
             appName = appNameList.get(0);
         }
@@ -237,13 +237,13 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             id = RandomStringUtils.random(20, true, true).toUpperCase();
         }
         // agent传过来，则优先用 agent的
-        List<String> idList = parameters.get(URIConstans.ID);
+        List<String> idList = parameters.get(URIConstants.ID);
         if (idList != null && !idList.isEmpty()) {
             id = idList.get(0);
         }
 
         String arthasVersion = null;
-        List<String> arthasVersionList = parameters.get(URIConstans.ARTHAS_VERSION);
+        List<String> arthasVersionList = parameters.get(URIConstants.ARTHAS_VERSION);
         if (arthasVersionList != null && !arthasVersionList.isEmpty()) {
             arthasVersion = arthasVersionList.get(0);
         }
@@ -251,8 +251,8 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         final String finalId = id;
 
         // URI responseUri = new URI("response", null, "/", "method=" + MethodConstants.AGENT_REGISTER + "&id=" + id, null);
-        URI responseUri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
-                .queryParam(URIConstans.METHOD, MethodConstants.AGENT_REGISTER).queryParam(URIConstans.ID, id).build()
+        URI responseUri = UriComponentsBuilder.newInstance().scheme(URIConstants.RESPONSE).path("/")
+                .queryParam(URIConstants.METHOD, MethodConstants.AGENT_REGISTER).queryParam(URIConstants.ID, id).build()
                 .encode().toUri();
 
         AgentInfo info = new AgentInfo();

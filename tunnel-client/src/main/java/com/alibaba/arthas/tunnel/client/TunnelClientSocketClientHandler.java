@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.arthas.tunnel.common.MethodConstants;
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
-import com.alibaba.arthas.tunnel.common.URIConstans;
+import com.alibaba.arthas.tunnel.common.URIConstants;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -62,14 +62,14 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
 
             QueryStringDecoder queryDecoder = new QueryStringDecoder(text);
             Map<String, List<String>> parameters = queryDecoder.parameters();
-            List<String> methodList = parameters.get(URIConstans.METHOD);
+            List<String> methodList = parameters.get(URIConstants.METHOD);
             String method = null;
             if (methodList != null && !methodList.isEmpty()) {
                 method = methodList.get(0);
             }
 
             if (MethodConstants.AGENT_REGISTER.equals(method)) {
-                List<String> idList = parameters.get(URIConstans.ID);
+                List<String> idList = parameters.get(URIConstants.ID);
                 if (idList != null && !idList.isEmpty()) {
                     this.tunnelClient.setId(idList.get(0));
                 }
@@ -79,9 +79,9 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
 
             if (MethodConstants.START_TUNNEL.equals(method)) {
                 QueryStringEncoder queryEncoder = new QueryStringEncoder(this.tunnelClient.getTunnelServerUrl());
-                queryEncoder.addParam(URIConstans.METHOD, MethodConstants.OPEN_TUNNEL);
-                queryEncoder.addParam(URIConstans.CLIENT_CONNECTION_ID, parameters.get(URIConstans.CLIENT_CONNECTION_ID).get(0));
-                queryEncoder.addParam(URIConstans.ID, parameters.get(URIConstans.ID).get(0));
+                queryEncoder.addParam(URIConstants.METHOD, MethodConstants.OPEN_TUNNEL);
+                queryEncoder.addParam(URIConstants.CLIENT_CONNECTION_ID, parameters.get(URIConstants.CLIENT_CONNECTION_ID).get(0));
+                queryEncoder.addParam(URIConstants.ID, parameters.get(URIConstants.ID).get(0));
 
                 final URI forwardUri = queryEncoder.toUri();
 
@@ -104,15 +104,15 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                  * 
                  */
                 ProxyClient proxyClient = new ProxyClient();
-                List<String> targetUrls = parameters.get(URIConstans.TARGET_URL);
+                List<String> targetUrls = parameters.get(URIConstants.TARGET_URL);
 
-                List<String> requestIDs = parameters.get(URIConstans.PROXY_REQUEST_ID);
+                List<String> requestIDs = parameters.get(URIConstants.PROXY_REQUEST_ID);
                 String id = null;
                 if (requestIDs != null && !requestIDs.isEmpty()) {
                     id = requestIDs.get(0);
                 }
                 if (id == null) {
-                    logger.error("error, http proxy need {}", URIConstans.PROXY_REQUEST_ID);
+                    logger.error("error, http proxy need {}", URIConstants.PROXY_REQUEST_ID);
                     return;
                 }
 
@@ -125,9 +125,9 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                     String requestData = byteBuf.toString(CharsetUtil.UTF_8);
 
                     QueryStringEncoder queryEncoder = new QueryStringEncoder("");
-                    queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY);
-                    queryEncoder.addParam(URIConstans.PROXY_REQUEST_ID, id);
-                    queryEncoder.addParam(URIConstans.PROXY_RESPONSE_DATA, requestData);
+                    queryEncoder.addParam(URIConstants.METHOD, MethodConstants.HTTP_PROXY);
+                    queryEncoder.addParam(URIConstants.PROXY_REQUEST_ID, id);
+                    queryEncoder.addParam(URIConstants.PROXY_RESPONSE_DATA, requestData);
 
                     String url = queryEncoder.toString();
                     ctx.writeAndFlush(new TextWebSocketFrame(url));

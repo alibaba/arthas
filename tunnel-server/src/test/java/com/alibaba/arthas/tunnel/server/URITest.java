@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.alibaba.arthas.tunnel.common.MethodConstants;
-import com.alibaba.arthas.tunnel.common.URIConstans;
+import com.alibaba.arthas.tunnel.common.URIConstants;
 
 /**
  * 
@@ -38,8 +38,8 @@ public class URITest {
 
         String string = responseUri.toString();
 
-        String uriString = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
-                .queryParam(URIConstans.METHOD, MethodConstants.AGENT_REGISTER).queryParam(URIConstans.ID, id).build()
+        String uriString = UriComponentsBuilder.newInstance().scheme(URIConstants.RESPONSE).path("/")
+                .queryParam(URIConstants.METHOD, MethodConstants.AGENT_REGISTER).queryParam(URIConstants.ID, id).build()
                 .encode().toUriString();
 
         Assertions.assertThat(string).isEqualTo(uriString)
@@ -56,9 +56,9 @@ public class URITest {
 
         String string = uri.toString();
 
-        String uriString = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
-                .queryParam(URIConstans.METHOD, MethodConstants.START_TUNNEL).queryParam(URIConstans.ID, agentId)
-                .queryParam(URIConstans.CLIENT_CONNECTION_ID, clientConnectionId).build().toUriString();
+        String uriString = UriComponentsBuilder.newInstance().scheme(URIConstants.RESPONSE).path("/")
+                .queryParam(URIConstants.METHOD, MethodConstants.START_TUNNEL).queryParam(URIConstants.ID, agentId)
+                .queryParam(URIConstants.CLIENT_CONNECTION_ID, clientConnectionId).build().toUriString();
 
         System.err.println(string);
         Assertions.assertThat(string).isEqualTo(uriString)
