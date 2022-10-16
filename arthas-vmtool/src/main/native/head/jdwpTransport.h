@@ -262,7 +262,7 @@ struct _jdwpTransportEnv {
     }
 
     /*  SetTransportConfiguration added in JDWPTRANSPORT_VERSION_1_1 */
-    jdwpTransportError SetTransportConfiguration(jdwpTransportEnv* env,
+    jdwpTransportError SetTransportConfiguration(jdwpTransportConfiguration *config) {
         return functions->SetTransportConfiguration(this, config);
     }
 
