@@ -84,7 +84,7 @@ const setExpress = publicStore().inputDialogFactory(
   raw => raw,
   _ => _.value
 )
-
+const { increase, decrease } = publicStore().numberCondition(autoStop, { min: 0, max: 100 })
 
 const filterfn = (_: any, item: Item) => true
 </script>
@@ -95,9 +95,16 @@ const filterfn = (_: any, item: Item) => true
     <AutoComplete label="method" :option-items="optionMethod"
       :input-fn="(value: string) => changeMethod(slotClass.selectItem.value as string, value)" :filter-fn="filterfn"
       v-slot="slotMethod">
-      <button v-if="nexpress" class="btn btn-sm btn-outline ml-2" @click="setExpress">express:{{express}}</button>
-      <button v-if="ncondition" class="btn btn-sm btn-outline ml-2" @click="setConditon">condition:{{conditon}}</button>
-      <button v-if="ncount" class="btn btn-sm btn-outline ml-2" @click="setCount">count:{{autoStop}}</button>
+      <button v-if="nexpress" class="btn btn-sm btn-outline ml-2"
+        @click.prevent="setExpress">express:{{express}}</button>
+      <button v-if="ncondition" class="btn btn-sm btn-outline ml-2"
+        @click.prevent="setConditon">condition:{{conditon}}</button>
+      <div class="btn-group ml-2" v-if="ncount">
+        <button class="btn btn-sm btn-outline" @click.prevent="decrease">-</button>
+        <button class="btn btn-sm btn-outline border-x-0" @click.prevent="setCount">count:{{autoStop}}</button>
+        <button class="btn btn-sm btn-outline" @click.prevent="increase">+</button>
+      </div>
+
       <slot name="others" :methodItem="slotMethod.selectItem" :classItem="slotClass.selectItem"></slot>
       <button @click.prevent="submitF({
       classItem: slotClass.selectItem, 

@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { Terminal } from "xterm"
 import { FitAddon } from 'xterm-addon-fit';
-import {WebglAddon} from "xterm-addon-webgl"
+import { WebglAddon } from "xterm-addon-webgl"
 
 let ws: WebSocket | undefined;
 
@@ -14,9 +14,11 @@ const ip = ref("")
 const port = ref('')
 const iframe = ref(true)
 const fullSc = ref(true)
+const agentID = ref('')
+const isTunnel = import.meta.env.VITE_AGENT === 'true'
 const fitAddon = new FitAddon();
 const webglAddon = new WebglAddon();
-let xterm = new Terminal({allowProposedApi: true})
+let xterm = new Terminal({ allowProposedApi: true })
 
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
@@ -27,7 +29,7 @@ onMounted(() => {
   startConnect(true);
   window.addEventListener('resize', function () {
     if (ws !== undefined && ws !== null) {
-      const {cols, rows} = fitAddon.proposeDimensions()!
+      const { cols, rows } = fitAddon.proposeDimensions()!
       ws.send(JSON.stringify({ action: 'resize', cols, rows: rows }));
       fitAddon.fit();
     }
@@ -56,7 +58,7 @@ function initWs(silent: boolean) {
 
     let scrollback = getUrlParam('scrollback') ?? '0';
 
-    const {cols, rows} = initXterm(scrollback)
+    const { cols, rows } = initXterm(scrollback)
     xterm.onData(function (data) {
       ws?.send(JSON.stringify({ action: 'read', data: data }))
     });
@@ -85,7 +87,7 @@ function initXterm(scrollback: string) {
     scrollback: isValidNumber(scrollNumber) ? scrollNumber : DEFAULT_SCROLL_BACK
   });
   xterm.loadAddon(fitAddon)
-  
+
   xterm.open(document.getElementById('terminal')!);
 
   xterm.loadAddon(webglAddon)
@@ -136,8 +138,8 @@ function disconnect() {
 function xtermFullScreen() {
   var ele = document.getElementById('terminal-card')!;
   requestFullScreen(ele);
-  ele.onfullscreenchange = (e:Event)=>{
-      fitAddon.fit()
+  ele.onfullscreenchange = (e: Event) => {
+    fitAddon.fit()
   }
 }
 
@@ -162,8 +164,8 @@ function requestFullScreen(element: HTMLElement) {
   <div class="flex flex-col h-[100vh] resize-none">
     <nav v-if="iframe" class="navbar bg-base-100 flex-row">
       <div class="flex-1">
-        <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
-            src="/arthas.png" alt="Arthas" title="Welcome to Arthas web console" class=""></a>
+        <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img src="/arthas.png"
+            alt="Arthas" title="Welcome to Arthas web console" class=""></a>
         <ul class="menu menu-horizontal p-0">
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
@@ -200,7 +202,7 @@ function requestFullScreen(element: HTMLElement) {
           <button
             class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
             @click.prevent="disconnect">Disconnect</button>
-          <a class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
+          <a v-if="!isTunnel" class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
             href="arthas-output/" target="_blank">Arthas Output</a>
         </div>
       </form>

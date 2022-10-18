@@ -59,7 +59,6 @@ export const publicStore = defineStore("public", { // Public项目唯一id
       });
     },
     /**
-     * 
      * @param inputRef 组件提供的值的存储区
      * @param getVal 从inputRef到全局缓冲区的处理流程
      * @param setVal 冲缓冲区到inputRef的处理流程
@@ -75,7 +74,7 @@ export const publicStore = defineStore("public", { // Public项目唯一id
       // 发布订阅模式，把函数的闭包里的mutex和缓冲区的锁注册到vue上
       watchEffect(() => {
         if (mutex.value && !this.isInput) {
-          //先上锁，防止再次触发该副作用           
+          //先上锁，防止再次触发该副作用
           mutex.value = false;
           // 把缓冲区的值输入到需要使用的组件里
           inputRef.value = getVal(this.inputVal);
@@ -83,6 +82,7 @@ export const publicStore = defineStore("public", { // Public项目唯一id
           this.inputVal = "";
         }
       });
+
       return () => {
         this.$patch({
           // 打开缓冲区
@@ -92,6 +92,19 @@ export const publicStore = defineStore("public", { // Public项目唯一id
         });
         // 解锁
         mutex.value = true;
+      };
+    },
+    numberCondition(
+      raw: Ref<number>,
+      scope: { min?: number; max?: number },
+    ) {
+      return {
+        increase() {
+          (!scope.max || raw.value < scope.max ) && raw.value++;
+        },
+        decrease() {
+          (!scope.min || raw.value > scope.min ) && raw.value--;
+        },
       };
     },
     nanoToMillis(nanoSeconds: number): number {

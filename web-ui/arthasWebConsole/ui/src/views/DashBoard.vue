@@ -181,6 +181,7 @@ const setPri = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
+const {increase,decrease} = publiC.numberCondition(pri)
 const transformRuntimeInfo = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
   for (const key in result.runtimeInfo as RuntimeInfo) {
@@ -461,14 +462,18 @@ onBeforeUnmount(async () => {
       <div id="gc-info" class="w-[40rem] h-80 input-btn-style p-2 mr-4"></div>
       <div class="input-btn-style overflow-auto flex-1 h-80">
         <div class="flex justify-end mb-2">
-
-          <button class="btn btn-sm btn-outline" @click="setPri">limit:{{pri}}</button>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline" @click="decrease">-</button>
+            <button class="btn btn-sm btn-outline border-x-0" @click="setPri">limit:{{pri}}</button>
+            <button class="btn btn-sm btn-outline" @click="increase">+</button>
+          </div>
         </div>
         <div class="overflow-x-auto">
           <table class="table table-compact w-full group">
             <thead>
               <tr>
-                <th class="border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}</th>
+                <th class="border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}
+                </th>
               </tr>
             </thead>
             <tbody class="">

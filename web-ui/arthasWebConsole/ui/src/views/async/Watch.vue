@@ -18,6 +18,7 @@ const pollResults = reactive([] as [string, Map<string, string[]>, TreeNode][])
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const depth = ref(1)
 const tableResults = reactive([] as Map<string, string | TreeNode>[])
+const {increase,decrease} = publiC.numberCondition(depth,{min:1,max:6})
 const keyList = [
   "ts",
   "accessPoint",
@@ -161,7 +162,11 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         </div>
 
       </div>
-      <button class="btn btn-sm btn-outline ml-2" @click="setDepth">depth:{{depth}}</button>
+      <div class="btn-group ml-2">
+        <button class="btn btn-sm btn-outline" @click.prevent="decrease">-</button>
+        <button class="btn btn-sm btn-outline border-x-0" @click.prevent="setDepth">depth:{{depth}}</button>
+        <button class="btn btn-sm btn-outline" @click.prevent="increase">+</button>
+      </div>
     </template>
   </MethodInput>
   <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>

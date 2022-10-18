@@ -195,10 +195,6 @@ const getSpecialThreads = (threadid: number = -1) => {
     <div class="flex justify-end items-center h-[10vh]">
 
       <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
-        <label class="label cursor-pointer btn-sm border border-neutral ">
-          <span class="label-text uppercase font-bold mr-1">is blocking:</span>
-          <input v-model="isBlock" type="checkbox" class="toggle"/>
-        </label>
       <button class="btn ml-2 btn-sm btn-outline" @click="setleast">sample interval:{{leastTime}}</button>
       <button v-show="!isBlock" class="btn ml-2 btn-sm btn-outline" @click="setlimit"> top n threads:{{count}}</button>
       <Listbox v-model="threadState">
@@ -217,7 +213,11 @@ const getSpecialThreads = (threadid: number = -1) => {
           </ListboxOptions>
         </div>
       </Listbox>
-      <button class="btn btn-primary btn-sm btn-outline" @click="getThreads"> get threads</button>
+      <label class="label cursor-pointer btn-sm ">
+        <span class="label-text uppercase font-bold mr-1">is blocking:</span>
+        <input v-model="isBlock" type="checkbox" class="toggle" />
+      </label>
+      <button class="btn btn-primary btn-sm btn-outline" @click="getThreads"> get threads </button>
     </div>
     <div class="w-full h-[50vh] input-btn-style my-2 p-4 flex flex-col">
       <div class="flex h-[8vh] flex-wrap flex-auto">

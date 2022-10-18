@@ -46,10 +46,10 @@ const submitCommand = (e: Event) => {
           class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
 
-      <label class="label cursor-pointer btn-sm border border-neutral mr-2">
-      <span class="label-text uppercase font-bold mr-1">only live object</span>
-      <input v-model="enabled" type="checkbox" class="toggle" />
-    </label>
+      <label class="label cursor-pointer btn-sm mr-2">
+        <span class="label-text uppercase font-bold mr-1">only live object</span>
+        <input v-model="enabled" type="checkbox" class="toggle" />
+      </label>
     </label>
 
     <button @click.prevent="submitCommand"

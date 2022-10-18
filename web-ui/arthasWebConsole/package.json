@@ -3,8 +3,10 @@
   "private": false,
   "version": "0.1.4",
   "scripts": {
-    "dev": "vite --port 8000",
-    "build": "vue-tsc --noEmit && vite build",
+    "dev": "vite --port 8000 --mode ui",
+    "dev:tunnel": "vite --port 8000 --mode tunnel",
+    "build": "vue-tsc --noEmit && vite build --mode ui",
+    "build:tunnel":"vue-tsc --noEmit && vite build --mode tunnel",
     "preview": "vite preview"
   },
   "dependencies": {

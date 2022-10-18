@@ -354,7 +354,7 @@ const resetClassloader = () => {
             <table class="table w-full group table-compact">
               <thead>
                 <tr>
-                  <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}</th>
+                  <th class="border border-slate-300 p-2 normal-case" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}</th>
                 </tr>
               </thead>
               <tbody class="">

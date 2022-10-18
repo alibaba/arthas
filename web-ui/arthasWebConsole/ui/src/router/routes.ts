@@ -37,10 +37,10 @@ const routes: RouteRecordRaw[] = [
         path: "jad",
         component: () => import("@/views/sync/Jad.vue"),
       },
-      {
-        path: "retransform",
-        component: () => import("@/views/sync/Retransform.vue"),
-      },
+      // {
+      //   path: "retransform",
+      //   component: () => import("@/views/sync/Retransform.vue"),
+      // },
       {
         path: "mbean",
         component: () => import("@/views/sync/Mbean.vue"),

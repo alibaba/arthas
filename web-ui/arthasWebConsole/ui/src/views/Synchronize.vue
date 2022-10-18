@@ -16,9 +16,9 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: "jad",
     url: "jad"
-  }, {
-    cmd: "retransform",
-    url: "retransform"
+  // }, {
+  //   cmd: "retransform",
+  //   url: "retransform"
   }, {
     cmd: "mbean",
     url: "mbean"

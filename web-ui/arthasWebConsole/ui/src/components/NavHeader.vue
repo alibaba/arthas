@@ -36,6 +36,7 @@ onBeforeMount(() => {
     value: vCmd
   })
   sessionM.send("INIT")
+  // fetchS.baseSubmit()
 })
 // 手动重来
 const reset = () => {
@@ -99,13 +100,13 @@ const resetAllClass = () => {
   }).then(response => {
     const result = (response as CommonRes).body.results[0]
     if (result.type === "reset") {
-      publicS.isSuccess=true
-    publicS.SuccessMessage = JSON.stringify(result.affect)
+      publicS.isSuccess = true
+      publicS.SuccessMessage = JSON.stringify(result.affect)
     }
 
   })
 }
-const tools:[string,()=>void][] = [
+const tools: [string, () => void][] = [
   ["forceGc", forceGc],
   ["shutdown", shutdown],
   ["reset class", resetAllClass]
@@ -114,19 +115,24 @@ const tools:[string,()=>void][] = [
 
 <template>
   <nav class=" h-[10vh] flex justify-between items-center min-h-max border-b-2 shadow-orange-300">
-    <a class="w-40 flex items-center justify-center" href="https://arthas.aliyun.com/doc/commands.html" target="_blank">
-      <img src="/arthas.png" alt="logo" class=" w-3/4" />
-    </a>
-
+    <div class="indicator mx-3">
+      <span class="indicator-item indicator-bottom indicator-end badge badge-ghost">v{{version}}</span>
+      <a class="flex items-center justify-center w-40" href="https://arthas.aliyun.com/doc/commands.html"
+        target="_blank">
+        <img src="/arthas.png" alt="logo" class=" w-3/4" />
+      </a>
+      
+    </div>
     <div class="flex items-center h-20">
-      <div class=" mr-4 bg-info text-info-content h-12 rounded-full flex justify-center items-center font-bold p-2">
-        sessionId: {{fetchS.sessionId}}</div>
-      <div class=" mr-4 bg-info text-info-content h-12 p-2 rounded-full flex justify-center items-center font-bold">
+      <!-- <div class=" mr-4 bg-info text-info-content h-12 rounded-full flex justify-center items-center font-bold p-2">
+        sessionId: {{fetchS.sessionId}}</div> -->
+      <!-- <div class=" mr-4 bg-info text-info-content h-12 p-2 rounded-full flex justify-center items-center font-bold">
         version:{{ version }}
-      </div>
+      </div> -->
       <button v-if="fetchS.jobRunning" @click.prevent="interruptEvent"
         class="btn-error btn rounded-full h-1/2 p-2 transition mr-4">interrupt</button>
-      <button class=" rounded-full btn btn-info btn-circle h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
+      <button class=" rounded-full btn btn-info btn-circle h-12 w-12 flex justify-center items-center mr-4 "
+        @click="reset">
         <refresh-icon class="h-3/4 w-3/4" :class="restBtnclass" />
       </button>
       <button class="hover:opacity-50 h-12 w-12 grid place-items-center  rounded-full mr-2 transition-all"
@@ -134,21 +140,31 @@ const tools:[string,()=>void][] = [
         <LogoutIcon class="h-1/2 w-1/2 text-error-content" @click="logout" v-if="fetchS.online" />
         <login-icon class="h-1/2 w-1/2 text-primary-content" @click="login" v-else />
       </button>
+      <!--
       <Menu as="div" class="relative mr-4">
-        <MenuButton
-          class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-primary transition">
+        <MenuButton class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-primary transition">
           <MenuIcon class="h-3/4 w-3/4 text-primary-content"></MenuIcon>
-          <!-- <XCirleIcon class="h-3/4 w-3/4"></XCirleIcon> -->
         </MenuButton>
         <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 z-10 w-40">
           <MenuItem v-slot="{ active }" v-for="(v,i) in tools" :key="i">
           <div :class='{ "bg-blue-500 text-primary-content": active }' class="px-4 py-2">
             <button @click.prevent="v[1]">{{v[0]}}</button>
           </div>
-
           </MenuItem>
         </MenuItems>
-      </Menu>
+      </Menu> -->
+      <div class="dropdown dropdown-hover dropdown-end mr-2">
+        <label tabindex="0" class="btn btn-ghost btn-circle m-1">
+          <MenuIcon class="h-3/5 w-3/5"></MenuIcon>
+        </label>
+        <ul tabindex="0" class="menu dropdown-content p-2 shadow-xl bg-base-200 rounded-box w-40">
+          <!-- <li><a>Item 1</a></li> 
+          <li><a>Item 2</a></li> -->
+          <li class="" v-for="(v,i) in tools" :key="i">
+            <a @click.prevent="v[1]">{{v[0]}}</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 </template>

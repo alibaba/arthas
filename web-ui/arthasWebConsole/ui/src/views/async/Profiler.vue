@@ -19,7 +19,7 @@ let eventList = reactive([] as string[]);
 let selectEvent = ref("cpu")
 let includesVal = reactive(new Set<string>())
 let excludesVal = reactive(new Set<string>())
-let framebuf = ref(1000000)
+let framebuf = ref(1_000_000)
 let duration = ref(300)
 let profilerStatus = ref({
   is: false,
@@ -29,6 +29,7 @@ let outputPath = ref("")
 let samples = ref(0)
 const support = ref(false)
 let fileformat = ref("%t-%p.html")
+
 const getStatusLoop = fetchS.getPollingLoop(() => {
   const statusM = interpret(permachine)
   fetchS.baseSubmit(statusM, {
@@ -55,7 +56,8 @@ const getStatusLoop = fetchS.getPollingLoop(() => {
 }, {
   step: 2000,
 })
-
+const handleFramebuf = publicS.numberCondition(framebuf, {})
+const handleduration = publicS.numberCondition(duration, {})
 const getSampleLoop = fetchS.getPollingLoop(() => {
   let statusM = interpret(permachine)
   fetchS.baseSubmit(statusM, {
@@ -227,8 +229,16 @@ onBeforeUnmount(() => {
           </ListboxOptions>
         </div>
       </Listbox>
-      <button class="btn btn-sm btn-outline mr-2" @click="changeDuration">duration :{{duration}}</button>
-      <button class="btn btn-sm btn-outline mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
+      <div class="btn-group mr-2">
+        <button class="btn btn-sm btn-outline" @click.prevent="handleduration.decrease">-</button>
+        <button class="btn btn-sm btn-outline border-x-0" @click.prevent="changeDuration">duration :{{duration}}</button>
+        <button class="btn btn-sm btn-outline" @click.prevent="handleduration.increase">+</button>
+      </div>
+      <div class="btn-group mr-2">
+        <button class="btn btn-sm btn-outline" @click.prevent="handleFramebuf.decrease">-</button>
+        <button class="btn btn-sm btn-outline border-x-0" @click.prevent="changeFramebuf">framebuf :{{framebuf}}</button>
+        <button class="btn btn-sm btn-outline" @click.prevent="handleFramebuf.increase">+</button>
+      </div>
       <button class="btn btn-sm btn-outline mr-2" @click="changeFile">file :<span
           class="normal-case">{{fileformat}}</span></button>
       <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
