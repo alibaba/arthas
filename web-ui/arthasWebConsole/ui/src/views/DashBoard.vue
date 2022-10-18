@@ -181,7 +181,7 @@ const setPri = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
-const {increase,decrease} = publiC.numberCondition(pri)
+const {increase,decrease} = publiC.numberCondition(pri,{min:1})
 const transformRuntimeInfo = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
   for (const key in result.runtimeInfo as RuntimeInfo) {

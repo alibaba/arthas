@@ -143,9 +143,13 @@ const getPerCounter = () => fetchS.baseSubmit(useInterpret(permachine), { action
 <template>
   <div class="p-2 h-[90vh] overflow-y-scroll">
     <article>
-      <div class="flex items-center">
-        <div class="btn-info btn my-2 btn-sm normal-case">workingDir</div>
+      <div class="flex items-center mb-2">
+        <div class="bage badge-info">workingDir</div>
         <div class="bg-base-200 w-full text-base-content pl-2"> {{ pwd }}</div>
+      </div>
+      <div class="flex items-center mb-2">
+        <div class="badge badge-info">sessionId</div>
+        <div class="bg-base-200 w-full text-base-content pl-2"> {{ fetchS.sessionId }}</div>
       </div>
       <CmdResMenu title="sysenv" :map="sysEnvMap" @click="getSysenv" />
       <CmdResMenu title="sysprop" :map="sysPropMap" @click="getSysprop" />

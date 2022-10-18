@@ -1,5 +1,5 @@
  <script setup lang="ts">
-import NavAside from "@/components/routeTo/NavAside.vue";
+// import NavAside from "@/components/routeTo/NavAside.vue";
 import NavHeader from "@/components/NavHeader.vue";
 import ErrDialog from "@/components/dialog/ErrDialog.vue";
 import SuccessDialog from "@/components/dialog/SuccessDialog.vue";
@@ -20,7 +20,7 @@ onBeforeUnmount(() => {
     <nav-header class="h-[10vh]"></nav-header>
     <div class=" flex-auto h-[90vh] overflow-auto">
       <div class="flex flex-row h-full">
-        <nav-aside ></nav-aside>
+        <!-- <nav-aside ></nav-aside> -->
         <div class="flex-auto overflow-auto h-[90vh] w-[90vw]">
           <router-view>
           </router-view>

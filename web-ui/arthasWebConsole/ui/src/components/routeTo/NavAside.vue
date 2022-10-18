@@ -39,7 +39,7 @@ const a: StatusResult = { type: "status", message: "", statusCode: 0 }
 </script>
 
 <template>
-  <ul class="menu bg-base-200 w-[10vw] menu-compact">
+  <ul class="menu bg-base-200 w-[10vw] menu-compact hidden ">
     <li v-for="(tab, idx) in tabs" :key="idx" 
       @click="toNext(tab.url)" class="pl-2" >
       <a class="break-all" :class="{ 'bg-primary text-primary-content': routePath.includes(tab.url), }">
