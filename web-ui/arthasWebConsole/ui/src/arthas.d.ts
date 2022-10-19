@@ -425,35 +425,17 @@ type CommandResult = {
   type: "perfcounter";
   } | {
     "classLoaderStats": Record<string,Record<"loadedCount"|"numberOfInstance",number>>
-    urlStats: never;
-    urls:never;
-    tree:never;
-    type: "classloader";
-} | {
-  type: "classloader";
-  urlStats: {
-    [x: `{hash":${string},"name:${string}}`]: {
-      unUsedUrls: string[];
-      usedUrls: string[];
+    urlStats: {
+      [x: `{hash":${string},"name:${string}}`]: {
+        unUsedUrls: string[];
+        usedUrls: string[];
+      };
     };
-  };
-  "classLoaderStats":never;
-  urls: never;
-  tree: never;
-} | {
-  type: "classloader";
-  urls: never;
-  "classLoaderStats";
-  urlStats:never;
-  classLoaders: ClassLoaderNode[];
-  tree: boolean;
-} | {
-  type: "classloader";
-  urls: string[];
-  urlStats:never;
-  "classLoaderStats":never;
-  tree: never;
-} | {
+    urls: string[];
+    classLoaders: ClassLoaderNode[];
+    tree: boolean;
+    type: "classloader";
+} |{
   classInfo: ClassInfo;
   detailed: true;
   type: "sc";

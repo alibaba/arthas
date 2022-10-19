@@ -140,9 +140,9 @@ const getCategorizedByClassType = () => {
 
       for (const name in result.classLoaderStats) {
         const map = new Map()
-        for (const key in result.classLoaderStats[name]) {
-          map.set(key, result.classLoaderStats[name][key])
-        }
+        map.set("loadedCount",result.classLoaderStats[name].loadedCount)
+        map.set("loadedCount",result.classLoaderStats[name].numberOfInstance)
+        // "loadedCount"|"numberOfInstance"
         map.set("name", name)
         tableResults.push(map)
       }
