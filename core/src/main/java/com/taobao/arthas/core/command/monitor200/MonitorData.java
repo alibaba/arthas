@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.util.Date;
+
 /**
  * 数据监控用的value for MonitorCommand
  *
@@ -12,6 +14,7 @@ public class MonitorData {
     private int success;
     private int failed;
     private double cost;
+    private Date timestamp;
 
     public String getClassName() {
         return className;
@@ -59,5 +62,16 @@ public class MonitorData {
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public Date getTimestamp() {
+        if (timestamp == null) {
+            timestamp = new Date();
+        }
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

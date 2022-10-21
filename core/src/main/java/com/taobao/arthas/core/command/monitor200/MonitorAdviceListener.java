@@ -160,6 +160,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
                 MonitorData oData = value.get();
                 MonitorData nData = new MonitorData();
                 nData.setCost(oData.getCost() + cost);
+                nData.setTimestamp(new Date());
                 if (isThrowing) {
                     nData.setFailed(oData.getFailed() + 1);
                     nData.setSuccess(oData.getSuccess());
