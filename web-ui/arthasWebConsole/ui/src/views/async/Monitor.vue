@@ -68,7 +68,7 @@ const chartContext: {
   count: number,
   myChart?: ECharts,
   costChart?: ECharts,
-  categories: number[],
+  categories: string[],
   data: number[],
   cur: number,
   max: number,
@@ -85,7 +85,7 @@ const chartContext: {
   successData: [],
   failureData: [],
 }
-for (let i = 0; i < chartContext.count; i++) { chartContext.categories[i] = i + 1 }
+// for (let i = 0; i < chartContext.count; i++) { chartContext.categories[i] = i + 1 }
 
 const chartOption = {
   tooltip: {
@@ -107,8 +107,12 @@ const chartOption = {
   xAxis: [
     {
       type: 'category',
-      boundaryGap: true,
-      data: chartContext.categories
+      data: chartContext.categories,
+      axisLabel: {
+        formatter(value: string){
+          return value.split(" ")[1]
+        }
+      } 
     }
   ],
   yAxis: [{
@@ -152,10 +156,14 @@ const costOption = {
     }
   },
   xAxis: [
-    {
+  {
       type: 'category',
-      boundaryGap: true,
-      data: chartContext.categories
+      data: chartContext.categories,
+      axisLabel: {
+        formatter(value: string){
+          return value.split(" ")[1]
+        }
+      } 
     }
   ],
   yAxis: [
@@ -180,11 +188,13 @@ const updateChart = (data: MonitorData) => {
     chartContext.data.shift()
     chartContext.successData.shift()
     chartContext.failureData.shift()
+    chartContext.categories.shift()
     chartContext.cur--
   }
   chartContext.data.push(data.cost)
   chartContext.failureData.push(data.failed)
   chartContext.successData.push(data.success)
+  chartContext.categories.push(data.timestamp)
   chartContext.cur++
 
   chartContext.myChart!.setOption<EChartsOption>({
@@ -291,10 +301,10 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   let cycle = `-c ${cycleV.value}`
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `monitor -c 5 ${data.classItem.value} ${data.methodItem.value} ${condition}`,
+    command: `monitor ${cycle} ${data.classItem.value} ${data.methodItem.value} ${condition}`,
     sessionId: undefined
   }).then(
-    res => loop.open()
+    _res => loop.open()
   )
 }
 </script>

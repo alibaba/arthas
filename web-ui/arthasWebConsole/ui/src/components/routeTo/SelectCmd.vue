@@ -11,7 +11,7 @@ const routePath = computed(() => route.path)
 </script>
 
 <template>
-  <ul class=" w-[10vw] menu bg-base-300 menu-compact">
+  <ul class=" w-[10vw] menu bg-base-200 menu-compact">
     <li v-for="(v, i) in routes" :key="i">
       <a @click="() => router.push(v.url)" :class='{"bg-secondary text-secondary-content":routePath.includes(v.url)}'>
         {{ v.cmd }}

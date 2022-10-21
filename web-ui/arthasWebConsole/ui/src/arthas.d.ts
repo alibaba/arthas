@@ -369,6 +369,7 @@ type MonitorData = {
   methodName: number;
   success: number;
   total: number;
+  timestamp:string;
 };
 type CommandResult = {
   type: "command";

@@ -24,8 +24,12 @@ const vCmd: CommandReq = {
 const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 publicS.getCommonResEffect(fetchM, body => {
   const result = body.results[0]
-  if (result.type === "version") version.value = result.version
-})
+  if (result.type === "version") {
+    let _raw = result.version.split(".")
+    if(_raw.length === 4) _raw.length = 3 
+    version.value = _raw.join(".")
+
+  }})
 
 watchEffect(() => {
   if (!fetchS.wait) restBtnclass.value = "animate-spin-rev-pause"
@@ -151,7 +155,7 @@ const toNext = (url: string) => {
   <nav class=" h-[10vh] border-b-2 navbar">
     <div class=" navbar-start">
       <div class=" indicator mx-3">
-        <span class="indicator-item indicator-bottom indicator-end badge badge-ghost">v{{version}}</span>
+        <span class="indicator-item indicator-bottom indicator-end badge badge-ghost -right-3">v{{version}}</span>
         <a class="flex items-center justify-center w-40" href="https://arthas.aliyun.com/doc/commands.html"
           target="_blank">
           <img src="/arthas.png" alt="logo" class=" w-3/4" />
