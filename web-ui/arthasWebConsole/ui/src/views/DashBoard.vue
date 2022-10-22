@@ -181,7 +181,7 @@ const setPri = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
-const {increase,decrease} = publiC.numberCondition(pri,{min:1})
+const { increase, decrease } = publiC.numberCondition(pri, { min: 1 })
 const transformRuntimeInfo = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
   for (const key in result.runtimeInfo as RuntimeInfo) {
@@ -458,9 +458,10 @@ onBeforeUnmount(async () => {
       <div id="nonheapMemory" class="w-80 h-80 flex-1 input-btn-style mr-4"></div>
       <div id="bufferPoolMemory" class="w-80 h-80 flex-1 input-btn-style"></div>
     </div>
+
     <div class="w-full flex justify-start items-start flex-1">
       <div id="gc-info" class="w-[40rem] h-80 input-btn-style p-2 mr-4"></div>
-      <div class="input-btn-style overflow-auto flex-1 h-80">
+      <div class="input-btn-style flex-1 h-80 overflow-auto w-0">
         <div class="flex justify-end mb-2">
           <div class="btn-group">
             <button class="btn btn-sm btn-outline" @click="decrease">-</button>
@@ -469,16 +470,18 @@ onBeforeUnmount(async () => {
           </div>
         </div>
         <div class="overflow-x-auto">
-          <table class="table table-compact w-full group">
+          <table class="table table-compact w-full">
             <thead>
               <tr>
-                <th class="border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}
+                <th></th>
+                <th v-for="(v,i) in keyList" :key="i" class="normal-case">{{v}}
                 </th>
               </tr>
             </thead>
-            <tbody class="">
-              <tr v-for="(map, i) in tableResults" :key="i">
-                <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
+            <tbody>
+              <tr v-for="(map, i) in tableResults" :key="i" class="hover">
+                <th>{{i + 1}}</th>
+                <td v-for="(key,j) in keyList" :key="j">
                   {{map.get(key)}}
                 </td>
               </tr>

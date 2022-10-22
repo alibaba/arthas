@@ -40,7 +40,7 @@ import {
 import {
   SVGRenderer
 } from 'echarts/renderers';
-import { ECharts} from 'echarts/core';
+import { ECharts } from 'echarts/core';
 
 echarts.use(
   [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, DataZoomComponent, BarChart, LineChart, SVGRenderer, UniversalTransition]
@@ -63,6 +63,10 @@ const modelist: { name: string, value: string }[] = [
 ]
 const mode = ref(modelist[1])
 
+const averageRT = ref({
+  totalCost: 0,
+  totalCount: 0,
+})
 
 const chartContext: {
   count: number,
@@ -109,10 +113,10 @@ const chartOption = {
       type: 'category',
       data: chartContext.categories,
       axisLabel: {
-        formatter(value: string){
+        formatter(value: string) {
           return value.split(" ")[1]
         }
-      } 
+      }
     }
   ],
   yAxis: [{
@@ -156,29 +160,28 @@ const costOption = {
     }
   },
   xAxis: [
-  {
+    {
       type: 'category',
       data: chartContext.categories,
       axisLabel: {
-        formatter(value: string){
+        formatter(value: string) {
           return value.split(" ")[1]
         }
-      } 
+      }
     }
   ],
   yAxis: [
     {
       type: 'value',
       scale: true,
-      name: 'cost(ms)',
+      name: 'rt(ms)',
       min: 0,
-      boundaryGap: [0.2, 0.2]
     }
   ],
   series: [
     {
-      name: 'cost',
-      type: 'bar',
+      name: 'rt',
+      type: 'line',
       data: chartContext.data
     }
   ]
@@ -191,7 +194,7 @@ const updateChart = (data: MonitorData) => {
     chartContext.categories.shift()
     chartContext.cur--
   }
-  chartContext.data.push(data.cost)
+  chartContext.data.push(data.cost / data.total)
   chartContext.failureData.push(data.failed)
   chartContext.successData.push(data.success)
   chartContext.categories.push(data.timestamp)
@@ -296,12 +299,13 @@ onBeforeUnmount(() => {
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string }) => {
   enhancer.value = undefined
   // tableResults.length = 0
-
+  averageRT.value.totalCost =0
+  averageRT.value.totalCount = 0
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let cycle = `-c ${cycleV.value}`
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `monitor ${cycle} ${data.classItem.value} ${data.methodItem.value} ${condition}`,
+    command: `monitor ${cycle} ${data.classItem.value as string} ${data.methodItem.value} ${condition}`,
     sessionId: undefined
   }).then(
     _res => loop.open()
@@ -331,7 +335,9 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <button class="btn btn-sm btn-outline" @click="changeCycle">cycle time:{{cycleV}}</button>
     </template>
   </MethodInput>
-  <Enhancer :result="enhancer" v-if="enhancer" class="mb-4"></Enhancer>
+  <Enhancer :result="enhancer" v-if="enhancer" class="mb-4">
+
+  </Enhancer>
   <div id="monitorchart" class="input-btn-style h-60 w-full pointer-events-auto transition mb-2"></div>
   <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div>
 

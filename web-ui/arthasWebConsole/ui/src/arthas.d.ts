@@ -68,7 +68,7 @@ type AsyncReq = SessionId<
     } | {
       command: StringInclude<"stack", 3>;
     } | {
-      command: `monitor -c ${number} ${string} ${string}`;
+      command: `monitor ${string} ${string} ${string} ${string}`;
     } | {
       command: `trace ${string} ${string}`;
     } | {

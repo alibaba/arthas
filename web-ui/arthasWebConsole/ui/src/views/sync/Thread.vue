@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import machine from '@/machines/consoleMachine';
 import { useInterpret, } from '@xstate/vue';
-import { onBeforeMount, reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref, computed } from 'vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
@@ -10,7 +10,7 @@ import {
 } from '@headlessui/vue';
 import { transfromStore } from "@/stores/resTransform"
 import permachine from '@/machines/perRequestMachine';
-import { computed } from '@vue/reactivity';
+import { watch } from 'fs';
 
 const fetchS = fetchStore()
 const FetchService = useInterpret(permachine)
@@ -43,7 +43,8 @@ const keyList: thkey[] = [
   "blockedCount",
   "blockedTime",
 ]
-const statsList: (keyof ThreadStats)[] = ["id",
+const statsList: (keyof ThreadStats)[] = [
+  "id",
   "name",
   "cpu",
   "daemon",
@@ -62,9 +63,15 @@ const infoCount = ref({
   TERMINATED: 0
 } as ThreadStateCount)
 const tableResults = reactive([] as Map<string, string>[])
+const limitResults = tableResults
+// watchEffect(()=>{
+//   if(count.value > 0) {
+//     tableResults.length = count.value
+//   }
+// })
 const tableFilter = computed(() => {
   // 原本的数组
-  let res = tableResults
+  let res = count.value > 0 ? tableResults.filter((v, i)=>i < count.value) : tableResults
   if (includesVal.size === 0) return res;
   // 导入过滤条件
   includesVal.forEach((v1) => {
@@ -106,8 +113,9 @@ onBeforeMount(() => {
 })
 const getThreads = () => {
   let i = leastTime.value > 0 ? "-i " + leastTime.value : ""
-  let n = count.value > 0 ? "-n " + count.value : ""
-  const b = isBlock.value ? "-b" : ""
+  // 在block时用这个参数会暴毙
+  let n = count.value > 0 && !isBlock ? "-n " + count.value : ""
+  const b = isBlock.value ? "-b --lockedMonitors  --lockedSynchronizers" : ""
   let state = threadState.value.value === "" ? "" : `--state ${threadState.value.value}`
   tableResults.length = 0
   for (const key in infoCount.value) {
@@ -173,12 +181,12 @@ const setleast = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
-
+const {increase, decrease} = publiC.numberCondition(count,{min:0})
 const getSpecialThreads = (threadid: number = -1) => {
   let threadName = threadid > 0 ? `${threadid}` : ""
   fetchS.baseSubmit(FetchService, {
     action: "exec",
-    command: `thread ${threadName}`
+    command: `thread ${threadName} `
   }).then(res => {
     const result = (res as CommonRes).body.results[0]
     if (result.type === "thread") {
@@ -196,7 +204,11 @@ const getSpecialThreads = (threadid: number = -1) => {
 
       <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
       <button class="btn ml-2 btn-sm btn-outline" @click="setleast">sample interval:{{leastTime}}</button>
-      <button v-show="!isBlock" class="btn ml-2 btn-sm btn-outline" @click="setlimit"> top n threads:{{count}}</button>
+      <div class="btn-group ml-2" v-show="!isBlock">
+        <button class="btn btn-outline btn-sm" @click.prevent="decrease">-</button>
+        <button class="btn btn-outline btn-sm border-x-0" @click.prevent="setlimit">top threads:{{count}}</button>
+        <button class="btn btn-outline btn-sm" @click.prevent="increase">+</button>
+      </div>
       <Listbox v-model="threadState">
         <div class=" relative mx-2 ">
           <ListboxButton class="btn w-40 btn-sm btn-outline">state {{ threadState.name }}</ListboxButton>
@@ -231,31 +243,31 @@ const getSpecialThreads = (threadid: number = -1) => {
         </div>
       </div>
       <div class="overflow-auto h-[40vh] w-full">
-        <table class="table w-full group">
+        <table class="table w-full">
           <thead>
             <tr>
-              <th class="border border-slate-300 p-2 group-first:z-0">get stackTrace</th>
-              <template v-if="count===0">
-                <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+              <th class=""></th>
+              <template v-if="count === 0">
+                <th class="normal-case" v-for="(v,i) in keyList" :key="i">{{v}}</th>
               </template>
               <template v-else>
-                <th class="border border-slate-300 p-2" v-for="(v,i) in statsList" :key="i">{{v}}</th>
+                <th class="normal-case" v-for="(v,i) in statsList" :key="i">{{v}}</th>
               </template>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(map, i) in tableFilter" :key="i">
-              <td class="border border-slate-300 p-2"><button class="btn-outline btn-primary btn btn-sm"
+              <th class="2"><button class="btn-outline btn-primary btn btn-sm"
                   @click="getSpecialThreads(parseInt(map.get('id')!))" v-if="map.get('id')!=='-1'">
                   get stackTrace
-                </button></td>
+                </button></th>
               <template v-if="count === 0">
-                <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
+                <td class="" v-for="(key,j) in keyList" :key="j">
                   {{map.get(key)}}
                 </td>
               </template>
               <template v-else>
-                <td class="border border-slate-300 p-2" v-for="(key,j) in statsList" :key="j">
+                <td class="" v-for="(key,j) in statsList" :key="j">
                   {{map.get(key)}}
                 </td>
               </template>

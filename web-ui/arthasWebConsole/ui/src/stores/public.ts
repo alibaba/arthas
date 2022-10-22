@@ -100,10 +100,10 @@ export const publicStore = defineStore("public", { // Public项目唯一id
     ) {
       return {
         increase() {
-          (!scope.max || raw.value < scope.max ) && raw.value++;
+          (scope.max === undefined || raw.value < scope.max ) && raw.value++;
         },
         decrease() {
-          (!scope.min || raw.value > scope.min ) && raw.value--;
+          (scope.min === undefined || raw.value > scope.min ) && raw.value--;
         },
       };
     },

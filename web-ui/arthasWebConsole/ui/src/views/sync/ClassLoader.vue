@@ -140,8 +140,8 @@ const getCategorizedByClassType = () => {
 
       for (const name in result.classLoaderStats) {
         const map = new Map()
-        map.set("loadedCount",result.classLoaderStats[name].loadedCount)
-        map.set("loadedCount",result.classLoaderStats[name].numberOfInstance)
+        map.set("loadedCount", result.classLoaderStats[name].loadedCount)
+        map.set("numberOfInstance", result.classLoaderStats[name].numberOfInstance)
         // "loadedCount"|"numberOfInstance"
         map.set("name", name)
         tableResults.push(map)
@@ -250,7 +250,8 @@ const resetClassloader = () => {
                     </span>
                   </div>
                   <!-- <div class="">count:{{data[0]}}</div> -->
-                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="btn btn-primary btn-xs btn-outline opacity-0 group-hover:opacity-100"
+                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})"
+                    class="btn btn-primary btn-xs btn-outline opacity-0 group-hover:opacity-100"
                     v-if="data[2]!== 'null'">
                     select classloader
                   </button>
@@ -260,13 +261,12 @@ const resetClassloader = () => {
           </div>
         </div>
       </div>
-      
-      <div class="w-1/3 ml-2 overflow-y-scroll transition-all duration-500" :class='{
+
+      <div class=" ml-2 overflow-y-scroll transition-all duration-500" :class='{
         "w-0":loaderCache.hash === "",
-        "input-btn-style":loaderCache.hash !==""
+        "input-btn-style w-1/3":loaderCache.hash !==""
       }'>
 
-        <!-- <div class="overflow-auto h-full"> -->
         <div class="mb-2">
           <div class="overflow-auto">
             <span class="bg-primary-focus px-2 rounded-l text-primary-content border border-primary-focus">
@@ -293,7 +293,6 @@ const resetClassloader = () => {
             </span>
           </div>
         </div>
-        
         <template v-if="loaderCache.hash.trim() !== ''">
           <div class="flex mb-2 w-full">
             <div class=" cursor-default 
@@ -351,20 +350,26 @@ const resetClassloader = () => {
               <button class="btn btn-primary btn-sm" @click="getCategorizedByClassType">refresh</button>
             </div>
             <div class="overflow-auto">
-            <table class="table w-full group table-compact">
-              <thead>
-                <tr>
-                  <th class="border border-slate-300 p-2 normal-case" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}</th>
-                </tr>
-              </thead>
-              <tbody class="">
-                <tr v-for="(map, i) in tableResults" :key="i">
-                  <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
-                    {{map.get(key)}}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              <table class="table w-full table-compact">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th class=" normal-case" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i==0}">{{v}}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="">
+                  <tr v-for="(map, i) in tableResults" :key="i">
+                    <th>{{i + 1}}</th>
+                    <template v-for="(key, j) in keyList">
+                      <td class="">
+                        {{map.get(key)}}
+                      </td>
+                    </template>
+
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
