@@ -59,7 +59,7 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 
 - [grep](grep.md)- filter the result with the given keyword
 - plaintext - remove the ANSI color
-- wc - count lines
+- [wc](wc.md) - count lines
 
 ## async jobs
 

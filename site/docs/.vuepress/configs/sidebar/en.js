@@ -72,6 +72,7 @@ export const sidebarEN = {
             "/en/doc/cls.md",
             "/en/doc/echo.md",
             "/en/doc/grep.md",
+            "/en/doc/wc.md",
             "/en/doc/help.md",
             "/en/doc/history.md",
             "/en/doc/keymap.md",
