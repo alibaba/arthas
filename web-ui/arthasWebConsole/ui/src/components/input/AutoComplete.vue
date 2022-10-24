@@ -91,7 +91,7 @@ const blurF = (event:Event)=>{
             'bg-blue-600 text-white': selected,
             'text-gray-900': !active && !selected,
           }">
-            <span class="block truncate"
+            <span class="block"
               :class="{ 'font-medium': selected, 'font-normal': !selected, 'text-white': active, 'text-teal-600': !active && !selected }">
               {{ item.name }}
             </span>

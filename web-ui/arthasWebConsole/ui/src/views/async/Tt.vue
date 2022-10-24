@@ -353,7 +353,6 @@ const searchTt = () => {
                 </div>
               </div>
             </td>
-
           </tr>
         </tbody>
         <tfoot>

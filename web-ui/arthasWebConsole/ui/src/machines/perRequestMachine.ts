@@ -276,8 +276,8 @@ const permachine = createMachine({
           isErr: true,
           ErrMessage: context.err,
         });
-      } else{
-        console.error(context.err)
+      } else {
+        console.error(context.err);
       }
       return {
         err: "",
@@ -302,14 +302,13 @@ const permachine = createMachine({
       };
     }),
     needReportSuccess: (context, e) => {
-      
       if (context.inputValue?.action === "close_session") {
         context.fetchStore.$patch({
           sessionId: "",
           consumerId: "",
           online: false,
         });
-        if(context.publicStore.ignore) return;
+        if (context.publicStore.ignore) return;
         context.publicStore.$patch({
           isSuccess: true,
           SuccessMessage: `close session success!`,
@@ -323,7 +322,7 @@ const permachine = createMachine({
           consumerId: response.consumerId,
           online: true,
         });
-        if(context.publicStore.ignore) return;
+        if (context.publicStore.ignore) return;
         context.publicStore.$patch({
           isSuccess: true,
           SuccessMessage: `init_session success!`,
@@ -391,7 +390,27 @@ const permachine = createMachine({
         if (Object.hasOwn(event.data, "body")) {
           if (Object.hasOwn(event.data.body, "results")) {
             return (event.data as CommonRes).body.results.every((result) => {
-              return result.type === "status" ? result.statusCode === 0 : true;
+              if (result.type === "status" && result.statusCode !== 0) {
+                return false;
+              }
+              if (
+                result.type === "message" &&
+                result.message ===
+                  "all consumers are unhealthy, current job was interrupted."
+              ) {
+                return false;
+              }
+              if (
+                result.type === "options" &&
+                Object.hasOwn(result, "changeResult") &&
+                (result.changeResult.afterValue as string).toString() !==
+                  (context.inputValue as CommandReq).command.split(" ")[2]
+              ) {
+                // console.warn("?????");
+                // arthas 本身不会对 options抛错，得手动抛错
+                return false;
+              }
+              return true;
             });
           } else {
             return ["READY", "TERMINATED"].includes(

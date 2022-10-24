@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      emptyOutDir: false,
+      emptyOutDir: true,
       outDir,
       minify: "esbuild",
       rollupOptions: {

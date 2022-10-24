@@ -51,6 +51,8 @@ export const fetchStore = defineStore("fetch", {
     jobIdSet: new Set<string>(),
     //由于轮询只会轮询一个命令，可以直接挂载当前的轮询机
     curPolling: nullLoop,
+    //获取osName 通过dashboard
+    osName:""
   }),
   getters: {
     getRequest: (state) =>

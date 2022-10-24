@@ -8,9 +8,8 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import { onMounted, ref, onBeforeMount } from 'vue';
+import { onMounted, ref } from 'vue';
 const store = publicStore()
-const debug = (e: any) => console.log(e)
 
 const inputV = ref("")
 onMounted(() => {
@@ -20,10 +19,11 @@ onMounted(() => {
 
 function setIsOpen() {
   store.inputVal = inputV.value
-  console.log(store.inputVal, inputV.value)
+  store.inputE = true
   store.isInput = false
 }
 function setIsOpenCancel() {
+  store.inputE = false
   store.isInput = false
 }
 </script>
@@ -33,9 +33,9 @@ function setIsOpenCancel() {
     <Dialog @close="setIsOpenCancel" class="min-w-max z-20">
       <TransitionChild enter="transition-opacity duration-300" enter-from="opacity-0" enter-to="opacity-100"
         leave="transition-opacity duration-300" leave-from="opacity-100" leave-to="opacity-0">
-        <div class="fixed inset-0 bg-black bg-opacity-25" />
+        <div class="fixed inset-0 bg-black bg-opacity-25 z-20" />
       </TransitionChild>
-      <div class="fixed inset-0 grid place-items-center min-w-max">
+      <div class="fixed inset-0 grid place-items-center min-w-max z-30">
         <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
           enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95">

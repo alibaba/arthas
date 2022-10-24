@@ -8,11 +8,31 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/config",
     component: () => import("@/views/Config.vue"),
+    children:[
+      {
+        path:"",
+        redirect:"/config/perCounter"
+      },  {
+        path: "perCounter",
+        component:()=>import("@/views/config/PerCounter.vue")
+      },{
+        path:"sysenv",
+        component:()=>import("@/views/config/Sysenv.vue")
+      },{
+        path:"sysprop",
+        component:()=>import("@/views/config/Sysprop.vue")
+      },{
+        path:"jvm",
+        component:()=>import("@/views/config/Jvm.vue")
+      },{
+        path:"vmoption",
+        component:()=>import("@/views/config/Vmoption.vue")
+      },{
+        path:"options",
+        component:()=>import("@/views/config/Options.vue")
+      }
+    ]
   },
-  // {
-  //   path: "/console",
-  //   component: () => import("@/views/Console.vue"),
-  // },
   {
     path: "/dashboard",
     component: () => import("@/views/DashBoard.vue"),
@@ -29,14 +49,11 @@ const routes: RouteRecordRaw[] = [
         path: "thread",
         component: () => import("@/views/sync/Thread.vue"),
       },
-      // {
-      //   path: "memory",
-      //   component: () => import("@/views/sync/Memory.vue"),
-      // },
       {
         path: "jad",
         component: () => import("@/views/sync/Jad.vue"),
       },
+      
       // {
       //   path: "retransform",
       //   component: () => import("@/views/sync/Retransform.vue"),

@@ -96,9 +96,9 @@ const filterfn = (_: any, item: Item) => true
       :input-fn="(value: string) => changeMethod(slotClass.selectItem.value as string, value)" :filter-fn="filterfn"
       v-slot="slotMethod">
       <button v-if="nexpress" class="btn btn-sm btn-outline ml-2"
-        @click.prevent="setExpress">express:{{express}}</button>
+        @click.prevent="setExpress">express: <span class="normal-case">{{express}}</span></button>
       <button v-if="ncondition" class="btn btn-sm btn-outline ml-2"
-        @click.prevent="setConditon">condition:{{conditon}}</button>
+        @click.prevent="setConditon">condition: <span class="normal-case">{{conditon}}</span></button>
       <div class="btn-group ml-2" v-if="ncount">
         <button class="btn btn-sm btn-outline" @click.prevent="decrease">-</button>
         <button class="btn btn-sm btn-outline border-x-0" @click.prevent="setCount">count:{{autoStop}}</button>
