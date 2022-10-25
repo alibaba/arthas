@@ -127,6 +127,9 @@ const routes: RouteRecordRaw[] = [
         component: ()=>import("@/views/async/Profiler.vue")
       }
     ],
-  },
+  },{
+    path:"/console",
+    component:()=>import("@/views/Console.vue")
+  }
 ];
 export default routes;

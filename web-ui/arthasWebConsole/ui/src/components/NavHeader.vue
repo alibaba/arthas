@@ -25,9 +25,6 @@ const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> =
 publicS.getCommonResEffect(fetchM, body => {
   const result = body.results[0]
   if (result.type === "version") {
-    // let _raw = result.version.split(".")
-    // if(_raw.length === 4) _raw.length = 3 
-    // version.value = _raw.join(".")
     version.value = result.version
   }})
 
@@ -133,10 +130,14 @@ const tabs = [
   },
   {
     name: 'console',
-    url: 'console',
+    url: '/console',
     icon: TerminalIcon
   },
-
+  {
+    name:'terminal',
+    url:'terminal',
+    icon:TerminalIcon
+  }
 ]
 
 const tools: [string, () => void][] = [
@@ -147,7 +148,7 @@ const tools: [string, () => void][] = [
 const router = useRouter()
 const routePath = computed(() => useRoute().path)
 const toNext = (url: string) => {
-  if(url === "console") {
+  if(url === "terminal") {
     window.open("/","_blank")
   } else router.push(url)
 }
