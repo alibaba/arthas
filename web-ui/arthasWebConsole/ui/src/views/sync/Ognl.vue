@@ -23,6 +23,7 @@ const setDepth = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
+const {increase, decrease} = publiC.numberCondition(depth,{min:1})
 const setHash = publiC.inputDialogFactory(
   hashcode,
   (raw) => raw,
@@ -67,7 +68,11 @@ const getSource = () => {
         <input type="text" v-model="express"
           class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none">
       </div>
-      <button class="btn btn-sm btn-outline mr-2" @click.prevent="setDepth">depth:{{depth}}</button>
+      <div class="btn-group mr-2">
+        <button class="btn btn-outline btn-sm" @click.prevent="decrease">-</button>
+        <button class="btn btn-outline btn-sm border-x-0" @click.prevent="setDepth">depth:{{depth}}</button>
+        <button class="btn btn-outline btn-sm" @click.prevent="increase">+</button>
+      </div>
       <button class="btn btn-sm btn-outline mr-2" @click.prevent="setClassLoader" v-if="hashcode === ''">ClassLoaderClass:{{classloaderName}}</button>
       <button class="btn btn-sm btn-outline mr-2" @click.prevent="setHash" v-if="classloaderName === ''">hashcode:{{hashcode}}</button>
     </label>

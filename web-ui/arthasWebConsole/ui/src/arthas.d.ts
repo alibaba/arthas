@@ -1,4 +1,3 @@
-
 type SessionAction =
   | "join_session"
   | "init_session"
@@ -68,7 +67,7 @@ type AsyncReq = SessionId<
     } | {
       command: StringInclude<"stack", 3>;
     } | {
-      command: `monitor -c ${number} ${string} ${string}`;
+      command: `monitor ${string} ${string} ${string} ${string}`;
     } | {
       command: `trace ${string} ${string}`;
     } | {
@@ -88,6 +87,7 @@ type CommandReq = CommonAction<
       | "sysenv"
       | "version"
       | "sysprop"
+      | `sysprop ${string} ${string}`
       | "pwd"
       | "jvm"
       | "memory"
@@ -114,6 +114,8 @@ type CommandReq = CommonAction<
       | `profiler ${"list" | "status" | "stop" | "resume" | "getSamples"}`
       | `profiler ${string}`
       | `stop`
+      | `options`
+      | `options ${string} ${string}`
       | `ognl ${string}`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
@@ -362,6 +364,12 @@ type TimeFragment = {
   "throwExp": string;
   "timestamp": string;
 };
+type Perfcounter = {
+  name: string;
+  units: string;
+  value: string | number;
+  variability: string;
+};
 type MonitorData = {
   className: string;
   cost: number;
@@ -369,6 +377,15 @@ type MonitorData = {
   methodName: number;
   success: number;
   total: number;
+  timestamp: string;
+};
+type GlobalOptions = {
+  "description": string;
+  "level": number;
+  "name": string;
+  "summary": string;
+  "type": string;
+  "value": string;
 };
 type CommandResult = {
   type: "command";
@@ -403,6 +420,14 @@ type CommandResult = {
   busyThreads: never;
   type: "thread";
 } | {
+  options: GlobalOptions[];
+  changeResult: {
+    "afterValue": unknown,
+    "beforeValue": unknown,
+    "name": string
+};
+  type: "options";
+} | {
   all: boolean;
   threadStateCount: never;
   busyThreads: BusyThread[];
@@ -416,43 +441,23 @@ type CommandResult = {
   memoryInfo: MemoryInfo;
   type: "memory";
 } | {
-  perfCounters: {
-    name: string;
-    units: string;
-    value: string | number;
-    variability: string;
-  }[];
+  perfCounters: Perfcounter[];
   type: "perfcounter";
-  } | {
-    "classLoaderStats": Record<string,Record<"loadedCount"|"numberOfInstance",number>>
-    urlStats: never;
-    urls:never;
-    tree:never;
-    type: "classloader";
 } | {
-  type: "classloader";
+  "classLoaderStats": Record<
+    string,
+    Record<"loadedCount" | "numberOfInstance", number>
+  >;
   urlStats: {
     [x: `{hash":${string},"name:${string}}`]: {
       unUsedUrls: string[];
       usedUrls: string[];
     };
   };
-  "classLoaderStats":never;
-  urls: never;
-  tree: never;
-} | {
-  type: "classloader";
-  urls: never;
-  "classLoaderStats";
-  urlStats:never;
+  urls: string[];
   classLoaders: ClassLoaderNode[];
   tree: boolean;
-} | {
   type: "classloader";
-  urls: string[];
-  urlStats:never;
-  "classLoaderStats":never;
-  tree: never;
 } | {
   classInfo: ClassInfo;
   detailed: true;

@@ -15,14 +15,12 @@ onBeforeMount(()=>{
 })
 
 const submitCommand = ()=>{
-  console.log('别报错了')
   fetchM.send({ type: 'SUBMIT', value: val.value})
 }
-
 </script>
 
 <template>
-  <div class="flex flex-col p-2">
+  <div class="flex flex-col ">
     <form class="h-[10vh] flex items-center border shadow" @submit.prevent="submitCommand">
       <label for="command-input" class=" m-2 ">command:</label>
       <div class=" flex-auto grid place-items-start">
@@ -47,4 +45,4 @@ const submitCommand = ()=>{
 </template>
 
 <style scoped>
-</style>·
+</style>

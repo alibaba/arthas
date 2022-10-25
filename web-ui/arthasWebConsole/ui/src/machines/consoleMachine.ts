@@ -406,7 +406,18 @@ const machine =
                   result.message ===
                     "all consumers are unhealthy, current job was interrupted."
                 ) {
+                  
                   return false;
+                }
+                if (
+                  result.type === "options" &&
+                  Object.hasOwn(result, "changeResult") &&
+                  result.changeResult.afterValue === result.changeResult.beforeValue &&
+                  (result.changeResult.afterValue as string).toString() !== (context.inputValue as CommandReq).command.split(" ")[2]
+                ) {
+                  console.log("?????")
+                  // arthas 本身不会对 options抛错，得手动抛错
+                  return false
                 }
                 return true;
               });

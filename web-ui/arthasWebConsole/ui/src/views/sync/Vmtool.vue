@@ -11,6 +11,7 @@ const gcMachine = useInterpret(permachine)
 const fetchS = fetchStore()
 const publicS = publicStore()
 const depth = ref(1)
+const {increase, decrease} = publicS.numberCondition(depth,{min:1})
 const setDepth = publicS.inputDialogFactory(
   depth,
   (raw) => {
@@ -87,7 +88,11 @@ const getInstance = (data:{classItem:Item}) => {
 
   <ClassInput :submit-f="getInstance" class="mb-4" >
     <template #others>
-      <button class="ml-2 btn btn-outline btn-sm" @click="setDepth">depth:{{depth}}</button>
+      <div class="btn-group ml-2">
+        <button class="btn btn-outline btn-sm" @click.prevent="decrease">-</button>
+        <button class="btn btn-outline btn-sm border-x-0" @click.prevent="setDepth">depth:{{depth}}</button>
+        <button class="btn btn-outline btn-sm" @click.prevent="increase">+</button>
+      </div>
     </template>
   </ClassInput>
   <template v-if="pollResults.length > 0">

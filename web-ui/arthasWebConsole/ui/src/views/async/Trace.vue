@@ -126,7 +126,7 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, cou
   <MethodInput :submit-f="submit" class="mb-2" ncondition ncount>
     <template #others>
 
-      <label class="label cursor-pointer btn-sm border border-neutral ml-2">
+      <label class="label cursor-pointer btn-sm ml-2">
           <span class="label-text uppercase font-bold mr-1">skip JDK Method</span>
           <input v-model="enabled" type="checkbox" class="toggle"/>
         </label>

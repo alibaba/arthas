@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue';
-import { onBeforeMount, Ref, ref, watchEffect } from 'vue';
+import { computed, onBeforeMount, Ref, ref, watchEffect } from 'vue';
 import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon, XCircleIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
 import machine from "@/machines/consoleMachine"
 import { publicStore } from '@/stores/public';
 import { interpret } from 'xstate';
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { PuzzleIcon, TerminalIcon, ViewGridIcon } from "@heroicons/vue/outline"
+import { DesktopComputerIcon } from "@heroicons/vue/solid"
+import { useRoute, useRouter } from 'vue-router';
 import permachine from '@/machines/perRequestMachine';
 const fetchM = useMachine(machine)
 const publicS = publicStore()
@@ -22,8 +24,9 @@ const vCmd: CommandReq = {
 const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 publicS.getCommonResEffect(fetchM, body => {
   const result = body.results[0]
-  if (result.type === "version") version.value = result.version
-})
+  if (result.type === "version") {
+    version.value = result.version
+  }})
 
 watchEffect(() => {
   if (!fetchS.wait) restBtnclass.value = "animate-spin-rev-pause"
@@ -36,6 +39,7 @@ onBeforeMount(() => {
     value: vCmd
   })
   sessionM.send("INIT")
+  // fetchS.baseSubmit()
 })
 // 手动重来
 const reset = () => {
@@ -72,7 +76,6 @@ const logout = async () => {
   })
   restBtnclass.value = "animate-spin-rev-pause"
 }
-
 const login = async () => {
   sessionM.send("SUBMIT", {
     value: {
@@ -99,59 +102,103 @@ const resetAllClass = () => {
   }).then(response => {
     const result = (response as CommonRes).body.results[0]
     if (result.type === "reset") {
-      publicS.isSuccess=true
-    publicS.SuccessMessage = JSON.stringify(result.affect)
+      publicS.isSuccess = true
+      publicS.SuccessMessage = JSON.stringify(result.affect)
     }
 
   })
 }
-const tools:[string,()=>void][] = [
+const tabs = [
+  {
+    name: 'dashboard',
+    url: "/dashboard",
+    icon: DesktopComputerIcon
+  },
+  {
+    name: 'immediacy',
+    url: '/synchronize',
+    icon: ViewGridIcon
+  }, {
+    name: "real time",
+    url: '/asynchronize',
+    icon: ViewGridIcon
+  },
+  {
+    name: 'option',
+    url: '/config',
+    icon: PuzzleIcon
+  },
+  {
+    name: 'console',
+    url: '/console',
+    icon: TerminalIcon
+  },
+  {
+    name:'terminal',
+    url:'terminal',
+    icon:TerminalIcon
+  }
+]
+
+const tools: [string, () => void][] = [
   ["forceGc", forceGc],
   ["shutdown", shutdown],
   ["reset class", resetAllClass]
 ]
+const router = useRouter()
+const routePath = computed(() => useRoute().path)
+const toNext = (url: string) => {
+  if(url === "terminal") {
+    window.open("/","_blank")
+  } else router.push(url)
+}
 </script>
 
 <template>
-  <nav class=" h-[10vh] flex justify-between items-center min-h-max border-b-2 shadow-orange-300">
-    <a class="w-40 flex items-center justify-center" href="https://arthas.aliyun.com/doc/commands.html" target="_blank">
-      <img src="/arthas.png" alt="logo" class=" w-3/4" />
-    </a>
-
-    <div class="flex items-center h-20">
-      <div class=" mr-4 bg-info text-info-content h-12 rounded-full flex justify-center items-center font-bold p-2">
-        sessionId: {{fetchS.sessionId}}</div>
-      <div class=" mr-4 bg-info text-info-content h-12 p-2 rounded-full flex justify-center items-center font-bold">
-        version:{{ version }}
-      </div>
+  <nav class=" h-[10vh] border-b-2 navbar">
+    <div class=" navbar-start flex items-stretch ">
+      <!-- <div class=" indicator mx-3"> -->
+        <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/doc/commands.html"
+          target="_blank">
+          <img src="/arthas.png" alt="logo" class="w-32" />
+        </a>
+        <span class="badge badge-ghost self-end text-sm">v{{version}}</span>
+      <!-- </div> -->
+    </div>
+    <div class="navbar-center">
+      <ul class="menu menu-horizontal p-0">
+        <li v-for="(tab, idx) in tabs" :key="idx" @click="toNext(tab.url)">
+          <a class="break-all" :class="{ 'bg-primary text-primary-content': routePath.includes(tab.url), }">
+            <component :is="tab.icon" class="w-4 h-4" />
+            {{
+            tab.name
+            }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="flex items-center h-20 navbar-end">
       <button v-if="fetchS.jobRunning" @click.prevent="interruptEvent"
-        class="btn-error btn rounded-full h-1/2 p-2 transition mr-4">interrupt</button>
-      <button class=" rounded-full btn btn-info btn-circle h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
-        <refresh-icon class="h-3/4 w-3/4" :class="restBtnclass" />
+        class="btn-error btn h-1/2 p-2">interrupt</button>
+      <div class="dropdown dropdown-end mr-2">
+        <label tabindex="0" class="btn btn-ghost m-1">
+          <MenuIcon class=" w-6 h-6"></MenuIcon>
+        </label>
+        <ul tabindex="0" class="menu dropdown-content p-2 shadow-xl bg-base-200 rounded-box w-40">
+          <li class="" v-for="(v,i) in tools" :key="i">
+            <a @click.prevent="v[1]">{{v[0]}}</a>
+          </li>
+        </ul>
+      </div>
+      <button class=" btn btn-ghost"
+        :class="{ 'btn-primary': !fetchS.online, 'btn-error': fetchS.online }">
+        <LogoutIcon class="h-6 w-6" @click="logout" v-if="fetchS.online" />
+        <login-icon class="h-6 w-6" @click="login" v-else />
       </button>
-      <button class="hover:opacity-50 h-12 w-12 grid place-items-center  rounded-full mr-2 transition-all"
-        :class="{ 'bg-primary': !fetchS.online, 'bg-error': fetchS.online }">
-        <LogoutIcon class="h-1/2 w-1/2 text-error-content" @click="logout" v-if="fetchS.online" />
-        <login-icon class="h-1/2 w-1/2 text-primary-content" @click="login" v-else />
+      <button class="btn-ghost btn"
+        @click="reset">
+        <refresh-icon class="h-6 w-6" :class="restBtnclass" />
       </button>
-      <Menu as="div" class="relative mr-4">
-        <MenuButton
-          class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-primary transition">
-          <MenuIcon class="h-3/4 w-3/4 text-primary-content"></MenuIcon>
-          <!-- <XCirleIcon class="h-3/4 w-3/4"></XCirleIcon> -->
-        </MenuButton>
-        <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 z-10 w-40">
-          <MenuItem v-slot="{ active }" v-for="(v,i) in tools" :key="i">
-          <div :class='{ "bg-blue-500 text-primary-content": active }' class="px-4 py-2">
-            <button @click.prevent="v[1]">{{v[0]}}</button>
-          </div>
-
-          </MenuItem>
-        </MenuItems>
-      </Menu>
     </div>
   </nav>
 </template>
-<style scoped>
-
-</style>

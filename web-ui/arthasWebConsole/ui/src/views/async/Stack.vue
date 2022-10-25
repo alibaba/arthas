@@ -91,16 +91,18 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   <MethodInput :submit-f="submit" ncondition ncount></MethodInput>
 
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <div class="w-full flex justify-center items-center mt-4">
-      <table class="table w-full table-compact group">
+    <div class="mt-4 overflow-x-auto w-full">
+      <table class="table w-full table-compact">
         <thead>
           <tr>
-            <th class="border border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i===0}">{{v}}</th>
+            <th></th>
+            <th v-for="(v,i) in keyList" :key="i">{{v}}</th>
           </tr>
         </thead>
         <tbody class="">
           <tr v-for="(map, i) in tableResults" :key="i">
-            <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
+            <th>{{i + 1}}</th>
+            <td v-for="(key,j) in keyList" :key="j">
               <template v-if="key!== 'stackTrace'">
                 {{map.get(key)}}
               </template>
@@ -113,6 +115,12 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <th></th>
+            <th v-for="(v,i) in keyList" :key="i">{{v}}</th>
+          </tr>
+        </tfoot>
       </table>
     </div>
 

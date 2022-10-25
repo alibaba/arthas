@@ -15,30 +15,7 @@ const classFields = reactive(new Map<string, string[]>())
 const classMethodMap = reactive(new Map<string, string[]>())
 const dumpMap = reactive(new Map<string, string[]>())
 const { getCommonResEffect } = publicStore()
-const publicS = publicStore()
 const fetchS = fetchStore()
-// getCommonResEffect(classInfoM, body => {
-//   const result = body.results[0]
-//   if (result.type === "sc" && result.detailed === true && result.withField === true) {
-
-//     classDetailMap.clear()
-//     classFields.clear()
-
-//     Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
-//       let value: string[] = []
-//       if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
-//       else value = v as string[]
-//       classDetailMap.set(k, value)
-//     })
-
-//     result.classInfo.fields.forEach(field => {
-//       classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
-//         if (k === "value") v = JSON.stringify(v)
-//         return `${k}: ${v}`
-//       }))
-//     })
-//   }
-// })
 getCommonResEffect(classMethodInfoM, body => {
   classMethodMap.clear()
   body.results.forEach(result => {

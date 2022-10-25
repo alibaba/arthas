@@ -18,6 +18,7 @@ const pollResults = reactive([] as [string, Map<string, string[]>, TreeNode][])
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const depth = ref(1)
 const tableResults = reactive([] as Map<string, string | TreeNode>[])
+const { increase, decrease } = publiC.numberCondition(depth, { min: 1, max: 6 })
 const keyList = [
   "ts",
   "accessPoint",
@@ -150,7 +151,8 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
     <template #others>
       <div class="relative group ml-2">
         <div class="btn btn-sm btn-outline">watching point</div>
-        <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full pt-2">
+        <div
+          class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full pt-2">
 
           <label class="label cursor-pointer btn-sm border border-neutral ml-2 bg-base-100"
             v-for="(mode,i) in modereflist" :key="i">
@@ -161,33 +163,36 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         </div>
 
       </div>
-      <button class="btn btn-sm btn-outline ml-2" @click="setDepth">depth:{{depth}}</button>
+      <div class="btn-group ml-2">
+        <button class="btn btn-sm btn-outline" @click.prevent="decrease">-</button>
+        <button class="btn btn-sm btn-outline border-x-0" @click.prevent="setDepth">depth:{{depth}}</button>
+        <button class="btn btn-sm btn-outline" @click.prevent="increase">+</button>
+      </div>
     </template>
   </MethodInput>
   <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-  <div class="flex justify-center mt-4 overflow-auto">
-    <table class="table w-full group">
+  <div class="overflow-x-auto w-full mt-4">
+    <table class="table w-full table-compact">
       <thead>
         <tr>
-          <th class="border border-slate-300" v-for="(v,i) in keyList" :key="i" :class="{'group-first:z-0':i===0}">{{v}}
+          <th></th>
+          <th class="0" v-for="(v,i) in keyList" :key="i">{{v}}
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(map, i) in tableResults" :key="i">
-          <td class="border border-slate-300" v-for="(key,j) in keyList" :key="j">
+        <tr v-for="(map, i) in tableResults" :key="i" class="hover">
+          <th>{{i+1}}</th>
+          <td class="" v-for="(key,j) in keyList" :key="j">
             <div v-if=" key !== 'value'">
               {{map.get(key)}}
             </div>
-
             <div class="flex flex-col" v-else>
               <Tree :root="(map.get('value') as TreeNode)" class="mt-2" button-class=" ">
                 <template #meta="{ data, active }">
-                  <div 
-                    class="bg-info  px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
-                  "hover:opacity-50":active
-                }'
-                    >
+                  <div class="bg-info  px-2 rounded-r rounded-br mr-2 text-info-content" :class='{
+                    "hover:opacity-50":active
+                  }'>
                     {{data}}
                   </div>
                 </template>
@@ -196,6 +201,14 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
           </td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th class="0" v-for="(v,i) in keyList" :key="i">{{v}}
+          </th>
+        </tr>
+      </tfoot>
     </table>
+
   </div>
 </template>

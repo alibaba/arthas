@@ -5,8 +5,25 @@ import * as path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const proxyTarget =`${env.VITE_ARTHAS_PROXY_IP}:${env.VITE_ARTHAS_PROXY_PORT}`;
+  const proxyTarget =
+    `${env.VITE_ARTHAS_PROXY_IP}:${env.VITE_ARTHAS_PROXY_PORT}`;
+
   console.log("Arthas proxy :", proxyTarget);
+  let outDir, input
+  console.log(env.VITE_AGENT)
+  if (env.VITE_AGENT === "true") {
+    outDir = `./dist/tunnel`
+    input = {
+      tunnel: path.resolve(__dirname, "index.html")
+    }
+  } else {
+    outDir = `./dist`
+    input = {
+      main: path.resolve(__dirname, "index.html"),
+      ui: path.resolve(__dirname, "ui/index.html"),
+    }
+  }
+
   return {
     plugins: [vue({
       reactivityTransform: true,
@@ -18,12 +35,10 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       emptyOutDir: true,
+      outDir,
       minify: "esbuild",
       rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, "index.html"),
-          ui: path.resolve(__dirname, "ui/index.html"),
-        },
+        input,
         output: {
           chunkFileNames: "static/js/[name]-[hash].js",
           entryFileNames: "static/js/[name]-[hash].js",
@@ -43,7 +58,7 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target: `http://${proxyTarget}`,
           changeOrigin: true,
-        }
+        },
       },
     },
   };

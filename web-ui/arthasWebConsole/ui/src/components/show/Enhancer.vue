@@ -19,7 +19,9 @@ if (result.type === "enhancer") {
         <div class="stat-title">{{kv[0]}}</div>
         <div class="stat-value">{{kv[1]}}</div>
       </div>
+      <slot name="otherStat">
 
+      </slot>
     </div>
 </template>
 

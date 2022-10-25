@@ -173,7 +173,7 @@ const transform = (tf: TimeFragment) => {
     } else {
       val = (tf[k as tfkey].toString())
     }
-    
+
     map.set(k, val)
   })
   updateChart(tf)
@@ -187,9 +187,9 @@ getPullResultsEffect(
         console.log(tf.index)
         // if(!timeFragmentSet.has(tf.index)){
         //   timeFragmentSet.add(tf.index)
-          tableResults.unshift(transform(tf))
+        tableResults.unshift(transform(tf))
         // }
-        
+
       })
     }
     if (result.type == "enhancer") {
@@ -291,7 +291,7 @@ const searchTt = () => {
         tableResults.unshift(transform(tf))
       })
     }
-  }).catch(err=>{
+  }).catch(err => {
     console.error(err)
   })
 }
@@ -327,35 +327,42 @@ const searchTt = () => {
         </template>
       </CmdResMenu>
     </div>
-      <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-      <div class="w-full flex justify-center items-center overflow-auto flex-1">
-        <table class="table table-compact group w-full">
-          <thead>
-            <tr>
-              <th class="border group-first:z-0" v-for="(v,i) in keyList" :key="i">{{v}}</th>
-              <th class="border">invoke</th>
-            </tr>
-          </thead>
-          <tbody class="">
-            <tr v-for="(map, i) in tableResults" :key="i">
-              <td class="border" v-for="(key,j) in keyList" :key="j">
-                <template v-if=" key !== 'params'">
-                  {{map.get(key)}}
-                </template>
+    <Enhancer :result="enhancer" v-if="enhancer">
+    </Enhancer>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-compact w-full">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="normal-case" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+          </tr>
+        </thead>
+        <tbody class="">
+          <tr v-for="(map, i) in tableResults" :key="i">
+            <th class="">
+              <button class="btn btn-primary btn-sm btn-outline" @click="reTrigger(map.get('index')!)">invoke</button>
+            </th>
+            <td class="" v-for="(key,j) in keyList" :key="j">
+              <template v-if=" key !== 'params'">
+                {{map.get(key)}}
+              </template>
 
-                <div class="flex flex-col" v-else>
-                  <div v-for="(row, k) in map.get(key)" :key="k">
-                    {{row}}
-                  </div>
+              <div class="flex flex-col" v-else>
+                <div v-for="(row, k) in map.get(key)" :key="k">
+                  {{row}}
                 </div>
-              </td>
-              <td class="border">
-                <button class="btn btn-primary btn-sm btn-outline" @click="reTrigger(map.get('index')!)">invoke</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th></th>
+            <th class="normal-case" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 
 </template>
