@@ -12,6 +12,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   fetchStore()
     .interruptJob()
+    .catch(_=>{
+      // console.error(e)
+      // 拦截调试台的错误
+    })
     .finally(() => {
       next();
     });

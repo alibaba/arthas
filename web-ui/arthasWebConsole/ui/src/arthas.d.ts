@@ -422,10 +422,10 @@ type CommandResult = {
 } | {
   options: GlobalOptions[];
   changeResult: {
-    "afterValue": unknown,
-    "beforeValue": unknown,
-    "name": string
-};
+    "afterValue": unknown;
+    "beforeValue": unknown;
+    "name": string;
+  };
   type: "options";
 } | {
   all: boolean;
@@ -709,7 +709,9 @@ type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
 type BindQS =
   | { req: CommandReq; res: CommonRes }
   | { req: SessionReq; res: SessionRes }
-  | { req: AsyncReq; res: AsyncRes };
+  | { req: AsyncReq; res: AsyncRes }
+  | { req: PullResults; res: ArthasRes };
+
 // autoComplete
 type Item = { name: string; value: unknown };
 
