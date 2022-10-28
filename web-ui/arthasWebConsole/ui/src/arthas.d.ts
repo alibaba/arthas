@@ -422,10 +422,11 @@ type CommandResult = {
 } | {
   options: GlobalOptions[];
   changeResult: {
-    "afterValue": unknown;
-    "beforeValue": unknown;
-    "name": string;
-  };
+
+    "afterValue": unknown,
+    "beforeValue": unknown,
+    "name": string
+};
   type: "options";
 } | {
   all: boolean;

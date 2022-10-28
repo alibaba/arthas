@@ -26,8 +26,10 @@ publicS.getCommonResEffect(fetchM, body => {
   const result = body.results[0]
   if (result.type === "version") {
     version.value = result.version
+
   }
 })
+
 
 watchEffect(() => {
   if (!fetchS.wait) restBtnclass.value = "animate-spin-rev-pause"
@@ -72,8 +74,9 @@ const logout = async () => {
   fetchS.closeSession()
   restBtnclass.value = "animate-spin-rev-pause"
 }
+
 const login = () => {
-  fetchS.initSession().then((res)=>console.log("wei"),res=>console.log("跪了"))
+  fetchS.initSession()
 }
 const shutdown = () => {
   publicS.warnMessage = "Are you sure to stop the arthas? All the Arthas clients connecting to this server will be disconnected."
@@ -126,9 +129,10 @@ const tabs = [
     icon: TerminalIcon
   },
   {
-    name: 'terminal',
-    url: 'terminal',
-    icon: TerminalIcon
+
+    name:'terminal',
+    url:'terminal',
+    icon:TerminalIcon
   }
 ]
 
@@ -177,16 +181,18 @@ const toNext = (url: string) => {
           <MenuIcon class=" w-6 h-6"></MenuIcon>
         </label>
         <ul tabindex="0" class="menu dropdown-content p-2 shadow-xl bg-base-200 rounded-box w-40">
-          <li class="" v-for="(v, i) in tools" :key="i">
-            <a @click.prevent="v[1]">{{ v[0] }}</a>
+          <li class="" v-for="(v,i) in tools" :key="i">
+            <a @click.prevent="v[1]">{{v[0]}}</a>
           </li>
         </ul>
       </div>
-      <button class=" btn btn-ghost" :class="{ 'btn-primary': !fetchS.online, 'btn-error': fetchS.online }">
+      <button class=" btn btn-ghost"
+        :class="{ 'btn-primary': !fetchS.online, 'btn-error': fetchS.online }">
         <LogoutIcon class="h-6 w-6" @click="logout" v-if="fetchS.online" />
         <login-icon class="h-6 w-6" @click="login" v-else />
       </button>
-      <button class="btn-ghost btn" @click="reset">
+      <button class="btn-ghost btn"
+        @click="reset">
         <refresh-icon class="h-6 w-6" :class="restBtnclass" />
       </button>
     </div>

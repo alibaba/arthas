@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { watchEffect } from "vue";
 import { publicStore } from "./public";
 import { waitFor } from "xstate/lib/waitFor";
-import { interpret, t } from "xstate";
+import { interpret } from "xstate";
 import permachine from "@/machines/perRequestMachine";
 // 控制fetch的store
 const getEffect = (
@@ -294,7 +294,6 @@ export const fetchStore = defineStore("fetch", {
             kl();
             id = setInterval(
               (() => {
-                console.log("?????");
                 if (
                   // 不在线或者意外报错就停掉
                   publicStore().isErr || !that.online
@@ -326,7 +325,6 @@ export const fetchStore = defineStore("fetch", {
       return loop;
     },
     initSession() {
-      console.log("i need to init");
       let p1 = this.baseSubmit(interpret(permachine), {
         action: "init_session",
       }).then((res) => {
