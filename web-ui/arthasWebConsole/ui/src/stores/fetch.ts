@@ -27,7 +27,8 @@ type PollingLoop = {
   invoke(): void;
 };
 const nullLoop: PollingLoop = {
-  open() {},
+  open() {
+  },
   close() {},
   isOn() {
     return false;
@@ -48,11 +49,11 @@ export const fetchStore = defineStore("fetch", {
     // 所有用pollingLoop都要
     jobRunning: false,
     // 对于 pullresults可能会拉同一个结果很多次
-    jobIdSet: new Set<string>(),
+    // jobIdSet: new Set<string>(),
     //由于轮询只会轮询一个命令，可以直接挂载当前的轮询机
     curPolling: nullLoop,
-    //获取osName 通过dashboard
-    osName:""
+    //对session init以后4分钟重轮一次。
+    // 如果curPolling是nullLoop,就要停掉状态维持来防止消耗异步请求结果的行为
   }),
   getters: {
     getRequest: (state) =>
@@ -94,6 +95,15 @@ export const fetchStore = defineStore("fetch", {
       },
   },
   actions: {
+    /**
+     * @param hander 要使用的函数
+     * @param options step：间隔时间，globalIntrupt: 是否需要全局的打断按钮
+     * @returns 一个轮询对象
+     * 需要open以后才挂载到curPolling
+     * close以后会重置为nullLoop
+     * curloop的状态转移
+     * nullloop->keepalive loop->polling loop
+     */
     getPollingLoop(
       hander: Function,
       options: { step?: number; globalIntrupt?: boolean } = {
@@ -104,10 +114,16 @@ export const fetchStore = defineStore("fetch", {
       let id = -1;
       const { step, globalIntrupt } = options;
       const that = this;
-      const pollingLoop = {
+      // 很有可能是keepalive session loop
+      let preLoop = this.curPolling;
+      const pollingLoop: PollingLoop = {
         // 自动轮询的可能会被错误打断
         open() {
           if (!this.isOn()) {
+            // 切换为当前用到的 pollingLoop
+            preLoop.close();
+            that.curPolling = pollingLoop;
+
             if (globalIntrupt) that.jobRunning = true;
             hander();
             id = setInterval(
@@ -131,6 +147,10 @@ export const fetchStore = defineStore("fetch", {
             if (globalIntrupt) that.jobRunning = false;
             clearInterval(id);
             id = -1;
+            // 重置为默认的nullloop
+            that.curPolling = preLoop;
+            // 继续keepalive
+            preLoop.open();
           }
         },
         isOn() {
@@ -143,10 +163,9 @@ export const fetchStore = defineStore("fetch", {
           hander();
         },
       };
-      this.curPolling = pollingLoop;
       return pollingLoop;
     },
-    pullResultsLoop(pollingM: Machine,globalIntrupt:boolean=true) {
+    pullResultsLoop(pollingM: Machine, globalIntrupt: boolean = true) {
       return this.getPollingLoop(
         () => {
           pollingM.send({
@@ -163,6 +182,9 @@ export const fetchStore = defineStore("fetch", {
         },
       );
     },
+    /**
+     * 用来提示是否正在请求中
+     */
     onWait() {
       if (!this.wait) this.wait = true;
     },
@@ -245,10 +267,71 @@ export const fetchStore = defineStore("fetch", {
         },
       );
     },
+    keepaliveSession() {
+      const kl = () => {
+        let m = interpret(permachine);
+        m.start();
+        m.send("INIT");
+        m.send({
+          type: "SUBMIT",
+          value: {
+            action: "pull_results",
+            sessionId: undefined,
+            consumerId: undefined,
+          },
+        });
+        
+      };
+      kl();
+      let id = -1;
+      let that = this;
+      let loop = {
+        open() {
+          if (!this.isOn()) {
+            // 切换为kl_loop
+            that.curPolling.close();
+            that.curPolling = loop;
+            kl();
+            id = setInterval(
+              (() => {
+                if (
+                  // 不在线或者意外报错就停掉
+                  publicStore().isErr || !that.online
+                ) {
+                  this.close();
+                } else {
+                  kl();
+                }
+              }) as TimerHandler,
+              60_000,
+            );
+          }
+        },
+        close() {
+          if (this.isOn()) {
+            clearInterval(id);
+            id = -1;
+            // 重置为默认的nullloop
+            that.curPolling = nullLoop;
+          }
+        },
+        isOn() {
+          return id !== -1;
+        },
+        invoke() {},
+      };
+      // 会先运行一次，当有任务执行
+      loop.open();
+      return loop;
+    },
     initSession() {
-      return this.baseSubmit(interpret(permachine), {
+      let p1 = this.baseSubmit(interpret(permachine), {
         action: "init_session",
+      }).then((res) => {
+        // 自动调度,维持session活性
+        this.keepaliveSession();
       });
+      return p1
     },
     asyncInit() {
       if (!this.online) {
@@ -262,6 +345,12 @@ export const fetchStore = defineStore("fetch", {
         });
       }
       return Promise.resolve("alrealy init");
+    },
+    closeSession() {
+      return this.baseSubmit(interpret(permachine), {
+        action: "close_session",
+        sessionId: undefined,
+      });
     },
   },
 });

@@ -443,7 +443,7 @@ const permachine = createMachine({
     isCommon: (context) => {
       if (!context) return false;
       if (
-        ["exec"]
+        ["exec","pull_results"]
           .includes(context.inputValue!.action)
       ) {
         console.log("isCommon");
@@ -454,7 +454,7 @@ const permachine = createMachine({
     isAsync: (context) => {
       if (!context) return false;
       if (
-        ["async_exec", "pull_results"]
+        ["async_exec"]
           .includes(context.inputValue!.action)
       ) {
         console.log("isAsync");

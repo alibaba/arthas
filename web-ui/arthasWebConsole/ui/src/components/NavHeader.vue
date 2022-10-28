@@ -26,7 +26,10 @@ publicS.getCommonResEffect(fetchM, body => {
   const result = body.results[0]
   if (result.type === "version") {
     version.value = result.version
-  }})
+
+  }
+})
+
 
 watchEffect(() => {
   if (!fetchS.wait) restBtnclass.value = "animate-spin-rev-pause"
@@ -68,20 +71,12 @@ const logout = async () => {
 
   interruptEvent()
 
-  sessionM.send("SUBMIT", {
-    value: {
-      action: "close_session",
-      sessionId: undefined
-    }
-  })
+  fetchS.closeSession()
   restBtnclass.value = "animate-spin-rev-pause"
 }
-const login = async () => {
-  sessionM.send("SUBMIT", {
-    value: {
-      action: "init_session"
-    }
-  })
+
+const login = () => {
+  fetchS.initSession()
 }
 const shutdown = () => {
   publicS.warnMessage = "Are you sure to stop the arthas? All the Arthas clients connecting to this server will be disconnected."
@@ -134,6 +129,7 @@ const tabs = [
     icon: TerminalIcon
   },
   {
+
     name:'terminal',
     url:'terminal',
     icon:TerminalIcon
@@ -148,8 +144,8 @@ const tools: [string, () => void][] = [
 const router = useRouter()
 const routePath = computed(() => useRoute().path)
 const toNext = (url: string) => {
-  if(url === "terminal") {
-    window.open("/","_blank")
+  if (url === "terminal") {
+    window.open("/", "_blank")
   } else router.push(url)
 }
 </script>
@@ -158,11 +154,11 @@ const toNext = (url: string) => {
   <nav class=" h-[10vh] border-b-2 navbar">
     <div class=" navbar-start flex items-stretch ">
       <!-- <div class=" indicator mx-3"> -->
-        <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/doc/commands.html"
-          target="_blank">
-          <img src="/arthas.png" alt="logo" class="w-32" />
-        </a>
-        <span class="badge badge-ghost self-end text-sm">v{{version}}</span>
+      <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/doc/commands.html"
+        target="_blank">
+        <img src="/arthas.png" alt="logo" class="w-32" />
+      </a>
+      <span class="badge badge-ghost self-end text-sm">v{{ version }}</span>
       <!-- </div> -->
     </div>
     <div class="navbar-center">
@@ -171,7 +167,7 @@ const toNext = (url: string) => {
           <a class="break-all" :class="{ 'bg-primary text-primary-content': routePath.includes(tab.url), }">
             <component :is="tab.icon" class="w-4 h-4" />
             {{
-            tab.name
+                tab.name
             }}
           </a>
         </li>
