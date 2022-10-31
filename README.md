@@ -15,6 +15,16 @@ Arthas allows developers to troubleshoot production issues for Java applications
 
 [中文说明/Chinese Documentation](README_CN.md)
 
+### Fork
+
+Supports service discovery registry from arthas tunnel server. For more features, please refer to [CHANGELOG.md](https://github.com/shiyindaxiaojie/Arthas/blob/master/CHANGELOG.md)
+
+![](doc/image/arthas-proxy-overview.png)
+
+Also provide the basic access authentication by spring-security.
+
+![](doc/image/arthas-proxy-login.png)
+
 ### Background
 
 Often times, the production system network is inaccessible from the local development environment. If issues are encountered in production systems, it is impossible to use IDEs to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, resulting in the suspension of business services. 

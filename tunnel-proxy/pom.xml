@@ -18,13 +18,14 @@
         <maven.compiler.target>8</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+        <start-class>com.alibaba.arthas.tunnel.proxy.ArthasTunnelProxyApplication</start-class>
         <arthas.version>3.6.6</arthas.version>
         <spring-cloud.version>3.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <lombok.version>1.18.18</lombok.version>
         <disruptor.version>3.4.4</disruptor.version>
         <micrometer.version>1.9.4</micrometer.version>
+        <build.layers.enabled>true</build.layers.enabled>
     </properties>
 
     <build>
@@ -35,15 +36,28 @@
                 <version>2.4.2</version>
                 <executions>
                     <execution>
+                        <id>spring-boot-build-info</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>spring-boot-repackage</id>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <executable>true</executable>
+                    <fork>true</fork>
+                    <mainClass>${start-class}</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
                     <layers>
-                        <enabled>true</enabled>
-                        <configuration>${project.basedir}/.docker/layers.xml</configuration>
+                        <enabled>${build.layers.enabled}</enabled>
+                        <includeLayerTools>true</includeLayerTools>
+                        <configuration>${project.basedir}/src/main/docker/layers.xml</configuration>
                     </layers>
                 </configuration>
             </plugin>
