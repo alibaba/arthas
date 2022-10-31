@@ -17,6 +17,8 @@ Arthas allows developers to troubleshoot production issues for Java applications
 
 ### Fork
 
+> Thanks for [@wf2311](https://github.com/wf2311/arthas-ext)
+
 Supports service discovery registry from arthas tunnel server. For more features, please refer to [CHANGELOG.md](https://github.com/shiyindaxiaojie/Arthas/blob/master/CHANGELOG.md)
 
 ![](doc/image/arthas-proxy-overview.png)
