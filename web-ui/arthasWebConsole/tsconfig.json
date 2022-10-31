@@ -14,13 +14,18 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*":["ui/src/*"]
+      "@/*": ["all/ui/ui/src/*"],
+      "~/*": ["all/share/*"]
     },
     "experimentalDecorators": true
   },
   "include": [
-    "ui/src/**/*.ts", "ui/src/**/*.d.ts", "ui/src/**/*.tsx", "ui/src/**/*.vue","ui/tests/**/*.ts",
-    "src/**/*.vue", "src/**/*.ts","src/**/*.d.ts"
+    "all/**/*.vue",
+    "all/**/*.ts",
+    "all/**/*.d.ts",
+    "all/env.d.ts"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [
+    { "path": "./tsconfig.node.json" }
+  ]
 }

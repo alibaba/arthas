@@ -71,12 +71,21 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>vite build</id>
+                        <id>vite build:ui</id>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
                         <configuration>
-                            <arguments>vite build</arguments>
+                            <arguments>vite build --mode ui</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>vite build:tunnel</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>vite build --mode tunnel</arguments>
                         </configuration>
                     </execution>
                 </executions>

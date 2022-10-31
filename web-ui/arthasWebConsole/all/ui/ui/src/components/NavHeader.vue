@@ -10,6 +10,7 @@ import { PuzzleIcon, TerminalIcon, ViewGridIcon } from "@heroicons/vue/outline"
 import { DesktopComputerIcon } from "@heroicons/vue/solid"
 import { useRoute, useRouter } from 'vue-router';
 import permachine from '@/machines/perRequestMachine';
+import pic from "~/assert/arthas.png"
 const fetchM = useMachine(machine)
 const publicS = publicStore()
 const { send } = fetchM
@@ -148,6 +149,7 @@ const toNext = (url: string) => {
     window.open("/", "_blank")
   } else router.push(url)
 }
+
 </script>
 
 <template>
@@ -156,7 +158,7 @@ const toNext = (url: string) => {
       <!-- <div class=" indicator mx-3"> -->
       <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/doc/commands.html"
         target="_blank">
-        <img src="/arthas.png" alt="logo" class="w-32" />
+        <img :src="pic" alt="logo" class="w-32" />
       </a>
       <span class="badge badge-ghost self-end text-sm">v{{ version }}</span>
       <!-- </div> -->

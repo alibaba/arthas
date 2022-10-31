@@ -1,21 +1,31 @@
 <script setup lang="ts">
+import { computed } from "@vue/reactivity";
 import { onMounted, ref } from "vue";
 import { Terminal } from "xterm"
 import { FitAddon } from 'xterm-addon-fit';
 import { WebglAddon } from "xterm-addon-webgl"
+import { MenuAlt2Icon } from "@heroicons/vue/outline"
+import fullPic from "~/assert/fullsc.png"
+const { isTunnel = false } = defineProps<{
+  isTunnel?: boolean
+}>()
 
 let ws: WebSocket | undefined;
-
+let intervalReadKey = -1
 const DEFAULT_SCROLL_BACK = 1000
 const MAX_SCROLL_BACK = 9999999
 const MIN_SCROLL_BACK = 1
-const ARTHAS_PORT = '8563'
+const ARTHAS_PORT = isTunnel ? "7777" : "8563"
 const ip = ref("")
 const port = ref('')
 const iframe = ref(true)
 const fullSc = ref(true)
 const agentID = ref('')
-const isTunnel = import.meta.env.VITE_AGENT === 'true'
+const outputHerf = computed(() => {
+  console.log(agentID.value)
+  return isTunnel?`proxy/${agentID.value}/arthas-output/`:`/arthas-output/`
+})
+// const isTunnel = import.meta.env.MODE === 'tunnel'
 const fitAddon = new FitAddon();
 const webglAddon = new WebglAddon();
 let xterm = new Terminal({ allowProposedApi: true })
@@ -23,6 +33,7 @@ let xterm = new Terminal({ allowProposedApi: true })
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
   port.value = getUrlParam('port') ?? ARTHAS_PORT;
+  if (isTunnel) agentID.value = getUrlParam("agent") ?? ""
   let _iframe = getUrlParam('iframe')
   if (_iframe && _iframe.trim() !== 'false') iframe.value = false
 
@@ -42,12 +53,22 @@ function getUrlParam(name: string) {
   return urlparam.get(name)
 }
 
-
+function getWsUri() {
+  const host = `${ip.value}:${port.value}`
+  if (!isTunnel) return `ws://${host}/ws`;
+  const path = getUrlParam("path") ?? 'ws'
+  const _targetServer = getUrlParam("targetServer")
+  let protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const uri = `${protocol}${host}/${encodeURIComponent(path)}?method=connectArthas&id=${agentID.value}`
+  if (_targetServer != null) {
+    return uri + '&targetServer=' + encodeURIComponent(_targetServer);
+  }
+  return uri
+}
 /** init websocket **/
 function initWs(silent: boolean) {
-  let path = 'ws://' + ip.value + ':' + port.value + '/ws';
-  console.log(path)
-  ws = new WebSocket(path);
+  let uri = getWsUri()
+  ws = new WebSocket(uri);
   ws.onerror = function () {
     ws ?? ws!.close();
     ws = undefined;
@@ -69,12 +90,21 @@ function initWs(silent: boolean) {
       }
     };
     ws?.send(JSON.stringify({ action: 'resize', cols, rows }));
-    window.setInterval(function () {
+    intervalReadKey = window.setInterval(function () {
       if (ws != null && ws.readyState === 1) {
         ws.send(JSON.stringify({ action: 'read', data: "" }));
       }
     }, 30000);
   }
+  ws.onclose = function (message) {
+    if (intervalReadKey != -1) {
+      window.clearInterval(intervalReadKey)
+      intervalReadKey = -1
+    }
+    if (message.code === 2000) {
+      alert(message.reason);
+    }
+  };
 }
 
 /** init xterm **/
@@ -103,18 +133,31 @@ function isValidNumber(scrollNumber: number) {
     scrollNumber <= MAX_SCROLL_BACK;
 }
 
-/** begin connect **/
-function startConnect(silent: boolean = false) {
+const connectGuard = (silent: boolean): boolean => {
   if (ip.value.trim() === '' || port.value.trim() === '') {
     alert('Ip or port can not be empty');
-    return;
+    return false;
+  }
+  if (isTunnel && agentID.value == '') {
+    if (silent) {
+      return false;
+    }
+    alert('AgentId can not be empty');
+    return false;
   }
   if (ws) {
     alert('Already connected');
-    return;
+    return false;
   }
-  // init webSocket
-  initWs(silent);
+  return true
+}
+/** begin connect **/
+function startConnect(silent: boolean = false) {
+  if (connectGuard(silent)) {
+    // init webSocket
+    initWs(silent);
+  }
+
 }
 
 function disconnect() {
@@ -157,16 +200,37 @@ function requestFullScreen(element: HTMLElement) {
   }
 }
 
-
 </script>
 
 <template>
-  <div class="flex flex-col h-[100vh] resize-none">
-    <nav v-if="iframe" class="navbar bg-base-100 flex-row">
-      <div class="flex-1">
-        <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img src="/arthas.png"
-            alt="Arthas" title="Welcome to Arthas web console" class=""></a>
-        <ul class="menu menu-horizontal p-0">
+  <div class="flex flex-col h-[100vh] w-[100vw]">
+    <nav v-if="iframe" class="navbar bg-base-100 md:flex-row flex-col w-[100vw]">
+      <div class="navbar-start">
+        <div class="dropdown dropdown-start 2xl:hidden">
+          <label tabindex="0" class="btn btn-ghost btn-sm">
+            <MenuAlt2Icon class="w-6 h-6"></MenuAlt2Icon>
+          </label>
+          <ul tabindex="0" class="dropdown-content menu shadow bg-base-100">
+            <li>
+              <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
+                target="_blank">Documentation
+                <span class="sr-only">(current)</span></a>
+            </li>
+            <li>
+              <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
+                href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
+                Tutorials</a>
+            </li>
+            <li>
+              <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://github.com/alibaba/arthas"
+                target="_blank">Github</a>
+            </li>
+          </ul>
+        </div>
+        <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
+            src="../assert/arthas.png" alt="Arthas" title="Welcome to Arthas web console"></a>
+
+        <ul class="menu menu-vertical 2xl:menu-horizontal hidden">
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
               target="_blank">Documentation
@@ -182,9 +246,14 @@ function requestFullScreen(element: HTMLElement) {
               target="_blank">Github</a>
           </li>
         </ul>
+
       </div>
-      <form class="navbar-end">
-        <div class="flex">
+      <div class="navbar-center ">
+        <div class=" xl:flex-row form-control"        
+        :class="{
+          'xl:flex-row':isTunnel,
+          'lg:flex-row':!isTunnel
+        }">
           <label class="input-group input-group-sm mr-2">
             <span>IP</span>
             <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
@@ -194,28 +263,35 @@ function requestFullScreen(element: HTMLElement) {
             <span>Port</span>
             <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port" />
           </label>
+          <label v-if="isTunnel" class="input-group input-group-sm mr-2">
+            <span>AgentId</span>
+            <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
+              v-model="agentID" />
+          </label>
         </div>
-        <div class="btn-group btn-group-horizontal">
+      </div>
+      <div class="navbar-end">
+        <div class="btn-group   2xl:btn-group-horizontal btn-group-horizontal"
+        :class="{
+          'md:btn-group-vertical':isTunnel
+        }">
           <button
             class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
             @click.prevent="startConnect(true)">Connect</button>
           <button
             class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
             @click.prevent="disconnect">Disconnect</button>
-          <a v-if="!isTunnel" class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            href="arthas-output/" target="_blank">Arthas Output</a>
+          <a class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
+            :href="outputHerf" target="_blank">Arthas Output</a>
         </div>
-      </form>
-
+      </div>
     </nav>
     <div class="w-full h-0 flex-auto bg-black overscroll-auto" id="terminal-card">
-      <!-- <div class="h-full overflow-visible" id="terminal-card"> -->
       <div id="terminal" class="w-full h-full"></div>
-      <!-- </div> -->
     </div>
 
     <div title="fullscreen" id="fullSc" class="fullSc" v-if="fullSc">
-      <button id="fullScBtn" @click="xtermFullScreen"><img src="/fullsc.png"></button>
+      <button id="fullScBtn" @click="xtermFullScreen"><img :src="fullPic"></button>
     </div>
   </div>
 </template>
