@@ -50,6 +50,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isRegEx = false;
     private String hashCode = null;
     private String classLoaderClass;
+    private String classLoaderToString;
     private Integer expand;
     private int numberOfLimit = 100;
 
@@ -101,6 +102,12 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.numberOfLimit = numberOfLimit;
     }
 
+    @Option(shortName = "cs", longName = "classLoaderStr")
+    @Description("The return value of the ClassLoader#toString().")
+    public void setClassLoaderToString(String classLoaderToString) {
+        this.classLoaderToString = classLoaderToString;
+    }
+
     @Override
     public void process(final CommandProcess process) {
         // TODO: null check
@@ -126,6 +133,9 @@ public class SearchClassCommand extends AnnotatedCommand {
         }
 
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
+        if (!StringUtils.isEmpty(classLoaderToString)) {
+            matchedClasses = filterByClassLoaderToStr(matchedClasses);
+        }
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
             public int compare(Class<?> c1, Class<?> c2) {
@@ -157,6 +167,16 @@ public class SearchClassCommand extends AnnotatedCommand {
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));
         process.end();
+    }
+
+    private List<Class<?>> filterByClassLoaderToStr(List<Class<?>> classes) {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        for (Class<?> clazz : classes) {
+            if (clazz.getClassLoader() !=null && clazz.getClassLoader().toString().equals(classLoaderToString)) {
+                list.add(clazz);
+            }
+        }
+        return list;
     }
 
     @Override
