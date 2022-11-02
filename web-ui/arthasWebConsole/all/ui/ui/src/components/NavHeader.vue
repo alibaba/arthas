@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue';
 import { computed, onBeforeMount, Ref, ref, watchEffect } from 'vue';
-import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon, XCircleIcon } from '@heroicons/vue/outline';
+import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon, MenuAlt2Icon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
 import machine from "@/machines/consoleMachine"
 import { publicStore } from '@/stores/public';
@@ -131,9 +131,9 @@ const tabs = [
   },
   {
 
-    name:'terminal',
-    url:'terminal',
-    icon:TerminalIcon
+    name: 'terminal',
+    url: 'terminal',
+    icon: TerminalIcon
   }
 ]
 
@@ -153,20 +153,34 @@ const toNext = (url: string) => {
 </script>
 
 <template>
-  <nav class=" h-[10vh] border-b-2 navbar">
-    <div class=" navbar-start flex items-stretch ">
-      <!-- <div class=" indicator mx-3"> -->
+  <nav class=" h-[10vh] border-b-2 navbar bg-base-100">
+    <div class=" navbar-start flex items-stretch">
+      <div class="dropdown dropdown-start hover xl:hidden">
+        <label tabindex="0" class="btn btn-ghost m-1">
+          <MenuAlt2Icon class="w-6 h-6"></MenuAlt2Icon>
+        </label>
+        <ul tabindex="0" class="menu menu-vertical dropdown-content bg-base-100 shadow rounded-box">
+          <li v-for="(tab, idx) in tabs" :key="idx" @click="toNext(tab.url)">
+            <a :class="{ 'bg-primary text-primary-content': routePath.includes(tab.url), }">
+              <component :is="tab.icon" class="w-4 h-4" />
+              {{
+                  tab.name
+              }}
+            </a>
+          </li>
+        </ul>
+      </div>
       <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/doc/commands.html"
         target="_blank">
         <img :src="pic" alt="logo" class="w-32" />
       </a>
-      <span class="badge badge-ghost self-end text-sm">v{{ version }}</span>
-      <!-- </div> -->
+      <span class="badge badge-ghost self-end badge-sm">v{{ version }}</span>
     </div>
     <div class="navbar-center">
-      <ul class="menu menu-horizontal p-0">
+
+      <ul class="menu menu-horizontal hidden xl:flex">
         <li v-for="(tab, idx) in tabs" :key="idx" @click="toNext(tab.url)">
-          <a class="break-all" :class="{ 'bg-primary text-primary-content': routePath.includes(tab.url), }">
+          <a :class="{ 'bg-primary text-primary-content': routePath.includes(tab.url), }">
             <component :is="tab.icon" class="w-4 h-4" />
             {{
                 tab.name
@@ -183,18 +197,16 @@ const toNext = (url: string) => {
           <MenuIcon class=" w-6 h-6"></MenuIcon>
         </label>
         <ul tabindex="0" class="menu dropdown-content p-2 shadow-xl bg-base-200 rounded-box w-40">
-          <li class="" v-for="(v,i) in tools" :key="i">
-            <a @click.prevent="v[1]">{{v[0]}}</a>
+          <li class="" v-for="(v, i) in tools" :key="i">
+            <a @click.prevent="v[1]">{{ v[0] }}</a>
           </li>
         </ul>
       </div>
-      <button class=" btn btn-ghost"
-        :class="{ 'btn-primary': !fetchS.online, 'btn-error': fetchS.online }">
+      <button class=" btn btn-ghost" :class="{ 'btn-primary': !fetchS.online, 'btn-error': fetchS.online }">
         <LogoutIcon class="h-6 w-6" @click="logout" v-if="fetchS.online" />
         <login-icon class="h-6 w-6" @click="login" v-else />
       </button>
-      <button class="btn-ghost btn"
-        @click="reset">
+      <button class="btn-ghost btn" @click="reset">
         <refresh-icon class="h-6 w-6" :class="restBtnclass" />
       </button>
     </div>

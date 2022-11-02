@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "@vue/reactivity";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed  } from "vue";
 import { Terminal } from "xterm"
 import { FitAddon } from 'xterm-addon-fit';
 import { WebglAddon } from "xterm-addon-webgl"
 import { MenuAlt2Icon } from "@heroicons/vue/outline"
 import fullPic from "~/assert/fullsc.png"
+import arthasLogo from "~/assert/arthas.png"
 const { isTunnel = false } = defineProps<{
   isTunnel?: boolean
 }>()
@@ -33,7 +33,7 @@ let xterm = new Terminal({ allowProposedApi: true })
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
   port.value = getUrlParam('port') ?? ARTHAS_PORT;
-  if (isTunnel) agentID.value = getUrlParam("agent") ?? ""
+  if (isTunnel) agentID.value = getUrlParam("agentId") ?? ""
   let _iframe = getUrlParam('iframe')
   if (_iframe && _iframe.trim() !== 'false') iframe.value = false
 
@@ -169,7 +169,6 @@ function disconnect() {
     xterm.dispose();
     fitAddon.dispose()
     webglAddon.dispose()
-    // $('#fullSc').hide();
     fullSc.value = false
     alert('Connection was closed successfully!');
   } catch {
@@ -203,7 +202,7 @@ function requestFullScreen(element: HTMLElement) {
 </script>
 
 <template>
-  <div class="flex flex-col h-[100vh] w-[100vw]">
+  <div class="flex flex-col h-[100vh] w-[100vw] resize-none">
     <nav v-if="iframe" class="navbar bg-base-100 md:flex-row flex-col w-[100vw]">
       <div class="navbar-start">
         <div class="dropdown dropdown-start 2xl:hidden">
@@ -228,7 +227,7 @@ function requestFullScreen(element: HTMLElement) {
           </ul>
         </div>
         <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
-            src="../assert/arthas.png" alt="Arthas" title="Welcome to Arthas web console"></a>
+            :src="arthasLogo" alt="Arthas" title="Welcome to Arthas web console"></a>
 
         <ul class="menu menu-vertical 2xl:menu-horizontal hidden">
           <li>

@@ -7,7 +7,7 @@
     "dev:ui": "vite --port 8000 --mode ui",
     "build": "vue-tsc --noEmit && vite build --mode tunnel && vite build --mode ui",
     "build:tunnel": "vue-tsc --noEmit && vite build --mode tunnel",
-    "build:dev": "vue-tsc --noEmit && vite build --mode ui",
+    "build:ui": "vue-tsc --noEmit && vite build --mode ui",
     "preview:ui": "vite preview --mode ui",
     "preview:tunnel": "vite preview --mode tunnel"
   },

@@ -441,52 +441,63 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div class="p-2 pointer-events-auto flex flex-col h-full">
-    <div class="input-btn-style mb-4 h-32 flex flex-wrap flex-col items-start overflow-auto min-h-[6rem]">
-      <div v-for="(cv, ci) in runtimeInfo" :key="ci" class="flex mb-1 pr-2">
-        <span class="bg-primary-focus text-primary-content border border-primary-focus w-44 px-2 rounded-l">
-          {{ cv[0] }}
-        </span>
-        <span class="bg-base-200 border border-primary-focus rounded-r px-2 flex-1">
-          {{cv[1]}}
+  <div class="p-2 pointer-events-auto h-full overflow-auto">
+    <div class="card bg-base-100 border mb-4 compact h-auto">
+      <div class="card-body flex-wrap flex-row">
+        <span v-for="(cv, ci) in runtimeInfo" :key="ci" class="badge badge-outline badge-primary">
+
+          {{ cv[0] }}:
+          {{ cv[1] }}
         </span>
       </div>
     </div>
-    <!-- <CmdResMenu title="threads" :map="threads" class="w-full flex justify-center" /> -->
     <div class="flex justify-evenly mb-4 flex-1 h-80">
-      <div id="heapMemory" class="w-80 h-80 flex-1 input-btn-style mr-4"></div>
-      <div id="nonheapMemory" class="w-80 h-80 flex-1 input-btn-style mr-4"></div>
-      <div id="bufferPoolMemory" class="w-80 h-80 flex-1 input-btn-style"></div>
+      <div class="card border mr-4 flex-1 bg-base-100">
+        <div id="heapMemory" class="w-80 h-80 card-body "></div>
+      </div>
+      <div class="card border mr-4 flex-1 bg-base-100">
+        <div id="nonheapMemory" class="w-80 h-80 card-body"></div>
+      </div>
+      <div class="card border flex-1 bg-base-100">
+        <div id="bufferPoolMemory" class="w-80 h-80 card-body"></div>
+      </div>
+
+
+
     </div>
 
     <div class="w-full flex justify-start items-start flex-1">
-      <div id="gc-info" class="w-[40rem] h-80 input-btn-style p-2 mr-4"></div>
-      <div class="input-btn-style flex-1 h-80 overflow-auto w-0">
-        <div class="flex justify-end mb-2">
-          <div class="btn-group">
-            <button class="btn btn-sm btn-outline" @click="decrease">-</button>
-            <button class="btn btn-sm btn-outline border-x-0" @click="setPri">limit:{{pri}}</button>
-            <button class="btn btn-sm btn-outline" @click="increase">+</button>
+      <div class="card bg-base-100 border mr-4">
+        <div id="gc-info" class="w-[40rem] h-80 card-body p-2 "></div>
+      </div>
+      <div class="card flex-1 h-80 overflow-auto w-0 border bg-base-100">
+        <div class="card-body">
+          <div class="flex justify-end mb-2">
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline" @click="decrease">-</button>
+              <button class="btn btn-sm btn-outline border-x-0" @click="setPri">limit:{{ pri }}</button>
+              <button class="btn btn-sm btn-outline" @click="increase">+</button>
+            </div>
           </div>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="table table-compact w-full">
-            <thead>
-              <tr>
-                <th></th>
-                <th v-for="(v,i) in keyList" :key="i" class="normal-case">{{v}}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(map, i) in tableResults" :key="i" class="hover">
-                <th>{{i + 1}}</th>
-                <td v-for="(key,j) in keyList" :key="j">
-                  {{map.get(key)}}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="overflow-x-auto">
+            <table class="table table-compact w-full">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th v-for="(v, i) in keyList" :key="i" class="normal-case">{{ v }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(map, i) in tableResults" :key="i" class="hover">
+                  <th>{{ i + 1 }}</th>
+                  <td v-for="(key, j) in keyList" :key="j">
+                    {{ map.get(key) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
