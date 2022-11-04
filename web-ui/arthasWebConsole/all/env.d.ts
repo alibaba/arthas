@@ -6,7 +6,7 @@ declare module '*.vue' {
   export default component
 }
 interface ImportMetaEnv {
-  readonly VITE_AGENT:string
+  readonly VITE_ARTHAS_PORT:string
 }
 
 interface ImportMeta {

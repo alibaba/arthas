@@ -3,11 +3,13 @@
   "private": false,
   "version": "0.1.4",
   "scripts": {
-    "dev": "vite --port 8000 --mode ui",
     "dev:tunnel": "vite --port 8000 --mode tunnel",
-    "build": "vue-tsc --noEmit && vite build --mode ui",
+    "dev:ui": "vite --port 8000 --mode ui",
+    "build": "vue-tsc --noEmit && vite build --mode tunnel && vite build --mode ui",
     "build:tunnel": "vue-tsc --noEmit && vite build --mode tunnel",
-    "preview": "vite preview"
+    "build:ui": "vue-tsc --noEmit && vite build --mode ui",
+    "preview:ui": "vite preview --mode ui",
+    "preview:tunnel": "vite preview --mode tunnel"
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.6",

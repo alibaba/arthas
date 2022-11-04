@@ -6,14 +6,11 @@ import { fetchStore } from '@/stores/fetch';
 import { useMachine, useInterpret } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import Enhancer from '@/components/show/Enhancer.vue';
-import {transfromStore} from "@/stores/resTransform"
+import transformStackTrace from '@/utils/transform';
 const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-// const publicS = publicStore()
-const transS = transfromStore()
 const { getCommonResEffect } = fetchS
-// const {getCommonResEffect} = publicStore()
 
 const loop = fetchS.pullResultsLoop(pollingM)
 const tableResults = reactive([] as Map<string, string>[])
@@ -26,8 +23,8 @@ const keyList = [
   "classloader",
   "threadId",
   "threadName",]
-// const enhancer = reactive(new Map())
 const enhancer = ref(undefined as EnchanceResult | undefined)
+
 getCommonResEffect(pollingM, body => {
   if (body.results.length > 0) {
     body.results.forEach(result => {
@@ -40,7 +37,7 @@ getCommonResEffect(pollingM, body => {
             let val: string | string[] = ""
             if (k === "stackTrace") {
               let stackTrace = result[k]
-              val = stackTrace.map((trace) => transS.transformStackTrace(trace))
+              val = stackTrace.map((trace) => transformStackTrace(trace))
             } else {
               val = result[k as Exclude<keyof typeof result, "jobId" | "type" | "stackTrace">].toString()
             }
@@ -58,10 +55,8 @@ getCommonResEffect(pollingM, body => {
 })
 
 onBeforeMount(() => {
-  // fetchM.send("INIT")
   pollingM.send("INIT")
   fetchS.asyncInit()
-  // loop.open()
 })
 onBeforeUnmount(() => {
   loop.close()

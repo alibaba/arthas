@@ -18,14 +18,9 @@ onBeforeUnmount(() => {
 <template>
   <div class=" h-screen flex flex-col">
     <nav-header class="h-[10vh]"></nav-header>
-    <div class=" flex-auto h-[90vh] overflow-auto">
-      <div class="flex flex-row h-full">
-        <!-- <nav-aside ></nav-aside> -->
-        <div class="flex-auto overflow-auto h-[90vh] w-[90vw]">
+    <div class=" flex-auto h-[90vh] overflow-auto w-[100vw]">
           <router-view>
           </router-view>
-        </div>
-      </div>
     </div>
 
   </div>

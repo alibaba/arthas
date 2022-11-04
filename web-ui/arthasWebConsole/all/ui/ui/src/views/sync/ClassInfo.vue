@@ -7,7 +7,6 @@ import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { interpret } from 'xstate';
 import permachine from '@/machines/perRequestMachine';
-const classInfoM = useMachine(machine)
 const classMethodInfoM = useMachine(machine)
 const dumpM = useMachine(machine)
 const classDetailMap = reactive(new Map<string, string[]>())

@@ -8,14 +8,12 @@ import TodoList from '@/components/input/TodoList.vue';
 import {
   Listbox, ListboxButton, ListboxOptions, ListboxOption
 } from '@headlessui/vue';
-import { transfromStore } from "@/stores/resTransform"
 import permachine from '@/machines/perRequestMachine';
-import { watch } from 'fs';
+import transformStackTrace from '@/utils/transform';
 
 const fetchS = fetchStore()
 const FetchService = useInterpret(permachine)
 const stackTrace = reactive([] as string[])
-const transformS = transfromStore()
 const count = ref(0)
 const leastTime = ref(200)
 const isBlock = ref(false)
@@ -63,15 +61,10 @@ const infoCount = ref({
   TERMINATED: 0
 } as ThreadStateCount)
 const tableResults = reactive([] as Map<string, string>[])
-const limitResults = tableResults
-// watchEffect(()=>{
-//   if(count.value > 0) {
-//     tableResults.length = count.value
-//   }
-// })
+
 const tableFilter = computed(() => {
   // 原本的数组
-  let res = count.value > 0 ? tableResults.filter((v, i)=>i < count.value) : tableResults
+  let res = count.value > 0 ? tableResults.filter((v, i) => i < count.value) : tableResults
   if (includesVal.size === 0) return res;
   // 导入过滤条件
   includesVal.forEach((v1) => {
@@ -181,7 +174,7 @@ const setleast = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
-const {increase, decrease} = publiC.numberCondition(count,{min:0})
+const { increase, decrease } = publiC.numberCondition(count, { min: 0 })
 const getSpecialThreads = (threadid: number = -1) => {
   let threadName = threadid > 0 ? `${threadid}` : ""
   fetchS.baseSubmit(FetchService, {
@@ -191,7 +184,7 @@ const getSpecialThreads = (threadid: number = -1) => {
     const result = (res as CommonRes).body.results[0]
     if (result.type === "thread") {
       stackTrace.length = 0
-      result.threadInfo.stackTrace.forEach(stack => stackTrace.unshift(transformS.transformStackTrace(stack)))
+      result.threadInfo.stackTrace.forEach(stack => stackTrace.unshift(transformStackTrace(stack)))
     }
   })
 }
@@ -203,10 +196,10 @@ const getSpecialThreads = (threadid: number = -1) => {
     <div class="flex justify-end items-center h-[10vh]">
 
       <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
-      <button class="btn ml-2 btn-sm btn-outline" @click="setleast">sample interval:{{leastTime}}</button>
+      <button class="btn ml-2 btn-sm btn-outline" @click="setleast">sample interval:{{ leastTime }}</button>
       <div class="btn-group ml-2" v-show="!isBlock">
         <button class="btn btn-outline btn-sm" @click.prevent="decrease">-</button>
-        <button class="btn btn-outline btn-sm border-x-0" @click.prevent="setlimit">top threads:{{count}}</button>
+        <button class="btn btn-outline btn-sm border-x-0" @click.prevent="setlimit">top threads:{{ count }}</button>
         <button class="btn btn-outline btn-sm" @click.prevent="increase">+</button>
       </div>
       <Listbox v-model="threadState">
@@ -214,10 +207,10 @@ const getSpecialThreads = (threadid: number = -1) => {
           <ListboxButton class="btn w-40 btn-sm btn-outline">state {{ threadState.name }}</ListboxButton>
           <ListboxOptions
             class=" z-10 absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-base-100">
-            <ListboxOption v-for="(am,i) in statelist" :key="i" :value="am" v-slot="{active, selected}">
+            <ListboxOption v-for="(am, i) in statelist" :key="i" :value="am" v-slot="{ active, selected }">
               <div class=" p-2 transition " :class="{
-              'bg-neutral text-neutral-content': active,
-              'bg-neutral-focus text-neutral-content': selected,
+                'bg-neutral text-neutral-content': active,
+                'bg-neutral-focus text-neutral-content': selected,
               }">
                 {{ am.name }}
               </div>
@@ -231,55 +224,58 @@ const getSpecialThreads = (threadid: number = -1) => {
       </label>
       <button class="btn btn-primary btn-sm btn-outline" @click="getThreads"> get threads </button>
     </div>
-    <div class="w-full h-[50vh] input-btn-style my-2 p-4 flex flex-col">
-      <div class="flex h-[8vh] flex-wrap flex-auto">
-        <div v-for="(v, i) in Object.entries(infoCount)" :key="i" class="mr-2">
-          <span class="text-primary-content border border-primary-focus bg-primary-focus w-44 px-2 rounded-l">
-            {{ v[0] }}
-          </span>
-          <span class="border border-primary-focus bg-base-200 rounded-r flex-1 px-1">
-            {{v[1]}}
-          </span>
+    <div class="w-full h-[50vh] my-2 card rounded-box compact border">
+      <div class="card-body overflow-auto">
+        <div class="h-[8vh] flex-wrap flex-auto flex-row flex">
+          <div v-for="(v, i) in Object.entries(infoCount)" :key="i" class="mr-2">
+            <span class="text-primary-content border border-primary-focus bg-primary-focus w-44 px-2 rounded-l">
+              {{ v[0] }}
+            </span>
+            <span class="border border-primary-focus bg-base-200 rounded-r flex-1 px-1">
+              {{ v[1] }}
+            </span>
+          </div>
+        </div>
+        <div class="overflow-auto h-[40vh] w-full">
+          <table class="table w-full">
+            <thead>
+              <tr>
+                <th class=""></th>
+                <template v-if="count === 0">
+                  <th class="normal-case" v-for="(v, i) in keyList" :key="i">{{ v }}</th>
+                </template>
+                <template v-else>
+                  <th class="normal-case" v-for="(v, i) in statsList" :key="i">{{ v }}</th>
+                </template>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(map, i) in tableFilter" :key="i">
+                <th class="2"><button class="btn-outline btn-primary btn btn-sm"
+                    @click="getSpecialThreads(parseInt(map.get('id')!))" v-if="map.get('id') !== '-1'">
+                    get stackTrace
+                  </button></th>
+                <template v-if="count === 0">
+                  <td class="" v-for="(key, j) in keyList" :key="j">
+                    {{ map.get(key) }}
+                  </td>
+                </template>
+                <template v-else>
+                  <td class="" v-for="(key, j) in statsList" :key="j">
+                    {{ map.get(key) }}
+                  </td>
+                </template>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="overflow-auto h-[40vh] w-full">
-        <table class="table w-full">
-          <thead>
-            <tr>
-              <th class=""></th>
-              <template v-if="count === 0">
-                <th class="normal-case" v-for="(v,i) in keyList" :key="i">{{v}}</th>
-              </template>
-              <template v-else>
-                <th class="normal-case" v-for="(v,i) in statsList" :key="i">{{v}}</th>
-              </template>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(map, i) in tableFilter" :key="i">
-              <th class="2"><button class="btn-outline btn-primary btn btn-sm"
-                  @click="getSpecialThreads(parseInt(map.get('id')!))" v-if="map.get('id')!=='-1'">
-                  get stackTrace
-                </button></th>
-              <template v-if="count === 0">
-                <td class="" v-for="(key,j) in keyList" :key="j">
-                  {{map.get(key)}}
-                </td>
-              </template>
-              <template v-else>
-                <td class="" v-for="(key,j) in statsList" :key="j">
-                  {{map.get(key)}}
-                </td>
-              </template>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
-    <div class="input-btn-style flex-auto overflow-auto">
-      <h2 class="text-lg">stackTrace</h2>
-      <div v-for="(stack, i) in stackTrace" class="mb-2" :key="i">{{stack}} </div>
-
+    <div class=" flex-auto card rounded-box compact border">
+      <div class="card-body overflow-auto ">
+        <h2 class="text-lg">stackTrace</h2>
+        <div v-for="(stack, i) in stackTrace" class="mb-2" :key="i">{{ stack }} </div>
+      </div>
     </div>
   </div>
 </template>
