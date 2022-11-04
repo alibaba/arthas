@@ -76,4 +76,24 @@ public class ClassLoaderUtils {
         }
         return Integer.toHexString(hashCode);
     }
+
+    /**
+     * 通过ClassLoader#toString()返回值查找classloader
+     * @param inst
+     * @param classLoaderToString
+     * @return
+     */
+    public static List<ClassLoader> getClassLoaderByClassLoaderToStr(Instrumentation inst, String classLoaderToString) {
+        if (classLoaderToString == null || classLoaderToString.isEmpty()) {
+            return null;
+        }
+        Set<ClassLoader> classLoaderSet = getAllClassLoader(inst);
+        List<ClassLoader> matchClassLoaders = new ArrayList<ClassLoader>();
+        for (ClassLoader classLoader : classLoaderSet) {
+            if (classLoader.toString().equals(classLoaderToString)) {
+                matchClassLoaders.add(classLoader);
+            }
+        }
+        return matchClassLoaders;
+    }
 }

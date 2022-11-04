@@ -103,7 +103,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "cs", longName = "classLoaderStr")
-    @Description("The return value of the ClassLoader#toString().")
+    @Description("The return value of the special class's ClassLoader#toString().")
     public void setClassLoaderToString(String classLoaderToString) {
         this.classLoaderToString = classLoaderToString;
     }
@@ -114,8 +114,30 @@ public class SearchClassCommand extends AnnotatedCommand {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
 
-        if (hashCode == null && classLoaderClass != null) {
-            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+        if (hashCode == null && (classLoaderClass != null || classLoaderToString != null)) {
+            List<ClassLoader> matchedClassLoaders = new ArrayList<ClassLoader>();
+            String tips = "";
+            if (classLoaderClass != null) {
+                List<ClassLoader> matchedByClassName = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+                if (matchedByClassName != null) {
+                    matchedClassLoaders.addAll(matchedByClassName);
+                }
+                tips = "class name: " + classLoaderClass;
+            }
+            if (classLoaderToString != null) {
+                if (matchedClassLoaders.size() <= 0 && classLoaderClass != null) {
+                } else {
+                    List<ClassLoader> matchedByClassLoaderToStr = ClassLoaderUtils.getClassLoaderByClassLoaderToStr(inst, classLoaderToString);
+                    if (matchedByClassLoaderToStr != null) {
+                        if (matchedClassLoaders.size() > 0) {
+                            matchedClassLoaders.retainAll(matchedByClassLoaderToStr);
+                        } else {
+                            matchedClassLoaders.addAll(matchedByClassLoaderToStr);
+                        }
+                    }
+                }
+                tips = tips + (StringUtils.isEmpty(tips) ? "ClassLoader#toString(): " : ", ClassLoader#toString(): ") + classLoaderToString;
+            }
             if (matchedClassLoaders.size() == 1) {
                 hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
             } else if (matchedClassLoaders.size() > 1) {
@@ -124,18 +146,15 @@ public class SearchClassCommand extends AnnotatedCommand {
                         .setClassLoaderClass(classLoaderClass)
                         .setMatchedClassLoaders(classLoaderVOList);
                 process.appendResult(searchclassModel);
-                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                process.end(-1, "Found more than one classloader by " + tips + ", please specify classloader with '-c <classloader hash>'");
                 return;
             } else {
-                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                process.end(-1, "Can not find classloader by " + tips + ".");
                 return;
             }
         }
 
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
-        if (!StringUtils.isEmpty(classLoaderToString)) {
-            matchedClasses = filterByClassLoaderToStr(matchedClasses);
-        }
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
             public int compare(Class<?> c1, Class<?> c2) {
@@ -167,16 +186,6 @@ public class SearchClassCommand extends AnnotatedCommand {
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));
         process.end();
-    }
-
-    private List<Class<?>> filterByClassLoaderToStr(List<Class<?>> classes) {
-        List<Class<?>> list = new ArrayList<Class<?>>();
-        for (Class<?> clazz : classes) {
-            if (clazz.getClassLoader() !=null && clazz.getClassLoader().toString().equals(classLoaderToString)) {
-                list.add(clazz);
-            }
-        }
-        return list;
     }
 
     @Override
