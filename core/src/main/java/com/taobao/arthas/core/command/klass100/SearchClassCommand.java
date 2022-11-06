@@ -115,27 +115,12 @@ public class SearchClassCommand extends AnnotatedCommand {
         Instrumentation inst = process.session().getInstrumentation();
 
         if (hashCode == null && (classLoaderClass != null || classLoaderToString != null)) {
-            List<ClassLoader> matchedClassLoaders = new ArrayList<ClassLoader>();
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoader(inst, classLoaderClass, classLoaderToString);
             String tips = "";
             if (classLoaderClass != null) {
-                List<ClassLoader> matchedByClassName = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
-                if (matchedByClassName != null) {
-                    matchedClassLoaders.addAll(matchedByClassName);
-                }
                 tips = "class name: " + classLoaderClass;
             }
             if (classLoaderToString != null) {
-                if (matchedClassLoaders.size() <= 0 && classLoaderClass != null) {
-                } else {
-                    List<ClassLoader> matchedByClassLoaderToStr = ClassLoaderUtils.getClassLoaderByClassLoaderToStr(inst, classLoaderToString);
-                    if (matchedByClassLoaderToStr != null) {
-                        if (matchedClassLoaders.size() > 0) {
-                            matchedClassLoaders.retainAll(matchedByClassLoaderToStr);
-                        } else {
-                            matchedClassLoaders.addAll(matchedByClassLoaderToStr);
-                        }
-                    }
-                }
                 tips = tips + (StringUtils.isEmpty(tips) ? "ClassLoader#toString(): " : ", ClassLoader#toString(): ") + classLoaderToString;
             }
             if (matchedClassLoaders.size() == 1) {
