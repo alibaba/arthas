@@ -21,6 +21,9 @@ public class VmToolUtils {
         }
         if (OSUtils.isWindows()) {
             libName = "libArthasJniLibrary-x64.dll";
+            if (OSUtils.isX86()) {
+                libName = "libArthasJniLibrary-x86.dll";
+            }
         }
     }
 

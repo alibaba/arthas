@@ -131,6 +131,39 @@
 				</configuration>
 			</plugin>
 
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- 从web-ui复制打包好的js/html -->
+                                <copy overwrite="true" todir="${project.basedir}/src/main/resources/static/">
+                                    <fileset dir="${project.basedir}/../web-ui/arthasWebConsole/dist/tunnel/" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>resources-clean</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- 清理从web-ui复制的js/html -->
+                                <delete dir="${project.basedir}/src/main/resources/static"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
