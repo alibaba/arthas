@@ -21,7 +21,7 @@ Search classes loaded by JVM.
 |                `[c:]` | The hash code of the special class's classLoader                                                                                                                                                                                 |
 | `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression.                                                                                                                                                                  |
 |                `[n:]` | Maximum number of matching classes with details (100 by default)                                                                                                                                                                 |
-|`[cs <arg>]` | specify the return value of class's ClassLoader#toString(). Long format is`[classLoaderStr <arg>]`|
+|`[cs <arg>]` | Specify the return value of class's ClassLoader#toString(). Long format is`[classLoaderStr <arg>]`|
 
 ::: tip
 _class-patten_ supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'.
