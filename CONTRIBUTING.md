@@ -19,9 +19,8 @@ Please refer to [README.MD at tutorials/katacoda](tutorials/katacoda/README.md#c
 ## Developer
 
 * Arthas runtime supports JDK6+
-* To build Arthas requires JDK7+, because of the source code import JDK7 classes, such as `java.lang.management.BufferPoolMXBean`.
-
-> It is recommended to use JDK8 to compile, and you will encounter problems when using a higher version. Reference https://github.com/alibaba/arthas/tree/master/.github/workflows
+* It is recommended to use JDK8 to compile, and you will encounter problems when using a higher version. Reference https://github.com/alibaba/arthas/tree/master/.github/workflows
+* If you encounter jfr related problems, it is recommended to use `8u262` and later versions of openjdk8 or zulu jdk8, https://mail.openjdk.org/pipermail/jdk8u-dev/2020-July/012143.html
 ### Local Installation
 
 Recommend to use [`as-package.sh`](as-package.sh) to package, which will auto-install the latest Arthas to local `~/.arthas` and when debugging, Arthas will auto-load the latest version.
@@ -84,6 +83,7 @@ Tip: you can use `--versions` to list all available versions.
 
 * Arthas运行支持JDK6+
 * 建议使用JDK8来编译，使用高版本会遇到问题。参考 https://github.com/alibaba/arthas/tree/master/.github/workflows
+* 如果遇到jfr相关问题，建议使用`8u262`及之后的高版本 openjdk8 或者zulu jdk8， https://mail.openjdk.org/pipermail/jdk8u-dev/2020-July/012143.html
 ### 安装到本地
 
 本地开发时，推荐执行`as-package.sh`来打包，会自动安装最新版本的arthas到`~/.arthas`目录里。debug时会自动使用最新版本。
