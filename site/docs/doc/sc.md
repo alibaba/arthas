@@ -21,6 +21,7 @@
 |                `[c:]` | 指定 class 的 ClassLoader 的 hashcode                                                                                                                 |
 | `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name                                                                                                            |
 |                `[n:]` | 具有详细信息的匹配类的最大数量（默认为 100）                                                                                                          |
+|`[cs <arg>]` | 指定 class 的 ClassLoader#toString() 返回值。长格式`[classLoaderStr <arg>]`|
 
 ::: tip
 class-pattern 支持全限定名，如 com.taobao.test.AAA，也支持 com/taobao/test/AAA 这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦。
