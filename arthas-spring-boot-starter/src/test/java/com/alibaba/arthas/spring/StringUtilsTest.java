@@ -15,7 +15,7 @@ public class StringUtilsTest {
 	@Test
 	public void test() {
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		map.put("telnet-port", "" + 9999);
 
 		map.put("aaa--bbb", "fff");
