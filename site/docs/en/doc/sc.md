@@ -106,3 +106,13 @@ _class-patten_ supports full qualified class name, e.g. com.taobao.test.AAA and 
 
   Affect(row-cnt:1) cost in 19 ms.
   ```
+
+- Search class by ClassLoader#toString (on the premise that a ClassLoader instance whose `toString()` returns `apo` has loaded some classes including `demo.MathGame`, `demo.MyBar`, `demo.MyFoo`)
+
+  ```bash
+  $ sc -cs apo *demo*
+  demo.MathGame
+  demo.MyBar
+  demo.MyFoo
+  Affect(row-cnt:3) cost in 56 ms.
+  ```

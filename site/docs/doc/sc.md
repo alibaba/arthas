@@ -106,3 +106,13 @@ sc 默认开启了子类匹配功能，也就是说所有当前类的子类也�
 
   Affect(row-cnt:1) cost in 19 ms.
   ```
+
+- 通过 ClassLoader#toString 查找类（前提：有一个toString()返回值是`apo`的类加载器，加载的类中包含`demo.MathGame`, `demo.MyBar`,` demo.MyFoo`3个类）
+
+  ```bash
+  $ sc -cs apo *demo*
+  demo.MathGame
+  demo.MyBar
+  demo.MyFoo
+  Affect(row-cnt:3) cost in 56 ms.
+  ```
