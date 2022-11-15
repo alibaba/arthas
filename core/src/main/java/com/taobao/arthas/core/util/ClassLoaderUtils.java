@@ -76,4 +76,48 @@ public class ClassLoaderUtils {
         }
         return Integer.toHexString(hashCode);
     }
+
+    /**
+     * Find List<ClassLoader> by the class name of ClassLoader or the return value of ClassLoader#toString().
+     * @param inst
+     * @param classLoaderClassName
+     * @param classLoaderToString
+     * @return
+     */
+    public static List<ClassLoader> getClassLoader(Instrumentation inst, String classLoaderClassName, String classLoaderToString) {
+        List<ClassLoader> matchClassLoaders = new ArrayList<ClassLoader>();
+        if (StringUtils.isEmpty(classLoaderClassName) && StringUtils.isEmpty(classLoaderToString)) {
+            return matchClassLoaders;
+        }
+        Set<ClassLoader> classLoaderSet = getAllClassLoader(inst);
+        List<ClassLoader> matchedByClassLoaderToStr = new ArrayList<ClassLoader>();
+        for (ClassLoader classLoader : classLoaderSet) {
+            // only classLoaderClassName
+            if (!StringUtils.isEmpty(classLoaderClassName) && StringUtils.isEmpty(classLoaderToString)) {
+                if (classLoader.getClass().getName().equals(classLoaderClassName)) {
+                    matchClassLoaders.add(classLoader);
+                }
+            }
+            // only classLoaderToString
+            else if (!StringUtils.isEmpty(classLoaderToString) && StringUtils.isEmpty(classLoaderClassName)) {
+                if (classLoader.toString().equals(classLoaderToString)) {
+                    matchClassLoaders.add(classLoader);
+                }
+            }
+            // classLoaderClassName and classLoaderToString
+            else {
+                if (classLoader.getClass().getName().equals(classLoaderClassName)) {
+                    matchClassLoaders.add(classLoader);
+                }
+                if (classLoader.toString().equals(classLoaderToString)) {
+                    matchedByClassLoaderToStr.add(classLoader);
+                }
+            }
+        }
+        // classLoaderClassName and classLoaderToString
+        if (!StringUtils.isEmpty(classLoaderClassName) && !StringUtils.isEmpty(classLoaderToString)) {
+            matchClassLoaders.retainAll(matchedByClassLoaderToStr);
+        }
+        return matchClassLoaders;
+    }
 }

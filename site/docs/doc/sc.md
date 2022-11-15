@@ -21,6 +21,7 @@
 |                `[c:]` | 指定 class 的 ClassLoader 的 hashcode                                                                                                                 |
 | `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name                                                                                                            |
 |                `[n:]` | 具有详细信息的匹配类的最大数量（默认为 100）                                                                                                          |
+|`[cs <arg>]` | 指定 class 的 ClassLoader#toString() 返回值。长格式`[classLoaderStr <arg>]`|
 
 ::: tip
 class-pattern 支持全限定名，如 com.taobao.test.AAA，也支持 com/taobao/test/AAA 这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦。
@@ -104,4 +105,14 @@ sc 默认开启了子类匹配功能，也就是说所有当前类的子类也�
 
 
   Affect(row-cnt:1) cost in 19 ms.
+  ```
+
+- 通过 ClassLoader#toString 查找类（前提：有一个toString()返回值是`apo`的类加载器，加载的类中包含`demo.MathGame`, `demo.MyBar`,` demo.MyFoo`3个类）
+
+  ```bash
+  $ sc -cs apo *demo*
+  demo.MathGame
+  demo.MyBar
+  demo.MyFoo
+  Affect(row-cnt:3) cost in 56 ms.
   ```

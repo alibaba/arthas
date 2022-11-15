@@ -21,6 +21,7 @@ Search classes loaded by JVM.
 |                `[c:]` | The hash code of the special class's classLoader                                                                                                                                                                                 |
 | `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression.                                                                                                                                                                  |
 |                `[n:]` | Maximum number of matching classes with details (100 by default)                                                                                                                                                                 |
+|`[cs <arg>]` | Specify the return value of class's ClassLoader#toString(). Long format is`[classLoaderStr <arg>]`|
 
 ::: tip
 _class-patten_ supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'.
@@ -104,4 +105,14 @@ _class-patten_ supports full qualified class name, e.g. com.taobao.test.AAA and 
 
 
   Affect(row-cnt:1) cost in 19 ms.
+  ```
+
+- Search class by ClassLoader#toString (on the premise that a ClassLoader instance whose `toString()` returns `apo` has loaded some classes including `demo.MathGame`, `demo.MyBar`, `demo.MyFoo`)
+
+  ```bash
+  $ sc -cs apo *demo*
+  demo.MathGame
+  demo.MyBar
+  demo.MyFoo
+  Affect(row-cnt:3) cost in 56 ms.
   ```
