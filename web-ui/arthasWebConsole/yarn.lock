@@ -200,7 +200,7 @@
 
 "@xstate/vue@^2.0.0":
   version "2.0.0"
-  resolved "https://registry.npmmirror.com/@xstate/vue/-/vue-2.0.0.tgz"
+  resolved "https://registry.npmmirror.com/@xstate/vue/-/vue-2.0.0.tgz#bb95f91600c5fad2e8a72f872cb8f69b3b154e10"
   integrity sha512-JlrJ3d+I6rZCcFBuu3O4GP+mGJfd11O9o69wRedzPMqZ+hxcMRBsih9L5kKnJHcU9CTmdJTT172oxTaYF7thzA==
 
 acorn-node@^1.8.2:

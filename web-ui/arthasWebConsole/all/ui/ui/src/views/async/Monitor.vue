@@ -10,45 +10,12 @@ import {
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { publicStore } from '@/stores/public';
-import * as echarts from 'echarts/core';
-import {
-  TitleComponent,
-  TitleComponentOption,
-  ToolboxComponent,
-  ToolboxComponentOption,
-  TooltipComponent,
-  TooltipComponentOption,
-  GridComponent,
-  GridComponentOption,
-  LegendComponent,
-  LegendComponentOption,
-  DataZoomComponent,
-  DataZoomComponentOption
-} from 'echarts/components';
-import {
-  BarChart,
-  BarSeriesOption,
-  LineChart,
-  LineSeriesOption
-} from 'echarts/charts';
-import {
-  UniversalTransition
-} from 'echarts/features';
-import {
-  SVGRenderer
-} from 'echarts/renderers';
-import { ECharts } from 'echarts/core';
-
-echarts.use(
-  [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, DataZoomComponent, BarChart, LineChart, SVGRenderer, UniversalTransition]
-);
-
-type EChartsOption = echarts.ComposeOption<
-  TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | DataZoomComponentOption | BarSeriesOption | LineSeriesOption
->
+import LineVue from "@/components/charts/Line.vue"
+import Bar from '@/components/charts/Bar.vue';
+import { BarChartOption, LineChartOption } from '@/echart';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getCommonResEffect } = fetchS
@@ -69,29 +36,28 @@ const averageRT = ref({
 })
 
 const chartContext: {
-  count: number,
-  myChart?: ECharts,
-  costChart?: ECharts,
   categories: string[],
   data: number[],
-  cur: number,
-  max: number,
   successData: number[],
-  failureData: number[]
-} = {
-  max: 0,
-  cur: 0,
-  count: 40,
-  myChart: undefined,
-  costChart: undefined,
+  failureData: number[],
+  dataZoom: Record<string, unknown>
+} = reactive({
   categories: [],
   data: [],
   successData: [],
   failureData: [],
-}
-// for (let i = 0; i < chartContext.count; i++) { chartContext.categories[i] = i + 1 }
+  dataZoom: {
+    type: "inside",
+    minValueSpan: 10,
+    maxValueSpan: 10,
+    start: 50,
+    end: 100,
+    throttle: 0,
+    zoomLock: true
+  }
+})
 
-const chartOption = {
+const chartOption = reactive<BarChartOption>({
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -102,12 +68,7 @@ const chartOption = {
     }
   },
   legend: {},
-  toolbox: {
-    show: true,
-    feature: {
-      dataView: { readOnly: false },
-    }
-  },
+  dataZoom: chartContext.dataZoom,
   xAxis: [
     {
       type: 'category',
@@ -129,20 +90,20 @@ const chartOption = {
       name: 'success',
       type: 'bar',
       stack: 'count',
-      data: [],
+      data: chartContext.successData,
     },
     {
       name: 'failure',
       type: 'bar',
       stack: "count",
-      data: [],
+      data: chartContext.failureData,
       itemStyle: {
         color: "#ff0000",
       }
     },
   ]
-};
-const costOption = {
+});
+const costOption = reactive<LineChartOption>({
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -152,109 +113,50 @@ const costOption = {
       }
     }
   },
-  legend: {},
-  toolbox: {
-    show: true,
-    feature: {
-      dataView: { readOnly: false },
-    }
+  legend: {
   },
-  xAxis: [
-    {
-      type: 'category',
-      data: chartContext.categories,
-      axisLabel: {
-        formatter(value: string) {
-          return value.split(" ")[1]
-        }
+  dataZoom: chartContext.dataZoom,
+  // toolbox: {
+  //   show: true,
+  //   feature: {
+  //     dataView: { readOnly: false },
+  //   }
+  // },
+  xAxis: {
+    type: 'category',
+    data: chartContext.categories,
+    axisLabel: {
+      formatter(value: string) {
+        return value.split(" ")[1]
       }
     }
-  ],
-  yAxis: [
-    {
-      type: 'value',
-      scale: true,
-      name: 'rt(ms)',
-      min: 0,
-    }
-  ],
-  series: [
-    {
-      name: 'rt',
-      type: 'line',
-      data: chartContext.data
-    }
-  ]
-}
-const updateChart = (data: MonitorData) => {
-  while (chartContext.cur > chartContext.count) {
-    chartContext.data.shift()
-    chartContext.successData.shift()
-    chartContext.failureData.shift()
-    chartContext.categories.shift()
-    chartContext.cur--
+  },
+  yAxis: {
+    type: 'value',
+    scale: true,
+    name: 'rt(ms)',
+    min: 0,
+  },
+  series: {
+    name: 'rt',
+    type: 'line',
+    data: chartContext.data
   }
+})
+const updateChart = (data: MonitorData) => {
   chartContext.data.push(data.cost / data.total)
   chartContext.failureData.push(data.failed)
   chartContext.successData.push(data.success)
   chartContext.categories.push(data.timestamp)
-  chartContext.cur++
 
-  chartContext.myChart!.setOption<EChartsOption>({
-    xAxis: [
-      {
-        data: chartContext.categories
-      }
-    ],
-    series: [{
-      data: chartContext.successData
-    }, {
-      data: chartContext.failureData
-    }
-    ]
-  })
-  chartContext.costChart!.setOption<EChartsOption>({
-    xAxis: [
-      {
-        data: chartContext.categories
-      }
-    ],
-    series: [
-      {
-        data: chartContext.data
-      }
-    ]
-  })
 }
 const resetChart = () => {
   chartContext.data.length = 0
   chartContext.failureData.length = 0
   chartContext.successData.length = 0
-  chartContext.myChart!.setOption<EChartsOption>({
-    xAxis: [
-      {
-        data: chartContext.categories
-      }
-    ],
-    series: [{
-      data: chartContext.successData
-    }, {
-      data: chartContext.failureData
-    }
-    ]
-  })
-  chartContext.costChart!.setOption<EChartsOption>({
-    xAxis: [
-      {
-        data: chartContext.categories
-      }
-    ],
-    series: [
-      {
-        data: chartContext.data
-      }
-    ]
-  })
+  enhancer.value = undefined
+  averageRT.value.totalCost = 0
+  averageRT.value.totalCount = 0
 }
 const transform = (result: ArthasResResult) => {
   if (result.type === "monitor") {
@@ -286,21 +188,11 @@ onBeforeMount(() => {
   fetchS.asyncInit()
   pollingM.send("INIT")
 })
-onMounted(() => {
-  const chartDom = document.getElementById('monitorchart')!;
-  chartContext.myChart = echarts.init(chartDom);
-  chartOption && chartContext.myChart.setOption(chartOption)
-  chartContext.costChart = echarts.init(document.getElementById('monitorchartcost')!);
-  chartOption && chartContext.costChart.setOption(costOption)
-})
 onBeforeUnmount(() => {
   loop.close()
 })
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string }) => {
-  enhancer.value = undefined
-  // tableResults.length = 0
-  averageRT.value.totalCost =0
-  averageRT.value.totalCount = 0
+  resetChart()
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let cycle = `-c ${cycleV.value}`
   fetchS.baseSubmit(fetchM, {
@@ -321,10 +213,10 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
           <ListboxButton class="btn btn-sm btn-outline w-40">{{ mode.name }}</ListboxButton>
           <ListboxOptions
             class="absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white z-10">
-            <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
+            <ListboxOption v-for="(am, i) in modelist" :key="i" :value="am" v-slot="{ active, selected }">
               <div class=" p-2 transition" :class="{
-              'bg-neutral text-neutral-content': active,
-              'bg-neutral-focus text-neutral-content': selected,
+                'bg-neutral text-neutral-content': active,
+                'bg-neutral-focus text-neutral-content': selected,
               }">
                 {{ am.name }}
               </div>
@@ -332,13 +224,14 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
           </ListboxOptions>
         </div>
       </Listbox>
-      <button class="btn btn-sm btn-outline" @click="changeCycle">cycle time:{{cycleV}}</button>
+      <button class="btn btn-sm btn-outline" @click="changeCycle">cycle time:{{ cycleV }}</button>
     </template>
   </MethodInput>
   <Enhancer :result="enhancer" v-if="enhancer" class="mb-4">
 
   </Enhancer>
-  <div id="monitorchart" class="input-btn-style h-60 w-full pointer-events-auto transition mb-2"></div>
-  <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div>
-
+  <!-- <div id="monitorchart" class="input-btn-style h-60 w-full pointer-events-auto transition mb-2"></div> -->
+  <Bar class="h-60 pointer-events-auto transition" :option="chartOption" />
+  <!-- <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div> -->
+  <LineVue class="h-60 pointer-events-auto transition" :option="costOption" />
 </template>
