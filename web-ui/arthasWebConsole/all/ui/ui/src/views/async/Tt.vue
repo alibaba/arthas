@@ -8,42 +8,12 @@ import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { publicStore } from '@/stores/public';
-import * as echarts from 'echarts/core';
-import {
-  TitleComponent,
-  TitleComponentOption,
-  ToolboxComponent,
-  ToolboxComponentOption,
-  TooltipComponent,
-  TooltipComponentOption,
-  GridComponent,
-  GridComponentOption,
-  LegendComponent,
-  LegendComponentOption,
-  DataZoomComponent,
-  DataZoomComponentOption
-} from 'echarts/components';
-import {
-  BarChart,
-  BarSeriesOption,
-  LineChart,
-  LineSeriesOption
-} from 'echarts/charts';
-import {
-  UniversalTransition
-} from 'echarts/features';
-import {
-  SVGRenderer
-} from 'echarts/renderers';
-import { ECharts, number } from 'echarts/core';
+import LineVue from '@/components/charts/Line.vue';
+import { LineChartOption } from '@/echart';
 
-echarts.use(
-  [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, DataZoomComponent, BarChart, LineChart, SVGRenderer, UniversalTransition]
-);
-
-type EChartsOption = echarts.ComposeOption<
-  TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | DataZoomComponentOption | BarSeriesOption | LineSeriesOption
->
+// type EChartsOption = echarts.ComposeOption<
+//   TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | DataZoomComponentOption | BarSeriesOption | LineSeriesOption
+// >
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getPullResultsEffect } = fetchS
@@ -72,21 +42,13 @@ const tableResults = reactive([] as Map<string, string>[])
 type tfkey = keyof TimeFragment
 
 const chartContext: {
-  count: number,
-  myChart?: ECharts,
   categories: number[],
   data: number[],
-  cur: number,
-  max: number,
-} = {
-  max: 0,
-  cur: 0,
-  count: 20,
-  myChart: undefined,
+} = reactive({
   categories: [],
   data: []
-}
-const chartOption = {
+})
+const chartOption = reactive<LineChartOption>({
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -96,67 +58,47 @@ const chartOption = {
       }
     }
   },
-  legend: {},
+  legend: {
+  },
+  dataZoom: {
+    type: "inside",
+    minValueSpan:30,
+    maxValueSpan:30,
+    start: 50,
+    end: 100,
+    throttle:0,
+    zoomLock: true
+  },
   toolbox: {
     show: true,
     feature: {
       dataView: { readOnly: false },
     }
   },
-  xAxis: [
-    {
-      type: 'category',
-      boundaryGap: true,
-      data: chartContext.categories
-    }
-  ],
-  yAxis: [
-    {
-      type: 'value',
-      scale: true,
-      name: 'cost(ms)',
-      max: 0,
-      min: 0,
-      boundaryGap: [0.2, 0.2]
-    }
-  ],
-  series: [
-    {
-      name: 'cost',
-      type: 'bar',
-      xAxisIndex: 0,
-      yAxisIndex: 0,
-      data: chartContext.data
-    }
-  ]
-};
-const updateChart = (tf: TimeFragment) => {
-  while (chartContext.cur > chartContext.count) {
-    chartContext.data.shift()
-    chartContext.categories.shift()
-    chartContext.cur--
+  xAxis: {
+    type: 'category',
+    boundaryGap: true,
+    data: chartContext.categories
+  },
+  yAxis:
+  {
+    type: 'value',
+    scale: true,
+    name: 'cost(ms)',
+    min: 0,
+    boundaryGap: [0.2, 0.2]
+  },
+  series: {
+    name: 'cost',
+    type: 'line',
+    xAxisIndex: 0,
+    yAxisIndex: 0,
+    data: chartContext.data
   }
+});
+const updateChart = (tf: TimeFragment) => {
   chartContext.data.push(tf.cost)
   chartContext.categories.push(tf.index)
-  chartContext.cur++
-  chartContext.max = Math.max(...chartContext.data)
-  chartContext.myChart!.setOption<EChartsOption>({
-    xAxis: [
-      {
-        data: chartContext.categories
-      }
-    ],
-    yAxis: [
-      {
-        max: chartContext.max,
-      }
-    ],
-    series: [
-      {
-        data: chartContext.data
-      }
-    ]
-  });
 }
 const transform = (tf: TimeFragment) => {
   const map = new Map()
@@ -200,14 +142,6 @@ onBeforeMount(() => {
   pollingM.send("INIT")
   fetchS.asyncInit()
 })
-onMounted(() => {
-  const chartDom = document.getElementById('ttchart')!;
-  chartContext.myChart = echarts.init(chartDom);
-  chartContext.myChart.on("click", e => {
-    console.dir(e)
-  })
-  chartOption && chartContext.myChart.setOption(chartOption)
-})
 onBeforeUnmount(() => {
   loop.close()
 })
@@ -230,10 +164,13 @@ const alltt = () => fetchS.baseSubmit(fetchM, {
   let result = (res as CommonRes).body.results[0]
   trigerRes.clear()
   tableResults.length = 0
+  // 因为要all 所以清空之前的记录
+  chartContext.categories.length = 0
+  chartContext.data.length = 0
+
   if (result.type === "tt") {
     result.timeFragmentList.forEach(tf => {
       tableResults.unshift(transform(tf))
-
     })
   }
 })
@@ -317,7 +254,7 @@ const searchTt = () => {
     </button>
   </div>
   <div class="pointer-events-auto">
-    <div id="ttchart" class="w-full h-60 input-btn-style mb-4"></div>
+    <LineVue :option="chartOption" class="w-full h-64 mb-4"></LineVue>
     <div class="text-gray-500">
       <CmdResMenu title="invoked result" :map="trigerRes" v-if="trigerRes.size > 0">
         <template #headerAside>
@@ -334,7 +271,7 @@ const searchTt = () => {
         <thead>
           <tr>
             <th></th>
-            <th class="normal-case" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+            <th class="normal-case" v-for="(v, i) in keyList" :key="i">{{ v }}</th>
           </tr>
         </thead>
         <tbody class="">
@@ -342,14 +279,14 @@ const searchTt = () => {
             <th class="">
               <button class="btn btn-primary btn-sm btn-outline" @click="reTrigger(map.get('index')!)">invoke</button>
             </th>
-            <td class="" v-for="(key,j) in keyList" :key="j">
-              <template v-if=" key !== 'params'">
-                {{map.get(key)}}
+            <td class="" v-for="(key, j) in keyList" :key="j">
+              <template v-if="key !== 'params'">
+                {{ map.get(key) }}
               </template>
 
               <div class="flex flex-col" v-else>
                 <div v-for="(row, k) in map.get(key)" :key="k">
-                  {{row}}
+                  {{ row }}
                 </div>
               </div>
             </td>
@@ -358,7 +295,7 @@ const searchTt = () => {
         <tfoot>
           <tr>
             <th></th>
-            <th class="normal-case" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+            <th class="normal-case" v-for="(v, i) in keyList" :key="i">{{ v }}</th>
           </tr>
         </tfoot>
       </table>

@@ -129,14 +129,14 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   <div class="overflow-x-auto w-full mt-4">
     <table class="table w-full table-compact">
       <thead>
-        <tr>
+        <tr >
           <th></th>
-          <th class="0" v-for="(v, i) in keyList" :key="i">{{ v }}
+          <th v-for="(v, i) in keyList" :key="i" class="normal-case">{{ v }}
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(map, i) in tableResults" :key="i" class="hover">
+        <tr v-for="(map, i) in tableResults" :key="i" class="hover ">
           <th>{{ i + 1 }}</th>
           <td class="" v-for="(key, j) in keyList" :key="j">
             <div v-if="key !== 'value'">
@@ -151,7 +151,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <tfoot>
         <tr>
           <th></th>
-          <th class="0" v-for="(v, i) in keyList" :key="i">{{ v }}
+          <th class="normal-case" v-for="(v, i) in keyList" :key="i">{{ v }}
           </th>
         </tr>
       </tfoot>

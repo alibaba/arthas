@@ -3,51 +3,17 @@ import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import { useInterpret, useMachine } from '@xstate/vue';
-import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import * as echarts from 'echarts/core';
-import {
-  TooltipComponent,
-  TooltipComponentOption,
-  LegendComponent,
-  LegendComponentOption,
-  DatasetComponentOption,
-  GridComponentOption,
-  ToolboxComponentOption,
-  GridComponent,
-  ToolboxComponent
-} from 'echarts/components';
-import {
-  BarChart,
-  BarSeriesOption,
-  LineChart,
-  LineSeriesOption,
-  PieChart,
-  PieSeriesOption
-} from 'echarts/charts';
-import {
-  LabelLayout, UniversalTransition
-} from 'echarts/features';
-import {
-  SVGRenderer
-} from 'echarts/renderers';
-import { dispose, ECharts } from 'echarts/core';
+import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import permachine from '@/machines/perRequestMachine';
-
-type EChartsOption = echarts.ComposeOption<
-  DatasetComponentOption | PieSeriesOption
->
-type GcEChartsOption = echarts.ComposeOption<
-  ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | BarSeriesOption | LineSeriesOption
->
+import Bar from '@/components/charts/Bar.vue';
+import { BarChartOption, CircleChartOption } from '@/echart';
+import Circle from '@/components/charts/Circle.vue';
 const fetchS = fetchStore()
 const { getCommonResEffect } = publicStore()
 const dashboadM = useInterpret(permachine)
 const dashboadResM = useMachine(machine)
 const loop = fetchS.pullResultsLoop(dashboadResM)
 const toMb = (b: number) => Math.floor(b / 1024 / 1024)
-const gcInfos = reactive(new Map<string, string[]>())
-const memoryInfo = reactive(new Map<string, string[]>())
-const threads = reactive(new Map<string, string[]>())
 const runtimeInfo = reactive(new Map<keyof RuntimeInfo, string>())
 const pri = ref(3)
 const publiC = publicStore()
@@ -66,70 +32,235 @@ const keyList: (keyof ThreadStats)[] = [
 ]
 
 let dashboardId = -1
-let heapChart: ECharts
-let nonheapChart: ECharts
-let bufferPoolChart: ECharts
-let gcChart: ECharts
-const clearChart = (...charts: ECharts[]) => {
-  charts.forEach(chart => {
-    if (chart !== null && chart !== undefined) chart.dispose()
-  })
-}
+
+const colors = ['#5470C6', '#91CC75'];
+const gcChartContext = reactive<{ xData: string[], collectionCount: number[], collectionTime: number[] }>({
+  xData: [],
+  collectionCount: [],
+  collectionTime: []
+})
+const gcoption = reactive<BarChartOption>({
+  color: colors,
+  title:{
+    text: "GC",
+  },
+  grid: {
+    right: '20%'
+  },
+  legend: {
+    data: ['collectionCount', 'collectionTime']
+  },
+  xAxis: [{
+    type: 'category',
+    axisTick: {
+      alignWithLabel: true
+    },
+    data: gcChartContext.xData
+  }],
+  yAxis: [
+    {
+      type: 'value',
+      name: 'collectionCount',
+      position: 'left',
+      alignTicks: true,
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: colors[0]
+        }
+      },
+      axisLabel: {
+        formatter: '{value}'
+      }
+    },
+    {
+      type: 'value',
+      name: 'collectionTime',
+      position: 'right',
+      alignTicks: true,
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: colors[1]
+        }
+      },
+      axisLabel: {
+        formatter: '{value} ms'
+      }
+    },
+  ],
+  series: [
+    {
+      name: 'collectionCount',
+      type: 'bar',
+      data: gcChartContext.collectionCount
+    },
+    {
+      name: 'collectionTime',
+      type: 'bar',
+      yAxisIndex: 1,
+      data: gcChartContext.collectionTime
+    },
+  ]
+});
+const bufferPoolContext = reactive<{
+  data: {
+    value: number, name: string,
+  }[]
+}>({
+  data: []
+})
+const heapoptionContext = reactive<{
+  data: {
+    value: number, name: string,
+  }[]
+}>({
+  data: []
+})
+const nonheapContext = reactive<{
+  data: {
+    value: number, name: string,
+  }[]
+}>({
+  data: []
+})
+const heapoption = reactive<CircleChartOption>({
+  title:{
+    text:"heap"
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: '{b}:{c}M {d}'
+  },
+  legend: {
+    top: 'center',
+    left: 'right',
+    orient: "vertical"
+  },
+  series: [
+    {
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center:['35%','50%'],
+      avoidLabelOverlap: true,
+      label: {
+        show: false,
+        position: 'center',
+      },
+      labelLine: {
+        show: false
+      },
+      data: heapoptionContext.data
+    }
+  ]
+});
+const nonheapoption = reactive<CircleChartOption>({
+  title:{
+    text:"nonheap"
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: '{b}:{c}M'
+  },
+  legend: {
+    top: 'center',
+    left: 'right',
+    orient: "vertical"
+  },
+  series: [
+    {
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center:['35%','50%'],
+      avoidLabelOverlap: false,
+      label: {
+        show: false,
+        position: 'center',
+        formatter: '{b}:{c}M'
+      },
+      labelLine: {
+        show: false
+      },
+      data: nonheapContext.data
+    }
+  ]
+});
+const bufferPooloption = reactive<CircleChartOption>({
+  title: {
+    text: "buffer_pool"
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: '{c}M'
+  },
+  legend: {
+    top: 'center',
+    left: 'right',
+    orient: 'vertical'
+  },
+  series: [
+    {
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center:['35%','50%'],
+      avoidLabelOverlap: true,
+      label: {
+        show: false,
+        position: 'outside',
+      },
+      labelLine: {
+        show: false
+      },
+      data: bufferPoolContext.data
+    }
+  ]
+});
 const transformMemory = (result: ArthasResResult) => {
   if (result.type === "dashboard") {
 
-    const heaparr: { value: number, name: string }[] = [
-    ]
+    // const heaparr: { value: number, name: string }[] = [
+    // ]
+    heapoptionContext.data.length = 0
     result.memoryInfo.heap.filter(v => v.name !== "heap").forEach(v => {
       const arr: string[] = []
 
-      arr.push('max : ' + toMb(v.max))
-      arr.push('total : ' + toMb(v.total))
-      arr.push('used : ' + toMb(v.used))
+      // arr.push('max : ' + toMb(v.max))
+      // arr.push('total : ' + toMb(v.total))
+      // arr.push('used : ' + toMb(v.used))
 
       const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
-      heaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
+      heapoptionContext.data.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
 
-      arr.push(usage + '%')
+      // arr.push(usage + '%')
 
-      memoryInfo.set(v.name, arr)
+      // memoryInfo.set(v.name, arr)
     })
-    heaparr.push({
+    heapoptionContext.data.push({
       value: Math.floor((result.memoryInfo.heap[0].max > 0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
       name: "free",
     })
-    heapChart && heapChart.setOption({
-      series: {
-        data: heaparr
-      }
-    } as EChartsOption)
+    // heapoptionContext.data = heaparr
 
-    const nonheaparr: {
-      value: number, name: string,
-    }[] = []
+    nonheapContext.data.length = 0
     result.memoryInfo.nonheap.filter(v => v.name !== "nonheap").forEach(v => {
       const arr: string[] = []
 
-      arr.push('max : ' + toMb(v.max))
-      arr.push('total : ' + toMb(v.total))
-      arr.push('used : ' + toMb(v.used))
+      // arr.push('max : ' + toMb(v.max))
+      // arr.push('total : ' + toMb(v.total))
+      // arr.push('used : ' + toMb(v.used))
       const usage: number = (v.used / v.total) * 100
-      nonheaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
+      nonheapContext.data.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
 
-      arr.push(usage * 100 + '%')
+      // arr.push(usage * 100 + '%')
 
-      memoryInfo.set(v.name, arr)
+      // memoryInfo.set(v.name, arr)
     })
-    nonheapChart && nonheapChart.setOption({ series: { data: nonheaparr } } as EChartsOption)
+    // nonheapChart && nonheapChart.setOption({ series: { data: nonheaparr } } as EChartsOption)
 
-    const bufferPoolarr: {
-      value: number, name: string,
-    }[] = []
+    bufferPoolContext.data.length = 0
     result.memoryInfo.buffer_pool.filter(v => v.name !== "buffer_pool;").forEach(v => {
-      bufferPoolarr.push({ value: toMb(v.used), name: `${v.name}` })
-
+      bufferPoolContext.data.push({ value: toMb(v.used), name: `${v.name}` })
     })
-    bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
   }
 }
 const transformThread = (result: ArthasResResult, end: number) => {
@@ -144,34 +275,14 @@ const transformThread = (result: ArthasResResult, end: number) => {
 }
 const transformGc = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
-  const gcCountData: number[] = []
-
-  const gcTimeData: number[] = []
-  const gcxdata: string[] = []
+  gcChartContext.xData.length = 0
+  gcChartContext.collectionCount.length = 0
+  gcChartContext.collectionTime.length = 0
   result.gcInfos.forEach(v => {
-    // gcInfos.set(v.name, [v.collectionCount.toString(), v.collectionTime.toString()])
-    gcxdata.push(v.name)
-    gcCountData.push(v.collectionCount)
-    gcTimeData.push(v.collectionTime)
+    gcChartContext.xData.push(v.name)
+    gcChartContext.collectionCount.push(v.collectionCount)
+    gcChartContext.collectionTime.push(v.collectionTime)
   })
-  gcChart.setOption({
-    xAxis: {
-      type: 'category',
-      axisTick: {
-        alignWithLabel: true
-      },
-      // prettier-ignore
-      data: gcxdata
-    }, series: [{
-      name: "collectionCount",
-      type: 'bar',
-      data: gcCountData
-    }, {
-      name: "collectionTime",
-      type: 'bar',
-      data: gcTimeData
-    }]
-  } as GcEChartsOption)
 }
 const setPri = publiC.inputDialogFactory(
   pri,
@@ -193,17 +304,14 @@ getCommonResEffect(dashboadResM, body => {
     const result = body.results.find(v => v.type === "dashboard" && v.jobId === dashboardId)
     if (result && result.type === "dashboard") {
 
-      memoryInfo.clear()
       transformMemory(result)
 
       runtimeInfo.clear()
       transformRuntimeInfo(result)
 
-      threads.clear()
       tableResults.length = 0
       transformThread(result, pri.value)
 
-      gcInfos.clear()
       transformGc(result)
     }
   }
@@ -231,212 +339,9 @@ onBeforeMount(async () => {
     )
 
 })
-// 处理dom
-onMounted(() => {
-  // init
 
-  const clearDom = (...doms: HTMLElement[]) => {
-    doms.forEach(dom => {
-      dispose(dom)
-    })
-  }
-  clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
-  const heapDom = document.getElementById('heapMemory')!
-  const nonheapDom = document.getElementById('nonheapMemory')!
-  const bufferPoolDom = document.getElementById('bufferPoolMemory')!
-  const gcDom = document.getElementById('gc-info')!
-  clearDom(heapDom, nonheapDom, bufferPoolDom, gcDom)
-  echarts.use(
-    [TooltipComponent, LegendComponent, PieChart, SVGRenderer, LabelLayout, ToolboxComponent, GridComponent, BarChart, LineChart, UniversalTransition]
-  );
-
-
-
-  const heapoption: EChartsOption = {
-    tooltip: {
-      trigger: 'item',
-      formatter: '{b}:{c}M {d}'
-    },
-    legend: {
-      top: '5%',
-      left: 'center'
-    },
-    series: [
-      {
-        name: 'heap memory',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        avoidLabelOverlap: true,
-        label: {
-          show: false,
-          position: 'center',
-        },
-        labelLine: {
-          show: false
-        },
-        data: [
-        ]
-      }
-    ]
-  };
-  const nonheapoption: EChartsOption = {
-    tooltip: {
-      trigger: 'item',
-      formatter: '{b}:{c}M'
-    },
-    legend: {
-      top: '5%',
-      left: 'center'
-    },
-    series: [
-      {
-        name: 'nonheap memory',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center',
-          formatter: '{b}:{c}M'
-        },
-        labelLine: {
-          show: false
-        },
-        data: [
-        ]
-      }
-    ]
-  };
-  const bufferPooloption: EChartsOption = {
-    tooltip: {
-      trigger: 'item',
-      formatter: '{c}M'
-    },
-    legend: {
-      top: '5%',
-      left: 'center'
-    },
-    series: [
-      {
-        name: 'buffer_pool memory',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        avoidLabelOverlap: true,
-        label: {
-          show: false,
-          position: 'outside',
-        },
-        labelLine: {
-          show: false
-        },
-        data: [
-          {
-            value: 0,
-            name: '',
-          }
-        ]
-      }
-    ]
-  };
-  const colors = ['#5470C6', '#91CC75'];
-  const gcoption: GcEChartsOption = {
-    color: colors,
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross'
-      }
-    },
-    grid: {
-      right: '20%'
-    },
-    legend: {
-      data: ['collectionCount', 'collectionTime']
-    },
-    xAxis: [
-      {
-        type: 'category',
-        axisTick: {
-          alignWithLabel: true
-        },
-        // prettier-ignore
-        data: []
-      }
-    ],
-    toolbox: {
-      feature: {
-        dataView: { show: true, readOnly: true },
-      }
-    },
-    yAxis: [
-      {
-        type: 'value',
-        name: 'collectionCount',
-        position: 'left',
-        alignTicks: true,
-        axisLine: {
-          show: true,
-          lineStyle: {
-            color: colors[0]
-          }
-        },
-        axisLabel: {
-          formatter: '{value}'
-        }
-      },
-      {
-        type: 'value',
-        name: 'collectionTime',
-        position: 'right',
-        alignTicks: true,
-        axisLine: {
-          show: true,
-          lineStyle: {
-            color: colors[1]
-          }
-        },
-        axisLabel: {
-          formatter: '{value} ms'
-        }
-      },
-    ],
-    series: [
-      {
-        name: 'collectionCount',
-        type: 'bar',
-        data: [
-        ]
-      },
-      {
-        name: 'collectionTime',
-        type: 'bar',
-        yAxisIndex: 1,
-        data: [
-        ]
-      },
-    ]
-  };
-
-
-  heapChart = echarts.init(heapDom);
-  heapoption && heapChart.setOption(heapoption);
-
-  nonheapChart = echarts.init(nonheapDom);
-  nonheapoption && nonheapChart.setOption(nonheapoption);
-
-  bufferPoolChart = echarts.init(bufferPoolDom);
-  bufferPooloption && bufferPoolChart.setOption(bufferPooloption);
-
-  // gcInfosChart
-
-  gcChart = echarts.init(gcDom);
-
-
-  gcoption && gcChart.setOption(gcoption);
-})
 onBeforeUnmount(async () => {
   loop.close()
-  clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
 })
 </script>
 
@@ -453,22 +358,21 @@ onBeforeUnmount(async () => {
     </div>
     <div class="flex justify-evenly mb-4 flex-1 h-80">
       <div class="card border mr-4 flex-1 bg-base-100">
-        <div id="heapMemory" class="w-80 h-80 card-body "></div>
+
+        <Circle class="card-body" :option="heapoption"></Circle>
       </div>
       <div class="card border mr-4 flex-1 bg-base-100">
-        <div id="nonheapMemory" class="w-80 h-80 card-body"></div>
+
+        <Circle class="card-body" :option="nonheapoption"></Circle>
       </div>
       <div class="card border flex-1 bg-base-100">
-        <div id="bufferPoolMemory" class="w-80 h-80 card-body"></div>
+        <Circle class="card-body" :option="bufferPooloption"></Circle>
       </div>
-
-
-
     </div>
 
     <div class="w-full flex justify-start items-start flex-1">
-      <div class="card bg-base-100 border mr-4">
-        <div id="gc-info" class="w-[40rem] h-80 card-body p-2 "></div>
+      <div class="card bg-base-100 border mr-4 h-80 w-1/3">
+        <Bar class="card-body" :option="gcoption" />
       </div>
       <div class="card flex-1 h-80 overflow-auto w-0 border bg-base-100">
         <div class="card-body">
