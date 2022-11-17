@@ -69,11 +69,11 @@ export default defineConfig(({ mode }) => {
     define: {
       "__VUE_OPTIONS_API__": false,
     },
-    base: "./",
+    base: ".",
     publicDir: path.resolve(__dirname, "all/share/public"),
     root,
     server: {
-      proxy,
+      proxy
     },
   };
 });

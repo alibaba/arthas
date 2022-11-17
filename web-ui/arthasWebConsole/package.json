@@ -17,6 +17,7 @@
     "@highlightjs/vue-plugin": "^2.1.0",
     "@xstate/vue": "^2.0.0",
     "daisyui": "^2.31.0",
+    "dayjs": "^1.11.6",
     "echarts": "^5.3.3",
     "highlight.js": "^11.6.0",
     "pinia": "^2.0.15",
@@ -35,6 +36,6 @@
     "tailwindcss": "^3.1.4",
     "typescript": "^4.7.4",
     "vite": "^2.9.9",
-    "vue-tsc": "1.0.8"
+    "vue-tsc": "1.0.9"
   }
 }

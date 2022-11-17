@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Chart from "./Base.vue"
-import * as echarts from 'echarts/core';
 import { DataZoomComponent,  GridComponent } from 'echarts/components';
 import { LineChart } from 'echarts/charts';
 import { LabelLayout } from 'echarts/features';

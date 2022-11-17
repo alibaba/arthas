@@ -38,10 +38,3 @@ type BarChartOption = echarts.ComposeOption<
   | ToolboxComponentOption
 >;
 
-type CircleChartOption = echarts.ComposeOption<
-  | TooltipComponentOption
-  | TitleComponentOption
-  | DatasetComponentOption
-  | PieSeriesOption
-  | LegendComponentOption
->;
