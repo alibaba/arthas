@@ -6,8 +6,9 @@ import { useInterpret, useMachine } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import permachine from '@/machines/perRequestMachine';
 import Bar from '@/components/charts/Bar.vue';
-import { BarChartOption, CircleChartOption } from '@/echart';
-import Circle from '@/components/charts/Circle.vue';
+import { BarChartOption, LineChartOption } from '@/echart';
+import Line from '@/components/charts/Line.vue';
+import dayjs from "dayjs";
 const fetchS = fetchStore()
 const { getCommonResEffect } = publicStore()
 const dashboadM = useInterpret(permachine)
@@ -30,9 +31,10 @@ const keyList: (keyof ThreadStats)[] = [
   "state",
   "time",
 ]
-
+let tz = dayjs.tz.guess();
 let dashboardId = -1
 
+const options = reactive<Map<string, LineChartOption>>(new Map())
 const colors = ['#5470C6', '#91CC75'];
 const gcChartContext = reactive<{ xData: string[], collectionCount: number[], collectionTime: number[] }>({
   xData: [],
@@ -41,7 +43,7 @@ const gcChartContext = reactive<{ xData: string[], collectionCount: number[], co
 })
 const gcoption = reactive<BarChartOption>({
   color: colors,
-  title:{
+  title: {
     text: "GC",
   },
   grid: {
@@ -103,164 +105,125 @@ const gcoption = reactive<BarChartOption>({
     },
   ]
 });
-const bufferPoolContext = reactive<{
-  data: {
-    value: number, name: string,
-  }[]
-}>({
-  data: []
-})
-const heapoptionContext = reactive<{
-  data: {
-    value: number, name: string,
-  }[]
-}>({
-  data: []
-})
-const nonheapContext = reactive<{
-  data: {
-    value: number, name: string,
-  }[]
-}>({
-  data: []
-})
-const heapoption = reactive<CircleChartOption>({
-  title:{
-    text:"heap"
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b}:{c}M {d}'
-  },
-  legend: {
-    top: 'center',
-    left: 'right',
-    orient: "vertical"
-  },
-  series: [
-    {
-      type: 'pie',
-      radius: ['40%', '70%'],
-      center:['35%','50%'],
-      avoidLabelOverlap: true,
-      label: {
-        show: false,
-        position: 'center',
+const initOption = (title: string, have_max: boolean = true): LineChartOption => {
+  let series: {
+    type: string;
+    name: string;
+    areaStyle: any;
+    data: number[];
+    yAxisIndex: number;
+    tooltip: any;
+  }[] = [
+      {
+        type: 'line',
+        name: "total",
+        areaStyle: {},
+        data: [],
+        yAxisIndex: 0,
+        tooltip: {
+        }
       },
-      labelLine: {
-        show: false
-      },
-      data: heapoptionContext.data
+      {
+        type: 'line',
+        name: "used",
+        areaStyle: {},
+        data: [],
+        yAxisIndex: 0,
+        tooltip: {
+        }
+      }
+    ]
+  if (have_max) series.unshift({
+    type: 'line',
+    areaStyle: {},
+    name: 'max',
+    yAxisIndex: 0,
+    data: [],
+    tooltip: {
+      formatter: `{a}:{c}M`
     }
-  ]
-});
-const nonheapoption = reactive<CircleChartOption>({
-  title:{
-    text:"nonheap"
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b}:{c}M'
-  },
-  legend: {
-    top: 'center',
-    left: 'right',
-    orient: "vertical"
-  },
-  series: [
-    {
-      type: 'pie',
-      radius: ['40%', '70%'],
-      center:['35%','50%'],
-      avoidLabelOverlap: false,
-      label: {
-        show: false,
-        position: 'center',
-        formatter: '{b}:{c}M'
-      },
-      labelLine: {
-        show: false
-      },
-      data: nonheapContext.data
+  })
+
+  series.unshift({
+    type: 'line',
+    areaStyle: undefined,
+    name: 'usage',
+    yAxisIndex: 1,
+    data: [],
+    tooltip: {
     }
-  ]
-});
-const bufferPooloption = reactive<CircleChartOption>({
-  title: {
-    text: "buffer_pool"
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{c}M'
-  },
-  legend: {
-    top: 'center',
-    left: 'right',
-    orient: 'vertical'
-  },
-  series: [
-    {
-      type: 'pie',
-      radius: ['40%', '70%'],
-      center:['35%','50%'],
-      avoidLabelOverlap: true,
-      label: {
-        show: false,
-        position: 'outside',
+  })
+
+  const time = reactive<string[]>([])
+  return {
+    title: {
+      text: title
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#283b56'
+        }
+      }
+    },
+    legend: {
+      left: "right",
+      orient: "vertical"
+    },
+    xAxis: {
+      type: 'category',
+      data: time
+    },
+    yAxis: [
+      {
+        type: 'value',
+        name: 'MB',
+        min: 0,
+        position: "left"
       },
-      labelLine: {
-        show: false
-      },
-      data: bufferPoolContext.data
-    }
-  ]
-});
+      {
+        type: 'value',
+        name: 'usage(%)',
+        min: 0,
+        position: 'right'
+      }],
+    series
+  } as LineChartOption
+}
 const transformMemory = (result: ArthasResResult) => {
   if (result.type === "dashboard") {
+    let timestamp = result.runtimeInfo.timestamp
+    const time = dayjs(timestamp).tz(tz).format('HH:mm:ss')
+    const updateMemory = (v: { max: number; total: number; used: number; name: string; }, i: number) => {
+      const have_max = v.max > 0
+      const max = toMb(have_max ? v.max : v.total)
+      const total = toMb(v.total)
+      const used = toMb(v.used)
 
-    // const heaparr: { value: number, name: string }[] = [
-    // ]
-    heapoptionContext.data.length = 0
-    result.memoryInfo.heap.filter(v => v.name !== "heap").forEach(v => {
-      const arr: string[] = []
+      let chartOption = options.get(v.name)
+      if (chartOption === undefined) {
+        options.set(v.name, chartOption = initOption(v.name, have_max))
+      }
+      (chartOption.xAxis as ({ data: string[] })).data.push(time)
+      if (have_max) {
+        (chartOption.series as { data: number[] }[])[1].data.push(max)
+          ; (chartOption.series as { data: number[] }[])[2].data.push(total)
+          ; (chartOption.series as { data: number[] }[])[3].data.push(used)
+          ; (chartOption.series as { data: number[] }[])[0].data.push(Math.floor((used / max) * 10000) / 100)
+      } else {
+        ; (chartOption.series as { data: number[] }[])[2].data.push(used)
+          ; (chartOption.series as { data: number[] }[])[1].data.push(total)
+          ; (chartOption.series as { data: number[] }[])[0].data.push(Math.floor((used / max) * 10000) / 100)
+      }
 
-      // arr.push('max : ' + toMb(v.max))
-      // arr.push('total : ' + toMb(v.total))
-      // arr.push('used : ' + toMb(v.used))
+    }
+    result.memoryInfo.heap.forEach(updateMemory)
 
-      const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
-      heapoptionContext.data.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
+    result.memoryInfo.nonheap.forEach(updateMemory)
 
-      // arr.push(usage + '%')
-
-      // memoryInfo.set(v.name, arr)
-    })
-    heapoptionContext.data.push({
-      value: Math.floor((result.memoryInfo.heap[0].max > 0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
-      name: "free",
-    })
-    // heapoptionContext.data = heaparr
-
-    nonheapContext.data.length = 0
-    result.memoryInfo.nonheap.filter(v => v.name !== "nonheap").forEach(v => {
-      const arr: string[] = []
-
-      // arr.push('max : ' + toMb(v.max))
-      // arr.push('total : ' + toMb(v.total))
-      // arr.push('used : ' + toMb(v.used))
-      const usage: number = (v.used / v.total) * 100
-      nonheapContext.data.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
-
-      // arr.push(usage * 100 + '%')
-
-      // memoryInfo.set(v.name, arr)
-    })
-    // nonheapChart && nonheapChart.setOption({ series: { data: nonheaparr } } as EChartsOption)
-
-    bufferPoolContext.data.length = 0
-    result.memoryInfo.buffer_pool.filter(v => v.name !== "buffer_pool;").forEach(v => {
-      bufferPoolContext.data.push({ value: toMb(v.used), name: `${v.name}` })
-    })
+    result.memoryInfo.buffer_pool.forEach(updateMemory)
   }
 }
 const transformThread = (result: ArthasResResult, end: number) => {
@@ -296,7 +259,7 @@ const { increase, decrease } = publiC.numberCondition(pri, { min: 1 })
 const transformRuntimeInfo = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
   for (const key in result.runtimeInfo as RuntimeInfo) {
-    runtimeInfo.set(key as keyof RuntimeInfo, result.runtimeInfo[key as keyof RuntimeInfo].toString())
+    if (!['timestamp', 'uptime'].includes(key)) runtimeInfo.set(key as keyof RuntimeInfo, result.runtimeInfo[key as keyof RuntimeInfo].toString())
   }
 }
 getCommonResEffect(dashboadResM, body => {
@@ -356,20 +319,6 @@ onBeforeUnmount(async () => {
         </span>
       </div>
     </div>
-    <div class="flex justify-evenly mb-4 flex-1 h-80">
-      <div class="card border mr-4 flex-1 bg-base-100">
-
-        <Circle class="card-body" :option="heapoption"></Circle>
-      </div>
-      <div class="card border mr-4 flex-1 bg-base-100">
-
-        <Circle class="card-body" :option="nonheapoption"></Circle>
-      </div>
-      <div class="card border flex-1 bg-base-100">
-        <Circle class="card-body" :option="bufferPooloption"></Circle>
-      </div>
-    </div>
-
     <div class="w-full flex justify-start items-start flex-1">
       <div class="card bg-base-100 border mr-4 h-80 w-1/3">
         <Bar class="card-body" :option="gcoption" />
@@ -405,9 +354,13 @@ onBeforeUnmount(async () => {
         </div>
       </div>
     </div>
+    <div class="card border bg-base-100">
+
+      <div class="card-body">
+        <template v-for="([title, option]) in options.entries()" :key="title">
+          <Line class="h-80" :option="option"></Line>
+        </template>
+      </div>
+    </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>
