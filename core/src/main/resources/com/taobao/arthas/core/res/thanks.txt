@@ -1,4 +1,4 @@
-
+#from https://github.com/oldmanpushcart/greys-anatomy
 PLATINUM DEVELOPERS
 
     vlinux
@@ -11,11 +11,9 @@ PLATINUM DEVELOPERS
 
     JieChenCN
         weibo : http://weibo.com/471760204
-         blog : http://xapp.in
 
     JamesPan
         email : panjiabang@gmail.com
-         blog : http://blog.jamespan.me
 
     jotcmd
        github : https://github.com/jotcmd
