@@ -20,9 +20,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -980,5 +982,16 @@ public abstract class StringUtils {
 
     public static String beautifyName(String name) {
         return name.replace(' ', '_').toLowerCase();
+    }
+
+    public static List<String> toStringList(URL[] urls) {
+        if (urls != null) {
+            List<String> result = new ArrayList<String>(urls.length);
+            for (URL url : urls) {
+                result.add(url.toString());
+            }
+            return result;
+        }
+        return Collections.emptyList();
     }
 }
