@@ -62,11 +62,11 @@ const chartOption = reactive<LineChartOption>({
   },
   dataZoom: {
     type: "inside",
-    minValueSpan:30,
-    maxValueSpan:30,
+    minValueSpan: 30,
+    maxValueSpan: 30,
     start: 50,
     end: 100,
-    throttle:0,
+    throttle: 0,
     zoomLock: true
   },
   toolbox: {
@@ -145,12 +145,12 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (data: { classItem: Item, methodItem: Item, count: number, conditon: string }) => {
+const submit = async (data: { classItem: Item, methodItem: Item, count: number,express:string }) => {
   let n = data.count > 0 ? `-n ${data.count}` : ""
-  let condition = data.conditon
+  let express =  data.express.trim() !== ""? `-w ${data.express}`:""
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n} ${condition}`,
+    command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n} ${express}`,
     sessionId: undefined
   }).then(res => {
     enhancer.value = undefined
@@ -236,7 +236,7 @@ const searchTt = () => {
 </script>
 
 <template>
-  <MethodInput :submit-f="submit" ncount ncondition>
+  <MethodInput :submit-f="submit" ncount nexpress>
   </MethodInput>
   <div class="divider"></div>
   <div class="flex items-center justify-between">
@@ -280,15 +280,19 @@ const searchTt = () => {
               <button class="btn btn-primary btn-sm btn-outline" @click="reTrigger(map.get('index')!)">invoke</button>
             </th>
             <td class="" v-for="(key, j) in keyList" :key="j">
-              <template v-if="key !== 'params'">
-                {{ map.get(key) }}
-              </template>
-
-              <div class="flex flex-col" v-else>
+              <div class="flex flex-col" v-if="key == 'params'">
                 <div v-for="(row, k) in map.get(key)" :key="k">
                   {{ row }}
                 </div>
               </div>
+              <template v-else-if="['returnObj', 'throwExp'].includes(key)">
+                <pre><code>{{map.get(key)}}</code></pre>
+              </template>
+              <template v-else>
+                {{ map.get(key) }}
+              </template>
+              <!-- <template v-else-if="key == 'returnObject'"></template> -->
+
             </td>
           </tr>
         </tbody>

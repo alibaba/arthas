@@ -43,7 +43,6 @@ getCommonResEffect(pollingM, body => {
             }
             map.set(k, val)
           })
-        // pollResults.unshift([result.ts, map])
         tableResults.unshift(map)
       }
 
@@ -69,9 +68,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
 
-  // pollResults.length = 0
   enhancer.value = undefined
-  // tableResults.length = 0
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
     command: `stack ${className} ${methodName} ${condition} ${n}`,
@@ -85,38 +82,37 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
 <template>
   <MethodInput :submit-f="submit" ncondition ncount></MethodInput>
 
-    <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <div class="mt-4 overflow-x-auto w-full">
-      <table class="table w-full table-compact">
-        <thead>
-          <tr>
-            <th></th>
-            <th v-for="(v,i) in keyList" :key="i">{{v}}</th>
-          </tr>
-        </thead>
-        <tbody class="">
-          <tr v-for="(map, i) in tableResults" :key="i">
-            <th>{{i + 1}}</th>
-            <td v-for="(key,j) in keyList" :key="j">
-              <template v-if="key!== 'stackTrace'">
-                {{map.get(key)}}
-              </template>
-              <div class="flex flex-col items-end" v-else>
-
-                <div v-for="(row, k) in map.get(key)" :key="k">
-                  {{row}}
-                </div>
+  <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
+  <div class="mt-4 overflow-x-auto w-full">
+    <table class="table w-full table-compact">
+      <thead>
+        <tr>
+          <th></th>
+          <th v-for="(v, i) in keyList" :key="i" class="normal-case">{{ v }}</th>
+        </tr>
+      </thead>
+      <tbody class="">
+        <tr v-for="(map, i) in tableResults" :key="i">
+          <th></th>
+          <td v-for="(key, j) in keyList" :key="j">
+            <template v-if="key !== 'stackTrace'">
+              {{ map.get(key) }}
+            </template>
+            <div class="flex flex-col items-end" v-else>
+              <div v-for="(row, k) in map.get(key)" :key="k">
+                {{ row }}
               </div>
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th></th>
-            <th v-for="(v,i) in keyList" :key="i">{{v}}</th>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th v-for="(v, i) in keyList" :key="i" class="normal-case">{{ v }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 
 </template>

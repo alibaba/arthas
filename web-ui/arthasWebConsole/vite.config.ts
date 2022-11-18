@@ -9,11 +9,12 @@ export default defineConfig(({ mode }) => {
     `${env.VITE_ARTHAS_PROXY_IP}:${env.VITE_ARTHAS_PROXY_PORT}`;
 
   console.log("Arthas proxy :", proxyTarget);
-  let outDir, input, root, proxy;
+  let outDir, input, root, proxy, base;
 
   if (mode === "tunnel") {
     outDir = path.resolve(__dirname, `dist/tunnel`);
     root = "./all/tunnel";
+    base = "./"
     input = {
       tunnel: path.resolve(__dirname, "all/tunnel/index.html"),
       apps: path.resolve(__dirname, "all/tunnel/apps.html"),
@@ -27,6 +28,7 @@ export default defineConfig(({ mode }) => {
     };
   } else if (mode === "ui") {
     outDir = path.resolve(__dirname, `dist/ui`);
+    base = "/"
     root = "./all/ui";
     input = {
       main: path.resolve(__dirname, "all/ui/index.html"),
@@ -69,7 +71,7 @@ export default defineConfig(({ mode }) => {
     define: {
       "__VUE_OPTIONS_API__": false,
     },
-    base: ".",
+    base,
     publicDir: path.resolve(__dirname, "all/share/public"),
     root,
     server: {
