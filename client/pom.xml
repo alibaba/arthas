@@ -10,6 +10,7 @@
 
     <artifactId>arthas-client</artifactId>
     <name>arthas-client</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <build>
         <finalName>arthas-client</finalName>

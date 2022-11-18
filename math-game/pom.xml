@@ -9,6 +9,7 @@
     </parent>
     <artifactId>math-game</artifactId>
     <name>math-game</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <build>
         <finalName>math-game</finalName>

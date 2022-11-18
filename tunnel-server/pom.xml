@@ -9,6 +9,7 @@
 	</parent>
 	<artifactId>arthas-tunnel-server</artifactId>
 	<name>arthas-tunnel-server</name>
+	<url>https://github.com/alibaba/arthas</url>
 
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>

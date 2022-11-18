@@ -8,6 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>arthas-site</name>
+    <url>https://github.com/alibaba/arthas</url>
     <artifactId>arthas-site</artifactId>
 
     <properties>

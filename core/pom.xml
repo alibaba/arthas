@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-core</artifactId>
     <name>arthas-core</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <properties>
         <arthas.deps.package>com.alibaba.arthas.deps</arthas.deps.package>

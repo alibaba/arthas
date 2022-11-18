@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-common</artifactId>
     <name>arthas-common</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <!-- This module can not add any dependencies -->
     <build>

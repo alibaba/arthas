@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-testcase</artifactId>
     <name>arthas-testcase</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
         <dependency>

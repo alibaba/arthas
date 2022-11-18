@@ -9,6 +9,7 @@
 	</parent>
 	<artifactId>arthas-tunnel-client</artifactId>
 	<name>arthas-tunnel-client</name>
+	<url>https://github.com/alibaba/arthas</url>
 
 	<dependencies>
         <dependency>

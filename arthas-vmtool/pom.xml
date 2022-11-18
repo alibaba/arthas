@@ -11,6 +11,7 @@
     </parent>
     <artifactId>arthas-vmtool</artifactId>
     <name>arthas-vmtool</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <profiles>
         <!-- https://github.com/openjdk/jdk/blob/jdk-16%2B36/src/java.base/windows/native/libjava/java_props_md.c#L568 -->
