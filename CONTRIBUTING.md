@@ -152,4 +152,5 @@ Tip: you can use `--versions` to list all available versions.
     ```
 * 更新README.md，比如增加了新命令，要加上说明，更新wiki的链接
 * 更新release页面的 issue信息，修改信息等
+* 更新 https://arthas.aliyun.com/api/latest_version api
 * 更新内部的版本
