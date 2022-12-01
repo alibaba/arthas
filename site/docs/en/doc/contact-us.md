@@ -34,4 +34,6 @@ Arthas open source discussion QQ group：916328269
 
 Arthas open source discussion QQ group2：854625984
 
-![](/images/qqgroup2_qr.jpg)
+Arthas open source discussion QQ group 3： 672077388
+
+![](/images/qqgroup3_qr.jpg)

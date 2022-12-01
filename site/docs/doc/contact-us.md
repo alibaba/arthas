@@ -30,10 +30,14 @@
 
 ### QQ 群
 
-Arthas 开源交流 QQ 群： 916328269 （如果满了无法加入，请加 2 群）
+Arthas 开源交流 QQ 群： 916328269 （如果满了无法加入，请加3群）
 
 ![](/images/qqgroup_qr.jpg)
 
 Arthas 开源交流 QQ 群 2： 854625984
 
 ![](/images/qqgroup2_qr.jpg)
+
+Arthas 开源交流 QQ 群 3： 672077388
+
+![](/images/qqgroup3_qr.jpg)
