@@ -123,6 +123,36 @@ public class SearchUtils {
         return matches;
     }
 
+    /**
+     * 搜索目标类的子类
+     *
+     * @param inst     inst
+     * @param classSet 当前类集合
+     * @param maxNumOfMatchedClass 匹配的class最大数量
+     * @return 匹配的子类集合
+     */
+    public static Set<Class<?>> searchSubClass(Instrumentation inst, Set<Class<?>> classSet, int maxNumOfMatchedClass) {
+        if (classSet.size() >= maxNumOfMatchedClass) {
+            return classSet;
+        }
+        final Set<Class<?>> matches = new HashSet<Class<?>>();
+        for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            if (clazz == null) {
+                continue;
+            }
+            for (Class<?> superClass : classSet) {
+                if (superClass.isAssignableFrom(clazz)) {
+                    matches.add(clazz);
+                    break;
+                }
+            }
+            if (matches.size() >= maxNumOfMatchedClass) {
+                break;
+            }
+        }
+        return matches;
+    }
+
 
     /**
      * 搜索目标类的内部类

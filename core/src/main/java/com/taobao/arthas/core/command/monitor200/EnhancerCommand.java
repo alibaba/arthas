@@ -45,6 +45,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected boolean verbose;
 
+    protected int maxNumOfMatchedClass = Integer.MAX_VALUE;
+
     @Option(longName = "exclude-class-pattern")
     @Description("exclude class name pattern, use either '.' or '/' as separator")
     public void setExcludeClassPattern(String excludeClassPattern) {
@@ -61,6 +63,12 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     @Description("Enables print verbose information, default value false.")
     public void setVerbosee(boolean verbose) {
         this.verbose = verbose;
+    }
+
+    @Option(shortName = "m", longName = "maxClassNum")
+    @Description("The maximum of matched class.")
+    public void setMaxNumOfMatchedClass(int maxNumOfMatchedClass) {
+        this.maxNumOfMatchedClass = maxNumOfMatchedClass;
     }
 
     /**
@@ -159,7 +167,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
             // 注册通知监听器
             process.register(listener, enhancer);
-            effect = enhancer.enhance(inst);
+            effect = enhancer.enhance(inst, this.maxNumOfMatchedClass);
 
             if (effect.getThrowable() != null) {
                 String msg = "error happens when enhancing class: "+effect.getThrowable().getMessage();
