@@ -24,6 +24,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 |                 [f] | 在**函数结束之后**(正常返回和异常返回)观察        |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配              |
 |                [x:] | 指定输出结果的属性遍历深度，默认为 1，最大值是 4  |
+|`[m <arg>]` | 指定Class最大匹配数量，默认值为Integer.MAX_VALUE。长格式为`[maxMatch <arg>]`。 |
 
 这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
@@ -86,6 +87,26 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 
 - 上面的结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是 null
 - 在第二次结果里是`location=AtExit`，说明函数正常返回，因此可以看到`returnObj`结果是一个 ArrayList
+
+### 指定Class最大匹配数量
+
+```bash
+$ watch demo.MathGame primeFactors -m 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 302 ms, listenerId: 3
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2022-12-25 19:58:41; [cost=0.222419ms] result=@ArrayList[
+    @Object[][isEmpty=false;size=1],
+    @MathGame[demo.MathGame@3bf400],
+    null,
+]
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2022-12-25 19:58:51; [cost=0.046928ms] result=@ArrayList[
+    @Object[][isEmpty=false;size=1],
+    @MathGame[demo.MathGame@3bf400],
+    null,
+]
+```
 
 ### 观察函数调用入口的参数和返回值
 

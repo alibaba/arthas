@@ -39,6 +39,7 @@
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配     |
 |              `[c:]` | 统计周期，默认值为 120 秒                |
 |                 [b] | 在**方法调用之前**计算 condition-express |
+|`[m <arg>]` | 指定Class最大匹配数量，默认值为Integer.MAX_VALUE。长格式为`[maxMatch <arg>]`。 |
 
 ## 使用参考
 
@@ -69,6 +70,21 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
+```
+
+### 指定Class最大匹配数量
+
+```bash
+$ monitor -c 1 -m 1 demo.MathGame primeFactors
+Press Q or Ctrl+C to abort.
+Affect(class count:1 , method count:1) cost in 384 ms, listenerId: 6.
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2022-12-25 21:12:58  demo.MathGame  primeFactors  1      1        0     0.18        0.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2022-12-25 21:12:59  demo.MathGame  primeFactors  0      0        0     0.00       0.00%
 ```
 
 ### 计算条件表达式过滤统计结果(方法执行完毕之后)

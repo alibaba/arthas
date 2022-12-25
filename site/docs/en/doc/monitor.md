@@ -39,6 +39,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |                  `[E]` | turn on regex matching while the default is wildcard matching |
 |                 `[c:]` | cycle of statistics, the default value: `120`s                |
 |                  `[b]` | evaluate the condition-expression before method invoke        |
+|`[m <arg>]` | Specify the max number of matched Classes, the default value is Integer.MAX_VALUE. Long format is `[maxMatch <arg>]`. |
 
 ## Usage
 
@@ -69,6 +70,21 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
+```
+
+### Specify the max number of matched Classes
+
+```bash
+$ monitor -c 1 -m 1 demo.MathGame primeFactors
+Press Q or Ctrl+C to abort.
+Affect(class count:1 , method count:1) cost in 384 ms, listenerId: 6.
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2022-12-25 21:12:58  demo.MathGame  primeFactors  1      1        0     0.18        0.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2022-12-25 21:12:59  demo.MathGame  primeFactors  0      0        0     0.00       0.00%
 ```
 
 ### Evaluate condition-express to filter method (after method call)
