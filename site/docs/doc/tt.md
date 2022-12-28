@@ -61,7 +61,7 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
   
   - `-m 1`
   
-    通过 `-m` 参数指定Class匹配的最大数量，防止匹配到的Class数量太多导致JVM挂起，默认值是Integer.MAX_VALUE。
+    通过 `-m` 参数指定Class匹配的最大数量，防止匹配到的Class数量太多导致JVM挂起，默认值是50。
 
 - 表格字段说明
 

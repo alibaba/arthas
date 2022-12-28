@@ -415,9 +415,13 @@ public class Enhancer implements ClassFileTransformer {
     public synchronized EnhancerAffect enhance(final Instrumentation inst, int maxNumOfMatchedClass) throws UnmodifiableClassException {
         // 获取需要增强的类集合
         this.matchingClasses = GlobalOptions.isDisableSubClass
-                ? SearchUtils.searchClass(inst, classNameMatcher, maxNumOfMatchedClass)
-                : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher, maxNumOfMatchedClass), maxNumOfMatchedClass);
+                ? SearchUtils.searchClass(inst, classNameMatcher, maxNumOfMatchedClass + 1)
+                : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher, maxNumOfMatchedClass + 1), maxNumOfMatchedClass + 1);
 
+        if (matchingClasses.size() > maxNumOfMatchedClass) {
+            affect.setMsg("The matched Class number is over limit: " + maxNumOfMatchedClass + ". Enhancing is forbidden. You can try to change the limit with option '-m <arg>'.");
+            return affect;
+        }
         // 过滤掉无法被增强的类
         List<Pair<Class<?>, String>> filtedList = filter(matchingClasses);
         if (!filtedList.isEmpty()) {

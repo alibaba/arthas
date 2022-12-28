@@ -39,7 +39,7 @@
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配     |
 |              `[c:]` | 统计周期，默认值为 120 秒                |
 |                 [b] | 在**方法调用之前**计算 condition-express |
-|`[m <arg>]` | 指定Class最大匹配数量，默认值为Integer.MAX_VALUE。长格式为`[maxMatch <arg>]`。 |
+|`[m <arg>]` | 指定Class最大匹配数量，默认值为50。长格式为`[maxMatch <arg>]`。 |
 
 ## 使用参考
 

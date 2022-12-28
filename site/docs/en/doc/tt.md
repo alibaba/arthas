@@ -53,7 +53,7 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
 
 - `-m 1`
   
-  limit the number of matched Classes to avoid JVM suspending when too many matched Classes. The default value is Integer.MAX_VALUE.
+  limit the number of matched Classes to avoid JVM suspending when too many matched Classes. The default value is 50.
   
 - Property
 

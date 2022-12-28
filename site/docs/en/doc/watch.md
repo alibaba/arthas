@@ -22,7 +22,7 @@ There are four different scenarios for `watch` command, which makes it rather co
 |                    [f] | when method exits (either succeed or fail with exceptions)                          |
 |                    [E] | turn on regex matching while the default is wildcard matching                       |
 |                   [x:] | the depth to print the specified property with default value: 1, the max value is 4 |
-|`[m <arg>]` | Specify the max number of matched Classes, the default value is Integer.MAX_VALUE. Long format is `[maxMatch <arg>]`. |
+|`[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 F.Y.I
 

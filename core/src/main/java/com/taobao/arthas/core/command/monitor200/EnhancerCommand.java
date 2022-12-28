@@ -23,6 +23,7 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.Ansi;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Option;
 
@@ -45,7 +46,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected boolean verbose;
 
-    protected int maxNumOfMatchedClass = Integer.MAX_VALUE;
+    protected int maxNumOfMatchedClass;
 
     @Option(longName = "exclude-class-pattern")
     @Description("exclude class name pattern, use either '.' or '/' as separator")
@@ -66,6 +67,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "m", longName = "maxMatch")
+    @DefaultValue("50")
     @Description("The maximum of matched class.")
     public void setMaxNumOfMatchedClass(int maxNumOfMatchedClass) {
         this.maxNumOfMatchedClass = maxNumOfMatchedClass;

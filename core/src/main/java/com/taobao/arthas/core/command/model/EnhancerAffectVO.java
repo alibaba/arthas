@@ -20,6 +20,7 @@ public class EnhancerAffectVO {
     private Throwable throwable;
     private List<String> classDumpFiles;
     private List<String> methods;
+    private String msg;
 
     public EnhancerAffectVO(EnhancerAffect affect) {
         this.cost = affect.cost();
@@ -27,6 +28,7 @@ public class EnhancerAffectVO {
         this.methodCount = affect.mCnt();
         this.listenerId = affect.getListenerId();
         this.throwable = affect.getThrowable();
+        this.msg = affect.getMsg();
 
         if (GlobalOptions.isDump) {
             classDumpFiles = new ArrayList<String>();
@@ -86,5 +88,13 @@ public class EnhancerAffectVO {
 
     public void setMethods(List<String> methods) {
         this.methods = methods;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }
