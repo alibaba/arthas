@@ -419,7 +419,6 @@ public class Bootstrap {
         // find arthas home
         File arthasHomeDir = null;
         if (bootstrap.getArthasHome() != null) {
-            verifyArthasHome(bootstrap.getArthasHome());
             arthasHomeDir = new File(bootstrap.getArthasHome());
         }
         if (arthasHomeDir == null && bootstrap.getUseVersion() != null) {
@@ -431,7 +430,6 @@ public class Bootstrap {
                 DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
                                 bootstrap.getUseVersion(), ARTHAS_LIB_DIR.getAbsolutePath());
             }
-            verifyArthasHome(specialVersionDir.getAbsolutePath());
             arthasHomeDir = specialVersionDir;
         }
 
@@ -442,7 +440,6 @@ public class Bootstrap {
                 try {
                     // https://stackoverflow.com/a/17870390
                     File bootJarPath = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
-                    verifyArthasHome(bootJarPath.getParent());
                     arthasHomeDir = bootJarPath.getParentFile();
                 } catch (Throwable e) {
                     // ignore
