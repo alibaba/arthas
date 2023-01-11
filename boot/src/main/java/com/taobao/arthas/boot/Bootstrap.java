@@ -518,74 +518,78 @@ public class Bootstrap {
             //double check telnet port and pid before attach
             telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPortOrDefault());
             checkTelnetPortPid(bootstrap, telnetPortPid, pid);
+            if (telnetPortPid > 0 && pid == telnetPortPid) {
+                AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPortOrDefault());
+            } else {
 
-            // start arthas-core.jar
-            List<String> attachArgs = new ArrayList<String>();
-            attachArgs.add("-jar");
-            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
-            attachArgs.add("-pid");
-            attachArgs.add("" + pid);
-            if (bootstrap.getTargetIp() != null) {
-                attachArgs.add("-target-ip");
-                attachArgs.add(bootstrap.getTargetIp());
-            }
+                // start arthas-core.jar
+                List<String> attachArgs = new ArrayList<String>();
+                attachArgs.add("-jar");
+                attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+                attachArgs.add("-pid");
+                attachArgs.add("" + pid);
+                if (bootstrap.getTargetIp() != null) {
+                    attachArgs.add("-target-ip");
+                    attachArgs.add(bootstrap.getTargetIp());
+                }
 
-            if (bootstrap.getTelnetPort() != null) {
-                attachArgs.add("-telnet-port");
-                attachArgs.add("" + bootstrap.getTelnetPort());
-            }
+                if (bootstrap.getTelnetPort() != null) {
+                    attachArgs.add("-telnet-port");
+                    attachArgs.add("" + bootstrap.getTelnetPort());
+                }
 
-            if (bootstrap.getHttpPort() != null) {
-                attachArgs.add("-http-port");
-                attachArgs.add("" + bootstrap.getHttpPort());
-            }
+                if (bootstrap.getHttpPort() != null) {
+                    attachArgs.add("-http-port");
+                    attachArgs.add("" + bootstrap.getHttpPort());
+                }
 
-            attachArgs.add("-core");
-            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
-            attachArgs.add("-agent");
-            attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
-            if (bootstrap.getSessionTimeout() != null) {
-                attachArgs.add("-session-timeout");
-                attachArgs.add("" + bootstrap.getSessionTimeout());
-            }
+                attachArgs.add("-core");
+                attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+                attachArgs.add("-agent");
+                attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
+                if (bootstrap.getSessionTimeout() != null) {
+                    attachArgs.add("-session-timeout");
+                    attachArgs.add("" + bootstrap.getSessionTimeout());
+                }
 
-            if (bootstrap.getAppName() != null) {
-                attachArgs.add("-app-name");
-                attachArgs.add(bootstrap.getAppName());
-            }
+                if (bootstrap.getAppName() != null) {
+                    attachArgs.add("-app-name");
+                    attachArgs.add(bootstrap.getAppName());
+                }
 
-            if (bootstrap.getUsername() != null) {
-                attachArgs.add("-username");
-                attachArgs.add(bootstrap.getUsername());
-            }
-            if (bootstrap.getPassword() != null) {
-                attachArgs.add("-password");
-                attachArgs.add(bootstrap.getPassword());
-            }
+                if (bootstrap.getUsername() != null) {
+                    attachArgs.add("-username");
+                    attachArgs.add(bootstrap.getUsername());
+                }
+                if (bootstrap.getPassword() != null) {
+                    attachArgs.add("-password");
+                    attachArgs.add(bootstrap.getPassword());
+                }
 
-            if (bootstrap.getTunnelServer() != null) {
-                attachArgs.add("-tunnel-server");
-                attachArgs.add(bootstrap.getTunnelServer());
-            }
-            if (bootstrap.getAgentId() != null) {
-                attachArgs.add("-agent-id");
-                attachArgs.add(bootstrap.getAgentId());
-            }
-            if (bootstrap.getStatUrl() != null) {
-                attachArgs.add("-stat-url");
-                attachArgs.add(bootstrap.getStatUrl());
-            }
+                if (bootstrap.getTunnelServer() != null) {
+                    attachArgs.add("-tunnel-server");
+                    attachArgs.add(bootstrap.getTunnelServer());
+                }
+                if (bootstrap.getAgentId() != null) {
+                    attachArgs.add("-agent-id");
+                    attachArgs.add(bootstrap.getAgentId());
+                }
+                if (bootstrap.getStatUrl() != null) {
+                    attachArgs.add("-stat-url");
+                    attachArgs.add(bootstrap.getStatUrl());
+                }
 
-            if (bootstrap.getDisabledCommands() != null){
-                attachArgs.add("-disabled-commands");
-                attachArgs.add(bootstrap.getDisabledCommands());
+                if (bootstrap.getDisabledCommands() != null) {
+                    attachArgs.add("-disabled-commands");
+                    attachArgs.add(bootstrap.getDisabledCommands());
+                }
+
+                AnsiLog.info("Try to attach process " + pid);
+                AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
+                ProcessUtils.startArthasCore(pid, attachArgs);
+
+                AnsiLog.info("Attach process {} success.", pid);
             }
-
-            AnsiLog.info("Try to attach process " + pid);
-            AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
-            ProcessUtils.startArthasCore(pid, attachArgs);
-
-            AnsiLog.info("Attach process {} success.", pid);
         }
 
         if (bootstrap.isAttachOnly()) {
