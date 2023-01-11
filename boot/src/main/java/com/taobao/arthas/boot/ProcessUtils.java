@@ -129,7 +129,7 @@ public class ProcessUtils {
             jps = jpsFile.getAbsolutePath();
         }
 
-        AnsiLog.debug("Try use jps to lis java process, jps: " + jps);
+        AnsiLog.debug("Try use jps to list java process, jps: " + jps);
 
         String[] command = null;
         if (v) {
