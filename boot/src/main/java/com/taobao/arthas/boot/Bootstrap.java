@@ -494,6 +494,7 @@ public class Bootstrap {
                         AnsiLog.info("local lastest version: {}, remote lastest version: {}, try to download from remote.",
                                         localLastestVersion, remoteLastestVersion);
                         needDownload = true;
+                        AnsiLog.info("If you have download the latest version, you can get more information from https://arthas.aliyun.com/doc/faq.html");
                     }
                 }
             }
@@ -586,6 +587,7 @@ public class Bootstrap {
             ProcessUtils.startArthasCore(pid, attachArgs);
 
             AnsiLog.info("Attach process {} success.", pid);
+            AnsiLog.info("More information about influence of attach: https://arthas.aliyun.com/doc/faq.html");
         }
 
         if (bootstrap.isAttachOnly()) {
