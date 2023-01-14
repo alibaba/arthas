@@ -23,7 +23,8 @@ public class TransformerManager {
     private Instrumentation instrumentation;
     private List<ClassFileTransformer> watchTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
     private List<ClassFileTransformer> traceTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
-    
+    private List<ClassFileTransformer> lookTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
+
     /**
      * 先于 watch/trace的 Transformer TODO 改进为全部用 order 排序？
      */
@@ -55,6 +56,14 @@ public class TransformerManager {
                     }
                 }
 
+                for (ClassFileTransformer classFileTransformer : lookTransformers) {
+                    byte[] transformResult = classFileTransformer.transform(loader, className, classBeingRedefined,
+                            protectionDomain, classfileBuffer);
+                    if (transformResult != null) {
+                        classfileBuffer = transformResult;
+                    }
+                }
+
                 for (ClassFileTransformer classFileTransformer : traceTransformers) {
                     byte[] transformResult = classFileTransformer.transform(loader, className, classBeingRedefined,
                             protectionDomain, classfileBuffer);
@@ -70,9 +79,11 @@ public class TransformerManager {
         instrumentation.addTransformer(classFileTransformer, true);
     }
 
-    public void addTransformer(ClassFileTransformer transformer, boolean isTracing) {
+    public void addTransformer(ClassFileTransformer transformer, boolean isTracing, boolean isLooking) {
         if (isTracing) {
             traceTransformers.add(transformer);
+        } else if (isLooking) {
+            lookTransformers.add(transformer);
         } else {
             watchTransformers.add(transformer);
         }
@@ -86,12 +97,14 @@ public class TransformerManager {
         reTransformers.remove(transformer);
         watchTransformers.remove(transformer);
         traceTransformers.remove(transformer);
+        lookTransformers.remove(transformer);
     }
 
     public void destroy() {
         reTransformers.clear();
         watchTransformers.clear();
         traceTransformers.clear();
+        lookTransformers.clear();
         instrumentation.removeTransformer(classFileTransformer);
     }
 

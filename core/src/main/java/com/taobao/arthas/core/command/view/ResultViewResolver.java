@@ -81,6 +81,9 @@ public class ResultViewResolver {
             registerView(VmToolView.class);
             registerView(JFRView.class);
 
+            //look
+            registerView(LookView.class);
+
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }

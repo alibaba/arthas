@@ -3,11 +3,7 @@ package com.taobao.arthas.core.advisor;
 import java.arthas.SpyAPI;
 
 import com.alibaba.bytekit.asm.binding.Binding;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtEnter;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtExceptionExit;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtExit;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtInvoke;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtInvokeException;
+import com.alibaba.bytekit.asm.interceptor.annotation.*;
 
 /**
  * 
@@ -40,6 +36,18 @@ public class SpyInterceptors {
                 @Binding.Throwable Throwable throwable) {
             SpyAPI.atExceptionExit(clazz, methodInfo, target, args, throwable);
         }
+    }
+
+    public static class SpyLookInterceptor {
+
+        public static void atLineBefore(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                                        @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
+                                        @Binding.LineBefore int line,
+                                        @Binding.LocalVars Object[] vars,
+                                        @Binding.LocalVarNames String[] varNames) {
+            SpyAPI.atLineBefore(clazz, methodInfo, target, args, line, vars, varNames);
+        }
+
     }
 
     public static class SpyTraceInterceptor1 {

@@ -20,20 +20,7 @@ import com.taobao.arthas.core.command.klass100.RetransformCommand;
 import com.taobao.arthas.core.command.klass100.SearchClassCommand;
 import com.taobao.arthas.core.command.klass100.SearchMethodCommand;
 import com.taobao.arthas.core.command.logger.LoggerCommand;
-import com.taobao.arthas.core.command.monitor200.DashboardCommand;
-import com.taobao.arthas.core.command.monitor200.HeapDumpCommand;
-import com.taobao.arthas.core.command.monitor200.JvmCommand;
-import com.taobao.arthas.core.command.monitor200.MBeanCommand;
-import com.taobao.arthas.core.command.monitor200.MemoryCommand;
-import com.taobao.arthas.core.command.monitor200.MonitorCommand;
-import com.taobao.arthas.core.command.monitor200.PerfCounterCommand;
-import com.taobao.arthas.core.command.monitor200.ProfilerCommand;
-import com.taobao.arthas.core.command.monitor200.StackCommand;
-import com.taobao.arthas.core.command.monitor200.ThreadCommand;
-import com.taobao.arthas.core.command.monitor200.TimeTunnelCommand;
-import com.taobao.arthas.core.command.monitor200.TraceCommand;
-import com.taobao.arthas.core.command.monitor200.VmToolCommand;
-import com.taobao.arthas.core.command.monitor200.WatchCommand;
+import com.taobao.arthas.core.command.monitor200.*;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
@@ -57,7 +44,7 @@ public class BuiltinCommandPack implements CommandResolver {
     }
 
     private void initCommands(List<String> disabledCommands) {
-        List<Class<? extends AnnotatedCommand>> commandClassList = new ArrayList<Class<? extends AnnotatedCommand>>(33);
+        List<Class<? extends AnnotatedCommand>> commandClassList = new ArrayList<Class<? extends AnnotatedCommand>>(34);
         commandClassList.add(HelpCommand.class);
         commandClassList.add(AuthCommand.class);
         commandClassList.add(KeymapCommand.class);
@@ -105,6 +92,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(ProfilerCommand.class);
         commandClassList.add(VmToolCommand.class);
         commandClassList.add(StopCommand.class);
+        commandClassList.add(LookCommand.class);
         try {
             if (ClassLoader.getSystemClassLoader().getResource("jdk/jfr/Recording.class") != null) {
                 commandClassList.add(JFRCommand.class);
