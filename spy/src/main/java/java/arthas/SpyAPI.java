@@ -64,6 +64,10 @@ public class SpyAPI {
         spyInstance.atExit(clazz, methodInfo, target, args, returnObject);
     }
 
+    public static void atLineBefore(Class<?> clazz, String methodInfo, Object target, Object[] args, int line, Object[] vars, String[] varNames) {
+        spyInstance.atLineBefore(clazz, methodInfo, target, args, line, vars, varNames);
+    }
+
     public static void atExceptionExit(Class<?> clazz, String methodInfo, Object target,
             Object[] args, Throwable throwable) {
         spyInstance.atExceptionExit(clazz, methodInfo, target, args, throwable);
@@ -88,6 +92,9 @@ public class SpyAPI {
         public abstract void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args,
                 Object returnObject);
 
+        public abstract void atLineBefore(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                          int line, Object[] vars, String[] varNames);
+
         public abstract void atExceptionExit(Class<?> clazz, String methodInfo, Object target,
                 Object[] args, Throwable throwable);
 
@@ -107,6 +114,11 @@ public class SpyAPI {
         @Override
         public void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args,
                 Object returnObject) {
+        }
+
+        @Override
+        public void atLineBefore(Class<?> clazz, String methodInfo, Object target, Object[] args, int line, Object[] vars, String[] varNames) {
+
         }
 
         @Override

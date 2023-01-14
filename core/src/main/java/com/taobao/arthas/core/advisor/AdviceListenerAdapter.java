@@ -65,6 +65,11 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
                 throwable);
     }
 
+    @Override
+    public void beforeLine(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args, int line, Object[] vars, String[] varNames) throws Throwable {
+        beforeLine(clazz.getClassLoader(), clazz, new ArthasMethod(clazz, methodName, methodDesc), target, args, line, vars, varNames);
+    }
+
     /**
      * 前置通知
      *
@@ -105,6 +110,24 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
      */
     public abstract void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
             Object[] args, Throwable throwable) throws Throwable;
+
+    /**
+     * 指定行之前，look命令中使用，查看本地变量
+     *
+     * @param loader    类加载器
+     * @param clazz      类
+     * @param method    方法
+     * @param target     目标类实例
+     *                   若目标为静态方法,则为null
+     * @param args       参数列表
+     * @param line       指定行，-1代表是方法退出前
+     * @param vars       本地变量数组
+     * @param varNames   本地变量名数组
+     * @throws Throwable 通知过程出错
+     */
+    public void beforeLine(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args, int line, Object[] vars, String[] varNames) throws Throwable{
+        //empty
+    }
 
     /**
      * 判断条件是否满足，满足的情况下需要输出结果

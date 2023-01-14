@@ -46,4 +46,14 @@ public interface Constants {
                                 "  FALSE : 1==2\n" +
                                 "  '#cost>100'\n";
 
+
+    String LOOK_CONDITION_EXPRESS =  "Conditional expression in ognl style, for example:\n" +
+                                "  TRUE  : 1==1\n" +
+                                "  TRUE  : true\n" +
+                                "  FALSE : false\n" +
+                                "  TRUE  : 'params.length>=0'\n" +
+                                "  FALSE : 1==2\n" +
+                                "  'varMap[\"varName\"]==1'\n"+
+                                "  'varMap[\"varName\"].equals(\"value\")'\n";
+
 }

@@ -35,6 +35,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     protected static final List<String> EMPTY = Collections.emptyList();
     public static final String[] EXPRESS_EXAMPLES = { "params", "returnObj", "throwExp", "target", "clazz", "method",
                                                        "{params,returnObj}", "params[0]" };
+
+    public static final String[] LOOK_EXPRESS_EXAMPLES = {"target", "clazz", "method", "params", "varMap"};
+
     private String excludeClassPattern;
 
     protected Matcher classNameMatcher;
@@ -157,6 +160,12 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             }
 
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
+            if(listener instanceof LookAdviceListener) {
+                int lineNum = ((LookAdviceListener) listener).getCommand().getLineNum();
+                enhancer.setLooking(true);
+                enhancer.setLookingLineNum(lineNum);
+            }
+
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst);
@@ -177,6 +186,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 String optionsCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("options unsafe true").reset().toString();
                 String javaPackage = Ansi.ansi().fg(Ansi.Color.GREEN).a("java.*").reset().toString();
                 String resetCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("reset CLASS_NAME").reset().toString();
+                String jadCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("jad CLASS_NAME").reset().toString();
+                String lookCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("look").reset().toString();
                 String logStr = Ansi.ansi().fg(Ansi.Color.GREEN).a(LogUtil.loggingFile()).reset().toString();
                 String issueStr = Ansi.ansi().fg(Ansi.Color.GREEN).a("https://github.com/alibaba/arthas/issues/47").reset().toString();
                 String msg = "No class or method is affected, try:\n"
@@ -184,8 +195,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                         + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
                         + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
                         + "4. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
-                        + "5. Check arthas log: " + logStr + "\n"
-                        + "6. Visit " + issueStr + " for more details.";
+                        + "5. If you are using `" + lookCommand + "` command, use `" + jadCommand + "` to comfirm the line exist first\n"
+                        + "6. Check arthas log: " + logStr + "\n"
+                        + "7. Visit " + issueStr + " for more details.";
                 process.end(-1, msg);
                 return;
             }
