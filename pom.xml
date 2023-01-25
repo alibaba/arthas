@@ -72,7 +72,7 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
-        <module>tunnel-proxy</module>
+        <module>tunnel-server2</module>
     </modules>
 
     <properties>
