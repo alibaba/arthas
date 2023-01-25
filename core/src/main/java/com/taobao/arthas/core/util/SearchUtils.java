@@ -82,7 +82,7 @@ public class SearchUtils {
         Set<Class<?>> result = new HashSet<Class<?>>();
         if (matchedClasses != null) {
             for (Class<?> c : matchedClasses) {
-                if (Integer.toHexString(c.getClassLoader().hashCode()).equals(code)) {
+                if (c.getClassLoader() != null && Integer.toHexString(c.getClassLoader().hashCode()).equals(code)) {
                     result.add(c);
                 }
             }

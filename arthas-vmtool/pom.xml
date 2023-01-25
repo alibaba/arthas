@@ -47,6 +47,30 @@
 
         <!-- windows -->
         <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <os_name>windows</os_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-32</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libArthasJniLibrary-x86.dll</lib_name>
+            </properties>
+        </profile>
+        <profile>
             <id>windows-amd64</id>
             <activation>
                 <os>
@@ -55,7 +79,6 @@
                 </os>
             </activation>
             <properties>
-                <os_name>windows</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary-x64.dll</lib_name>
             </properties>

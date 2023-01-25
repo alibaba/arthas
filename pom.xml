@@ -56,6 +56,7 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
+        <module>web-ui</module>
         <module>math-game</module>
         <module>common</module>
         <module>spy</module>
@@ -69,6 +70,7 @@
         <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
+        <module>tunnel-server</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
@@ -229,20 +231,34 @@
 
     <profiles>
         <profile>
-            <id>jdk8</id>
+            <!-- ci test -->
+            <id>jdk12</id>
             <activation>
-                <jdk>[1.8,)</jdk>
+                <jdk>[12,)</jdk>
+                <property>
+                    <name>JAVA8_HOME</name>
+                </property>
             </activation>
-            <modules>
-                <module>tunnel-server</module>
-            </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                    <version>1.6.0</version>
+                    <scope>system</scope>
+                    <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>full</id>
             <build>
                 <plugins>
                     <!-- git commit info -->
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>4.0.1</version>
+                        <version>4.9.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -271,34 +287,6 @@
                             <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <!-- ci test -->
-            <id>jdk12</id>
-            <activation>
-                <jdk>[12,)</jdk>
-                <property>
-                    <name>JAVA8_HOME</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sun</groupId>
-                    <artifactId>tools</artifactId>
-                    <version>1.6.0</version>
-                    <scope>system</scope>
-                    <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>full</id>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>

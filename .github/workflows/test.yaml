@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         # https://static.azul.com/zulu/bin/
-        java: [12, 13, 14 , 17, 18, '19.0.0-ea.33']
+        java: [12, 13, 14 , 17, 18, 19]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
