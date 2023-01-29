@@ -20,6 +20,7 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.Ansi;
@@ -180,6 +181,11 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
+                if (!StringUtils.isEmpty(effect.getOverLimitMsg())) {
+                    process.appendResult(new EnhancerModel(effect, false));
+                    process.end(-1);
+                    return;
+                }
                 // might be method code too large
                 process.appendResult(new EnhancerModel(effect, false, "No class or method is affected"));
 

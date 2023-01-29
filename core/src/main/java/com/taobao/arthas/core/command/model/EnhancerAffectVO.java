@@ -20,7 +20,7 @@ public class EnhancerAffectVO {
     private Throwable throwable;
     private List<String> classDumpFiles;
     private List<String> methods;
-    private String msg;
+    private String overLimitMsg;
 
     public EnhancerAffectVO(EnhancerAffect affect) {
         this.cost = affect.cost();
@@ -28,7 +28,7 @@ public class EnhancerAffectVO {
         this.methodCount = affect.mCnt();
         this.listenerId = affect.getListenerId();
         this.throwable = affect.getThrowable();
-        this.msg = affect.getMsg();
+        this.overLimitMsg = affect.getOverLimitMsg();
 
         if (GlobalOptions.isDump) {
             classDumpFiles = new ArrayList<String>();
@@ -90,11 +90,11 @@ public class EnhancerAffectVO {
         this.methods = methods;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setOverLimitMsg(String overLimitMsg) {
+        this.overLimitMsg = overLimitMsg;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getOverLimitMsg() {
+        return overLimitMsg;
     }
 }
