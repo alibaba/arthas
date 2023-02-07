@@ -20,6 +20,13 @@ public interface VmToolMXBean {
      */
     public void forceGc();
 
+    /**
+     * 打断指定线程
+     *
+     * @param threadName 线程名称
+     */
+    void interruptSpecialThread(String threadName);
+
     public <T> T[] getInstances(Class<T> klass);
 
     /**
