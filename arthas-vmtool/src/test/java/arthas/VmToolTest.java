@@ -3,6 +3,7 @@ package arthas;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.assertj.core.api.Assertions;
@@ -181,5 +182,28 @@ public class VmToolTest {
         Assertions.assertThat(ObjectInstances.length).isEqualTo(1);
 
         Assertions.assertThat(interfaceInstances[0]).isEqualTo(ObjectInstances[0]);
+    }
+
+    @Test
+    public void test_interrupt_thread() throws InterruptedException {
+        String threadName = "interruptMe";
+        Thread interruptMe = new Thread(() -> {
+            System.out.println("hello");
+            try {
+                TimeUnit.SECONDS.sleep(1_000);
+            } catch (InterruptedException e) {
+                System.out.println("interrupted ...");
+                throw new RuntimeException(e);
+            }
+        });
+        interruptMe.setName(threadName);
+
+        interruptMe.start();
+
+        VmTool tool = initVmTool();
+        tool.interruptSpecialThread(threadName);
+        System.out.printf("start interrupt %s\n", threadName);
+
+        TimeUnit.SECONDS.sleep(5);
     }
 }

@@ -36,6 +36,13 @@ public class VmTool implements VmToolMXBean {
         return instance;
     }
 
+    /**
+     * 打断指定线程
+     *
+     * @param threadName 线程名称 通过 `thread` 等其他命令获取
+     */
+    public static synchronized native void interruptSpecialThread0(String threadName);
+
     private static synchronized native void forceGc0();
 
     /**
@@ -68,6 +75,11 @@ public class VmTool implements VmToolMXBean {
     @Override
     public void forceGc() {
         forceGc0();
+    }
+
+    @Override
+    public void interruptSpecialThread(String threadName) {
+        interruptSpecialThread0(threadName);
     }
 
     @Override

@@ -55,7 +55,8 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
-        + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
+        + "  vmtool --action interruptThread --threadName interruptMe\n"
+    + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(VmToolCommand.class);
@@ -63,7 +64,7 @@ public class VmToolCommand extends AnnotatedCommand {
     private VmToolAction action;
     private String className;
     private String express;
-
+    private String threadName;
     private String hashCode = null;
     private String classLoaderClass;
     /**
@@ -149,8 +150,14 @@ public class VmToolCommand extends AnnotatedCommand {
         this.express = express;
     }
 
+    @Option(shortName = "tn", longName = "threadName", required = false)
+    @Description("The name of the thread to be interrupted")
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
+    }
+
     public enum VmToolAction {
-        getInstances, forceGc
+        getInstances, forceGc, interruptThread
     }
 
     @Override
@@ -225,6 +232,12 @@ public class VmToolCommand extends AnnotatedCommand {
                 vmToolInstance().forceGc();
                 process.write("\n");
                 process.end();
+                return;
+            } else if (VmToolAction.interruptThread.equals(action)) {
+                vmToolInstance().interruptSpecialThread(threadName);
+                process.write("\n");
+                process.end();
+
                 return;
             }
 

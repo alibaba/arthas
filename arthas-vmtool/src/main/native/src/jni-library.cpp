@@ -44,6 +44,7 @@ int init_agent(JavaVM *vm, void *reserved) {
 
     jvmtiCapabilities capabilities = {0};
     capabilities.can_tag_objects = 1;
+    capabilities.can_signal_thread = 1;
     jvmtiError error = jvmti->AddCapabilities(&capabilities);
     if (error) {
         fprintf(stderr, "ERROR: arthas vmtool JVMTI AddCapabilities failed!%u\n", error);
@@ -73,6 +74,39 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_arthas_VmTool_forceGc0(JNIEnv *env, jclass thisClass) {
     jvmti->ForceGarbageCollection();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_arthas_VmTool_interruptSpecialThread0(JNIEnv *env, jclass thisClass,  jstring threadName) {
+    jint threads_count_ptr = 0;
+    jthread* threads_ptr;
+    jvmtiError error = jvmti->GetAllThreads(&threads_count_ptr,&threads_ptr);
+
+    if (error) {
+        printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
+        return;
+    }
+
+    const char *nThreadName = env->GetStringUTFChars(threadName, 0);
+    for (int i = 0; i < threads_count_ptr; ++i) {
+      jvmtiThreadInfo info;
+      error = jvmti->GetThreadInfo(threads_ptr[i], &info);
+      if (error != JVMTI_ERROR_NONE || strncmp(info.name,nThreadName, strlen(nThreadName)) != 0) {
+        continue;
+      }
+
+
+      error = jvmti->InterruptThread(threads_ptr[i]);
+      if (error != JVMTI_ERROR_NONE) {
+        printf("ERROR: JVMTI interrupt thread failed!%u\n", error);
+        return;
+      }
+      printf("Interrupt %s thread.\n", nThreadName);
+      env->ReleaseStringUTFChars(threadName, nThreadName);
+
+      return;
+    }
 }
 
 extern "C"
