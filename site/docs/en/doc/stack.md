@@ -17,6 +17,7 @@ Most often we know one method gets called, but we have no idea on which code pat
 | _condition-expression_ | condition expression                                        |
 |                  `[E]` | turn on regex match, the default behavior is wildcard match |
 |                 `[n:]` | execution times                                             |
+|`[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
@@ -42,6 +43,18 @@ Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
 ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
     @demo.MathGame.run()
         at demo.MathGame.main(MathGame.java:16)
+```
+
+### Specify the max number of matched Classes
+
+```bash
+$ stack demo.MathGame primeFactors -m 1
+Press Q or Ctrl+C to abort.
+Affect(class count:1 , method count:1) cost in 561 ms, listenerId: 5.
+ts=2022-12-25 21:07:07;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@b4aac2
+    @demo.MathGame.primeFactors()
+        at demo.MathGame.run(MathGame.java:46)
+        at demo.MathGame.main(MathGame.java:38)
 ```
 
 ### Filtering by condition expression

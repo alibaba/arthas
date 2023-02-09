@@ -22,6 +22,7 @@ There are four different scenarios for `watch` command, which makes it rather co
 |                    [f] | when method exits (either succeed or fail with exceptions)                          |
 |                    [E] | turn on regex matching while the default is wildcard matching                       |
 |                   [x:] | the depth to print the specified property with default value: 1, the max value is 4 |
+|`[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 F.Y.I
 
@@ -84,6 +85,26 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 
 - In the above result, the method is executed twice, the first result is `location=AtExceptionExit`, indicating that the method throws an exception, so `returnObj` is null
 - In the second result is `location=AtExit`, indicating that the method returns normally, so you can see that the result of `returnObj` is an ArrayList
+
+### Specify the max number of matched Classes
+
+```bash
+$ watch demo.MathGame primeFactors -m 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 302 ms, listenerId: 3
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2022-12-25 19:58:41; [cost=0.222419ms] result=@ArrayList[
+    @Object[][isEmpty=false;size=1],
+    @MathGame[demo.MathGame@3bf400],
+    null,
+]
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2022-12-25 19:58:51; [cost=0.046928ms] result=@ArrayList[
+    @Object[][isEmpty=false;size=1],
+    @MathGame[demo.MathGame@3bf400],
+    null,
+]
+```
 
 ### Check `in parameters`
 

@@ -17,6 +17,7 @@
 | _condition-express_ | 条件表达式                           |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配 |
 |              `[n:]` | 执行次数限制                         |
+|`[m <arg>]` | 指定Class最大匹配数量，默认值为50。长格式为`[maxMatch <arg>]`。 |
 
 这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
@@ -42,6 +43,18 @@ Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
 ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
     @demo.MathGame.run()
         at demo.MathGame.main(MathGame.java:16)
+```
+
+### 指定Class最大匹配数量
+
+```bash
+$ stack demo.MathGame primeFactors -m 1
+Press Q or Ctrl+C to abort.
+Affect(class count:1 , method count:1) cost in 561 ms, listenerId: 5.
+ts=2022-12-25 21:07:07;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@b4aac2
+    @demo.MathGame.primeFactors()
+        at demo.MathGame.run(MathGame.java:46)
+        at demo.MathGame.main(MathGame.java:38)
 ```
 
 ### 据条件表达式来过滤

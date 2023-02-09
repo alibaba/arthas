@@ -18,6 +18,7 @@ Trace method calling path, and output the time cost for each node in the path.
 |               `[E]` | enable regex match, the default behavior is wildcards match |
 |              `[n:]` | execution times                                             |
 |               #cost | time cost                                                   |
+|`[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
@@ -66,6 +67,21 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 ::: tip
 The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
 :::
+
+### Specify the max number of matched Classes
+
+```bash
+$ trace demo.MathGame run -m 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 412 ms, listenerId: 4
+`---ts=2022-12-25 21:00:00;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@b4aac2
+    `---[0.762093ms] demo.MathGame:run()
+        `---[30.21% 0.230241ms] demo.MathGame:primeFactors() #46 [throws Exception]
+
+`---ts=2022-12-25 21:00:10;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@b4aac2
+    `---[0.315298ms] demo.MathGame:run()
+        `---[13.95% 0.043995ms] demo.MathGame:primeFactors() #46 [throws Exception]
+```
 
 ### Trace times limit
 
