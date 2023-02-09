@@ -52,9 +52,9 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
   limit the number of the records (avoid overflow for too many records; with `-n` option, Arthas can automatically stop recording once the records reach the specified limit)
 
 - `-m 1`
-  
+
   limit the number of matched Classes to avoid JVM suspending when too many matched Classes. The default value is 50.
-  
+
 - Property
 
 | Name      | Specification                                  |

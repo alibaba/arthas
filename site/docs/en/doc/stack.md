@@ -10,14 +10,14 @@ Most often we know one method gets called, but we have no idea on which code pat
 
 ## Parameters
 
-|                   Name | Specification                                               |
-| ---------------------: | :---------------------------------------------------------- |
-|        _class-pattern_ | pattern for the class name                                  |
-|       _method-pattern_ | pattern for the method name                                 |
-| _condition-expression_ | condition expression                                        |
-|                  `[E]` | turn on regex match, the default behavior is wildcard match |
-|                 `[n:]` | execution times                                             |
-|`[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
+|                   Name | Specification                                                                                          |
+| ---------------------: | :----------------------------------------------------------------------------------------------------- |
+|        _class-pattern_ | pattern for the class name                                                                             |
+|       _method-pattern_ | pattern for the method name                                                                            |
+| _condition-expression_ | condition expression                                                                                   |
+|                  `[E]` | turn on regex match, the default behavior is wildcard match                                            |
+|                 `[n:]` | execution times                                                                                        |
+|            `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 

@@ -10,19 +10,19 @@ With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.htm
 
 There are four different scenarios for `watch` command, which makes it rather complicated.
 
-|                   Name | Specification                                                                       |
-| ---------------------: | :---------------------------------------------------------------------------------- |
-|        _class-pattern_ | pattern for the class name                                                          |
-|       _method-pattern_ | pattern for the method name                                                         |
-|           _expression_ | expression to watch, default value `{params, target, returnObj}`                    |
-| _condition-expression_ | condition expression to filter                                                      |
-|                    [b] | before method being invoked                                                         |
-|                    [e] | when method encountering exceptions                                                 |
-|                    [s] | when method exits normally                                                          |
-|                    [f] | when method exits (either succeed or fail with exceptions)                          |
-|                    [E] | turn on regex matching while the default is wildcard matching                       |
-|                   [x:] | the depth to print the specified property with default value: 1, the max value is 4 |
-|`[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
+|                   Name | Specification                                                                                          |
+| ---------------------: | :----------------------------------------------------------------------------------------------------- |
+|        _class-pattern_ | pattern for the class name                                                                             |
+|       _method-pattern_ | pattern for the method name                                                                            |
+|           _expression_ | expression to watch, default value `{params, target, returnObj}`                                       |
+| _condition-expression_ | condition expression to filter                                                                         |
+|                    [b] | before method being invoked                                                                            |
+|                    [e] | when method encountering exceptions                                                                    |
+|                    [s] | when method exits normally                                                                             |
+|                    [f] | when method exits (either succeed or fail with exceptions)                                             |
+|                    [E] | turn on regex matching while the default is wildcard matching                                          |
+|                   [x:] | the depth to print the specified property with default value: 1, the max value is 4                    |
+|            `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 F.Y.I
 

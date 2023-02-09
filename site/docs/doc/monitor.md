@@ -31,15 +31,15 @@
 
 方法拥有一个命名参数 `[c:]`，意思是统计周期（cycle of output），拥有一个整型的参数值
 
-|            参数名称 | 参数说明                                 |
-| ------------------: | :--------------------------------------- |
-|     _class-pattern_ | 类名表达式匹配                           |
-|    _method-pattern_ | 方法名表达式匹配                         |
-| _condition-express_ | 条件表达式                               |
-|                 [E] | 开启正则表达式匹配，默认为通配符匹配     |
-|              `[c:]` | 统计周期，默认值为 120 秒                |
-|                 [b] | 在**方法调用之前**计算 condition-express |
-|`[m <arg>]` | 指定Class最大匹配数量，默认值为50。长格式为`[maxMatch <arg>]`。 |
+|            参数名称 | 参数说明                                                           |
+| ------------------: | :----------------------------------------------------------------- |
+|     _class-pattern_ | 类名表达式匹配                                                     |
+|    _method-pattern_ | 方法名表达式匹配                                                   |
+| _condition-express_ | 条件表达式                                                         |
+|                 [E] | 开启正则表达式匹配，默认为通配符匹配                               |
+|              `[c:]` | 统计周期，默认值为 120 秒                                          |
+|                 [b] | 在**方法调用之前**计算 condition-express                           |
+|         `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为`[maxMatch <arg>]`。 |
 
 ## 使用参考
 
@@ -72,7 +72,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 ```
 
-### 指定Class最大匹配数量
+### 指定 Class 最大匹配数量
 
 ```bash
 $ monitor -c 1 -m 1 demo.MathGame primeFactors

@@ -35,7 +35,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
  1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
 ```
 
-### 指定Class最大匹配数量
+### 指定 Class 最大匹配数量
 
 ```bash
 $ tt -t -m 1 demo.MathGame primeFactors
@@ -58,10 +58,10 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
     当你执行一个调用量不高的方法时可能你还能有足够的时间用 `CTRL+C` 中断 tt 命令记录的过程，但如果遇到调用量非常大的方法，瞬间就能将你的 JVM 内存撑爆。
 
     此时你可以通过 `-n` 参数指定你需要记录的次数，当达到记录次数时 Arthas 会主动中断 tt 命令的记录过程，避免人工操作无法停止的情况。
-  
+
   - `-m 1`
-  
-    通过 `-m` 参数指定Class匹配的最大数量，防止匹配到的Class数量太多导致JVM挂起，默认值是50。
+
+    通过 `-m` 参数指定 Class 匹配的最大数量，防止匹配到的 Class 数量太多导致 JVM 挂起，默认值是 50。
 
 - 表格字段说明
 
