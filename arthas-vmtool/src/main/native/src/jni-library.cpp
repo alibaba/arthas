@@ -98,10 +98,14 @@ Java_arthas_VmTool_interruptSpecialThread0(JNIEnv *env, jclass thisClass,  jint 
         printf("Error: Failed to find field tid.\n");
         return;
     }
-    jvmtiThreadInfo info;
+
     for (int i = 0; i < threads_count_ptr; ++i) {
-        error = jvmti->GetThreadInfo(threads_ptr[i], &info);
+        jvmtiThreadInfo threadInfo;
+        error = jvmti->GetThreadInfo(threads_ptr[i], &threadInfo);
         jlong tid = env->GetLongField(threads_ptr[i], tid_field);
+        // release name filed
+        // https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#jvmtiThreadInfo:~:text=The%20pointer%20returned%20in%20the%20field%20name%20of%20jvmtiThreadInfo%20is%20a%20newly%20allocated%20array.%20The%20array%20should%20be%20freed%20with%20Deallocate
+        jvmti->Deallocate(reinterpret_cast<unsigned char *>(threadInfo.name));
         if (error != JVMTI_ERROR_NONE || tid != threadId) {
             continue;
         }
