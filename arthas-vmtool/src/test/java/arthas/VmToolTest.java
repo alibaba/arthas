@@ -3,9 +3,11 @@ package arthas;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
@@ -181,5 +183,31 @@ public class VmToolTest {
         Assertions.assertThat(ObjectInstances.length).isEqualTo(1);
 
         Assertions.assertThat(interfaceInstances[0]).isEqualTo(ObjectInstances[0]);
+    }
+
+    @Test
+    public void test_interrupt_thread() throws InterruptedException {
+        String threadName = "interruptMe";
+        final RuntimeException[] re = new RuntimeException[1];
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                try {
+                    System.out.printf("Thread name is: [%s], thread id is: [%d].\n", Thread.currentThread().getName(),Thread.currentThread().getId());
+                    TimeUnit.SECONDS.sleep(1000);
+                } catch (InterruptedException e) {
+                    re[0] = new RuntimeException("interrupted " + Thread.currentThread().getId() + " thread success.");
+                }
+            }
+        };
+        Thread interruptMe = new Thread(runnable,threadName);
+        Thread interruptMe1 = new Thread(runnable,threadName);
+
+        interruptMe.start();
+        interruptMe1.start();
+
+        VmTool tool = initVmTool();
+        tool.interruptSpecialThread((int) interruptMe.getId());
+        TimeUnit.SECONDS.sleep(5);
+        Assert.assertEquals(("interrupted " + interruptMe.getId() + " thread success."), re[0].getMessage());
     }
 }

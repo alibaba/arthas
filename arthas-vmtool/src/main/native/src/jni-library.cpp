@@ -44,6 +44,7 @@ int init_agent(JavaVM *vm, void *reserved) {
 
     jvmtiCapabilities capabilities = {0};
     capabilities.can_tag_objects = 1;
+    capabilities.can_signal_thread = 1;
     jvmtiError error = jvmti->AddCapabilities(&capabilities);
     if (error) {
         fprintf(stderr, "ERROR: arthas vmtool JVMTI AddCapabilities failed!%u\n", error);
@@ -73,6 +74,45 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_arthas_VmTool_forceGc0(JNIEnv *env, jclass thisClass) {
     jvmti->ForceGarbageCollection();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_arthas_VmTool_interruptSpecialThread0(JNIEnv *env, jclass thisClass,  jint threadId) {
+    jint threads_count_ptr = 0;
+    jthread* threads_ptr;
+    jvmtiError error = jvmti->GetAllThreads(&threads_count_ptr,&threads_ptr);
+    if (error) {
+        printf("ERROR: JVMTI get all thread failed!%u\n", error);
+        return;
+    }
+
+    jclass thread_class = env->FindClass("java/lang/Thread");
+    if (thread_class == NULL) {
+        printf("Error: Failed to find class java/lang/Thread.\n");
+        return;
+   }
+
+    jfieldID tid_field = env->GetFieldID(thread_class, "tid", "J");
+    if (tid_field == NULL) {
+        printf("Error: Failed to find field tid.\n");
+        return;
+    }
+    jvmtiThreadInfo info;
+    for (int i = 0; i < threads_count_ptr; ++i) {
+        error = jvmti->GetThreadInfo(threads_ptr[i], &info);
+        jlong tid = env->GetLongField(threads_ptr[i], tid_field);
+        if (error != JVMTI_ERROR_NONE || tid != threadId) {
+            continue;
+        }
+
+        error = jvmti->InterruptThread(threads_ptr[i]);
+        if (error != JVMTI_ERROR_NONE) {
+            printf("ERROR: JVMTI interrupt thread failed!%u\n", error);
+        }
+
+        return;
+    }
 }
 
 extern "C"
