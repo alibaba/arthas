@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
@@ -187,23 +188,26 @@ public class VmToolTest {
     @Test
     public void test_interrupt_thread() throws InterruptedException {
         String threadName = "interruptMe";
-        Thread interruptMe = new Thread(() -> {
-            System.out.println("hello");
-            try {
-                TimeUnit.SECONDS.sleep(1_000);
-            } catch (InterruptedException e) {
-                System.out.println("interrupted ...");
-                throw new RuntimeException(e);
+        final RuntimeException[] re = new RuntimeException[1];
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                try {
+                    System.out.printf("Thread name is: [%s], thread id is: [%d].\n", Thread.currentThread().getName(),Thread.currentThread().getId());
+                    TimeUnit.SECONDS.sleep(1000);
+                } catch (InterruptedException e) {
+                    re[0] = new RuntimeException("interrupted " + Thread.currentThread().getId() + " thread success.");
+                }
             }
-        });
-        interruptMe.setName(threadName);
+        };
+        Thread interruptMe = new Thread(runnable,threadName);
+        Thread interruptMe1 = new Thread(runnable,threadName);
 
         interruptMe.start();
+        interruptMe1.start();
 
         VmTool tool = initVmTool();
-        tool.interruptSpecialThread(threadName);
-        System.out.printf("start interrupt %s\n", threadName);
-
+        tool.interruptSpecialThread((int) interruptMe.getId());
         TimeUnit.SECONDS.sleep(5);
+        Assert.assertEquals(("interrupted " + interruptMe.getId() + " thread success."), re[0].getMessage());
     }
 }

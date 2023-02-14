@@ -23,9 +23,9 @@ public interface VmToolMXBean {
     /**
      * 打断指定线程
      *
-     * @param threadName 线程名称
+     * @param threadId 线程ID
      */
-    void interruptSpecialThread(String threadName);
+    void interruptSpecialThread(int threadId);
 
     public <T> T[] getInstances(Class<T> klass);
 
