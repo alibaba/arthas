@@ -111,8 +111,9 @@ Java_arthas_VmTool_interruptSpecialThread0(JNIEnv *env, jclass thisClass,  jint 
             printf("ERROR: JVMTI interrupt thread failed!%u\n", error);
         }
 
-        return;
+        break;
     }
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(threads_ptr));
 }
 
 extern "C"
