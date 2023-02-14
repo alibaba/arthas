@@ -78,34 +78,40 @@ Java_arthas_VmTool_forceGc0(JNIEnv *env, jclass thisClass) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_arthas_VmTool_interruptSpecialThread0(JNIEnv *env, jclass thisClass,  jstring threadName) {
+Java_arthas_VmTool_interruptSpecialThread0(JNIEnv *env, jclass thisClass,  jint threadId) {
     jint threads_count_ptr = 0;
     jthread* threads_ptr;
     jvmtiError error = jvmti->GetAllThreads(&threads_count_ptr,&threads_ptr);
-
     if (error) {
-        printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
+        printf("ERROR: JVMTI get all thread failed!%u\n", error);
         return;
     }
 
-    const char *nThreadName = env->GetStringUTFChars(threadName, 0);
-    for (int i = 0; i < threads_count_ptr; ++i) {
-      jvmtiThreadInfo info;
-      error = jvmti->GetThreadInfo(threads_ptr[i], &info);
-      if (error != JVMTI_ERROR_NONE || strncmp(info.name,nThreadName, strlen(nThreadName)) != 0) {
-        continue;
-      }
-
-
-      error = jvmti->InterruptThread(threads_ptr[i]);
-      if (error != JVMTI_ERROR_NONE) {
-        printf("ERROR: JVMTI interrupt thread failed!%u\n", error);
+    jclass thread_class = env->FindClass("java/lang/Thread");
+    if (thread_class == NULL) {
+        printf("Error: Failed to find class java/lang/Thread.\n");
         return;
-      }
-      printf("Interrupt %s thread.\n", nThreadName);
-      env->ReleaseStringUTFChars(threadName, nThreadName);
+   }
 
-      return;
+    jfieldID tid_field = env->GetFieldID(thread_class, "tid", "J");
+    if (tid_field == NULL) {
+        printf("Error: Failed to find field tid.\n");
+        return;
+    }
+    jvmtiThreadInfo info;
+    for (int i = 0; i < threads_count_ptr; ++i) {
+        error = jvmti->GetThreadInfo(threads_ptr[i], &info);
+        jlong tid = env->GetLongField(threads_ptr[i], tid_field);
+        if (error != JVMTI_ERROR_NONE || tid != threadId) {
+            continue;
+        }
+
+        error = jvmti->InterruptThread(threads_ptr[i]);
+        if (error != JVMTI_ERROR_NONE) {
+            printf("ERROR: JVMTI interrupt thread failed!%u\n", error);
+        }
+
+        return;
     }
 }
 
