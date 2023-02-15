@@ -20,9 +20,7 @@ Trace method calling path, and output the time cost for each node in the path.
 |               #cost | time cost                                                                                              |
 |         `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
-There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
-
-Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
+There's one thing worthy noting here is `condition expression`. The `condition expression` supports OGNL grammar, for example, you can come up a expression like this `"params[0]<0"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
 Pls. refer to [core parameters in expression](advice-class.md) for more details.
 
