@@ -18,6 +18,8 @@ public class URIConstans {
      */
     public static final String ID = "id";
 
+    public static final String API_REQUEST_BODY = "apiRequestBody";
+
     /**
      * tunnel server用于区分不同 tunnel client的内部 id
      */
@@ -25,7 +27,7 @@ public class URIConstans {
 
     /**
      * tunnel server向 tunnel client请求http代理时的目标 url
-     * 
+     *
      * @see com.alibaba.arthas.tunnel.common.MethodConstants#HTTP_PROXY
      */
     public static final String TARGET_URL = "targetUrl";
