@@ -1,5 +1,7 @@
 package arthas;
 
+import java.util.Map;
+
 /**
  * @author ZhangZiCheng 2021-02-12
  * @author hengyunabc 2021-04-26
@@ -41,6 +43,7 @@ public class VmTool implements VmToolMXBean {
      *
      * @param threadId 线程名称 通过 `thread` 等其他命令获取
      */
+    @Deprecated
     public static synchronized native void interruptSpecialThread0(int threadId);
 
     private static synchronized native void forceGc0();
@@ -79,7 +82,13 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public void interruptSpecialThread(int threadId) {
-        interruptSpecialThread0(threadId);
+        Map<Thread, StackTraceElement[]> allThread = Thread.getAllStackTraces();
+        for (Map.Entry<Thread, StackTraceElement[]> entry : allThread.entrySet()) {
+            if (entry.getKey().getId() == threadId) {
+                entry.getKey().interrupt();
+                return;
+            }
+        }
     }
 
     @Override
