@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.view;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.command.model.LookView;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 
@@ -80,6 +81,7 @@ public class ResultViewResolver {
             registerView(WatchView.class);
             registerView(VmToolView.class);
             registerView(JFRView.class);
+            registerView(LookView.class);
 
         } catch (Throwable e) {
             logger.error("register result view failed", e);

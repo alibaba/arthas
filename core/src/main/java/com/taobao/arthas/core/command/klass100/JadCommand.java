@@ -2,13 +2,13 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
+import com.taobao.arthas.common.FileUtils;
 import com.taobao.arthas.common.Pair;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.ClassVO;
-import com.taobao.arthas.core.command.model.ClassLoaderVO;
-import com.taobao.arthas.core.command.model.JadModel;
-import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -21,6 +21,7 @@ import com.taobao.arthas.core.util.Decompiler;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
+import com.taobao.arthas.core.util.look.LookUtils;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
@@ -30,12 +31,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -67,6 +63,8 @@ public class JadCommand extends AnnotatedCommand {
      * jad output source code only
      */
     private boolean sourceOnly = false;
+
+    private boolean displayLookLocation = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -116,6 +114,12 @@ public class JadCommand extends AnnotatedCommand {
     @Description("Output source code contins line number, default value true")
     public void setLineNumber(boolean lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    @Option(shortName = "L", longName = "displayLookLocation", flag = true)
+    @Description("Output the look location list, default value false")
+    public void setLookLocation(boolean displayLookLocation) {
+        this.displayLookLocation = displayLookLocation;
     }
 
     @Override
@@ -195,6 +199,16 @@ public class JadCommand extends AnnotatedCommand {
                 jadModel.setLocation(ClassUtils.getCodeSource(c.getProtectionDomain().getCodeSource()));
             }
             process.appendResult(jadModel);
+
+            //简单处理
+            if (displayLookLocation){
+                ClassNode classNode = AsmUtils.toClassNode(FileUtils.readFileToByteArray(classFile));
+                for (MethodNode methodNode : classNode.methods) {
+                    if (methodNode.name.equals(methodName)){
+                        process.appendResult(new EchoModel(LookUtils.renderMethodLocation(methodNode)));
+                    }
+                }
+            }
 
             affect.rCnt(classFiles.keySet().size());
             return ExitStatus.success();

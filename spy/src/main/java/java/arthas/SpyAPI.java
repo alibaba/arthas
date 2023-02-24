@@ -81,6 +81,17 @@ public class SpyAPI {
         spyInstance.atInvokeException(clazz, invokeInfo, target, throwable);
     }
 
+    public static void atLookLocationCode(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                          String lookLocation, Object[] vars, String[] varNames){
+        spyInstance.atLookLocation(clazz, methodInfo, target, args, lookLocation, vars, varNames);
+    }
+
+    public static void atLookLocationLine(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                          String lookLocation, Object[] vars, String[] varNames){
+        spyInstance.atLookLocation(clazz, methodInfo, target, args, lookLocation, vars, varNames);
+    }
+
+
     public static abstract class AbstractSpy {
         public abstract void atEnter(Class<?> clazz, String methodInfo, Object target,
                 Object[] args);
@@ -96,6 +107,10 @@ public class SpyAPI {
         public abstract void atAfterInvoke(Class<?> clazz, String invokeInfo, Object target);
 
         public abstract void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable);
+
+        public abstract void atLookLocation(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                          String lookLocation, Object[] vars, String[] varNames);
+
     }
 
     static class NopSpy extends AbstractSpy {
@@ -126,6 +141,11 @@ public class SpyAPI {
 
         @Override
         public void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable) {
+
+        }
+
+        @Override
+        public void atLookLocation(Class<?> clazz, String methodInfo, Object target, Object[] args, String lookLocation, Object[] vars, String[] varNames) {
 
         }
 

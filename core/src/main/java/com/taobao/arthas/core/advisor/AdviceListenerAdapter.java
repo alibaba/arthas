@@ -65,6 +65,11 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
                 throwable);
     }
 
+    @Override
+    public void atLookLocation(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args, String lookLocation, Object[] vars, String[] varNames) throws Throwable {
+        atLookLocation(clazz.getClassLoader(), clazz, new ArthasMethod(clazz, methodName, methodDesc), target, args, lookLocation, vars, varNames);
+    }
+
     /**
      * 前置通知
      *
@@ -105,6 +110,24 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
      */
     public abstract void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
             Object[] args, Throwable throwable) throws Throwable;
+
+
+    /**
+     * look命令中使用，查看本地变量
+     *
+     * @param loader    类加载器
+     * @param clazz      类
+     * @param method    方法
+     * @param target     目标类实例,若目标为静态方法,则为null
+     * @param args       参数列表
+     * @param location   look命令使用的location
+     * @param vars       本地变量数组
+     * @param varNames   本地变量名数组
+     * @throws Throwable 通知过程出错
+     */
+    public void atLookLocation(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args, String location, Object[] vars, String[] varNames) throws Throwable{
+        //doing nothing by default
+    }
 
     /**
      * 判断条件是否满足，满足的情况下需要输出结果

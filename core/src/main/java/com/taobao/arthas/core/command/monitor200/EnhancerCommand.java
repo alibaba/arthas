@@ -35,6 +35,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     protected static final List<String> EMPTY = Collections.emptyList();
     public static final String[] EXPRESS_EXAMPLES = { "params", "returnObj", "throwExp", "target", "clazz", "method",
                                                        "{params,returnObj}", "params[0]" };
+
+    public static final String[] LOOK_EXPRESS_EXAMPLES = {"target", "clazz", "method", "params", "varMap"};
+
     private String excludeClassPattern;
 
     protected Matcher classNameMatcher;
@@ -157,6 +160,11 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             }
 
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
+            if(listener instanceof LookAdviceListener) {
+                String lookLocation = ((LookAdviceListener) listener).getCommand().getLocation();
+                enhancer.setLooking(true);
+                enhancer.setLookLocation(lookLocation);
+            }
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst);

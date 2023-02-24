@@ -111,6 +111,10 @@ public class AdviceListenerManager {
             return className + owner + methodName + methodDesc;
         }
 
+        private String keyForLook(String className, String lookLocation, String methodName, String methodDesc) {
+            return className + lookLocation + methodName + methodDesc;
+        }
+
         public void registerAdviceListener(String className, String methodName, String methodDesc,
                 AdviceListener listener) {
             synchronized (this) {
@@ -162,6 +166,33 @@ public class AdviceListenerManager {
 
             return listeners;
         }
+
+        public void registerLookAdviceListener(String className, String lookLocation, String methodName, String methodDesc,
+                                               AdviceListener listener) {
+
+            className = className.replace('/', '.');
+            String key = keyForLook(className, lookLocation, methodName, methodDesc);
+
+            List<AdviceListener> listeners = map.get(key);
+            if (listeners == null) {
+                listeners = new ArrayList<AdviceListener>();
+                map.put(key, listeners);
+            }
+            if (!listeners.contains(listener)) {
+                listeners.add(listener);
+            }
+        }
+
+        public List<AdviceListener> queryLookAdviceListeners(String className, String lookLocation, String methodName,
+                                                             String methodDesc) {
+            className = className.replace('/', '.');
+            String key = keyForLook(className, lookLocation, methodName, methodDesc);
+
+            List<AdviceListener> listeners = map.get(key);
+
+            return listeners;
+        }
+
     }
 
     public static void registerAdviceListener(ClassLoader classLoader, String className, String methodName,
@@ -217,6 +248,33 @@ public class AdviceListenerManager {
 
         if (manager != null) {
             return manager.queryTraceAdviceListeners(className, owner, methodName, methodDesc);
+        }
+
+        return null;
+    }
+
+    public static void registerLookAdviceListener(ClassLoader classLoader, String className, String lookLocation,
+                                                  String methodName, String methodDesc, AdviceListener listener) {
+        classLoader = wrap(classLoader);
+        className = className.replace('/', '.');
+
+        ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
+
+        if (manager == null) {
+            manager = new ClassLoaderAdviceListenerManager();
+            adviceListenerMap.put(classLoader, manager);
+        }
+        manager.registerLookAdviceListener(className, lookLocation, methodName, methodDesc, listener);
+    }
+
+    public static List<AdviceListener> queryLookAdviceListeners(ClassLoader classLoader, String className,
+                                                                String loolLoc, String methodName, String methodDesc) {
+        classLoader = wrap(classLoader);
+        className = className.replace('/', '.');
+        ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
+
+        if (manager != null) {
+            return manager.queryLookAdviceListeners(className, loolLoc, methodName, methodDesc);
         }
 
         return null;
