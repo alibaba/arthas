@@ -118,7 +118,7 @@ public class DownloadUtils {
             int totalCount = 0;
             int count;
             long lastPrintTime = System.currentTimeMillis();
-            while ((count = in.read(data, 0, 1024 * 1024)) != -1) {
+            while ((count = in.read(data, 0, data.length)) != -1) {
                 totalCount += count;
                 if (printProgress) {
                     long now = System.currentTimeMillis();

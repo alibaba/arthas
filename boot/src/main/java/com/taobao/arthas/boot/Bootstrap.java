@@ -412,7 +412,7 @@ public class Bootstrap {
                             pid, bootstrap.getHttpPortOrDefault());
             AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
                             httpPortPid);
-            AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999", httpPortPid);
+            AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999");
             System.exit(1);
         }
 

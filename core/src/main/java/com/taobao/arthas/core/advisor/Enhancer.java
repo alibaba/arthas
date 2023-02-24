@@ -453,10 +453,12 @@ public class Enhancer implements ClassFileTransformer {
     /**
      * 对象增强
      *
+     * @param inst              inst
+     * @param maxNumOfMatchedClass 匹配的class最大数量
      * @return 增强影响范围
      * @throws UnmodifiableClassException 增强失败
      */
-    public synchronized EnhancerAffect enhance(final Instrumentation inst) throws UnmodifiableClassException {
+    public synchronized EnhancerAffect enhance(final Instrumentation inst, int maxNumOfMatchedClass) throws UnmodifiableClassException {
         //判定是否需要增强子类,look命令对子类是没有意义的，所以需要做前置判定
         boolean isDisableSubClass = isLooking || GlobalOptions.isDisableSubClass;
 
@@ -465,6 +467,10 @@ public class Enhancer implements ClassFileTransformer {
                 ? SearchUtils.searchClass(inst, classNameMatcher)
                 : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
 
+        if (matchingClasses.size() > maxNumOfMatchedClass) {
+            affect.setOverLimitMsg("The number of matched classes is " +matchingClasses.size()+ ", greater than the limit value " + maxNumOfMatchedClass + ". Try to change the limit with option '-m <arg>'.");
+            return affect;
+        }
         // 过滤掉无法被增强的类
         List<Pair<Class<?>, String>> filtedList = filter(matchingClasses);
         if (!filtedList.isEmpty()) {

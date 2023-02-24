@@ -31,6 +31,18 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
  1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
 ```
 
+### Specify the max number of matched Classes
+
+```bash
+$ tt -t -m 1 demo.MathGame primeFactors
+Press Q or Ctrl+C to abort.
+Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ 1000    2022-12-25 19:41:45  2.629929  true    false    0x3bf400       MathGame                       primeFactors
+ 1001    2022-12-25 19:41:55  0.146161  false   true     0x3bf400       MathGame                       primeFactors
+```
+
 - `-t`
 
   record the calling context of the method `demo.MathGame primeFactors`
@@ -38,6 +50,10 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 - `-n 3`
 
   limit the number of the records (avoid overflow for too many records; with `-n` option, Arthas can automatically stop recording once the records reach the specified limit)
+
+- `-m 1`
+
+  limit the number of matched Classes to avoid JVM suspending when too many matched Classes. The default value is 50.
 
 - Property
 
