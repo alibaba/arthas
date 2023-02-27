@@ -144,7 +144,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "express", required = false)
-    @Description("The ognl expression, default valueis `instances`.")
+    @Description("The ognl expression, default value is `instances`.")
     public void setExpress(String express) {
         this.express = express;
     }

@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-agent</artifactId>
     <name>arthas-agent</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
         <dependency>

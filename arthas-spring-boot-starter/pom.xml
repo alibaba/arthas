@@ -13,6 +13,7 @@
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencyManagement>
         <dependencies>

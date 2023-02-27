@@ -15,6 +15,7 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ResultUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -23,7 +24,6 @@ import com.taobao.middleware.cli.annotations.Summary;
 
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
@@ -246,14 +246,14 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private void processClassLoader(CommandProcess process, Instrumentation inst, ClassLoader targetClassLoader) {
         RowAffect affect = new RowAffect();
         if (targetClassLoader != null) {
-            if (targetClassLoader instanceof URLClassLoader) {
-                List<String> classLoaderUrls = getClassLoaderUrls(targetClassLoader);
-                affect.rCnt(classLoaderUrls.size());
-                if (classLoaderUrls.isEmpty()) {
+            URL[] classLoaderUrls = ClassLoaderUtils.getUrls(targetClassLoader);
+            if (classLoaderUrls != null) {
+                affect.rCnt(classLoaderUrls.length);
+                if (classLoaderUrls.length == 0) {
                     process.appendResult(new MessageModel("urls is empty."));
                 } else {
-                    process.appendResult(new ClassLoaderModel().setUrls(classLoaderUrls));
-                    affect.rCnt(classLoaderUrls.size());
+                    process.appendResult(new ClassLoaderModel().setUrls(StringUtils.toStringList(classLoaderUrls)));
+                    affect.rCnt(classLoaderUrls.length);
                 }
             } else {
                 process.appendResult(new MessageModel("not a URLClassLoader."));
@@ -403,20 +403,6 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
     }
 
-    private static List<String> getClassLoaderUrls(ClassLoader classLoader) {
-        List<String> urlStrs = new ArrayList<String>();
-        if (classLoader instanceof URLClassLoader) {
-            URLClassLoader cl = (URLClassLoader) classLoader;
-            URL[] urls = cl.getURLs();
-            if (urls != null) {
-                for (URL url : urls) {
-                    urlStrs.add(url.toString());
-                }
-            }
-        }
-        return urlStrs;
-    }
-    
     private Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats(Instrumentation inst) {
         Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats = new HashMap<ClassLoaderVO, ClassLoaderUrlStat>();
         Map<ClassLoader, Set<String>> usedUrlsMap = new HashMap<ClassLoader, Set<String>>();
@@ -441,13 +427,17 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         for (Entry<ClassLoader, Set<String>> entry : usedUrlsMap.entrySet()) {
             ClassLoader loader = entry.getKey();
             Set<String> usedUrls = entry.getValue();
-            List<String> allUrls = getClassLoaderUrls(loader);
+            URL[] allUrls = ClassLoaderUtils.getUrls(loader);
             List<String> unusedUrls = new ArrayList<String>();
-            for (String url : allUrls) {
-                if (!usedUrls.contains(url)) {
-                    unusedUrls.add(url);
+            if (allUrls != null) {
+                for (URL url : allUrls) {
+                    String urlStr = url.toString();
+                    if (!usedUrls.contains(urlStr)) {
+                        unusedUrls.add(urlStr);
+                    }
                 }
             }
+
             urlStats.put(ClassUtils.createClassLoaderVO(loader), new ClassLoaderUrlStat(usedUrls, unusedUrls));
         }
         return urlStats;
