@@ -222,7 +222,7 @@ public class ThreadCommand extends AnnotatedCommand {
     private ThreadInfo findThreadInfoById(ThreadInfo[] threadInfos, long id) {
         for (int i = 0; i < threadInfos.length; i++) {
             ThreadInfo threadInfo = threadInfos[i];
-            if ( threadInfo.getThreadId() == id) {
+            if (threadInfo != null && threadInfo.getThreadId() == id) {
                 return threadInfo;
             }
         }

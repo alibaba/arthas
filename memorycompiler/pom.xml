@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-memorycompiler</artifactId>
     <name>arthas-memorycompiler</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
         <dependency>

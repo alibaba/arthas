@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-boot</artifactId>
     <name>arthas-boot</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
         <dependency>
