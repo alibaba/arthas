@@ -122,10 +122,10 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     }
 
     private ChannelFuture writeResponse(ChannelHandlerContext ctx, HttpResponse response) {
-        response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
         // try to add content-length header for DefaultFullHttpResponse
         if (!HttpUtil.isTransferEncodingChunked(response)
             && response instanceof DefaultFullHttpResponse) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
                 ((DefaultFullHttpResponse) response).content().readableBytes());
             return ctx.writeAndFlush(response);
