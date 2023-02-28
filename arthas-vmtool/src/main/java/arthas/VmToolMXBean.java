@@ -50,4 +50,34 @@ public interface VmToolMXBean {
      * 获取所有已加载的类
      */
     public Class<?>[] getAllLoadedClasses();
+
+    /**
+     * Return local variable information.
+     */
+    public Object[] getLocalVariableTable(Thread jthread,int depth);
+
+    /**
+     * This function can be used to retrieve the value of a local variable whose type is int, short, char, byte, or boolean.
+     */
+    public int getLocalInt(Thread jthread,int depth,int slot);
+
+    /**
+     * This function can be used to retrieve the value of a local variable whose type is long.
+     */
+    public long getLocalLong(Thread jthread,int depth,int slot);
+
+    /**
+     * This function can be used to retrieve the value of a local variable whose type is float.
+     */
+    public float getLocalFloat(Thread jthread,int depth,int slot);
+
+    /**
+     * This function can be used to retrieve the value of a local variable whose type is double.
+     */
+    public double getLocalDouble(Thread jthread,int depth,int slot);
+
+    /**
+     * This function can be used to retrieve the value of a local variable whose type is Object or a subclass of Object.
+     */
+    public Object getLocalObject(Thread jthread,int depth,int slot);
 }

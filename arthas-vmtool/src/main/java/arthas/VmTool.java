@@ -64,7 +64,12 @@ public class VmTool implements VmToolMXBean {
      * @return
      */
     private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
-
+    private static native Object[] getLocalVariableTable0(Thread jthread,int depth);
+    private static native int getLocalInt0(Thread jthread,int depth,int slot);
+    private static native long getLocalLong0(Thread jthread,int depth,int slot);
+    private static native float getLocalFloat0(Thread jthread,int depth,int slot);
+    private static native double getLocalDouble0(Thread jthread,int depth,int slot);
+    private static native Object getLocalObject0(Thread jthread,int depth,int slot);
     @Override
     public void forceGc() {
         forceGc0();
@@ -103,4 +108,33 @@ public class VmTool implements VmToolMXBean {
         return getAllLoadedClasses0(Class.class);
     }
 
+    @Override
+    public Object[] getLocalVariableTable(Thread jthread,int depth){
+        return getLocalVariableTable0(jthread,depth);
+    }
+
+    @Override
+    public int getLocalInt(Thread jthread,int depth,int slot) {
+        return getLocalInt0(jthread,depth,slot);
+    }
+
+    @Override
+    public long getLocalLong(Thread jthread,int depth,int slot) {
+        return getLocalLong0(jthread,depth,slot);
+    }
+
+    @Override
+    public float getLocalFloat(Thread jthread,int depth,int slot) {
+        return getLocalFloat0(jthread,depth,slot);
+    }
+
+    @Override
+    public double getLocalDouble(Thread jthread,int depth,int slot) {
+        return getLocalDouble0(jthread,depth,slot);
+    }
+
+    @Override
+    public Object getLocalObject(Thread jthread,int depth,int slot) {
+        return getLocalObject0(jthread,depth,slot);
+    }
 }

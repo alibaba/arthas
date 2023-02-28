@@ -1,3 +1,4 @@
+#include <string.h>
 #include <iostream>
 #include <jni.h>
 #include <jni_md.h>
@@ -42,9 +43,15 @@ int init_agent(JavaVM *vm, void *reserved) {
         return -1;
     }
 
-    jvmtiCapabilities capabilities = {0};
+    jvmtiCapabilities caps_potential;
+    jvmtiError error = jvmti->GetPotentialCapabilities(&caps_potential);
+
+    jvmtiCapabilities capabilities;
+    (void)memset(&capabilities,0,sizeof(capabilities));
     capabilities.can_tag_objects = 1;
-    jvmtiError error = jvmti->AddCapabilities(&capabilities);
+    capabilities.can_access_local_variables = caps_potential.can_access_local_variables;
+
+    error = jvmti->AddCapabilities(&capabilities);
     if (error) {
         fprintf(stderr, "ERROR: arthas vmtool JVMTI AddCapabilities failed!%u\n", error);
         return JNI_FALSE;
@@ -204,4 +211,103 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
     }
     jvmti->Deallocate(reinterpret_cast<unsigned char *>(classes));
     return array;
+}
+
+extern "C"
+JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getLocalVariableTable0
+  (JNIEnv *env, jclass thisClass, jobject jthread, jint depth){
+	jmethodID method_ptr;
+	jlocation location_ptr;
+	jvmtiError error = jvmti->GetFrameLocation(jthread, depth, &method_ptr, &location_ptr);
+	if (error) {
+		printf("ERROR: JVMTI GetFrameLocation failed!%u\n", error);
+		return NULL;
+	}
+
+	jint entry_count_ptr;
+	jvmtiLocalVariableEntry *table_ptr;
+	error = jvmti->GetLocalVariableTable(method_ptr, &entry_count_ptr, &table_ptr);
+	if(error){
+		printf("ERROR: JVMTI GetLocalVariableTable entry_count_ptr : %u,error : %u\n", entry_count_ptr,error);
+		return NULL;
+	}
+
+	jclass object_klass = env->FindClass("java/lang/Object");
+	jobjectArray ret_array = env->NewObjectArray(entry_count_ptr*2, object_klass, NULL);
+
+	jclass integer_kclass = env->FindClass("java/lang/Integer");
+	jmethodID integer_jmethod_valueOf = env->GetStaticMethodID(integer_kclass, "valueOf", "(I)Ljava/lang/Integer;");
+
+	int index = 0;
+	for(int i = 0;i < entry_count_ptr;i++){
+		jvmtiLocalVariableEntry entry = table_ptr[i];
+
+		jobject slot_val = env->CallStaticObjectMethod(integer_kclass, integer_jmethod_valueOf,entry.slot);
+		env->SetObjectArrayElement(ret_array, index, slot_val);
+
+		jstring signature_val = env->NewStringUTF(entry.signature);
+		env->SetObjectArrayElement(ret_array, ++index, signature_val);
+		env->ReleaseStringChars(signature_val, NULL);
+
+		index++;
+	}
+	jvmti->Deallocate(reinterpret_cast<unsigned char *>(table_ptr));
+	return ret_array;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL Java_arthas_VmTool_getLocalInt0
+  (JNIEnv *env, jclass thisClass, jobject jthread, jint depth, jint slot){
+	jint value_ptr;
+	jvmtiError error = jvmti->GetLocalInt(jthread, depth, slot, &value_ptr);
+	if (error) {
+		printf("ERROR: JVMTI GetLocalInt failed!%u\n", error);
+	}
+	return value_ptr;
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL Java_arthas_VmTool_getLocalLong0
+  (JNIEnv *env, jclass thisClass, jobject jthread, jint depth, jint slot){
+	jlong value_ptr;
+	jvmtiError error = jvmti->GetLocalLong(jthread, depth, slot, &value_ptr);
+	if (error) {
+		printf("ERROR: JVMTI GetLocalLong failed!%u\n", error);
+	}
+	return value_ptr;
+}
+
+extern "C"
+JNIEXPORT jfloat JNICALL Java_arthas_VmTool_getLocalFloat0
+  (JNIEnv *env, jclass thisClass, jobject jthread, jint depth, jint slot){
+	jfloat value_ptr;
+	jvmtiError error = jvmti->GetLocalFloat(jthread, depth, slot, &value_ptr);
+	if (error) {
+		printf("ERROR: JVMTI GetLocalFloat failed!%u\n", error);
+	}
+	return value_ptr;
+}
+
+extern "C"
+JNIEXPORT jdouble JNICALL Java_arthas_VmTool_getLocalDouble0
+  (JNIEnv *env, jclass thisClass, jobject jthread, jint depth, jint slot){
+	jdouble value_ptr;
+	jvmtiError error = jvmti->GetLocalDouble(jthread, depth, slot, &value_ptr);
+	if (error) {
+		printf("ERROR: JVMTI GetLocalDouble failed!%u\n", error);
+	}
+	return value_ptr;
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL Java_arthas_VmTool_getLocalObject0
+  (JNIEnv *env, jclass thisClass, jobject jthread, jint depth, jint slot){
+	jobject value_ptr;
+	jvmtiError error = jvmti->GetLocalObject(jthread, depth, slot, &value_ptr);
+
+	if (error) {
+		printf("ERROR: JVMTI GetLocalObject failed!%u\n", error);
+		return NULL;
+	}
+	return value_ptr;
 }

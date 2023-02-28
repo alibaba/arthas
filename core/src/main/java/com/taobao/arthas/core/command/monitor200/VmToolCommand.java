@@ -5,11 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.instrument.Instrumentation;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -30,6 +26,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -77,6 +74,10 @@ public class VmToolCommand extends AnnotatedCommand {
     private int limit;
 
     private String libPath;
+
+    private long threadId;
+
+    private int depth;
     private static String defaultLibPath;
     private static VmTool vmTool = null;
 
@@ -149,8 +150,20 @@ public class VmToolCommand extends AnnotatedCommand {
         this.express = express;
     }
 
+    @Option(longName = "threadId", required = false)
+    @Description("The thread id")
+    public void setTid(long threadId) {
+        this.threadId = threadId;
+    }
+
+    @Option(longName = "depth", required = false)
+    @Description("The thread frame depth")
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
     public enum VmToolAction {
-        getInstances, forceGc
+        getInstances, forceGc, getLocalVariables
     }
 
     @Override
@@ -163,35 +176,9 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "The className option cannot be empty!");
                     return;
                 }
-                ClassLoader classLoader = null;
-                if (hashCode != null) {
-                    classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
-                    if (classLoader == null) {
-                        process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
-                        return;
-                    }
-                }else if ( classLoaderClass != null) {
-                    List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst,
-                            classLoaderClass);
-                    if (matchedClassLoaders.size() == 1) {
-                        classLoader = matchedClassLoaders.get(0);
-                        hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
-                    } else if (matchedClassLoaders.size() > 1) {
-                        Collection<ClassLoaderVO> classLoaderVOList = ClassUtils
-                                .createClassLoaderVOList(matchedClassLoaders);
-
-                        VmToolModel vmToolModel = new VmToolModel().setClassLoaderClass(classLoaderClass)
-                                .setMatchedClassLoaders(classLoaderVOList);
-                        process.appendResult(vmToolModel);
-                        process.end(-1,
-                                "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
-                        return;
-                    } else {
-                        process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
-                        return;
-                    }
-                }else {
-                    classLoader = ClassLoader.getSystemClassLoader();
+                ClassLoader classLoader = this.matchClassLoader(process);
+                if(classLoader == null){
+                    return;
                 }
 
                 List<Class<?>> matchedClasses = new ArrayList<Class<?>>(
@@ -205,27 +192,90 @@ public class VmToolCommand extends AnnotatedCommand {
                     return;
                 } else {
                     Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
-                    Object value = instances;
-                    if (express != null) {
-                        Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
-                        try {
-                            value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
-                        } catch (ExpressException e) {
-                            logger.warn("ognl: failed execute express: " + express, e);
-                            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
-                                    + ", please check $HOME/logs/arthas/arthas.log for more details. ");
-                        }
-                    }
-
-                    VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
-                    process.appendResult(vmToolModel);
-                    process.end();
+                    this.express(process,classLoader,instances);
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
                 vmToolInstance().forceGc();
                 process.write("\n");
                 process.end();
                 return;
+            } else if(VmToolAction.getLocalVariables.equals(action)){
+                if(depth < 0) {
+                    process.end(-1, "Depth can not less than 0.");
+                    return;
+                }
+
+                Thread jthread = null;
+                List<Thread> threads = ThreadUtil.getThreadList();
+                for (Thread thread : threads) {
+                    if (threadId == thread.getId()) {
+                        jthread = thread;
+                        break;
+                    }
+                }
+                if(jthread == null) {
+                    process.end(-1, "Can not find thread by thread id : " + threadId + ".");
+                    return;
+                }
+
+                StackTraceElement[] stackTraceElements = jthread.getStackTrace();
+                if(depth >= stackTraceElements.length) {
+                    process.end(-1, "Depth can not greater than the max depth of the thread.");
+                    return;
+                }
+
+                ClassLoader classLoader = this.matchClassLoader(process);
+                if(classLoader == null){
+                    return;
+                }
+
+                VmTool vmtool = vmToolInstance();
+                Object[] localVariableTable = vmToolInstance().getLocalVariableTable(jthread,depth);
+                if(localVariableTable == null) {
+                    process.end(-1, "Can not find local variable table.");
+                    return;
+                }
+
+                List<Object> instances = new LinkedList<Object>();
+                for (int i = 0; i < localVariableTable.length; i++) {
+                    Integer slot = (Integer) localVariableTable[i];
+                    String signature = (String) localVariableTable[++i];
+                    char signature0 = signature.charAt(0);
+                    Object val = null;
+                    switch(signature0) {
+                        case 'Z':
+                            int valInt = vmtool.getLocalInt(jthread, depth, slot);
+                            val = (valInt == 1);
+                            break;
+                        case 'B':
+                            val = (byte)vmtool.getLocalInt(jthread, depth, slot);
+                            break;
+                        case 'C':
+                            val = (char)vmtool.getLocalInt(jthread, depth, slot);
+                            break;
+                        case 'S':
+                            val = (short)vmtool.getLocalInt(jthread, depth, slot);
+                            break;
+                        case 'I':
+                            val = vmtool.getLocalInt(jthread, depth, slot);
+                            break;
+                        case 'J':
+                            val = vmtool.getLocalLong(jthread, depth, slot);
+                            break;
+                        case 'F':
+                            val = vmtool.getLocalFloat(jthread, depth, slot);
+                            break;
+                        case 'D':
+                            val = vmtool.getLocalDouble(jthread, depth, slot);
+                            break;
+                        default:
+                            val = vmtool.getLocalObject(jthread, depth, slot);
+                    }
+                    if(val != null){
+                        instances.add(val);
+                    }
+                }
+                express(process,classLoader,instances);
             }
 
             process.end();
@@ -325,6 +375,59 @@ public class VmToolCommand extends AnnotatedCommand {
         }
 
         super.complete(completion);
+    }
+
+    private ClassLoader matchClassLoader(final CommandProcess process){
+        Instrumentation inst = process.session().getInstrumentation();
+        ClassLoader classLoader = null;
+        if (hashCode != null) {
+            classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
+            if (classLoader == null) {
+                process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                return null;
+            }
+        }else if ( classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst,
+                    classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                classLoader = matchedClassLoaders.get(0);
+                hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils
+                        .createClassLoaderVOList(matchedClassLoaders);
+
+                VmToolModel vmToolModel = new VmToolModel().setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(vmToolModel);
+                process.end(-1,
+                        "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return null;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return null;
+            }
+        }else {
+            classLoader = ClassLoader.getSystemClassLoader();
+        }
+        return classLoader;
+    }
+
+    private void express(final CommandProcess process,ClassLoader classLoader,Object instances){
+        Object value = instances;
+        if (express != null) {
+            Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
+            try {
+                value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
+            } catch (ExpressException e) {
+                logger.warn("ognl: failed execute express: " + express, e);
+                process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                        + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+            }
+        }
+
+        VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
+        process.appendResult(vmToolModel);
+        process.end();
     }
 
 }
