@@ -408,20 +408,20 @@ public class Enhancer implements ClassFileTransformer {
      * 对象增强
      *
      * @param inst              inst
-     * @param adviceId          通知ID
-     * @param isTracing         可跟踪方法调用
-     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
-     * @param classNameMatcher  类名匹配
-     * @param methodNameMatcher 方法名匹配
+     * @param maxNumOfMatchedClass 匹配的class最大数量
      * @return 增强影响范围
      * @throws UnmodifiableClassException 增强失败
      */
-    public synchronized EnhancerAffect enhance(final Instrumentation inst) throws UnmodifiableClassException {
+    public synchronized EnhancerAffect enhance(final Instrumentation inst, int maxNumOfMatchedClass) throws UnmodifiableClassException {
         // 获取需要增强的类集合
         this.matchingClasses = GlobalOptions.isDisableSubClass
                 ? SearchUtils.searchClass(inst, classNameMatcher)
                 : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
 
+        if (matchingClasses.size() > maxNumOfMatchedClass) {
+            affect.setOverLimitMsg("The number of matched classes is " +matchingClasses.size()+ ", greater than the limit value " + maxNumOfMatchedClass + ". Try to change the limit with option '-m <arg>'.");
+            return affect;
+        }
         // 过滤掉无法被增强的类
         List<Pair<Class<?>, String>> filtedList = filter(matchingClasses);
         if (!filtedList.isEmpty()) {

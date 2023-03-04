@@ -14,6 +14,10 @@ Questions about how to use Arthas and opinions can be directly raised in issues�
 
 ![](/images/dingding2_qr.jpg)
 
+- Arthas open source discussion Group 3： 17605006847 , You can join by searching for group number。
+
+![](/images/dingding3_qr.jpg)
+
 ### Instructions for Installing DingTalk
 
 DingTalk can be downloaded from: [https://www.dingtalk.com/en](https://page.dingtalk.com/wow/dingtalk/act/en-download)
@@ -30,4 +34,6 @@ Arthas open source discussion QQ group：916328269
 
 Arthas open source discussion QQ group2：854625984
 
-![](/images/qqgroup2_qr.jpg)
+Arthas open source discussion QQ group 3： 672077388
+
+![](/images/qqgroup3_qr.jpg)

@@ -50,6 +50,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isRegEx = false;
     private String hashCode = null;
     private String classLoaderClass;
+    private String classLoaderToString;
     private Integer expand;
     private int numberOfLimit = 100;
 
@@ -101,14 +102,27 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.numberOfLimit = numberOfLimit;
     }
 
+    @Option(shortName = "cs", longName = "classLoaderStr")
+    @Description("The return value of the special class's ClassLoader#toString().")
+    public void setClassLoaderToString(String classLoaderToString) {
+        this.classLoaderToString = classLoaderToString;
+    }
+
     @Override
     public void process(final CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
 
-        if (hashCode == null && classLoaderClass != null) {
-            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+        if (hashCode == null && (classLoaderClass != null || classLoaderToString != null)) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoader(inst, classLoaderClass, classLoaderToString);
+            String tips = "";
+            if (classLoaderClass != null) {
+                tips = "class name: " + classLoaderClass;
+            }
+            if (classLoaderToString != null) {
+                tips = tips + (StringUtils.isEmpty(tips) ? "ClassLoader#toString(): " : ", ClassLoader#toString(): ") + classLoaderToString;
+            }
             if (matchedClassLoaders.size() == 1) {
                 hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
             } else if (matchedClassLoaders.size() > 1) {
@@ -117,10 +131,10 @@ public class SearchClassCommand extends AnnotatedCommand {
                         .setClassLoaderClass(classLoaderClass)
                         .setMatchedClassLoaders(classLoaderVOList);
                 process.appendResult(searchclassModel);
-                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                process.end(-1, "Found more than one classloader by " + tips + ", please specify classloader with '-c <classloader hash>'");
                 return;
             } else {
-                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                process.end(-1, "Can not find classloader by " + tips + ".");
                 return;
             }
         }

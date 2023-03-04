@@ -21,10 +21,10 @@ public class ArthasEnvironment implements Environment {
             this.propertySources);
 
     public ArthasEnvironment() {
-        propertySources
-                .addLast(new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties()));
         propertySources.addLast(
                 new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment()));
+        propertySources
+                .addLast(new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties()));
     }
 
     /**
