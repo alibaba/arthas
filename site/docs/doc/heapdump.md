@@ -19,7 +19,7 @@ Heap dump file created
 ### 只 dump live 对象
 
 ```bash
-[arthas@58205]$ heapdump --live /tmp/dump.hprof
+[arthas@58205]$ heapdump --live /arthas-output/dump.hprof
 Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
