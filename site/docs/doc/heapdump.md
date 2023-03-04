@@ -11,7 +11,7 @@ dump java heap, 类似 jmap 命令的 heap dump 功能。
 ### dump 到指定文件
 
 ```bash
-[arthas@58205]$ heapdump /tmp/dump.hprof
+[arthas@58205]$ heapdump /arthas-output/dump.hprof
 Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
