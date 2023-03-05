@@ -22,14 +22,14 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard负载�
 
 为了减少客户端集成的工作，您可以使用 [eden-architect](https://github.com/shiyindaxiaojie/eden-architect) 框架，只需要两步就可以完成 Arthas 的集成。
 
-1. 引入 CAT 依赖
+1. 引入 Arthas 依赖
 ````xml
 <dependency>
     <groupId>org.ylzl</groupId>
     <artifactId>eden-arthas-spring-boot-starter</artifactId>
 </dependency>
 ````
-2. 开启 CAT 配置
+2. 开启 Arthas 配置
 ````yaml
 spring:
   arthas: 
