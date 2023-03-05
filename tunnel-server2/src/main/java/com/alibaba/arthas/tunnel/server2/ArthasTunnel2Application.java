@@ -14,9 +14,9 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @EnableWebFlux
 @EnableDiscoveryClient
 @SpringBootApplication
-public class ArthasTunnelServer2Application {
+public class ArthasTunnel2Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(ArthasTunnelServer2Application.class, args);
+        SpringApplication.run(ArthasTunnel2Application.class, args);
     }
 }

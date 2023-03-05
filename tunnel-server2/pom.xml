@@ -18,7 +18,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.alibaba.arthas.tunnel.server2.ArthasTunnelServer2Application</start-class>
+        <start-class>com.alibaba.arthas.tunnel.server2.ArthasTunnel2Application</start-class>
         <arthas.version>3.6.6</arthas.version>
         <spring-cloud.version>3.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>

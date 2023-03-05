@@ -4,11 +4,13 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard负载�
 1. 应用服务发现
 2. 支持权限控制
 
-## 改造前
+## 服务端概览
+
+### 改造前
 
 ![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/arthas/arthas-dashboard-overview-old.png)
 
-## 改造后
+### 改造后
 
 ![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/arthas/arthas-dashboard-overview.png)
 
@@ -17,6 +19,29 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard负载�
 ![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/arthas/arthas-dashboard-login.png)
 
 ## 客户端集成
+
+为了减少客户端集成的工作，您可以使用 [eden-architect](https://github.com/shiyindaxiaojie/eden-architect) 框架，只需要两步就可以完成 Arthas 的集成。
+
+1. 引入 CAT 依赖
+````xml
+<dependency>
+    <groupId>org.ylzl</groupId>
+    <artifactId>eden-arthas-spring-boot-starter</artifactId>
+</dependency>
+````
+2. 开启 CAT 配置
+````yaml
+spring:
+  arthas: 
+    enabled: false # 默认关闭，请按需开启
+
+arthas: # 在线诊断工具
+  agent-id: ${spring.application.name}@${random.value}
+  tunnel-server: ws://localhost:7777/ws
+  session-timeout: 1800
+  telnet-port: 0 # 随机端口
+  http-port: 0 # 随机端口
+````
 
 笔者提供了两种不同应用架构的示例，里面有集成 Sentinel 的示例。
 * 面向领域模型的 **COLA 架构**，代码实例可以查看 [eden-demo-cola](https://github.com/shiyindaxiaojie/eden-demo-cola)
