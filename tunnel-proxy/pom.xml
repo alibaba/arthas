@@ -10,26 +10,22 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>arthas-tunnel-proxy</artifactId>
-    <name>arthas-tunnel-proxy</name>
+    <artifactId>arthas-tunnel-server2</artifactId>
+    <name>arthas-tunnel-server2</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.alibaba.arthas.tunnel.proxy.ArthasProxyApplication</start-class>
+        <start-class>com.alibaba.arthas.tunnel.server2.ArthasTunnel2Application</start-class>
         <arthas.version>3.6.6</arthas.version>
         <spring-cloud.version>3.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <lombok.version>1.18.18</lombok.version>
         <disruptor.version>3.4.4</disruptor.version>
         <micrometer.version>1.9.4</micrometer.version>
-        <build.layers.enabled>false</build.layers.enabled>
-
-        <docker.image/>
-        <docker.username/>
-        <docker.password/>
+        <build.layers.enabled>true</build.layers.enabled>
     </properties>
 
     <build>
@@ -63,55 +59,6 @@
                         <includeLayerTools>true</includeLayerTools>
                         <configuration>${project.basedir}/src/main/docker/layers.xml</configuration>
                     </layers>
-                </configuration>
-            </plugin>
-            <!-- 容器化部署 -->
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>2.2.0</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:11-jdk</image>
-                    </from>
-                    <to>
-                        <image>${docker.image}</image>
-                        <auth>
-                            <username>${docker.username}</username>
-                            <password>${docker.password}</password>
-                        </auth>
-                        <tags>
-                            <tag>${project.version}</tag>
-                        </tags>
-                    </to>
-                    <container>
-                        <entrypoint>
-                            <shell>bash</shell>
-                            <option>-c</option>
-                            <arg>/entrypoint.sh</arg>
-                        </entrypoint>
-                        <ports>
-                            <port>8080</port>
-                        </ports>
-                        <environment>
-                            <TZ>Asia/Shanghai</TZ>
-                            <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
-                            <JAVA_SLEEP>1</JAVA_SLEEP>
-                            <JAVA_OPTS>-Xms256m -Xmx256m</JAVA_OPTS>
-                        </environment>
-                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                        <mainClass>${start-class}</mainClass>
-                    </container>
-                    <extraDirectories>
-                        <paths>src/main/docker</paths>
-                        <permissions>
-                            <permission>
-                                <file>/entrypoint.sh</file>
-                                <mode>755</mode>
-                            </permission>
-                        </permissions>
-                    </extraDirectories>
-                    <allowInsecureRegistries>true</allowInsecureRegistries>
                 </configuration>
             </plugin>
         </plugins>
@@ -214,17 +161,6 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
-            <version>${thymeleaf-extras-springsecurity5.version}</version>
         </dependency>
 
         <dependency>
