@@ -71,6 +71,10 @@ public class OSUtils {
     	return "x86_32".equals(arch);
 	}
 
+	public static boolean isX86_64() {
+		return "x86_64".equals(arch);
+	}
+
 	private static String normalizeArch(String value) {
 		value = normalize(value);
 		if (value.matches("^(x8664|amd64|ia32e|em64t|x64)$")) {
@@ -127,8 +131,7 @@ public class OSUtils {
 		if ("s390x".equals(value)) {
 			return "s390_64";
 		}
-
-		return UNKNOWN;
+		return value;
 	}
 
 	private static String normalize(String value) {
