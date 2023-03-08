@@ -57,6 +57,7 @@
     <file>
       <source>../bin/as-service.bat</source>
     </file>
+
   </files>
 
   <fileSets>
@@ -65,6 +66,13 @@
     </fileSet>
     <fileSet>
       <directory>../lib</directory>
+    </fileSet>
+    <fileSet>
+      <directory>../arthas-vmtool/target</directory>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>libArthasJniLibrary*</include>
+      </includes>
     </fileSet>
   </fileSets>
 </assembly>
