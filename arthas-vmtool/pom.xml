@@ -154,6 +154,7 @@
             <activation>
                 <os>
                     <name>linux</name>
+                    <arch>!amd64</arch>
                 </os>
             </activation>
             <properties>
