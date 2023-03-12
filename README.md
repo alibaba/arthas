@@ -25,7 +25,7 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard负载�
 1. 引入 Arthas 依赖
 ````xml
 <dependency>
-    <groupId>org.ylzl</groupId>
+    <groupId>io.github.shiyindaxiaojie</groupId>
     <artifactId>eden-arthas-spring-boot-starter</artifactId>
 </dependency>
 ````
