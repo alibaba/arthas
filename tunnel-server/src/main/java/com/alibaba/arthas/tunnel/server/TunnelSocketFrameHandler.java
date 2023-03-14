@@ -30,9 +30,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -74,6 +76,8 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 String clientConnectionId = parameters.getFirst(URIConstans.CLIENT_CONNECTION_ID);
                 openTunnel(ctx, clientConnectionId);
             }
+        } else if (evt instanceof IdleStateEvent) {
+            ctx.writeAndFlush(new PingWebSocketFrame());
         } else {
             ctx.fireUserEventTriggered(evt);
         }
