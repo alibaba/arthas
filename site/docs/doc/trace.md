@@ -134,7 +134,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
 
-### 据调用耗时过滤
+### 根据调用耗时过滤
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'
