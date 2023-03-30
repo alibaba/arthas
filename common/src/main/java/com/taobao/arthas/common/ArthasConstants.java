@@ -26,7 +26,7 @@ public class ArthasConstants {
     public static final int TELNET_PORT = 3658;
 
     public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
-    public static final int WEBSOCKET_IDLE_SECONDS = 60;
+    public static final int WEBSOCKET_IDLE_SECONDS = 10;
 
     /**
      * HTTP cookie id
