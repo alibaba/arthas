@@ -70,4 +70,18 @@ public interface AdviceListener {
             Object target, Object[] args,
             Throwable throwable) throws Throwable;
 
+    /**
+     * look命令中使用，查看本地变量
+     * @param clazz        类
+     * @param methodName   方法名
+     * @param methodDesc   方法描述
+     * @param target       目标类实例，若目标为静态方法,则为null
+     * @param args         参数列表
+     * @param lookLocation LineNumber 或 LocationCode
+     * @param vars         本地变量数组
+     * @param varNames     本地变量名数组
+     * @throws Throwable   通知过程出错
+     */
+    void atLookLocation(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args, String lookLocation, Object[] vars, String[] varNames) throws Throwable;
+
 }

@@ -8,6 +8,7 @@ import com.alibaba.bytekit.asm.interceptor.annotation.AtExceptionExit;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtExit;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtInvoke;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtInvokeException;
+import com.taobao.arthas.core.util.look.LookUtils;
 
 /**
  * 
@@ -85,6 +86,33 @@ public class SpyInterceptors {
                 @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
             SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
         }
+    }
+
+    /**
+     * 为什么要用两个"一模一样"的方法？
+     * 因为在避免重复增强时，需要有标记作为判定是否重复的依据，而look入参数有 LineNumber 和 LocationCode ，所以这个处理起来会非常麻烦
+     * 并且 LineNumber 和 LocationCode 不能一对一映射（匹配方法退出时）
+     */
+    public static class SpyLookInterceptor {
+
+        public static void atLookLocationCode(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                                          @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
+                                          //转成binding之后再赋值,这里默认是空串
+                                          @Binding.StringValue("LocationPlaceholder") String location,
+                                          @Binding.LocalVars(excludePattern = LookUtils.LOCAL_VARIABLES_NAME_EXCLUDE_MATCHER) Object[] vars,
+                                          @Binding.LocalVarNames(excludePattern = LookUtils.LOCAL_VARIABLES_NAME_EXCLUDE_MATCHER) String[] varNames) {
+            SpyAPI.atLookLocationCode(clazz, methodInfo, target, args, location, vars, varNames);
+        }
+
+        public static void atLookLocationLine(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                                          @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
+                                          //转成binding之后再赋值,这里默认是空串
+                                          @Binding.StringValue("LocationPlaceholder") String location,
+                                          @Binding.LocalVars(excludePattern = LookUtils.LOCAL_VARIABLES_NAME_EXCLUDE_MATCHER) Object[] vars,
+                                          @Binding.LocalVarNames(excludePattern = LookUtils.LOCAL_VARIABLES_NAME_EXCLUDE_MATCHER) String[] varNames) {
+            SpyAPI.atLookLocationLine(clazz, methodInfo, target, args, location, vars, varNames);
+        }
+
     }
 
     public static class SpyTraceExcludeJDKInterceptor1 {

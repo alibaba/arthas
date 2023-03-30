@@ -174,6 +174,30 @@ public class SpyImpl extends AbstractSpy {
         }
     }
 
+    @Override
+    public void atLookLocation(Class<?> clazz, String methodInfo, Object target, Object[] args, String lookLocation, Object[] vars, String[] varNames) {
+        ClassLoader classLoader = clazz.getClassLoader();
+
+        String[] info = StringUtils.splitMethodInfo(methodInfo);
+        String methodName = info[0];
+        String methodDesc = info[1];
+
+        List<AdviceListener> listeners = AdviceListenerManager.queryLookAdviceListeners(classLoader, clazz.getName(), lookLocation,
+                methodName, methodDesc);
+        if (listeners != null) {
+            for (AdviceListener adviceListener : listeners) {
+                try {
+                    if (skipAdviceListener(adviceListener)) {
+                        continue;
+                    }
+                    adviceListener.atLookLocation(clazz, methodName, methodDesc, target, args, lookLocation, vars, varNames);
+                } catch (Throwable e) {
+                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
+                }
+            }
+        }
+    }
+
     private static boolean skipAdviceListener(AdviceListener adviceListener) {
         if (adviceListener instanceof ProcessAware) {
             ProcessAware processAware = (ProcessAware) adviceListener;
