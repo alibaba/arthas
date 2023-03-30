@@ -12,6 +12,8 @@ import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.*;
 
+import java.arthas.SpyAPI;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 @Name("look")
@@ -175,6 +177,22 @@ public class LookCommand extends EnhancerCommand {
 
     @Override
     public void process(final CommandProcess process) {
+        //兼容旧版，如果没有那些方法，就不要用这个命令
+        boolean hasLookMethod = false;
+        try {
+            Class clazz = Class.forName("java.arthas.SpyAPI"); // 加载不到会抛异常
+            for (Method declaredMethod : clazz.getDeclaredMethods()) {
+                if (declaredMethod.getName().equals("atLookLocationCode")){
+                    hasLookMethod = true;
+                    break;
+                }
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+        if (!hasLookMethod){
+            throw new IllegalArgumentException("this version not support look command!");
+        }
         //check arg,只是简单的格式校验
         if (!LookUtils.validLocation(location)) {
             throw new IllegalArgumentException("location is invalid! " + location);
