@@ -45,6 +45,20 @@
                 <lib_name>libArthasJniLibrary-x64.so</lib_name>
             </properties>
         </profile>
+        <profile>
+            <id>linux-aarch64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <os_arch_option>-march=armv8-a</os_arch_option>
+                <lib_name>libArthasJniLibrary-aarch64.so</lib_name>
+            </properties>
+        </profile>
 
         <!-- windows -->
         <profile>
@@ -196,6 +210,8 @@
                         <compilerStartOption>-fpic</compilerStartOption>
                         <compilerStartOption>-shared</compilerStartOption>
                         <compilerStartOption>-o</compilerStartOption>
+                        <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
+                        <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
                     </compilerStartOptions>
 
                     <linkerOutputDirectory>target</linkerOutputDirectory>
