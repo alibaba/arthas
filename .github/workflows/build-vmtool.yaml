@@ -26,7 +26,7 @@ jobs:
             uname -a
             echo ::set-output name=uname::$(uname -a)
             apt update && apt install openjdk-8-jdk
-            ./mvnw package
+            ./mvnw package -pl common,arthas-vmtool
 
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
