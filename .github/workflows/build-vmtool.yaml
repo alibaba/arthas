@@ -25,6 +25,7 @@ jobs:
           run: |
             uname -a
             echo ::set-output name=uname::$(uname -a)
+            sudo apt install openjdk-8-jdk
             ./mvnw package
 
       - name: Get the output
