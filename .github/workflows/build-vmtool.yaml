@@ -2,10 +2,6 @@ name: build vmtool
 
 on:
   workflow_dispatch:
-    inputs:
-      deploymode:
-        required: false
-        type: string
 
 jobs:
 
