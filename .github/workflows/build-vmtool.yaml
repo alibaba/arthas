@@ -42,7 +42,8 @@ jobs:
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -a -m "update arthas vmtool lib"
+          git add lib/
+          git commit -m "update arthas vmtool lib"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
