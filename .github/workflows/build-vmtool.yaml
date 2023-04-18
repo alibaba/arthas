@@ -1,7 +1,6 @@
 name: build vmtool
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
 
