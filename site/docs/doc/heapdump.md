@@ -16,11 +16,14 @@ Dumping heap to arthas-output/dump.hprof ...
 Heap dump file created
 ```
 
+::: tip
+生成文件在`arthas-output`目录，可以通过浏览器下载： http://localhost:8563/arthas-output/
+:::
 ### 只 dump live 对象
 
 ```bash
-[arthas@58205]$ heapdump --live arthas-output/dump.hprof
-Dumping heap to arthas-output/dump.hprof ...
+[arthas@58205]$ heapdump --live /tmp/dump.hprof
+Dumping heap to /tmp/dump.hprof ...
 Heap dump file created
 ```
 
