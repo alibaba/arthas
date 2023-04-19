@@ -89,3 +89,11 @@ vmtool --action forceGc
 ```
 
 - 可以结合 [`vmoption`](vmoption.md) 命令动态打开`PrintGC`开关。
+
+## interrupt 指定线程
+
+thread id 通过`-t`参数指定，可以使用 `thread`命令获取。
+
+```bash
+vmtool --action interruptThread -t 1
+```
