@@ -17,7 +17,7 @@ jobs:
         run: ./mvnw package
       - uses: actions/upload-artifact@v2
         with:
-          name: libArthasJniLibrary-x64.so
+          name: lib
           path: arthas-vmtool/target/libArthasJniLibrary-x64.so
 
   commit_vmtool_files:
@@ -30,12 +30,16 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: libArthasJniLibrary-x64.so
-          path: lib/libArthasJniLibrary-x64.so
+          name: lib
+          path: tmplib
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: tmplib
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          mv tmplib/* lib/
           git add lib/
           git commit -m "update arthas vmtool lib"
       - name: Push changes
