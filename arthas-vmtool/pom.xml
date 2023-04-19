@@ -161,6 +161,21 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- linux other-arch-->
+        <profile>
+            <id>linux-${os.arch}</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <lib_name>libArthasJniLibrary-${os.arch}.so</lib_name>
+            </properties>
+        </profile>
     </profiles>
 
     <build>

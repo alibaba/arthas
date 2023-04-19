@@ -12,11 +12,14 @@ public class VmToolUtils {
             libName = "libArthasJniLibrary.dylib";
         }
         if (OSUtils.isLinux()) {
-            libName = "libArthasJniLibrary-x64.so";
             if (OSUtils.isArm32()) {
                 libName = "libArthasJniLibrary-arm.so";
             } else if (OSUtils.isArm64()) {
                 libName = "libArthasJniLibrary-aarch64.so";
+            } else if (OSUtils.isX86_64()) {
+                libName = "libArthasJniLibrary-x64.so";
+            }else {
+                libName = "libArthasJniLibrary-" + OSUtils.arch() + ".so";
             }
         }
         if (OSUtils.isWindows()) {
