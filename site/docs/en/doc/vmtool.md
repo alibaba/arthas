@@ -90,7 +90,6 @@ vmtool --action forceGc
 
 - Use the [`vmoption`](vmoption.md) command to dynamically turn on the `PrintGC` option.
 
-
 ## interrupt 指定线程
 
 The thread id is specified by the `-t` parameter. It can be obtained using the `thread` command.

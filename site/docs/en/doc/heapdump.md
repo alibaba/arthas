@@ -19,6 +19,7 @@ Heap dump file created
 ::: tip
 The generated file is located in the arthas-output directory and can be downloaded through the browser at http://localhost:8563/arthas-output/
 :::
+
 ### Dump only live objects
 
 ```bash
