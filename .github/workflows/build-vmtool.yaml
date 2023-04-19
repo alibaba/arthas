@@ -4,36 +4,34 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  linux_aarch64_job:
-    # The host should always be Linux
+  build-linux-x64:
     runs-on: ubuntu-20.04
-    name: Build on ubuntu aarch64
     steps:
       - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
         with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
-      - uses: uraimo/run-on-arch-action@v2
-        name: Run commands
-        id: runcmd
-        with:
-          arch: aarch64
-          distro: ubuntu20.04
-
-          # Not required, but speeds up builds by storing container images in
-          # a GitHub package registry.
-          githubToken: ${{ github.token }}
-
-          # Set an output parameter `uname` for use in subsequent steps
-          run: |
-            apt update && apt install openjdk-8-jdk g++ -y
-            ./mvnw package -pl common,arthas-vmtool
-            cp arthas-vmtool/target/libArthas* lib/
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: ./mvnw package
       - uses: actions/upload-artifact@v2
         with:
-          name: lib
-          path: arthas-vmtool/target/libArthas*
+          name: libArthasJniLibrary-x64.so
+          path: arthas-vmtool/target/libArthasJniLibrary-x64.so
+
+  commit_vmtool_files:
+    runs-on: ubuntu-20.04
+    needs: 
+      build-linux-x64
+    steps:
+      - name: Checkout Upstream Repo
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: libArthasJniLibrary-x64.so
+          path: lib/libArthasJniLibrary-x64.so
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -45,3 +43,44 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
+
+  # linux_aarch64_job:
+  #   # The host should always be Linux
+  #   runs-on: ubuntu-20.04
+  #   name: Build on ubuntu aarch64
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.head_ref }}
+  #         fetch-depth: 0
+  #     - uses: uraimo/run-on-arch-action@v2
+  #       name: Run commands
+  #       id: runcmd
+  #       with:
+  #         arch: aarch64
+  #         distro: ubuntu20.04
+
+  #         # Not required, but speeds up builds by storing container images in
+  #         # a GitHub package registry.
+  #         githubToken: ${{ github.token }}
+
+  #         # Set an output parameter `uname` for use in subsequent steps
+  #         run: |
+  #           apt update && apt install openjdk-8-jdk g++ -y
+  #           ./mvnw package -pl common,arthas-vmtool
+  #           cp arthas-vmtool/target/libArthas* lib/
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: lib
+  #         path: arthas-vmtool/target/libArthas*
+  #     - name: Commit files
+  #       run: |
+  #         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  #         git config --local user.name "github-actions[bot]"
+  #         git add lib/
+  #         git commit -m "update arthas vmtool lib"
+  #     - name: Push changes
+  #       uses: ad-m/github-push-action@master
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         branch: ${{ github.ref }}
