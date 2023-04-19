@@ -55,7 +55,6 @@ jobs:
   build-linux-aarch64:
     # The host should always be Linux
     runs-on: ubuntu-20.04
-    name: Build on ubuntu aarch64
     steps:
       - uses: actions/checkout@v3
         with:
@@ -72,7 +71,6 @@ jobs:
           # a GitHub package registry.
           githubToken: ${{ github.token }}
 
-          # Set an output parameter `uname` for use in subsequent steps
           run: |
             apt update && apt install openjdk-8-jdk g++ -y
             ./mvnw package -pl common,arthas-vmtool
@@ -108,44 +106,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
-
-  # linux_aarch64_job:
-  #   # The host should always be Linux
-  #   runs-on: ubuntu-20.04
-  #   name: Build on ubuntu aarch64
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ github.head_ref }}
-  #         fetch-depth: 0
-  #     - uses: uraimo/run-on-arch-action@v2
-  #       name: Run commands
-  #       id: runcmd
-  #       with:
-  #         arch: aarch64
-  #         distro: ubuntu20.04
-
-  #         # Not required, but speeds up builds by storing container images in
-  #         # a GitHub package registry.
-  #         githubToken: ${{ github.token }}
-
-  #         # Set an output parameter `uname` for use in subsequent steps
-  #         run: |
-  #           apt update && apt install openjdk-8-jdk g++ -y
-  #           ./mvnw package -pl common,arthas-vmtool
-  #           cp arthas-vmtool/target/libArthas* lib/
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: lib
-  #         path: arthas-vmtool/target/libArthas*
-  #     - name: Commit files
-  #       run: |
-  #         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-  #         git config --local user.name "github-actions[bot]"
-  #         git add lib/
-  #         git commit -m "update arthas vmtool lib"
-  #     - name: Push changes
-  #       uses: ad-m/github-push-action@master
-  #       with:
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         branch: ${{ github.ref }}
