@@ -38,9 +38,7 @@ jobs:
 
   commit_vmtool_files:
     runs-on: ubuntu-20.04
-    needs: 
-      build-linux-x64
-      build-mac
+    needs: [build-linux-x64, build-mac]
     steps:
       - name: Checkout Upstream Repo
         uses: actions/checkout@v3
