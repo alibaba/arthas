@@ -1,5 +1,6 @@
 package com.taobao.arthas.common;
 
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -132,6 +133,22 @@ public class OSUtils {
 			return "s390_64";
 		}
 		return value;
+	}
+
+	public static boolean isMuslLibc() {
+		String commandStr = "ldd --version 2>&1 | head -1 | awk 'END{if($1==\"musl\") exit 200}'";
+		Process process = null;
+		try {
+			process = new ProcessBuilder("/bin/sh", "-c", commandStr).start();
+			process.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		//仅在Linux系统中判断libc类型.
+		return isLinux() && 200 == process.exitValue();
 	}
 
 	private static String normalize(String value) {
