@@ -24,7 +24,7 @@
                 </os>
             </activation>
             <properties>
-                <os_name>macos</os_name>
+                <os_name>darwin</os_name>
                 <os_arch_option>-arch x86_64 -arch arm64</os_arch_option>
                 <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
@@ -126,7 +126,6 @@
                                     <className>arthas.VmTool</className>
                                 </javahInclude>
                             </javahIncludes>
-                            <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
                             <javahOS>${os_name}</javahOS>
                             <sources>
                                 <source>
@@ -140,13 +139,13 @@
                             <compilerProvider>generic-classic</compilerProvider>
                             <compilerExecutable>g++</compilerExecutable>
                             <compilerStartOptions>
+                                <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
+                                <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                                <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                                 <compilerStartOption>${os_arch_option}</compilerStartOption>
                                 <compilerStartOption>-fpic</compilerStartOption>
                                 <compilerStartOption>-shared</compilerStartOption>
                                 <compilerStartOption>-o</compilerStartOption>
-                                <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
-                                <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
-                                <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                             </compilerStartOptions>
 
                             <linkerOutputDirectory>target</linkerOutputDirectory>
@@ -223,8 +222,6 @@
                             <className>arthas.VmTool</className>
                         </javahInclude>
                     </javahIncludes>
-                    <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
-                    <javahOS>${os_name}</javahOS>
                     <sources>
                         <source>
                             <directory>src/main/native/src</directory>
@@ -237,13 +234,13 @@
                     <compilerProvider>generic-classic</compilerProvider>
                     <compilerExecutable>g++</compilerExecutable>
                     <compilerStartOptions>
+                        <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
+                        <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                        <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                         <compilerStartOption>${os_arch_option}</compilerStartOption>
                         <compilerStartOption>-fpic</compilerStartOption>
                         <compilerStartOption>-shared</compilerStartOption>
                         <compilerStartOption>-o</compilerStartOption>
-                        <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
-                        <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
-                        <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                     </compilerStartOptions>
 
                     <linkerOutputDirectory>target</linkerOutputDirectory>
