@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>404</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+	<meta name="description" content="Hello World">
+	<meta name="keywords" content="">
+	<meta name="author" content="">
+	<meta name="copyright" content="">
+	<meta name="theme-color" content="#fff">
+
+	<link rel="shortcut icon" href="../favicon.ico">
+	<link rel="dns-prefetch" href="https://cdn.jsdelivr.net/">
+	<link rel="stylesheet" href="static/css/font-awesome.min.css">
+	<style>
+		@-moz-keyframes rocket-movement {
+			100% {
+				-moz-transform: translate(1200px, -600px)
+			}
+		}
+
+		@-webkit-keyframes rocket-movement {
+			100% {
+				-webkit-transform: translate(1200px, -600px)
+			}
+		}
+
+		@keyframes rocket-movement {
+			100% {
+				transform: translate(1200px, -600px)
+			}
+		}
+
+		@-moz-keyframes spin-earth {
+			100% {
+				-moz-transform: rotate(-360deg);
+				transition: transform 20s
+			}
+		}
+
+		@-webkit-keyframes spin-earth {
+			100% {
+				-webkit-transform: rotate(-360deg);
+				transition: transform 20s
+			}
+		}
+
+		@keyframes spin-earth {
+			100% {
+				-webkit-transform: rotate(-360deg);
+				transform: rotate(-360deg);
+				transition: transform 20s
+			}
+		}
+
+		@-moz-keyframes move-astronaut {
+			100% {
+				-moz-transform: translate(-160px, -160px)
+			}
+		}
+
+		@-webkit-keyframes move-astronaut {
+			100% {
+				-webkit-transform: translate(-160px, -160px)
+			}
+		}
+
+		@keyframes move-astronaut {
+			100% {
+				-webkit-transform: translate(-160px, -160px);
+				transform: translate(-160px, -160px)
+			}
+		}
+
+		@-moz-keyframes rotate-astronaut {
+			100% {
+				-moz-transform: rotate(-720deg)
+			}
+		}
+
+		@-webkit-keyframes rotate-astronaut {
+			100% {
+				-webkit-transform: rotate(-720deg)
+			}
+		}
+
+		@keyframes rotate-astronaut {
+			100% {
+				-webkit-transform: rotate(-720deg);
+				transform: rotate(-720deg)
+			}
+		}
+
+		@-moz-keyframes glow-star {
+			40% {
+				-moz-opacity: .3
+			}
+			100%,
+			90% {
+				-moz-opacity: 1;
+				-moz-transform: scale(1.2)
+			}
+		}
+
+		@-webkit-keyframes glow-star {
+			40% {
+				-webkit-opacity: .3
+			}
+			100%,
+			90% {
+				-webkit-opacity: 1;
+				-webkit-transform: scale(1.2)
+			}
+		}
+
+		@keyframes glow-star {
+			40% {
+				-webkit-opacity: .3;
+				opacity: .3
+			}
+			100%,
+			90% {
+				-webkit-opacity: 1;
+				opacity: 1;
+				-webkit-transform: scale(1.2);
+				transform: scale(1.2);
+				border-radius: 999999px
+			}
+		}
+
+		.spin-earth-on-hover {
+			transition: ease 200s !important;
+			transform: rotate(-3600deg) !important
+		}
+
+		body,
+		html {
+			margin: 0;
+			width: 100%;
+			height: 100%;
+			font-family: 'Titillium Web', Lato, PingFang SC, Hiragino Sans GB, "Microsoft JhengHei", "Microsoft YaHei", Helvetica Neue, Helvetica, Arial, sans-serif;
+			font-weight: 300;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none
+		}
+
+		.bg-purple {
+			background: url(static/image/bg_purple.png);
+			background-repeat: repeat-x;
+			background-size: cover;
+			background-position: left top;
+			height: 100%;
+			overflow: hidden;
+			position: fixed
+		}
+
+		.custom-navbar {
+			padding-top: 15px;
+			padding-left: 15px;
+			position: absolute;
+			top: 0;
+			z-index: 99;
+			width: 100%;
+			border: none;
+			font-size: 18px;
+			-webkit-transition: all .2s ease-in-out;
+			-moz-transition: all .2s ease-in-out;
+			-o-transition: all .2s ease-in-out;
+			-ms-transition: all .2s ease-in-out;
+			transition: all .2s ease-in-out
+		}
+
+		.navbar-links {
+			display: inline-block;
+			float: right;
+			margin-top: 5px;
+			margin-right: 55px;
+			text-transform: uppercase
+		}
+
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			align-items: center
+		}
+
+		li {
+			float: left;
+			padding: 0 15px
+		}
+
+		li a {
+			display: block;
+			color: #fff;
+			text-align: center;
+			text-decoration: none;
+			letter-spacing: 2px;
+			font-size: 14px;
+			text-shadow: .1rem .1rem .2rem rgba(0, 0, 0, .15);
+			font-weight: 700;
+			-webkit-transition: all .3s ease-in;
+			-moz-transition: all .3s ease-in;
+			-ms-transition: all .3s ease-in;
+			-o-transition: all .3s ease-in;
+			transition: all .3s ease-in
+		}
+
+		li a:hover {
+			color: #ffcb39
+		}
+
+		.btn-request {
+			padding: 10px 25px;
+			border: 1px solid #ffcb39;
+			border-radius: 100px;
+			font-weight: 400
+		}
+
+		.btn-request:hover {
+			background-color: #ffcb39;
+			color: #fff;
+			transform: scale(1.05);
+			box-shadow: 0 20px 20px rgba(0, 0, 0, .1)
+		}
+
+		.btn-go-home {
+			position: relative;
+			z-index: 200;
+			margin: 15px auto;
+			width: 100px;
+			padding: 10px 15px;
+			border: 1px solid #ffcb39;
+			border-radius: 100px;
+			font-weight: 400;
+			display: block;
+			color: #fff;
+			text-align: center;
+			text-decoration: none;
+			letter-spacing: 2px;
+			font-size: 11px;
+			-webkit-transition: all .3s ease-in;
+			-moz-transition: all .3s ease-in;
+			-ms-transition: all .3s ease-in;
+			-o-transition: all .3s ease-in;
+			transition: all .3s ease-in
+		}
+
+		.btn-go-home:hover {
+			background-color: #ffcb39;
+			color: #fff;
+			transform: scale(1.05);
+			box-shadow: 0 20px 20px rgba(0, 0, 0, .1)
+		}
+
+		.central-body {
+			padding: 17% 5% 10% 5%;
+			text-align: center
+		}
+
+		.objects img {
+			z-index: 90;
+			pointer-events: none
+		}
+
+		.object_rocket {
+			z-index: 95;
+			position: absolute;
+			transform: translateX(-50px);
+			top: 75%;
+			pointer-events: none;
+			animation: rocket-movement 200s linear infinite both running
+		}
+
+		.object_earth {
+			position: absolute;
+			top: 20%;
+			left: 15%;
+			z-index: 90
+		}
+
+		.object_moon {
+			position: absolute;
+			top: 12%;
+			left: 25%;
+		}
+
+		.object_astronaut {
+			animation: rotate-astronaut 200s infinite linear both alternate
+		}
+
+		.box_astronaut {
+			z-index: 110 !important;
+			position: absolute;
+			top: 60%;
+			right: 20%;
+			will-change: transform;
+			animation: move-astronaut 50s infinite linear both alternate
+		}
+
+		.image-404 {
+			position: relative;
+			z-index: 100;
+			pointer-events: none
+		}
+
+		.stars {
+			background: url(static/image/overlay_stars.svg) repeat left top;
+			background-size: contain;
+		}
+
+		.glowing_stars .star {
+			position: absolute;
+			border-radius: 100%;
+			background-color: #fff;
+			width: 3px;
+			height: 3px;
+			opacity: .3;
+			will-change: opacity
+		}
+
+		.glowing_stars .star:nth-child(1) {
+			top: 80%;
+			left: 25%;
+			animation: glow-star 2s infinite ease-in-out alternate 1s
+		}
+
+		.glowing_stars .star:nth-child(2) {
+			top: 20%;
+			left: 40%;
+			animation: glow-star 2s infinite ease-in-out alternate 3s
+		}
+
+		.glowing_stars .star:nth-child(3) {
+			top: 25%;
+			left: 25%;
+			animation: glow-star 2s infinite ease-in-out alternate 5s
+		}
+
+		.glowing_stars .star:nth-child(4) {
+			top: 75%;
+			left: 80%;
+			animation: glow-star 2s infinite ease-in-out alternate 7s
+		}
+
+		.glowing_stars .star:nth-child(5) {
+			top: 90%;
+			left: 50%;
+			animation: glow-star 2s infinite ease-in-out alternate 9s
+		}
+
+		.brand-title {
+			float: left
+		}
+
+		.brand-title a {
+			text-shadow: .1rem .1rem .2rem rgba(0, 0, 0, .15);
+			font-weight: 700;
+			color: #fff;
+			text-decoration: none
+		}
+
+		@media only screen and (max-width: 768px) {
+			.navbar-links {
+				display: none
+			}
+
+			.custom-navbar {
+				padding: 10px 20px
+			}
+
+			.box_astronaut {
+				top: 70%
+			}
+
+			.central-body {
+				padding-top: 25%
+			}
+		}
+	</style>
+<body class="bg-purple">
+<div class="stars">
+	<div class="custom-navbar">
+		<div class="brand-title">
+			<a href="https://github.com/shiyindaxiaojie">Github</a>
+		</div>
+	</div>
+	<div class="central-body">
+		<a href="https://mengxiangge.netlify.app">
+			<img class="image-404" alt="404"
+				 src="static/image/404.svg"
+				 width="300px"></a>
+		<a href="https://mengxiangge.netlify.app"
+		   class="btn-go-home">😵快回地球吧</a>
+	</div>
+	<div class="objects">
+		<img class="object_moon object_rocket" alt="404" src="static/image/rocket.svg" width="40px"/>
+		<div class="earth-moon">
+			<img class="object_earth" alt="404" src="static/image/earth.svg" width="100px"/>
+			<img class="object_moon" alt="404" src="static/image/moon.svg" width="80px"/>
+		</div>
+		<div class="box_astronaut">
+			<img class="object_astronaut" alt="404" src="static/image/astronaut.svg"
+				 width="140px">
+		</div>
+	</div>
+	<div class="glowing_stars">
+		<div class="star"></div>
+		<div class="star"></div>
+		<div class="star"></div>
+		<div class="star"></div>
+		<div class="star"></div>
+	</div>
+</div>
+</body>
+</html>

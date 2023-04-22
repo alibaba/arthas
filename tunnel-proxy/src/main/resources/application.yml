@@ -1,0 +1,34 @@
+logging:
+  file:
+    name: ${spring.application.name}
+
+server:
+  port: 9999
+
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  cache:
+    type: caffeine
+    cache-names: inMemoryClusterCache
+    caffeine:
+      spec: maximumSize=3000,expireAfterAccess=3600s
+#  redis:
+#    host: 127.0.0.1
+
+arthas:
+  tunnel:
+    server:
+      port: 7777
+    users:
+      - name: admin
+        password: 123456
+        roles: '*'
+      - name: user
+        password: 123456
+        roles:
+          - eden-gateway
+#  embedded-redis:
+#    enabled: false
+#    settings: maxmemory 128M
