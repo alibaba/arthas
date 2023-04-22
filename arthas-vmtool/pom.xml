@@ -84,7 +84,7 @@
                 </os>
             </activation>
             <properties>
-                <os_name>windows</os_name>
+                <os_name>win32</os_name>
             </properties>
         </profile>
         <profile>
