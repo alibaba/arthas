@@ -144,6 +144,9 @@
                                 <compilerStartOption>-fpic</compilerStartOption>
                                 <compilerStartOption>-shared</compilerStartOption>
                                 <compilerStartOption>-o</compilerStartOption>
+                                <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
+                                <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                                <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                             </compilerStartOptions>
 
                             <linkerOutputDirectory>target</linkerOutputDirectory>
