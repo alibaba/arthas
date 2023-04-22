@@ -84,6 +84,7 @@
                 </os>
             </activation>
             <properties>
+                <!-- https://github.com/mojohaus/maven-native/blob/maven-native-1.0-alpha-11/native-maven-plugin/src/site/apt/examples/jni-dll.apt#L67-->
                 <os_name>win32</os_name>
             </properties>
         </profile>
@@ -165,10 +166,9 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>javah</id>
+                                <id>compile-and-link</id>
                                 <phase>compile</phase>
                                 <goals>
-<!--                                    <goal>javah</goal>-->
                                     <goal>initialize</goal>
                                     <goal>compile</goal>
                                     <goal>link</goal>
@@ -184,21 +184,12 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <source>1.6</source>-->
-<!--                    <target>1.6</target>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                    <showDeprecation>true</showDeprecation>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgs>
+                        <!-- 需要使用 3.8.0 及之后版本，使用javac -h 生成头文件 -->
                         <arg>-h</arg>
                         <arg>${project.build.directory}/native/include</arg>
                     </compilerArgs>
@@ -257,10 +248,9 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>javah</id>
+                        <id>compile-and-link</id>
                         <phase>compile</phase>
                         <goals>
-<!--                            <goal>javah</goal>-->
                             <goal>initialize</goal>
                             <goal>compile</goal>
                             <goal>link</goal>
