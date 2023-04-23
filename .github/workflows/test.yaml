@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [8, 11]
+        java: [8, 11, 17, 19]
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -50,33 +50,3 @@ jobs:
           cache: 'maven'
       - name: Build with Maven
         run: mvn clean package -P full
-
-  ubuntu_build_jdk_ge_12:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # https://static.azul.com/zulu/bin/
-        java: [12, 13, 14 , 17, 18, 19]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v3
-        with:
-          java-version: 8
-          distribution: 'zulu'
-          cache: 'maven'
-      - name: save java8 home
-        run: |
-          export JAVA8_HOME=$JAVA_HOME && echo $JAVA8_HOME
-          echo "export JAVA8_HOME=$JAVA_HOME" > ~/.testenv
-
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ matrix.java }}
-          distribution: 'zulu'
-          cache: 'maven'
-      - name: Build with Maven
-        run: |
-          source ~/.testenv
-          mvn -Dmaven.compiler.fork=true -Dmaven.compiler.executable=$JAVA8_HOME/bin/javac -DJAVA8_HOME=$JAVA8_HOME clean package -P full

@@ -79,8 +79,8 @@
     <properties>
         <revision>3.6.8</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <spring-boot.version>2.7.0</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
@@ -170,7 +170,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.28.2</version>
+                <version>4.11.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -209,13 +209,13 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.11.6</version>
+                <version>1.14.4</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.11.6</version>
+                <version>1.14.4</version>
             </dependency>
 
             <dependency>
