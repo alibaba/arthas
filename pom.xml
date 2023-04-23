@@ -83,7 +83,6 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <spring-boot.version>2.7.0</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
-        <jacoco.skip>${skipTests}</jacoco.skip>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
         <netty.version>4.1.77.Final</netty.version>
@@ -469,31 +468,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report-aggregate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>
