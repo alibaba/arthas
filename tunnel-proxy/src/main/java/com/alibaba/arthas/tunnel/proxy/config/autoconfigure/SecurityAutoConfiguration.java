@@ -75,13 +75,16 @@ public class SecurityAutoConfiguration {
                         "/favicon.ico",
                         "/actuator/**",
                         "/actuator",
-                        "/image",
-                        "/image",
                         "*.css",
                         "*.png",
                         "*.js",
                         "*.jpg",
                         "*.ico",
+                        "*.otf",
+                        "*.eot",
+                        "*.svg",
+                        "*.ttf",
+                        "*.woff",
                         "/static/**",
                         "/public/**")
                 .permitAll()

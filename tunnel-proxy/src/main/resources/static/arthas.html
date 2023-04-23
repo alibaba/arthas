@@ -22,21 +22,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="shortcut icon" href="favicon.ico"/>
+    <link rel="shortcut icon" href="/static/favicon.ico">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="static/bootstrap-4.2.1.min.css">
-    <link rel="stylesheet" href="static/bootstrap4-toggle.min.css">
+    <link rel="stylesheet" href="/static/bootstrap-4.2.1.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap4-toggle.min.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="static/jquery-3.3.1.slim.min.js"></script>
-    <script src="static/jquery-3.3.1.min.js"></script>
-    <script src="static/popper-1.14.6.min.js"></script>
-    <script src="static/bootstrap-4.2.1.min.js"></script>
+    <script src="/static/jquery-3.3.1.slim.min.js"></script>
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/popper-1.14.6.min.js"></script>
+    <script src="/static/bootstrap-4.2.1.min.js"></script>
     <!--    <script src="bootstrap-switch.min.js"></script>-->
 
-    <script src="static/bootstrap4-toggle.min.js"></script>
+    <script src="/static/bootstrap4-toggle.min.js"></script>
 
     <script type="text/javascript">
         window.addEventListener('resize', function () {
@@ -46,36 +47,36 @@
         });
     </script>
 
-    <link href="static/xterm.css" rel="stylesheet"/>
-    <link href="static/main.css" rel="stylesheet"/>
-    <script src="static/xterm.js" type="text/javascript"></script>
-    <script src="static/xweb-console.js"></script>
-    <script src="static/arthas.js"></script>
+    <link href="/static/xterm.css" rel="stylesheet"/>
+    <link href="/static/main.css" rel="stylesheet"/>
+    <script src="/static/xterm.js" type="text/javascript"></script>
+    <script src="/static/xweb-console.js"></script>
+    <script src="/static/arthas.js"></script>
     <style>
         .a-col {
             padding-right: 5px;
         }
 
         .toggle {
-            width: 80px !important;
+            width: 70px !important;
         }
 
         .toggle-off {
             color: white !important;
         }
     </style>
-    <title>Arthas Console</title>
+    <title>Arthas 控制台</title>
 </head>
 
 <body>
 <nav class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row bd-navbar">
     <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="navbar-brand">
-        <img src="static/image/logo.png"
+        <img src="/static/image/logo.png"
              alt="Arthas"
              title="Welcome to Arthas web console"
              style="height: 30px;"
              class="img-responsive"></a>
-    <span class="navbar-version" data-v-61144abc="">v3.6.8</span>
+    <span class="navbar-version" style="font-size: 18px">v3.6.8</span>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,17 +119,25 @@
             </div>
         </div>
         <div class="a-col">
-            <input id="connectType" type="checkbox" style="color:white;" checked data-toggle="toggle" data-on="代理" data-off="直连"
-                   data-onstyle="success" data-offstyle="warning"/>
+            <button id="connect" title="connect" type="button" class="btn btn-primary form-control" onclick="connectServer()">连接
+            </button>
+            <button id="disconnect" title="disconnect" type="button" class="btn btn-danger form-control" style="display:none" onclick="disconnectServer()" >断开
+            </button>
         </div>
+        <div class="a-col">
+            <div class="input-group ">
+                <input id="connectType" type="checkbox" style="color:white;" checked data-toggle="toggle" data-on="代理" data-off="直连"
+                       data-onstyle="success" data-offstyle="warning"/>
+            </div>
+        </div>
+        &nbsp;&nbsp;
         <div class="col-inline">
-            <button title="connect" type="button" class="btn btn-primary form-control" onclick="startConnect()">连接
-            </button>
-            <button title="disconnect" type="button" class="btn btn-danger form-control" onclick="disconnect()">断开
-            </button>
-            &nbsp;&nbsp;&nbsp;
-            <a id="arthasOutputA" target="_blank" href="arthas-output/" class="btn btn-link" role="button" onclick="updateArthasOutputLink()">火焰图</a>
-            <a href="/logout" class="btn btn-link" role="button">注销</a>
+            <a id="arthasOutputA" style="color:palevioletred;text-decoration: none;" target="_blank" href="arthas-output/" class="btn btn-link" role="button" onclick="updateArthasOutputLink()">
+                <i class="fa fa-bar-chart-o"></i>&nbsp;火焰图
+            </a>
+            <a href="/logout" style="color:black;text-decoration: none;" class="btn btn-link" role="button">
+                <i class="fa fa-power-off"></i>&nbsp;注销
+            </a>
         </div>
     </form>
 
@@ -141,7 +150,7 @@
 </div>
 
 <div title="fullscreen" id="fullSc" class="fullSc">
-    <button id="fullScBtn" onclick="xtermFullScreen()"><img src="static/fullsc.png"></button>
+    <button id="fullScBtn" onclick="xtermFullScreen()"><img src="/static/fullsc.png"></button>
 </div>
 </body>
 

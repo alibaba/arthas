@@ -1,0 +1,52 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Maven CI
+
+on:
+  push:
+    branches:
+      - main
+      - 3.6.x
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    name: Build on java ${{ matrix.java }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        java: ['8', '11']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up java ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          check-latest: true
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+
+      - name: Build with Maven
+        run: |
+          chmod +x mvnw
+          ./mvnw -ntp clean package -e -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Publish to GitHub Packages Apache Maven
+        run: |
+          echo "<settings><profiles><profile><id>github</id><properties><docker.username>${{secrets.DOCKER_USERNAME}}</docker.username><docker.password>${{secrets.DOCKER_PASSWORD}}</docker.password><docker.image>${{env.DOCKER_IMAGE}}</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
+          chmod +x mvnw
+          ./mvnw -ntp -Pgithub -pl arthas-tunnel-proxy jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml

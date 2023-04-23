@@ -1,21 +1,21 @@
-var ws;
-var xterm;
+let ws;
+let xterm;
 
 $(function () {
-    var url = window.location.href;
-    var ip = getUrlParam('ip');
-    var port = getUrlParam('port');
-    var agentId = getUrlParam('agentId');
+    const url = window.location.href;
+    const ip = getUrlParam('ip');
+    const port = getUrlParam('port');
+    const agentId = getUrlParam('agentId');
 
-    if (ip != '' && ip != null) {
+    if (ip !== '' && ip != null) {
         $('#ip').val(ip);
     } else {
         $('#ip').val(window.location.hostname);
     }
-    if (port != '' && port != null) {
+    if (port !== '' && port != null) {
         $('#port').val(port);
     }
-    if (agentId != '' && agentId != null) {
+    if (agentId !== '' && agentId != null) {
         $('#selectAgent').val(agentId);
     }
 
@@ -34,11 +34,11 @@ function getUrlParam(name, url) {
 }
 
 function getCharSize() {
-    var tempDiv = $('<div />').attr({'role': 'listitem'});
-    var tempSpan = $('<div />').html('qwertyuiopasdfghjklzxcvbnm');
+    let tempDiv = $('<div />').attr({'role': 'listitem'});
+    let tempSpan = $('<div />').html('qwertyuiopasdfghjklzxcvbnm');
     tempDiv.append(tempSpan);
     $("html body").append(tempDiv);
-    var size = {
+    const size = {
         width: tempSpan.outerWidth() / 26,
         height: tempSpan.outerHeight(),
         left: tempDiv.outerWidth() - tempSpan.outerWidth(),
@@ -49,14 +49,14 @@ function getCharSize() {
 }
 
 function getWindowSize() {
-    var e = window;
-    var a = 'inner';
+    let e = window;
+    let a = 'inner';
     if (!('innerWidth' in window)) {
         a = 'client';
         e = document.documentElement || document.body;
     }
-    var terminalDiv = document.getElementById("terminal-card");
-    var terminalDivRect = terminalDiv.getBoundingClientRect();
+    const terminalDiv = document.getElementById("terminal-card");
+    const terminalDivRect = terminalDiv.getBoundingClientRect();
     return {
         width: terminalDivRect.width,
         height: e[a + 'Height'] - terminalDivRect.top
@@ -64,12 +64,8 @@ function getWindowSize() {
 }
 
 function getTerminalSize() {
-    var charSize = getCharSize();
-    var windowSize = getWindowSize();
-    console.log('charsize');
-    console.log(charSize);
-    console.log('windowSize');
-    console.log(windowSize);
+    const charSize = getCharSize();
+    const windowSize = getWindowSize();
     return {
         cols: Math.floor((windowSize.width - charSize.left) / 10),
         rows: Math.floor((windowSize.height - charSize.top) / 17)
@@ -78,9 +74,9 @@ function getTerminalSize() {
 
 /** init websocket **/
 function initWs(ip, port, agentId) {
-    var protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
-    var path;
-    var proxy = document.getElementById('connectType').checked;
+    const protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+    let path;
+    const proxy = document.getElementById('connectType').checked;
     if (proxy) {
         path = protocol + location.hostname + ':' + location.port + '/arthas/' + agentId + '/ws?method=connectArthas&id=' + agentId;
     } else {
@@ -106,15 +102,15 @@ function initXterm(cols, rows) {
 
 
 /** 有修改 begin connect **/
-function startConnect(silent) {
-    var ip = $('#ip').val();
-    var port = $('#port').val();
-    var agentId = $('#selectAgent').val();
-    if (ip == '' || port == '') {
+function connectServer(silent) {
+    const ip = $('#ip').val();
+    const port = $('#port').val();
+    const agentId = $('#selectAgent').val();
+    if (ip === '' || port === '') {
         alert('Ip or port can not be empty');
         return;
     }
-    if (agentId == '') {
+    if (agentId === '') {
         if (silent) {
             return;
         }
@@ -122,9 +118,9 @@ function startConnect(silent) {
         return;
     }
     if (ws != null) {
-        alert('Already connected');
-        return;
+        disconnectServer();
     }
+
     // init webSocket
     initWs(ip, port, agentId);
     ws.onerror = function () {
@@ -138,16 +134,15 @@ function startConnect(silent) {
         }
     };
     ws.onopen = function () {
-        console.log('open');
+        $('#disconnect').show();
+        $('#connect').hide();
         $('#fullSc').show();
-        var terminalSize = getTerminalSize()
-        console.log('terminalSize')
-        console.log(terminalSize)
+        const terminalSize = getTerminalSize();
         // init xterm
         initXterm(terminalSize.cols, terminalSize.rows)
         ws.onmessage = function (event) {
             if (event.type === 'message') {
-                var data = event.data;
+                const data = event.data;
                 xterm.write(data);
             }
         };
@@ -164,7 +159,7 @@ function startConnect(silent) {
     }
 }
 
-function disconnect() {
+function disconnectServer() {
     try {
         ws.close();
         ws.onmessage = null;
@@ -172,7 +167,9 @@ function disconnect() {
         ws = null;
         xterm.destroy();
         $('#fullSc').hide();
-        alert('Connection was closed successfully!');
+        $('#disconnect').hide();
+        $('#connect').show();
+        // alert('Connection was closed successfully!');
     } catch (e) {
         alert('No connection, please start connect first.');
     }
@@ -180,16 +177,16 @@ function disconnect() {
 
 /** full screen show **/
 function xtermFullScreen() {
-    var ele = document.getElementById('terminal-card');
+    const ele = document.getElementById('terminal-card');
     requestFullScreen(ele);
 }
 
 function requestFullScreen(element) {
-    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+    const requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
     if (requestMethod) {
         requestMethod.call(element);
     } else if (typeof window.ActiveXObject !== "undefined") {
-        var wscript = new ActiveXObject("WScript.Shell");
+        const wscript = new ActiveXObject("WScript.Shell");
         if (wscript !== null) {
             wscript.SendKeys("{F11}");
         }
