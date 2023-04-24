@@ -49,5 +49,4 @@ jobs:
         run: |
           echo "<settings><profiles><profile><id>github</id><properties><docker.username>${{secrets.DOCKER_USERNAME}}</docker.username><docker.password>${{secrets.DOCKER_PASSWORD}}</docker.password></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
           chmod +x mvnw
-          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -Dimage=${{env.DOCKER_IMAGE}} -DskipTests -U -T 
-          4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -Dimage=${{env.DOCKER_IMAGE}} -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
