@@ -72,7 +72,7 @@
                 <version>2.2.0</version>
                 <configuration>
                     <from>
-                        <image>openjdk:11-jdk</image>
+                        <image>openjdk:11</image>
                     </from>
                     <to>
                         <image>${docker.image}</image>
