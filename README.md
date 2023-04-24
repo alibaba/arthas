@@ -8,7 +8,7 @@
 
 # Arthas 在线诊断工具
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/language-java-blue.svg) [![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/license-apache2.0-red.svg)][license-apache2.0] [![](https://github.com/shiyindaxiaojie/arthas/workflows/build/badge.svg)][github-action] [![](https://sonarcloud.io/api/project_badges/measure?project=shiyindaxiaojie_arthas&metric=alert_status)][sonarcloud-dashboard]
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/language-java-blue.svg) [![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/license-apache2.0-red.svg)][license-apache2.0] [![](https://github.com/shiyindaxiaojie/arthas/actions/workflows/maven-ci.yml/badge.svg?branch=3.6.x)][github-action] [![](https://sonarcloud.io/api/project_badges/measure?project=shiyindaxiaojie_arthas&metric=alert_status)][sonarcloud-dashboard]
 
 Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard 负载总览`、`Thread 线程占用`、`Stack 堆栈查看`、`Watch 性能观测` 等功能。笔者参考原作者 [@wf2311](https://github.com/wf2311/arthas-ext) 的实现进行了优化：
 1. 服务发现：自动获取接入的应用列表 IP 和端口，无须手动输入 AgentId
