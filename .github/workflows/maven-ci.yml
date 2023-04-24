@@ -47,9 +47,10 @@ jobs:
 
       - name: Publish to GitHub Packages Apache Maven
         run: |
-          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
+          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password><docker.image>DOCKER_IMAGE</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
           chmod +x mvnw
-          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -Dimage=shiyindaxiaojie/arthas-tunnel-proxy -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_IMAGE: ${{ DOCKER_IMAGE }}
