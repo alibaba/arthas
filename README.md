@@ -2,9 +2,9 @@
 
 [license-apache2.0]:https://www.apache.org/licenses/LICENSE-2.0.html
 
-[github-action]:https://github.com/shiyindaxiaojie/eden-demo-cola/actions
+[github-action]:https://github.com/shiyindaxiaojie/arthas/actions
 
-[sonarcloud-dashboard]:https://sonarcloud.io/dashboard?id=shiyindaxiaojie_eden-demo-cola
+[sonarcloud-dashboard]:https://sonarcloud.io/dashboard?id=shiyindaxiaojie_arthas
 
 # Arthas 在线诊断工具
 
