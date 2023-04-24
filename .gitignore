@@ -25,3 +25,4 @@ pom.xml.versionsBackup
 **/.flattened-pom.xml
 **/.idea/**
 **/cmake-build-debug/**
+/web-ui/node_modules/.yarn-integrity

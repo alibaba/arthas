@@ -41,7 +41,7 @@ jobs:
       - name: Build with Maven
         run: |
           chmod +x mvnw
-          ./mvnw -ntp clean package -e -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -pl arthas-tunnel-proxy package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
