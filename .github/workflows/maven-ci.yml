@@ -53,4 +53,4 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_IMAGE: ${{ DOCKER_IMAGE }}
+          DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
