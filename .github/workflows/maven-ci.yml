@@ -41,12 +41,14 @@ jobs:
       - name: Build with Maven
         run: |
           chmod +x mvnw
-          ./mvnw -ntp -pl tunnel-proxy package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -pl arthas-tunnel-proxy package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Publish to GitHub Packages Apache Maven
         run: |
           echo "<settings><profiles><profile><id>github</id><properties><docker.username>${{secrets.DOCKER_USERNAME}}</docker.username><docker.password>${{secrets.DOCKER_PASSWORD}}</docker.password><docker.image>${{env.DOCKER_IMAGE}}</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
+          echo "${{env.DOCKER_IMAGE}}"
+          echo "${{DOCKER_IMAGE}}"
           chmod +x mvnw
-          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -Pgithub -pl arthas-tunnel-proxy jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
