@@ -75,10 +75,10 @@
                         <image>openjdk:11</image>
                     </from>
                     <to>
-                        <image>shiyindaxiaojie/arthas-tunnel-proxy</image>
+                        <image>${docker.image}</image>
                         <auth>
-                            <username>shiyindaxiaojie</username>
-                            <password>2$XHLJC$@FGR6tcS3c</password>
+                            <username>${docker.username}</username>
+                            <password>${docker.password}</password>
                         </auth>
                         <tags>
                             <tag>${project.version}</tag>
