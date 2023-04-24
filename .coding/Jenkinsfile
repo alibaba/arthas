@@ -1,0 +1,63 @@
+pipeline {
+  agent any
+  environment {
+    MAVEN_SNAPSHOTS_NAME = "maven-snapshots"
+    MAVEN_SNAPSHOTS_ID = "${CCI_CURRENT_TEAM}-${PROJECT_NAME}-${MAVEN_SNAPSHOTS_NAME}"
+    MAVEN_SNAPSHOTS_URL = "${CCI_CURRENT_WEB_PROTOCOL}://${CCI_CURRENT_TEAM}-maven.pkg.${CCI_CURRENT_DOMAIN}/repository/${PROJECT_NAME}/${MAVEN_SNAPSHOTS_NAME}/"
+
+    MAVEN_RELEASES_NAME = "maven-releases"
+    MAVEN_RELEASES_ID = "${CCI_CURRENT_TEAM}-${PROJECT_NAME}-${MAVEN_RELEASES_NAME}"
+    MAVEN_RELEASES_URL = "${CCI_CURRENT_WEB_PROTOCOL}://${CCI_CURRENT_TEAM}-maven.pkg.${CCI_CURRENT_DOMAIN}/repository/${PROJECT_NAME}/${MAVEN_RELEASES_NAME}/"
+  }
+  stages {
+    stage('检出') {
+      steps {
+        checkout([$class: 'GitSCM',
+        branches: [[name: GIT_BUILD_REF]],
+        userRemoteConfigs: [[
+          url: GIT_REPO_URL,
+          credentialsId: CREDENTIALS_ID
+        ]]])
+      }
+    }
+    stage('编译') {
+      steps {
+        script {
+          if (env.TAG_NAME ==~ /.*/ ) {
+	          ARTIFACT_VERSION = "${env.TAG_NAME}"
+          } else if (env.MR_SOURCE_BRANCH ==~ /.*/ ) {
+	          ARTIFACT_VERSION = "${env.MR_RESOURCE_ID}-${env.GIT_COMMIT_SHORT}"
+          } else {
+	          ARTIFACT_VERSION = "${env.BRANCH_NAME.replace('/', '-')}-${env.GIT_COMMIT_SHORT}"
+          }
+        }
+        withCredentials([
+            usernamePassword(
+                credentialsId: env.MAVEN_RELEASES,
+                usernameVariable: 'MAVEN_RELEASES_USERNAME',
+                passwordVariable: 'MAVEN_RELEASES_PASSWORD'
+            ),
+            usernamePassword(
+                credentialsId: env.MAVEN_SNAPSHOTS,
+                usernameVariable: 'MAVEN_SNAPSHOTS_USERNAME',
+                passwordVariable: 'MAVEN_SNAPSHOTS_PASSWORD'
+            )
+        ]) {
+            withEnv([
+                "ARTIFACT_VERSION=${ARTIFACT_VERSION}",
+                "MAVEN_RELEASES_ID=${MAVEN_RELEASES_ID}",
+                "MAVEN_RELEASES_URL=${MAVEN_RELEASES_URL}",
+                "MAVEN_RELEASES_USERNAME=${MAVEN_RELEASES_USERNAME}",
+                "MAVEN_RELEASES_PASSWORD=${MAVEN_RELEASES_PASSWORD}",
+                "MAVEN_SNAPSHOTS_ID=${MAVEN_SNAPSHOTS_ID}",
+                "MAVEN_SNAPSHOTS_URL=${MAVEN_SNAPSHOTS_URL}",
+                "MAVEN_SNAPSHOTS_USERNAME=${MAVEN_SNAPSHOTS_USERNAME}",
+                "MAVEN_SNAPSHOTS_PASSWORD=${MAVEN_SNAPSHOTS_PASSWORD}"
+            ]) {
+                sh 'mvn -T 4C -Pcoding versions:set -DnewVersion=${ARTIFACT_VERSION} package -DskipTests -s ./.coding/settings.xml'
+            }
+        }
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - 3.6.x
     paths-ignore:
       - '**.md'
   pull_request:
@@ -44,9 +45,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Publish to GitHub Packages Apache Maven
+      - name: Publish to Docker Hub
         run: |
-          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password><docker.image>DOCKER_IMAGE</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
+          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password><docker.image>$DOCKER_IMAGE</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
           chmod +x mvnw
           ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
