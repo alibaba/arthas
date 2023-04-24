@@ -10,15 +10,15 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>arthas-tunnel-server2</artifactId>
-    <name>arthas-tunnel-server2</name>
+    <artifactId>arthas-tunnel-proxy</artifactId>
+    <name>arthas-tunnel-proxy</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.alibaba.arthas.tunnel.server2.ArthasTunnel2Application</start-class>
+        <start-class>com.alibaba.arthas.tunnel.proxy.ArthasProxyApplication</start-class>
         <arthas.version>3.6.6</arthas.version>
         <spring-cloud.version>3.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
