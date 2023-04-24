@@ -75,10 +75,10 @@
                         <image>openjdk:11</image>
                     </from>
                     <to>
-                        <image>${docker.image}</image>
+                        <image>shiyindaxiaojie/arthas-tunnel-proxy</image>
                         <auth>
-                            <username>${docker.username}</username>
-                            <password>${docker.password}</password>
+                            <username>shiyindaxiaojie</username>
+                            <password>2$XHLJC$@FGR6tcS3c</password>
                         </auth>
                         <tags>
                             <tag>${project.version}</tag>
@@ -91,7 +91,7 @@
                             <arg>/entrypoint.sh</arg>
                         </entrypoint>
                         <ports>
-                            <port>8080</port>
+                            <port>9999</port>
                         </ports>
                         <environment>
                             <TZ>Asia/Shanghai</TZ>
