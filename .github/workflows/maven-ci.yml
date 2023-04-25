@@ -47,10 +47,10 @@ jobs:
 
       - name: Publish to Docker Hub
         run: |
-          echo "$DOCKER_IMAGE"
+          echo "233: $DOCKER_IMAGE"
           echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password><docker.image>$DOCKER_IMAGE</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
           chmod +x mvnw
-          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Dimage=$DOCKER_IMAGE -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
