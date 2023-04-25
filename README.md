@@ -51,16 +51,34 @@ arthas:
 
 ## 如何启动
 
+### 本地启动
+
 本项目不依赖外部组件，可以直接启动运行。
 
 1. 在项目目录下运行 `mvn install`（如果不想运行测试，可以加上 `-DskipTests` 参数）。
 2. 进入 `tunnel-proxy` 目录，执行 `mvn spring-boot:run` 或者启动 `ArthasProxyApplication` 类。运行成功的话，可以看到 `Spring Boot` 启动成功的界面。
 
+### 镜像启动
+
+本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/arthas-tunnel-proxy)，请执行以下命令运行。
+
+```bash
+docker run -p 9999:9999 --name=arthas-tunnel-proxy -d shiyindaxiaojie/arthas-tunnel-proxy
+```
+
 ## 如何部署
+
+### FatJar 部署
+
+执行 `mvn clean package` 打包成一个 fat jar，参考如下命令启动编译后的控制台。
+
+```bash
+java -Dserver.port=9999 -jar target/arthas-tunnel-proxy.jar
+```
 
 ### Docker 部署
 
-调整 Maven 配置文件 `setiings.xml`，填充
+调整 Maven 配置文件 `setiings.xml`，填写相关凭据。
 ````xml
 <settings>
     <profiles>
