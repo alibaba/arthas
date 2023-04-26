@@ -51,7 +51,7 @@ arthas:
 
 ## 如何启动
 
-### 本地启动
+### IDEA 启动
 
 本项目不依赖外部组件，可以直接启动运行。
 
@@ -60,7 +60,7 @@ arthas:
 
 ### 镜像启动
 
-本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/arthas-tunnel-proxy)，请执行以下命令运行。
+本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/arthas-tunnel-proxy)，请执行参考命令运行。
 
 ```bash
 docker run -p 9999:9999 --name=arthas-tunnel-proxy -d shiyindaxiaojie/arthas-tunnel-proxy
