@@ -1,0 +1,100 @@
+name: build async-profiler
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-alpine-linux-x64:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - run: |
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Checkout tag $LATEST_TAG"
+          git checkout $LATEST_TAG
+
+      - name: Setup Alpine Linux x86-64 environment
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: x86_64
+          branch: v3.16
+          shell-name: alpine-x86_64.sh
+          packages: >
+            build-base linux-headers openjdk11
+      - name: Run script inside Alpine Linux x86-64 environment
+        run: |
+          JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+          java -version
+          sed -i 's/CXXFLAGS=/CXXFLAGS=-static-libgcc -static-libstdc++ /' Makefile && make
+          file build/lib/libasyncProfiler.so
+          ldd build/lib/libasyncProfiler.so
+          cp build/lib/libasyncProfiler.so libasyncProfiler-linux-musl-x64.so
+        shell: alpine-x86_64.sh {0}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-linux-musl-x64.so
+          if-no-files-found: error
+
+  build-alpine-linux-arm64:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - run: |
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Checkout tag $LATEST_TAG"
+          git checkout $LATEST_TAG
+      - name: Setup Alpine Linux aarch64 environment
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: aarch64
+          branch: v3.16
+          shell-name: alpine-aarch64.sh
+          packages: >
+            build-base linux-headers openjdk11
+      - name: Run script inside Alpine Linux aarch64 environment
+        run: |
+          JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+          java -version
+          sed -i 's/CXXFLAGS=/CXXFLAGS=-static-libgcc -static-libstdc++ /' Makefile && make
+          file build/lib/libasyncProfiler.so
+          ldd build/lib/libasyncProfiler.so
+          cp build/lib/libasyncProfiler.so libasyncProfiler-linux-musl-arm64.so
+        shell: alpine-aarch64.sh {0}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-linux-musl-arm64.so
+          if-no-files-found: error
+
+  upload-libasyncProfiler-files:
+    runs-on: ubuntu-20.04
+    needs: [build-alpine-linux-x64, build-alpine-linux-arm64]
+    steps:
+      - name: Checkout arthas upstream repo
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: async-profiler
+          path: tmp-async-profiler
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: tmp-async-profiler
+      - name: Commit and Push libasyncProfiler files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          mv tmp-async-profiler/* async-profiler/
+          git add async-profiler/
+          git commit -m "Upload arthas async-profiler lib for Alpine Linux"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
