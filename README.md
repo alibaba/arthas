@@ -1,4 +1,4 @@
-<img src="https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/icon.png" align="right" />
+<img src="https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/icon.png" align="right" />
 
 [license-apache2.0]:https://www.apache.org/licenses/LICENSE-2.0.html
 
@@ -8,7 +8,7 @@
 
 # Arthas 在线诊断工具
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/language-java-blue.svg) [![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/readme/license-apache2.0-red.svg)][license-apache2.0] [![](https://github.com/shiyindaxiaojie/arthas/actions/workflows/maven-ci.yml/badge.svg?branch=3.6.x)][github-action] [![](https://sonarcloud.io/api/project_badges/measure?project=shiyindaxiaojie_arthas&metric=alert_status)][sonarcloud-dashboard]
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/language-java-blue.svg) [![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/license-apache2.0-red.svg)][license-apache2.0] [![](https://github.com/shiyindaxiaojie/arthas/actions/workflows/maven-ci.yml/badge.svg?branch=3.6.x)][github-action] [![](https://sonarcloud.io/api/project_badges/measure?project=shiyindaxiaojie_arthas&metric=alert_status)][sonarcloud-dashboard]
 
 Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard 负载总览`、`Thread 线程占用`、`Stack 堆栈查看`、`Watch 性能观测` 等功能。笔者参考原作者 [@wf2311](https://github.com/wf2311/arthas-ext) 的实现进行了优化：
 1. 服务发现：自动获取接入的应用列表 IP 和端口，无须手动输入 AgentId
@@ -20,15 +20,15 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard 负载�
 
 ### 改造前
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/arthas/arthas-dashboard-overview-old.png)
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/arthas/arthas-dashboard-overview-old.png)
 
 ### 改造后
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/arthas/arthas-dashboard-overview.png)
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/arthas/arthas-dashboard-overview.png)
 
 登录控制
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/arthas/arthas-dashboard-login.png)
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/arthas/arthas-dashboard-login.png)
 
 配置管理
 
