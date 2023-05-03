@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.model.BusyThreadInfo;
+import com.taobao.arthas.core.command.model.DeadlockInfo;
 import com.taobao.arthas.core.command.model.ThreadModel;
 import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -8,6 +9,8 @@ import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.util.RenderUtil;
 
+import java.lang.management.LockInfo;
+import java.lang.management.ThreadInfo;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +79,45 @@ public class ThreadView extends ResultView<ThreadModel> {
             }
             String content = ViewRenderUtil.drawThreadInfo(threadStats, process.width(), height);
             process.write(stat + content);
+        } else if(result.getDeadlockInfo() != null){
+            StringBuilder sb = new StringBuilder();
+
+            DeadlockInfo deadlockInfo = result.getDeadlockInfo();
+            Map<Integer, ThreadInfo> ownerThreadPerLock = deadlockInfo.getOwnerThreadPerLock();
+
+            for(ThreadInfo thread : deadlockInfo.getThreads()){
+                LockInfo waitingToLockInfo;
+                ThreadInfo currentThread = thread;
+                sb.append("Found one Java-level deadlock:\n");
+                sb.append("=============================\n");
+                do{
+                    sb.append(currentThread.getThreadName() + "(" + currentThread.getThreadId() + "):\n");
+                    waitingToLockInfo = currentThread.getLockInfo();
+                    if(waitingToLockInfo != null){
+                        sb.append("  waiting to lock info @" + waitingToLockInfo + ",\n");
+                        sb.append("  which is held by ");
+
+                        currentThread = ownerThreadPerLock.get(waitingToLockInfo.getIdentityHashCode());
+                        sb.append(currentThread.getThreadName() + "\n");
+                    }
+                }while (!currentThread.equals(thread));
+                sb.append("\n");
+            }
+
+            int numberOfDeadlocks = deadlockInfo.getThreads().size();
+            switch (numberOfDeadlocks) {
+                case 0:
+                    sb.append("No deadlocks found.\n");
+                    break;
+                case 1:
+                    sb.append("Found a total of 1 deadlock.\n");
+                    break;
+                default:
+                    sb.append("Found a total of ").append(numberOfDeadlocks).append(" deadlocks.\n");
+                    break;
+            }
+            sb.append("\n");
+            process.write(sb.toString());
         }
     }
 }
