@@ -34,8 +34,8 @@ import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
 import com.alibaba.bytekit.utils.AsmUtils;
 import com.alibaba.bytekit.utils.IOUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
@@ -177,14 +177,9 @@ public class ArthasBootstrap {
     }
 
     private void initFastjson() {
-        // disable  fastjson circular reference feature
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
-        // add date format option for  fastjson
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
         // ignore getter error #1661
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
         // #2081
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteNonStringKeyAsString.getMask();
+        JSON.config(JSONWriter.Feature.IgnoreErrorGetter, JSONWriter.Feature.WriteNonStringKeyAsString);
     }
 
     private void initBeans() {

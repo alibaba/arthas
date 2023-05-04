@@ -57,8 +57,8 @@
                                     <shadedPattern>${arthas.deps.package}.io.netty</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.alibaba.fastjson</pattern>
-                                    <shadedPattern>${arthas.deps.package}.com.alibaba.fastjson</shadedPattern>
+                                    <pattern>com.alibaba.fastjson2</pattern>
+                                    <shadedPattern>${arthas.deps.package}.com.alibaba.fastjson2</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -204,8 +204,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
         </dependency>
         <dependency>
             <groupId>ognl</groupId>
@@ -258,7 +258,6 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
 
 </project>

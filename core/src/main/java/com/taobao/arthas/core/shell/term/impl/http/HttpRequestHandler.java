@@ -64,13 +64,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 path = "/index.html";
             }
 
-            boolean isHttpApiResponse = false;
             boolean isFileResponseFinished = false;
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
                     response = httpApiHandler.handle(ctx, request);
-                    isHttpApiResponse = true;
                 }
 
                 //handle webui requests
@@ -106,16 +104,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 if (!isFileResponseFinished) {
                     ChannelFuture future = writeResponse(ctx, response);
                     future.addListener(ChannelFutureListener.CLOSE);
-                    //reuse http api response buf
-                    if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
-                        final HttpResponse finalResponse = response;
-                        future.addListener(new ChannelFutureListener() {
-                            @Override
-                            public void operationComplete(ChannelFuture future) throws Exception {
-                                httpApiHandler.onCompleted((DefaultFullHttpResponse) finalResponse);
-                            }
-                        });
-                    }
                 }
             }
         }
