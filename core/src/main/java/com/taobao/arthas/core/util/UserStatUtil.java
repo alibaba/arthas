@@ -35,6 +35,8 @@ public class UserStatUtil {
 
     private static volatile String statUrl = null;
 
+    private static volatile String agentId = null;
+
     public static String getStatUrl() {
         return statUrl;
     }
@@ -43,10 +45,19 @@ public class UserStatUtil {
         statUrl = url;
     }
 
+    public static String getAgentId() {
+        return agentId;
+    }
+
+    public static void setAgentId(String id) {
+        agentId = id;
+    }
+
     public static void arthasStart() {
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
+        job.appendQueryData("agentId", agentId);
         job.appendQueryData("command", "start");
 
         try {
@@ -60,6 +71,7 @@ public class UserStatUtil {
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
+        job.appendQueryData("agentId", agentId);
         job.appendQueryData("command", URLEncoder.encode(cmd));
         if (detail != null) {
             job.appendQueryData("arguments", URLEncoder.encode(detail));
