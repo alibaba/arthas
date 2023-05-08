@@ -129,8 +129,13 @@ public class ProfilerCommand extends AnnotatedCommand {
             profierSoPath = "async-profiler/libasyncProfiler-mac.so";
         }
         if (OSUtils.isLinux()) {
-            profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
-            if (OSUtils.isArm64()) {
+            if (OSUtils.isX86_64() && OSUtils.isMuslLibc()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-musl-x64.so";
+            } else if(OSUtils.isX86_64()){
+                profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
+            } else if (OSUtils.isArm64() && OSUtils.isMuslLibc()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-musl-arm64.so";
+            } else if (OSUtils.isArm64()) {
                 profierSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
             }
         }
