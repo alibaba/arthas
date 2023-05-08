@@ -1,6 +1,6 @@
 package com.taobao.arthas.common;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -136,19 +136,14 @@ public class OSUtils {
 	}
 
 	public static boolean isMuslLibc() {
-		String commandStr = "ldd --version 2>&1 | head -1 | awk 'END{if($1==\"musl\") exit 200}'";
-		Process process = null;
-		try {
-			process = new ProcessBuilder("/bin/sh", "-c", commandStr).start();
-			process.waitFor();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		File ld_musl_x86_64_file = new File("/lib/ld-musl-x86_64.so.1");
+		File ld_musl_aarch64_file = new File("/lib/ld-musl-aarch64.so.1");
+
+		if(ld_musl_x86_64_file.exists() || ld_musl_aarch64_file.exists()){
+			return true;
 		}
 
-		//仅在Linux系统中判断libc类型.
-		return isLinux() && 200 == process.exitValue();
+		return false;
 	}
 
 	private static String normalize(String value) {
