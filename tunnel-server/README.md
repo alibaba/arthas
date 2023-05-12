@@ -20,7 +20,7 @@ For example:
 
 4. Arthas server find the `control connection` with the id `bvDOe8XbTM2pQWjF4cfw`
    
-   then send a text frame to arthas client: `response:/?method=startTunnel&id=bvDOe8XbTM2pQWjF4cfw&clientConnectionId=AMku9EFz2gxeL2gedGOC`
+   then send a text frame to arthas tunnel client: `response:/?method=startTunnel&id=bvDOe8XbTM2pQWjF4cfw&clientConnectionId=AMku9EFz2gxeL2gedGOC`
 
 5. Arthas tunnel client open a new connection to tunnel server
 
