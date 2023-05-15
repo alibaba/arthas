@@ -1,10 +1,10 @@
-package com.example.arthasspringbootstarterexample;
+package com.example.arthasspringbootstarterexample3;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ArthasSpringBootStarterExampleApplicationTests {
+class ArthasSpringBoot3StarterExampleApplicationTests {
 
 	@Test
 	void contextLoads() {

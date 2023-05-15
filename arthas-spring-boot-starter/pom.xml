@@ -15,6 +15,10 @@
     <name>${project.artifactId}</name>
     <url>https://github.com/alibaba/arthas</url>
 
+    <properties>
+        <it.pom.includes>*/pom.xml</it.pom.includes>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -64,6 +68,19 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>jdk-lt-17</id>
+            <activation>
+                <jdk>[1.8,17)</jdk>
+            </activation>
+            <properties>
+                <!-- spring boot3 测试只支持 jdk 17 及之后版本 -->
+                <it.pom.includes>arthas-spring-boot-starter-example/pom.xml</it.pom.includes>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -79,12 +96,13 @@
                     <streamLogs>true</streamLogs>
                     <preBuildHookScript>setup</preBuildHookScript>
                     <postBuildHookScript>verify</postBuildHookScript>
+                    <pomIncludes><pomInclude>${it.pom.includes}</pomInclude></pomIncludes>
                 </configuration>
                 <executions>
                     <execution>
                         <id>integration-test</id>
-                        <phase>test</phase>
                         <goals>
+                            <goal>install</goal>
                             <goal>run</goal>
                         </goals>
                     </execution>
