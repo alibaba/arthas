@@ -5,17 +5,17 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>@spring-boot.version@</version>
+        <version>@spring-boot3.version@</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>arthas-spring-boot-starter-example</artifactId>
+    <artifactId>arthas-spring-boot3-starter-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>arthas-spring-boot-starter-example</name>
+    <name>arthas-spring-boot3-starter-example</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
