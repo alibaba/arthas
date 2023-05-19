@@ -4,14 +4,12 @@
 
 具体字段信息，参考：
 
-* [MemoryMXBean#getHeapMemoryUsage()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryMXBean.html#getHeapMemoryUsage())
-* [MemoryMXBean#getNonHeapMemoryUsage()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryMXBean.html#getHeapMemoryUsage())
-
+- [MemoryMXBean#getHeapMemoryUsage()](<https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryMXBean.html#getHeapMemoryUsage()>)
+- [MemoryMXBean#getNonHeapMemoryUsage()](<https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryMXBean.html#getHeapMemoryUsage()>)
 
 具体代码：
 
-* https://github.com/alibaba/arthas/blob/master/core/src/main/java/com/taobao/arthas/core/command/monitor200/MemoryCommand.java
-
+- https://github.com/alibaba/arthas/blob/master/core/src/main/java/com/taobao/arthas/core/command/monitor200/MemoryCommand.java
 
 ## 使用参考
 
