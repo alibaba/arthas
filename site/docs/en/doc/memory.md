@@ -2,6 +2,17 @@
 
 View the JVM memory information.
 
+
+For field information, refer to:
+
+* [MemoryMXBean#getHeapMemoryUsage()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryMXBean.html#getHeapMemoryUsage())
+* [MemoryMXBean#getNonHeapMemoryUsage()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryMXBean.html#getHeapMemoryUsage())
+
+
+Source code:
+
+* https://github.com/alibaba/arthas/blob/master/core/src/main/java/com/taobao/arthas/core/command/monitor200/MemoryCommand.java
+
 ## Usage
 
 ```bash
