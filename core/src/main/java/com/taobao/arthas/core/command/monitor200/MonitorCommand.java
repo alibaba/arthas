@@ -61,7 +61,7 @@ public class MonitorCommand extends EnhancerCommand {
         this.cycle = cycle;
     }
 
-    @Option(shortName = "E", longName = "regex")
+    @Option(shortName = "E", longName = "regex", flag = true)
     @Description("Enable regular expression to match (wildcard matching by default)")
     public void setRegEx(boolean regEx) {
         isRegEx = regEx;

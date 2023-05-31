@@ -1,0 +1,261 @@
+name: build async-profiler
+
+on:
+  workflow_dispatch:
+    inputs:
+      async-profiler-tag-name:
+        description: 'Enter the async-profiler tag name in https://github.com/async-profiler/async-profiler/tags(e.g. v2.9) please.'
+        type: string
+        required: true
+
+jobs:
+  build-mac:
+    runs-on: macos-12
+    if: ${{ inputs.async-profiler-tag-name }} 
+    steps:
+      # 检出 async-profiler/async-profiler 项目指定的 tag
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - name: Checkout the async-profiler repository by input tag name ${{ inputs.async-profiler-tag-name }}
+        run: git checkout ${{ inputs.async-profiler-tag-name }}
+      # 安装 Liberica JDK 11
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "liberica"
+          java-version: "11"
+      # 从 async-profiler 源码编译出 libasyncProfiler-mac.so(兼容 arthas-core 中 ProfilerCommand.java 固定的 so 文件名称未使用 libasyncProfiler.dylib)
+      # grep -m1 PROFILER_VERSION Makefile 用于输出 async-profiler 版本, 下同
+      - name: Execute compile inside macOS 12 environment
+        run: |
+          grep -m1 PROFILER_VERSION Makefile
+          echo "JAVA_HOME=${JAVA_HOME}"
+          java -version
+          echo "FAT_BINARY variable that make libasyncProfiler-mac.so works both on macOS x86-64 and arm64"
+          make FAT_BINARY=true
+          LIB_PROFILER_PATH=$(find build -type f \( -name libasyncProfiler.so -o -name libasyncProfiler.dylib \) 2>/dev/null)
+          [ -z "${LIB_PROFILER_PATH}" ] && echo "Can not find libasyncProfiler.so or libasyncProfiler.dylib file under build directory." && exit 1
+          echo "LIB_PROFILER_PATH=${LIB_PROFILER_PATH}"
+          file ${LIB_PROFILER_PATH}
+          otool -L ${LIB_PROFILER_PATH}
+          cp ${LIB_PROFILER_PATH} libasyncProfiler-mac.so
+      # 暂存编译出来的 libasyncProfiler-mac.so 文件
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-mac.so
+          if-no-files-found: error
+  
+  build-generic-linux-x64:
+    runs-on: ubuntu-20.04
+    if: ${{ inputs.async-profiler-tag-name }}
+    steps:
+      # 检出 async-profiler/async-profiler 项目指定的 tag
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - name: Checkout the async-profiler repository by input tag name ${{ inputs.async-profiler-tag-name }}
+        run: git checkout ${{ inputs.async-profiler-tag-name }}
+      # 从 async-profiler 源码编译出适用于 glibc-based Linux 主机的 libasyncProfiler-linux-x64.so
+      - name: Execute compile inside CentOS 6 x86_64 docker container environment
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: none
+          distro: none
+          base_image: amd64/centos:6.10
+          run: |
+            cat /etc/system-release
+            uname -m
+            minorver=6.10
+            sed -e "s|^mirrorlist=|#mirrorlist=|g" \
+            -e "s|^#baseurl=http://mirror.centos.org/centos/\$releasever|baseurl=https://mirrors.aliyun.com/centos-vault/$minorver|g" \
+            -i.bak /etc/yum.repos.d/CentOS-*.repo
+            yum -y update && yum install -y wget
+            wget --no-check-certificate https://people.centos.org/tru/devtools-1.1/devtools-1.1.repo -O /etc/yum.repos.d/devtools-1.1.repo
+            yum install -y devtoolset-1.1-gcc devtoolset-1.1-gcc-c++ devtoolset-1.1-binutils
+            export CC=/opt/centos/devtoolset-1.1/root/usr/bin/gcc
+            export CPP=/opt/centos/devtoolset-1.1/root/usr/bin/cpp
+            export CXX=/opt/centos/devtoolset-1.1/root/usr/bin/c++
+            ln -sf /opt/centos/devtoolset-1.1/root/usr/bin/* /usr/local/bin/
+            hash -r
+            wget https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz -O openjdk-11.tar.gz
+            tar zxf openjdk-11.tar.gz
+            mv jdk-11.0.2 /usr/local/
+            export JAVA_HOME=/usr/local/jdk-11.0.2
+            export PATH=${JAVA_HOME}/bin:${PATH}
+            java -version
+            which java
+            grep -m1 PROFILER_VERSION Makefile
+            make
+            LIB_PROFILER_PATH=$(find build -type f -name libasyncProfiler.so 2>/dev/null)
+            [ -z "${LIB_PROFILER_PATH}" ] && echo "Can not find libasyncProfiler.so file under build directory." && exit 1
+            echo "LIB_PROFILER_PATH=${LIB_PROFILER_PATH}"
+            file ${LIB_PROFILER_PATH}
+            ldd ${LIB_PROFILER_PATH}
+            cp ${LIB_PROFILER_PATH} libasyncProfiler-linux-x64.so
+      # 暂存编译出来的 libasyncProfiler-linux-x64.so 文件
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-linux-x64.so
+          if-no-files-found: error
+          
+  build-generic-linux-arm64:
+    runs-on: ubuntu-20.04
+    if: ${{ inputs.async-profiler-tag-name }}
+    steps:
+      # 检出 async-profiler/async-profiler 项目指定的 tag
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - name: Checkout the async-profiler repository by input tag name ${{ inputs.async-profiler-tag-name }}
+        run: git checkout ${{ inputs.async-profiler-tag-name }}
+      # 从 async-profiler 源码编译出适用于 glibc-based Linux 主机的 libasyncProfiler-linux-arm64.so
+      - name: Execute compile inside CentOS 7 aarch64 docker container environment via QEMU
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: none
+          distro: none
+          base_image: arm64v8/centos:7
+          run: |
+            cat /etc/system-release
+            uname -m
+            yum -y update && yum install -y java-11-openjdk-devel gcc-c++ make which file
+            JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+            java -version
+            which java
+            grep -m1 PROFILER_VERSION Makefile
+            make
+            LIB_PROFILER_PATH=$(find build -type f -name libasyncProfiler.so 2>/dev/null)
+            [ -z "${LIB_PROFILER_PATH}" ] && echo "Can not find libasyncProfiler.so file under build directory." && exit 1
+            echo "LIB_PROFILER_PATH=${LIB_PROFILER_PATH}"
+            file ${LIB_PROFILER_PATH}
+            ldd ${LIB_PROFILER_PATH}
+            cp ${LIB_PROFILER_PATH} libasyncProfiler-linux-arm64.so
+      # 暂存编译出来的 libasyncProfiler-linux-arm64.so 文件
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-linux-arm64.so
+          if-no-files-found: error
+        
+          
+  build-alpine-linux-x64:
+    runs-on: ubuntu-20.04
+    if: ${{ inputs.async-profiler-tag-name }}
+    steps:
+      # 检出 async-profiler/async-profiler 项目指定的 tag
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - name: Checkout the async-profiler repository by input tag name ${{ inputs.async-profiler-tag-name }}
+        run: git checkout ${{ inputs.async-profiler-tag-name }}
+      - name: Setup Alpine Linux x86-64 environment
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: x86_64
+          branch: v3.15
+          shell-name: alpine-x86_64.sh
+          packages: >
+            build-base linux-headers openjdk11
+      # 从 async-profiler 源码编译出适用于 musl-based Linux 主机的 libasyncProfiler-linux-musl-x64.so
+      # grep -m1 PROFILER_VERSION Makefile 用于输出 async-profiler 版本, 下同
+      - name: Run script inside Alpine Linux x86-64 environment
+        run: |
+          grep -m1 PROFILER_VERSION Makefile
+          JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+          java -version
+          which java
+          echo "Append -static-libgcc -static-libstdc++ options to CXXFLAGS for user no need to install libstdc++ and libgcc manually."
+          sed -i 's/CXXFLAGS=/CXXFLAGS=-static-libgcc -static-libstdc++ /' Makefile && make
+          LIB_PROFILER_PATH=$(find build -type f -name libasyncProfiler.so 2>/dev/null)
+          [ -z "${LIB_PROFILER_PATH}" ] && echo "Can not find libasyncProfiler.so file under build directory." && exit 1
+          echo "LIB_PROFILER_PATH=${LIB_PROFILER_PATH}"
+          file ${LIB_PROFILER_PATH}
+          ldd ${LIB_PROFILER_PATH}
+          cp ${LIB_PROFILER_PATH} libasyncProfiler-linux-musl-x64.so
+        shell: alpine-x86_64.sh {0}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-linux-musl-x64.so
+          if-no-files-found: error
+
+  build-alpine-linux-arm64:
+    runs-on: ubuntu-20.04
+    if: ${{ inputs.async-profiler-tag-name }}
+    steps:
+      # 检出 async-profiler/async-profiler 项目指定的 tag
+      - uses: actions/checkout@v3
+        with:
+          repository: async-profiler/async-profiler
+          fetch-depth: 0
+      - name: Checkout the async-profiler repository by input tag name ${{ inputs.async-profiler-tag-name }}
+        run: git checkout ${{ inputs.async-profiler-tag-name }}
+      - name: Setup Alpine Linux aarch64 environment
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: aarch64
+          branch: v3.15
+          shell-name: alpine-aarch64.sh
+          packages: >
+            build-base linux-headers openjdk11
+      # 从 async-profiler 源码编译出适用于 musl-based Linux 主机的 libasyncProfiler-linux-musl-arm64.so
+      # grep -m1 PROFILER_VERSION Makefile 用于输出 async-profiler 版本, 下同
+      - name: Run script inside Alpine Linux aarch64 environment
+        run: |
+          grep -m1 PROFILER_VERSION Makefile
+          JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+          java -version
+          which java
+          echo "Append -static-libgcc -static-libstdc++ options to CXXFLAGS for user no need to install libstdc++ and libgcc manually."
+          sed -i 's/CXXFLAGS=/CXXFLAGS=-static-libgcc -static-libstdc++ /' Makefile && make
+          LIB_PROFILER_PATH=$(find build -type f -name libasyncProfiler.so 2>/dev/null)
+          [ -z "${LIB_PROFILER_PATH}" ] && echo "Can not find libasyncProfiler.so file under build directory." && exit 1
+          echo "LIB_PROFILER_PATH=${LIB_PROFILER_PATH}"
+          file ${LIB_PROFILER_PATH}
+          ldd ${LIB_PROFILER_PATH}
+          cp ${LIB_PROFILER_PATH} libasyncProfiler-linux-musl-arm64.so
+        shell: alpine-aarch64.sh {0}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: async-profiler
+          path: libasyncProfiler-linux-musl-arm64.so
+          if-no-files-found: error
+
+  upload-libasyncProfiler-files:
+    runs-on: ubuntu-20.04
+    needs: [build-mac, build-generic-linux-x64, build-generic-linux-arm64, build-alpine-linux-x64, build-alpine-linux-arm64]
+    steps:
+      # 检出当前 arthas 代码仓库
+      - name: Checkout arthas upstream repo
+        uses: actions/checkout@v3
+      # 将上面编译任务暂存的 libasyncProfiler 动态链接库文件上传到此工作流的 artifact 包中
+      - uses: actions/download-artifact@v3
+        with:
+          name: async-profiler
+          path: tmp-async-profiler
+      # 查看上面编译任务暂存的 libasyncProfiler 动态链接库文件
+      - name: Modify permissions and Display structure of downloaded files
+        run: |
+          chmod 755 libasyncProfiler-*
+          ls -lrt
+        working-directory: tmp-async-profiler
+      # 将编译好的 libasyncProfiler 动态链接库文件 push 到 arthas 代码仓库的 master 分支 async-profiler/ 目录下
+      - name: Commit and Push libasyncProfiler files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          mv tmp-async-profiler/* async-profiler/
+          git add async-profiler/
+          git commit -m "Upload arthas async-profiler libs"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          force: true

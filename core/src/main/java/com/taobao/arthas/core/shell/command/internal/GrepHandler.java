@@ -120,7 +120,7 @@ public class GrepHandler extends StdoutHandler {
             } else {
                 match = pattern.matcher(line).find();
             }
-            if (invertMatch ? !match : match) {
+            if (invertMatch != match) {
                 matchCount++;
                 if (beforeLines > continueCount) {
                     int n = lastContinueLineNum == -1 ? (beforeLines >= lineNum ? 1 : lineNum - beforeLines)

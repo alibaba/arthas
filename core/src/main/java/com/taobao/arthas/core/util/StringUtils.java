@@ -20,8 +20,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -671,17 +674,8 @@ public abstract class StringUtils {
     }
 
     public static Set<String> commaDelimitedListToSet(String str) {
-        TreeSet<String> set = new TreeSet<String>();
         String[] tokens = commaDelimitedListToStringArray(str);
-        String[] var3 = tokens;
-        int var4 = tokens.length;
-
-        for(int var5 = 0; var5 < var4; ++var5) {
-            String token = var3[var5];
-            set.add(token);
-        }
-
-        return set;
+        return new TreeSet<String>(Arrays.asList(tokens));
     }
 
     /**
@@ -738,7 +732,7 @@ public abstract class StringUtils {
             return true;
         }
         for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
                 return false;
             }
         }
@@ -926,12 +920,10 @@ public abstract class StringUtils {
         } catch (IOException exc) {
             // quit
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // ignore
-                }
+            try {
+                reader.close();
+            } catch (IOException e) {
+                // ignore
             }
         }
         return result;
@@ -986,5 +978,20 @@ public abstract class StringUtils {
         int index3 = invokeInfo.indexOf('|', index2 + 1);
         return new String[] { invokeInfo.substring(0, index1), invokeInfo.substring(index1 + 1, index2),
                 invokeInfo.substring(index2 + 1, index3), invokeInfo.substring(index3 + 1) };
+    }
+
+    public static String beautifyName(String name) {
+        return name.replace(' ', '_').toLowerCase();
+    }
+
+    public static List<String> toStringList(URL[] urls) {
+        if (urls != null) {
+            List<String> result = new ArrayList<String>(urls.length);
+            for (URL url : urls) {
+                result.add(url.toString());
+            }
+            return result;
+        }
+        return Collections.emptyList();
     }
 }

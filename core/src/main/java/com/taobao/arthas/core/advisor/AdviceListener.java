@@ -23,8 +23,7 @@ public interface AdviceListener {
     /**
      * 前置通知
      *
-     * @param loader     类加载器
-     * @param className  类名
+     * @param clazz      类
      * @param methodName 方法名
      * @param methodDesc 方法描述
      * @param target     目标类实例
@@ -39,8 +38,7 @@ public interface AdviceListener {
     /**
      * 返回通知
      *
-     * @param loader       类加载器
-     * @param className    类名
+     * @param clazz        类
      * @param methodName   方法名
      * @param methodDesc   方法描述
      * @param target       目标类实例
@@ -58,8 +56,7 @@ public interface AdviceListener {
     /**
      * 异常通知
      *
-     * @param loader     类加载器
-     * @param className  类名
+     * @param clazz      类
      * @param methodName 方法名
      * @param methodDesc 方法描述
      * @param target     目标类实例

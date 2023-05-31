@@ -10,6 +10,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
+import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
@@ -28,6 +29,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  watch *StringUtils isBlank params[0]\n" +
         "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         "  watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
+        "  watch OuterClass$InnerClass\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
 public class WatchCommand extends EnhancerCommand {
 
@@ -100,7 +102,7 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "x", longName = "expand")
-    @Description("Expand level of object (1 by default)")
+    @Description("Expand level of object (1 by default), the max value is " + ObjectView.MAX_DEEP)
     public void setExpand(Integer expand) {
         this.expand = expand;
     }

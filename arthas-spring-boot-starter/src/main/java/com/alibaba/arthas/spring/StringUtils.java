@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 public class StringUtils {
 
 	public static Map<String, String> removeDashKey(Map<String, String> map) {
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<String, String>(map.size());
 
 		for (Entry<String, String> entry : map.entrySet()) {
 			String key = entry.getKey();

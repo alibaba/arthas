@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -36,7 +37,7 @@ public class ArthasConfiguration {
 	 * </pre>
 	 */
 	@ConfigurationProperties(prefix = "arthas")
-	@ConditionalOnMissingBean
+	@ConditionalOnMissingBean(name="arthasConfigMap")
 	@Bean
 	public HashMap<String, String> arthasConfigMap() {
 		return new HashMap<String, String>();
@@ -44,7 +45,7 @@ public class ArthasConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public ArthasAgent arthasAgent(@Autowired Map<String, String> arthasConfigMap,
+	public ArthasAgent arthasAgent(@Autowired @Qualifier("arthasConfigMap") Map<String, String> arthasConfigMap,
 			@Autowired ArthasProperties arthasProperties) throws Throwable {
         arthasConfigMap = StringUtils.removeDashKey(arthasConfigMap);
         ArthasProperties.updateArthasConfigMapDefaultValue(arthasConfigMap);

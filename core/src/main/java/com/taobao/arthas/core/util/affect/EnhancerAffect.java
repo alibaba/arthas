@@ -34,6 +34,8 @@ public final class EnhancerAffect extends Affect {
 
     private final List<String> methods = new ArrayList<String>();
 
+    private String overLimitMsg;
+
     public EnhancerAffect() {
     }
 
@@ -119,6 +121,14 @@ public final class EnhancerAffect extends Affect {
 
     public List<String> getMethods() {
         return methods;
+    }
+
+    public String getOverLimitMsg() {
+        return overLimitMsg;
+    }
+
+    public void setOverLimitMsg(String overLimitMsg) {
+        this.overLimitMsg = overLimitMsg;
     }
 
     @Override

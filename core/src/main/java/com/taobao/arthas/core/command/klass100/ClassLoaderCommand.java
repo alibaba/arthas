@@ -15,6 +15,7 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ResultUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -23,7 +24,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
-import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +53,7 @@ import java.util.TreeSet;
         "  classloader -a\n" +
         "  classloader -a -c 327a647b\n" +
         "  classloader -c 659e0bfd --load demo.MathGame\n" +
+        "  classloader -u      # url statistics\n" +
         Constants.WIKI + Constants.WIKI_HOME + "classloader")
 public class ClassLoaderCommand extends AnnotatedCommand {
 
@@ -62,6 +65,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private String resource;
     private boolean includeReflectionClassLoader = true;
     private boolean listClassLoader = false;
+
+    private boolean urlStat = false;
 
     private String loadClass = null;
 
@@ -115,6 +120,12 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         this.loadClass = className;
     }
 
+    @Option(shortName = "u", longName = "url-stat", flag = true)
+    @Description("Display classloader url statistics")
+    public void setUrlStat(boolean urlStat) {
+        this.urlStat = urlStat;
+    }
+
     @Override
     public void process(CommandProcess process) {
         // ctrl-C support
@@ -123,6 +134,15 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         boolean classLoaderSpecified = false;
 
         Instrumentation inst = process.session().getInstrumentation();
+
+        if (urlStat) {
+            Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats = this.urlStats(inst);
+            ClassLoaderModel model = new ClassLoaderModel();
+            model.setUrlStats(urlStats);
+            process.appendResult(model);
+            process.end();
+            return;
+        }
         
         if (hashCode != null || classLoaderClass != null) {
             classLoaderSpecified = true;
@@ -136,7 +156,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                     break;
                 }
             }
-        } else if (targetClassLoader == null && classLoaderClass != null) {
+        } else if (classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
                 targetClassLoader = matchedClassLoaders.get(0);
@@ -226,14 +246,14 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private void processClassLoader(CommandProcess process, Instrumentation inst, ClassLoader targetClassLoader) {
         RowAffect affect = new RowAffect();
         if (targetClassLoader != null) {
-            if (targetClassLoader instanceof URLClassLoader) {
-                List<String> classLoaderUrls = getClassLoaderUrls(targetClassLoader);
-                affect.rCnt(classLoaderUrls.size());
-                if (classLoaderUrls.isEmpty()) {
+            URL[] classLoaderUrls = ClassLoaderUtils.getUrls(targetClassLoader);
+            if (classLoaderUrls != null) {
+                affect.rCnt(classLoaderUrls.length);
+                if (classLoaderUrls.length == 0) {
                     process.appendResult(new MessageModel("urls is empty."));
                 } else {
-                    process.appendResult(new ClassLoaderModel().setUrls(classLoaderUrls));
-                    affect.rCnt(classLoaderUrls.size());
+                    process.appendResult(new ClassLoaderModel().setUrls(StringUtils.toStringList(classLoaderUrls)));
+                    affect.rCnt(classLoaderUrls.length);
                 }
             } else {
                 process.appendResult(new MessageModel("not a URLClassLoader."));
@@ -273,7 +293,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             try {
                 Class<?> clazz = targetClassLoader.loadClass(this.loadClass);
                 process.appendResult(new MessageModel("load class success."));
-                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false);
+                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false, null);
                 process.appendResult(new ClassLoaderModel().setLoadClass(classInfo));
 
             } catch (Throwable e) {
@@ -383,18 +403,44 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
     }
 
-    private static List<String> getClassLoaderUrls(ClassLoader classLoader) {
-        List<String> urlStrs = new ArrayList<String>();
-        if (classLoader instanceof URLClassLoader) {
-            URLClassLoader cl = (URLClassLoader) classLoader;
-            URL[] urls = cl.getURLs();
-            if (urls != null) {
-                for (URL url : urls) {
-                    urlStrs.add(url.toString());
+    private Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats(Instrumentation inst) {
+        Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats = new HashMap<ClassLoaderVO, ClassLoaderUrlStat>();
+        Map<ClassLoader, Set<String>> usedUrlsMap = new HashMap<ClassLoader, Set<String>>();
+        for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            ClassLoader classLoader = clazz.getClassLoader();
+            if (classLoader != null) {
+                ProtectionDomain protectionDomain = clazz.getProtectionDomain();
+                CodeSource codeSource = protectionDomain.getCodeSource();
+                if (codeSource != null) {
+                    URL location = codeSource.getLocation();
+                    if (location != null) {
+                        Set<String> urls = usedUrlsMap.get(classLoader);
+                        if (urls == null) {
+                            urls = new HashSet<String>();
+                            usedUrlsMap.put(classLoader, urls);
+                        }
+                        urls.add(location.toString());
+                    }
                 }
             }
         }
-        return urlStrs;
+        for (Entry<ClassLoader, Set<String>> entry : usedUrlsMap.entrySet()) {
+            ClassLoader loader = entry.getKey();
+            Set<String> usedUrls = entry.getValue();
+            URL[] allUrls = ClassLoaderUtils.getUrls(loader);
+            List<String> unusedUrls = new ArrayList<String>();
+            if (allUrls != null) {
+                for (URL url : allUrls) {
+                    String urlStr = url.toString();
+                    if (!usedUrls.contains(urlStr)) {
+                        unusedUrls.add(urlStr);
+                    }
+                }
+            }
+
+            urlStats.put(ClassUtils.createClassLoaderVO(loader), new ClassLoaderUrlStat(usedUrls, unusedUrls));
+        }
+        return urlStats;
     }
 
     // 以树状列出ClassLoader的继承结构
@@ -580,6 +626,36 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         @Override
         public boolean accept(ClassLoader classLoader) {
             return !REFLECTION_CLASSLOADERS.contains(classLoader.getClass().getName());
+        }
+    }
+
+    public static class ClassLoaderUrlStat {
+        private Collection<String> usedUrls;
+        private Collection<String> unUsedUrls;
+
+        public ClassLoaderUrlStat() {
+        }
+
+        public ClassLoaderUrlStat(Collection<String> usedUrls, Collection<String> unUsedUrls) {
+            super();
+            this.usedUrls = usedUrls;
+            this.unUsedUrls = unUsedUrls;
+        }
+
+        public Collection<String> getUsedUrls() {
+            return usedUrls;
+        }
+
+        public void setUsedUrls(Collection<String> usedUrls) {
+            this.usedUrls = usedUrls;
+        }
+
+        public Collection<String> getUnUsedUrls() {
+            return unUsedUrls;
+        }
+
+        public void setUnUsedUrls(Collection<String> unUsedUrls) {
+            this.unUsedUrls = unUsedUrls;
         }
     }
 

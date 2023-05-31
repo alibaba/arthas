@@ -1,0 +1,26 @@
+{
+  "name": "site",
+  "version": "1.0.0",
+  "description": "Arthas user documentation site",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
+    "prettier": "prettier --write ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@vuepress/plugin-active-header-links": "^2.0.0-beta.51",
+    "@vuepress/plugin-docsearch": "^2.0.0-beta.51",
+    "@vuepress/plugin-theme-data": "^2.0.0-beta.51",
+    "prettier": "2.7.1",
+    "vuepress": "^2.0.0-beta.51",
+    "vuepress-plugin-copy-code2": "^2.0.0-beta.97",
+    "vuepress-plugin-redirect": "^2.0.0-beta.97"
+  },
+  "dependencies": {
+    "node-fetch": "^3.2.10",
+    "vue-count-to": "^1.0.13",
+    "xml-js": "^1.6.11"
+  }
+}

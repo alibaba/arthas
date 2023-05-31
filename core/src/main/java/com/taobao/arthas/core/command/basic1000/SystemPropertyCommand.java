@@ -17,7 +17,7 @@ import com.taobao.middleware.cli.annotations.Summary;
  * @author ralf0131 2017-01-09 14:03.
  */
 @Name("sysprop")
-@Summary("Display, and change the system properties.")
+@Summary("Display and change the system properties.")
 @Description(Constants.EXAMPLE + "  sysprop\n"+ "  sysprop file.encoding\n" + "  sysprop production.mode true\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sysprop")
 public class SystemPropertyCommand extends AnnotatedCommand {

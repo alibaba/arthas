@@ -1,34 +1,55 @@
 package com.taobao.arthas.core.command.model;
 
 /**
- * @author gongdewei 2020/4/29
+ * <pre>
+ * 包装一层，解决json输出问题
+ * https://github.com/alibaba/arthas/issues/2261
+ * </pre>
+ * 
+ * @author hengyunabc 2022-08-24
+ *
  */
 public class ObjectVO {
-    private String name;
-    private Object value;
+    private Object object;
+    private Integer expand;
 
-    public ObjectVO(String name, Object value) {
-        this.name = name;
-        this.value = value;
+    public ObjectVO(Object object, Integer expand) {
+        this.object = object;
+        this.expand = expand;
     }
 
-    public ObjectVO(Object value) {
-        this.value = value;
+    public static ObjectVO[] array(Object[] objects, Integer expand) {
+        ObjectVO[] result = new ObjectVO[objects.length];
+        for (int i = 0; i < objects.length; ++i) {
+            result[i] = new ObjectVO(objects[i], expand);
+        }
+        return result;
     }
 
-    public String getName() {
-        return name;
+    public int expandOrDefault() {
+        if (expand != null) {
+            return expand;
+        }
+        return 1;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public boolean needExpand() {
+        return null != expand && expand > 0;
     }
 
-    public Object getValue() {
-        return value;
+    public Object getObject() {
+        return object;
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    public Integer getExpand() {
+        return expand;
+    }
+
+    public void setExpand(Integer expand) {
+        this.expand = expand;
     }
 }
