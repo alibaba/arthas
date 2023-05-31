@@ -210,7 +210,7 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
-        Advice advice = Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject);
+        Advice advice = Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject);
         finishing(advice);
     }
 
