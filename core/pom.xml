@@ -258,6 +258,12 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>tools.profiler</groupId>
+            <artifactId>async-profiler</artifactId>
+            <version>2.9</version>
+        </dependency>
     </dependencies>
 
 </project>
