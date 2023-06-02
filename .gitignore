@@ -25,3 +25,6 @@ pom.xml.versionsBackup
 **/.flattened-pom.xml
 **/.idea/**
 **/cmake-build-debug/**
+
+# VSCode
+.vscode/
