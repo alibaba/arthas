@@ -115,7 +115,7 @@ public class FileUtils {
 			if (file.isDirectory()) {
 				throw new IOException("File '" + file + "' exists but is a directory");
 			}
-			if (file.canWrite() == false) {
+			if (!file.canWrite()) {
 				throw new IOException("File '" + file + "' cannot be written to");
 			}
 		} else {

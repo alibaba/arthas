@@ -20,7 +20,8 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
-import com.taobao.arthas.core.command.model.SearchClassModel;
+import com.taobao.arthas.core.command.model.ObjectVO;
+import com.taobao.arthas.core.command.model.VmToolModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.cli.OptionCompleteHandler;
@@ -29,7 +30,6 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -55,6 +55,7 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
+        + "  vmtool --action interruptThread -t 1\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
@@ -63,7 +64,7 @@ public class VmToolCommand extends AnnotatedCommand {
     private VmToolAction action;
     private String className;
     private String express;
-
+    private int threadId;
     private String hashCode = null;
     private String classLoaderClass;
     /**
@@ -144,13 +145,19 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "express", required = false)
-    @Description("The ognl expression, default valueis `instances`.")
+    @Description("The ognl expression, default value is `instances`.")
     public void setExpress(String express) {
         this.express = express;
     }
 
+    @Option(shortName = "t", longName = "threadId", required = false)
+    @Description("The id of the thread to be interrupted")
+    public void setThreadId(int threadId) {
+        this.threadId = threadId;
+    }
+
     public enum VmToolAction {
-        getInstances, forceGc
+        getInstances, forceGc, interruptThread
     }
 
     @Override
@@ -179,9 +186,10 @@ public class VmToolCommand extends AnnotatedCommand {
                     } else if (matchedClassLoaders.size() > 1) {
                         Collection<ClassLoaderVO> classLoaderVOList = ClassUtils
                                 .createClassLoaderVOList(matchedClassLoaders);
-                        SearchClassModel searchclassModel = new SearchClassModel().setClassLoaderClass(classLoaderClass)
+
+                        VmToolModel vmToolModel = new VmToolModel().setClassLoaderClass(classLoaderClass)
                                 .setMatchedClassLoaders(classLoaderVOList);
-                        process.appendResult(searchclassModel);
+                        process.appendResult(vmToolModel);
                         process.end(-1,
                                 "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
                         return;
@@ -216,14 +224,20 @@ public class VmToolCommand extends AnnotatedCommand {
                         }
                     }
 
-                    process.write(new ObjectView(value, this.expand).draw());
-                    process.write("\n");
+                    VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
+                    process.appendResult(vmToolModel);
                     process.end();
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
                 vmToolInstance().forceGc();
                 process.write("\n");
                 process.end();
+                return;
+            } else if (VmToolAction.interruptThread.equals(action)) {
+                vmToolInstance().interruptSpecialThread(threadId);
+                process.write("\n");
+                process.end();
+
                 return;
             }
 
@@ -264,7 +278,7 @@ public class VmToolCommand extends AnnotatedCommand {
             try {
                 File tmpLibFile = File.createTempFile(VmTool.JNI_LIBRARY_NAME, null);
                 tmpLibOutputStream = new FileOutputStream(tmpLibFile);
-                libInputStream = new FileInputStream(new File(libPath));
+                libInputStream = new FileInputStream(libPath);
 
                 IOUtils.copy(libInputStream, tmpLibOutputStream);
                 libPath = tmpLibFile.getAbsolutePath();

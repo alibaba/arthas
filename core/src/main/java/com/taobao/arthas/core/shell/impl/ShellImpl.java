@@ -2,6 +2,10 @@ package com.taobao.arthas.core.shell.impl;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.security.AuthUtils;
+import com.taobao.arthas.core.security.SecurityAuthenticator;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.Shell;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.cli.CliToken;
@@ -22,10 +26,15 @@ import com.taobao.arthas.core.shell.term.impl.http.ExtHttpTtyConnection;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.termd.core.telnet.TelnetConnection;
+import io.termd.core.telnet.TelnetTtyConnection;
+import io.termd.core.telnet.netty.NettyTelnetConnection;
 import io.termd.core.tty.TtyConnection;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +42,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginException;
+
 /**
  * The shell session as seen from the shell server perspective.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class ShellImpl implements Shell {
-
     private static final Logger logger = LoggerFactory.getLogger(ShellImpl.class);
+    private SecurityAuthenticator securityAuthenticator = ArthasBootstrap.getInstance().getSecurityAuthenticator();
 
     private JobControllerImpl jobController;
     final String id;
@@ -57,6 +69,26 @@ public class ShellImpl implements Shell {
         if (term instanceof TermImpl) {
             TermImpl termImpl = (TermImpl) term;
             TtyConnection conn = termImpl.getConn();
+            // 处理telnet本地连接鉴权
+            if (conn instanceof TelnetTtyConnection) {
+                TelnetConnection telnetConnection = ((TelnetTtyConnection) conn).getTelnetConnection();
+                if (telnetConnection instanceof NettyTelnetConnection) {
+                    ChannelHandlerContext handlerContext = ((NettyTelnetConnection) telnetConnection)
+                            .channelHandlerContext();
+                    Principal principal = AuthUtils.localPrincipal(handlerContext);
+                    if (principal != null) {
+                        try {
+                            Subject subject = securityAuthenticator.login(principal);
+                            if (subject != null) {
+                                session.put(ArthasConstants.SUBJECT_KEY, subject);
+                            }
+                        } catch (LoginException e) {
+                            logger.error("local connection auth error", e);
+                        }
+                    }
+                }
+            }
+
             if (conn instanceof ExtHttpTtyConnection) {
                 // 传递http cookie 里的鉴权信息到新建立的session中
                 ExtHttpTtyConnection extConn = (ExtHttpTtyConnection) conn;
@@ -126,11 +158,9 @@ public class ShellImpl implements Shell {
     }
 
     private void setPrompt(){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[arthas@");
-        stringBuilder.append(session.getPid());
-        stringBuilder.append("]$ ");
-        this.prompt = stringBuilder.toString();
+        this.prompt = "[arthas@" +
+                session.getPid() +
+                "]$ ";
     }
 
     public ShellImpl init() {
@@ -197,7 +227,7 @@ public class ShellImpl implements Shell {
         return currentForegroundJob;
     }
 
-    private class ShellJobHandler implements JobListener {
+    private static class ShellJobHandler implements JobListener {
         ShellImpl shell;
 
         public ShellJobHandler(ShellImpl shell) {

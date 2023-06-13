@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.taobao.arthas.common.ArthasConstants;
+
 public class FileUtils {
 
     /**
@@ -97,6 +99,12 @@ public class FileUtils {
         return new FileOutputStream(file, append);
     }
 
+    private static boolean isAuthCommand(String command) {
+        // 需要改写 auth command, TODO 更准确应该是用mask去掉密码信息
+        return command != null && command.trim().startsWith(ArthasConstants.AUTH);
+    }
+
+    private static final int[] AUTH_CODEPOINTS = Helper.toCodePoints(ArthasConstants.AUTH);
     /**
      * save the command history to the given file, data will be overridden.
      * @param history the command history, each represented by an int array
@@ -107,6 +115,11 @@ public class FileUtils {
         try {
             out = new BufferedOutputStream(openOutputStream(file, false));
             for (int[] command: history) {
+                String commandStr = Helper.fromCodePoints(command);
+                if (isAuthCommand(commandStr)) {
+                    command = AUTH_CODEPOINTS;
+                }
+
                 for (int i : command) {
                     out.write(i);
                 }
@@ -159,6 +172,9 @@ public class FileUtils {
             out = new BufferedOutputStream(openOutputStream(file, false));
             for (String command: history) {
                 if (!StringUtils.isBlank(command)) {
+                    if (isAuthCommand(command)) {
+                        command = ArthasConstants.AUTH;
+                    }
                     out.write(command.getBytes("utf-8"));
                     out.write('\n');
                 }

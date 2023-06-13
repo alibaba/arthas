@@ -1,9 +1,9 @@
 package com.taobao.arthas.core.shell.system.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -25,7 +25,7 @@ import com.taobao.arthas.core.shell.term.Term;
  * @author gehui 2017年7月31日 上午11:55:41
  */
 public class GlobalJobControllerImpl extends JobControllerImpl {
-    private Map<Integer, JobTimeoutTask> jobTimeoutTaskMap = new HashMap<Integer, JobTimeoutTask>();
+    private Map<Integer, JobTimeoutTask> jobTimeoutTaskMap = new ConcurrentHashMap<Integer, JobTimeoutTask>();
     private static final Logger logger = LoggerFactory.getLogger(GlobalJobControllerImpl.class);
 
     @Override
@@ -92,7 +92,8 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
                 result = Long.parseLong(jobTimeoutConfig);
                 break;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            logger.error("parse jobTimeoutConfig: {} error!", jobTimeoutConfig, e);
         }
 
         if (result < 0) {

@@ -1,7 +1,5 @@
 package com.taobao.arthas.core.shell.term.impl.http.api;
 
-import java.util.Map;
-
 /**
  * Http Api request
  *

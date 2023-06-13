@@ -8,6 +8,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +34,8 @@ import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
 import com.alibaba.bytekit.utils.AsmUtils;
 import com.alibaba.bytekit.utils.IOUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
@@ -144,7 +145,7 @@ public class ArthasBootstrap {
         outputPath.mkdirs();
 
         // 3. init logger
-        loggerContext = LogUtil.initLooger(arthasEnvironment);
+        loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         // 4. 增强ClassLoader
         enhanceClassLoader();
@@ -176,12 +177,9 @@ public class ArthasBootstrap {
     }
 
     private void initFastjson() {
-        // disable  fastjson circular reference feature
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
-        // add date format option for  fastjson
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
         // ignore getter error #1661
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
+        // #2081
+        JSON.config(JSONWriter.Feature.IgnoreErrorGetter, JSONWriter.Feature.WriteNonStringKeyAsString);
     }
 
     private void initBeans() {
@@ -256,16 +254,19 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> copyMap = new HashMap<String, String>();
+        Map<String, Object> copyMap;
         if (argsMap != null) {
-            copyMap.putAll(argsMap);
-        }
-        // 添加 arthas.home
-        if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+            copyMap = new HashMap<String, Object>(argsMap);
+            // 添加 arthas.home
+            if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+                copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
+            }
+        } else {
+            copyMap = new HashMap<String, Object>(1);
             copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
         }
 
-        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>)(Object)copyMap);
+        MapPropertySource mapPropertySource = new MapPropertySource("args", copyMap);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
@@ -316,25 +317,25 @@ public class ArthasBootstrap {
             if (!location.endsWith(".properties")) {
                 location = new File(location, configName + ".properties").getAbsolutePath();
             }
+            if (new File(location).exists()) {
+                Properties properties = FileUtils.readProperties(location);
+
+                boolean overrideAll = false;
+                if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
+                    overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
+                } else {
+                    overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
+                }
+
+                PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
+                if (overrideAll) {
+                    arthasEnvironment.addFirst(propertySource);
+                } else {
+                    arthasEnvironment.addLast(propertySource);
+                }
+            }
         }
 
-        if (new File(location).exists()) {
-            Properties properties = FileUtils.readProperties(location);
-
-            boolean overrideAll = false;
-            if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
-                overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
-            } else {
-                overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
-            }
-
-            PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
-            if (overrideAll) {
-                arthasEnvironment.addFirst(propertySource);
-            } else {
-                arthasEnvironment.addLast(propertySource);
-            }
-        }
     }
 
     /**
@@ -400,9 +401,7 @@ public class ArthasBootstrap {
             if (configure.getDisabledCommands() != null) {
                 String[] strings = StringUtils.tokenizeToStringArray(configure.getDisabledCommands(), ",");
                 if (strings != null) {
-                    for (String s : strings) {
-                        disabledCommands.add(s);
-                    }
+                    disabledCommands.addAll(Arrays.asList(strings));
                 }
             }
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);
@@ -457,6 +456,7 @@ public class ArthasBootstrap {
                 logger().info("arthas stat url: {}", configure.getStatUrl());
             }
             UserStatUtil.setStatUrl(configure.getStatUrl());
+            UserStatUtil.setAgentId(configure.getAgentId());
             UserStatUtil.arthasStart();
 
             try {
@@ -665,4 +665,7 @@ public class ArthasBootstrap {
         return securityAuthenticator;
     }
 
+    public Configure getConfigure() {
+        return configure;
+    }
 }

@@ -7,12 +7,12 @@ import com.taobao.arthas.core.shell.future.Future;
 /**
  * @author beiwei30 on 22/11/2016.
  */
-public class NoOpHandler implements Handler {
+public class NoOpHandler<E> implements Handler<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(NoOpHandler.class);
 
     @Override
-    public void handle(Object event) {
+    public void handle(E event) {
         if (event instanceof Future && ((Future) event).failed()) {
             logger.error("Error listening term server:", ((Future) event).cause());
         }

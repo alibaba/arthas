@@ -1,0 +1,22 @@
+name: auto prettier
+
+on:
+  push:
+    paths:
+      - 'site/**'
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --config ./site/.prettierrc.json --ignore-path ./site/.prettierignore  --write ./site

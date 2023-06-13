@@ -449,15 +449,13 @@ abstract public class ThreadUtil {
     }
 
     private static String getTCCL(Thread currentThread) {
-        if (null == currentThread.getContextClassLoader()) {
+        ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+        if (null == contextClassLoader) {
             return "null";
         } else {
-            String classloaderClassName = currentThread.getContextClassLoader().getClass().getName();
-            StringBuilder sb = new StringBuilder(classloaderClassName.length()+10);
-            sb.append(classloaderClassName)
-                    .append("@")
-                    .append(Integer.toHexString(currentThread.getContextClassLoader().hashCode()));
-            return  sb.toString();
+            return contextClassLoader.getClass().getName() +
+                    "@" +
+                    Integer.toHexString(contextClassLoader.hashCode());
         }
     }
 

@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderStat;
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderUrlStat;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,9 @@ public class ClassLoaderModel extends ResultModel {
 
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
+
+    //urls stat
+    private Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats;
 
     public ClassLoaderModel() {
     }
@@ -112,4 +116,13 @@ public class ClassLoaderModel extends ResultModel {
         this.matchedClassLoaders = matchedClassLoaders;
         return this;
     }
+
+    public Map<ClassLoaderVO, ClassLoaderUrlStat> getUrlStats() {
+        return urlStats;
+    }
+
+    public void setUrlStats(Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats) {
+        this.urlStats = urlStats;
+    }
+
 }

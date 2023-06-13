@@ -20,7 +20,7 @@ Affect(row-cnt:1) cost in 3 ms.
 
 结果会异步保存在：`{user.home}/logs/arthas-cache/result.log`，请定期进行清理，以免占据磁盘空间
 
-## 使用新版本Arthas的异步后台任务将结果存日志文件
+## 使用Arthas的异步后台任务将结果存日志文件
 
 ```bash
 $ trace Test t >>  &
@@ -28,9 +28,5 @@ job id  : 2
 cache location  : /Users/admin/logs/arthas-cache/28198/2
 ```
 
-此时命令会在后台异步执行，并将结果异步保存在文件（~/logs/arthas-cache/${PID}/${JobId}）中；
-
-- 此时任务的执行不受session断开的影响；任务默认超时时间是1天，可以通过全局 `options` 命令修改默认超时时间；
-
-- 此命令的结果将异步输出到文件中；此时不管 `save-result` 是否为true，都不会再往~/logs/arthas-cache/result.log 中异步写结果
+* 参考： https://arthas.aliyun.com/doc/async.html
 

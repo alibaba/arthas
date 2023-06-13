@@ -35,7 +35,7 @@ public interface AsyncProfilerMXBean {
     long getSamples();
     String getVersion();
 
-    String execute(String command) throws IllegalArgumentException, java.io.IOException;
+    String execute(String command) throws IllegalArgumentException, IllegalStateException, java.io.IOException;
 
     String dumpCollapsed(Counter counter);
     String dumpTraces(int maxTraces);

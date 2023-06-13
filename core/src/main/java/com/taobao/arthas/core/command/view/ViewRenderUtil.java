@@ -95,9 +95,11 @@ public class ViewRenderUtil {
                 affectVO.getMethodCount(),
                 affectVO.getCost(),
                 affectVO.getListenerId()));
-
+        if (!StringUtils.isEmpty(affectVO.getOverLimitMsg())) {
+            infoSB.append("\n" + affectVO.getOverLimitMsg());
+        }
         if (affectVO.getThrowable() != null) {
-            infoSB.append("\nEnhance error! exception: " + affectVO.getThrowable());
+            infoSB.append("\nEnhance error! exception: ").append(affectVO.getThrowable());
         }
         infoSB.append("\n");
 

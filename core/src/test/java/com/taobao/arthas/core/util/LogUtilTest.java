@@ -49,7 +49,7 @@ public class LogUtilTest {
         properties1.put("arthas.home", testResourcesDir);
         arthasEnvironment.addLast(new PropertiesPropertySource("test1", properties1));
 
-        LoggerContext loggerContext = LogUtil.initLooger(arthasEnvironment);
+        LoggerContext loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         Logger logger = loggerContext.getLogger("root");
         Level level = logger.getLevel();
@@ -64,7 +64,7 @@ public class LogUtilTest {
         properties1.put(LogUtil.LOGGING_CONFIG_PROPERTY, testResourcesDir + "/logback-test.xml");
         arthasEnvironment.addLast(new PropertiesPropertySource("test1", properties1));
 
-        LoggerContext loggerContext = LogUtil.initLooger(arthasEnvironment);
+        LoggerContext loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         Logger logger = loggerContext.getLogger("root");
         Level level = logger.getLevel();
@@ -80,7 +80,7 @@ public class LogUtilTest {
 
         arthasEnvironment.addLast(new PropertiesPropertySource("test1", properties1));
 
-        LoggerContext loggerContext = LogUtil.initLooger(arthasEnvironment);
+        LoggerContext loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         Logger logger = loggerContext.getLogger("root");
         Level level = logger.getLevel();
@@ -112,7 +112,7 @@ public class LogUtilTest {
         properties1.put(LogUtil.FILE_NAME_PROPERTY, logFile);
         arthasEnvironment.addLast(new PropertiesPropertySource("test1", properties1));
 
-        LoggerContext loggerContext = LogUtil.initLooger(arthasEnvironment);
+        LoggerContext loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         Logger logger = loggerContext.getLogger("root");
         Level level = logger.getLevel();
@@ -144,7 +144,7 @@ public class LogUtilTest {
         properties1.put(LogUtil.FILE_PATH_PROPERTY, tempFolder.getRoot().getAbsolutePath());
         arthasEnvironment.addLast(new PropertiesPropertySource("test1", properties1));
 
-        LoggerContext loggerContext = LogUtil.initLooger(arthasEnvironment);
+        LoggerContext loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         Logger logger = loggerContext.getLogger("root");
         Level level = logger.getLevel();

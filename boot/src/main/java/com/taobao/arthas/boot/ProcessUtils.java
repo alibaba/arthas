@@ -129,7 +129,7 @@ public class ProcessUtils {
             jps = jpsFile.getAbsolutePath();
         }
 
-        AnsiLog.debug("Try use jps to lis java process, jps: " + jps);
+        AnsiLog.debug("Try use jps to list java process, jps: " + jps);
 
         String[] command = null;
         if (v) {
@@ -266,6 +266,8 @@ public class ProcessUtils {
         // -agent "${arthas_lib_dir}/arthas-agent.jar"
 
         ProcessBuilder pb = new ProcessBuilder(command);
+        // https://github.com/alibaba/arthas/issues/2166
+        pb.environment().put("JAVA_TOOL_OPTIONS", "");
         try {
             final Process proc = pb.start();
             Thread redirectStdout = new Thread(new Runnable() {

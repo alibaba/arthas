@@ -58,6 +58,9 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      */
     @Override
     public void start(String event, long interval) throws IllegalStateException {
+        if (event == null) {
+            throw new NullPointerException();
+        }
         start0(event, interval, true);
     }
 
@@ -71,6 +74,9 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      */
     @Override
     public void resume(String event, long interval) throws IllegalStateException {
+        if (event == null) {
+            throw new NullPointerException();
+        }
         start0(event, interval, false);
     }
 
@@ -116,7 +122,10 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      * @throws IOException If failed to create output file
      */
     @Override
-    public String execute(String command) throws IllegalArgumentException, IOException {
+    public String execute(String command) throws IllegalArgumentException, IllegalStateException, IOException {
+        if (command == null) {
+            throw new NullPointerException();
+        }
         return execute0(command);
     }
 
@@ -129,7 +138,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     @Override
     public String dumpCollapsed(Counter counter) {
         try {
-            return execute0("collapsed,counter=" + counter.name().toLowerCase());
+            return execute0("collapsed," + counter.name().toLowerCase());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -144,7 +153,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     @Override
     public String dumpTraces(int maxTraces) {
         try {
-            return execute0("summary,traces=" + maxTraces);
+            return execute0(maxTraces == 0 ? "traces" : "traces=" + maxTraces);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -159,7 +168,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     @Override
     public String dumpFlat(int maxMethods) {
         try {
-            return execute0("summary,flat=" + maxMethods);
+            return execute0(maxMethods == 0 ? "flat" : "flat=" + maxMethods);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -186,7 +195,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     }
 
     private void filterThread(Thread thread, boolean enable) {
-        if (thread == null) {
+        if (thread == null || thread == Thread.currentThread()) {
             filterThread0(null, enable);
         } else {
             // Need to take lock to avoid race condition with a thread state change
@@ -201,6 +210,6 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
 
     private native void start0(String event, long interval, boolean reset) throws IllegalStateException;
     private native void stop0() throws IllegalStateException;
-    private native String execute0(String command) throws IllegalArgumentException, IOException;
+    private native String execute0(String command) throws IllegalArgumentException, IllegalStateException, IOException;
     private native void filterThread0(Thread thread, boolean enable);
 }

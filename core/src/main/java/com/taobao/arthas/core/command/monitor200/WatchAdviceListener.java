@@ -4,8 +4,9 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AccessPoint;
 import com.taobao.arthas.core.advisor.Advice;
-import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
@@ -46,7 +47,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
-        Advice advice = Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject);
+        Advice advice = Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject);
         if (command.isSuccess()) {
             watching(advice);
         }
@@ -88,8 +89,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 WatchModel model = new WatchModel();
                 model.setTs(new Date());
                 model.setCost(cost);
-                model.setValue(value);
-                model.setExpand(command.getExpand());
+                model.setValue(new ObjectVO(value, command.getExpand()));
                 model.setSizeLimit(command.getSizeLimit());
                 model.setClassName(advice.getClazz().getName());
                 model.setMethodName(advice.getMethod().getName());

@@ -66,6 +66,9 @@ public class SecurityAuthenticatorImpl implements SecurityAuthenticator {
                 return subject;
             }
         }
+        if (principal instanceof LocalConnectionPrincipal) {
+            return subject;
+        }
 
         return null;
     }

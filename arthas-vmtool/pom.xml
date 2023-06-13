@@ -11,6 +11,7 @@
     </parent>
     <artifactId>arthas-vmtool</artifactId>
     <name>arthas-vmtool</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <profiles>
         <!-- https://github.com/openjdk/jdk/blob/jdk-16%2B36/src/java.base/windows/native/libjava/java_props_md.c#L568 -->
@@ -20,13 +21,12 @@
             <activation>
                 <os>
                     <family>mac</family>
-                    <arch>x86_64</arch>
                 </os>
             </activation>
             <properties>
-                <os_name>macos</os_name>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary-x64.dylib</lib_name>
+                <os_name>darwin</os_name>
+                <os_arch_option>-arch x86_64 -arch arm64</os_arch_option>
+                <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
 
@@ -45,8 +45,62 @@
                 <lib_name>libArthasJniLibrary-x64.so</lib_name>
             </properties>
         </profile>
+        <profile>
+            <id>linux-aarch64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <os_arch_option>-march=armv8-a</os_arch_option>
+                <lib_name>libArthasJniLibrary-aarch64.so</lib_name>
+            </properties>
+        </profile>
+
+        <!-- linux other-arch-->
+        <profile>
+            <id>linux-${os.arch}</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <lib_name>libArthasJniLibrary-${os.arch}.so</lib_name>
+            </properties>
+        </profile>
 
         <!-- windows -->
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <!-- https://github.com/mojohaus/maven-native/blob/maven-native-1.0-alpha-11/native-maven-plugin/src/site/apt/examples/jni-dll.apt#L67-->
+                <os_name>win32</os_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-32</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libArthasJniLibrary-x86.dll</lib_name>
+            </properties>
+        </profile>
         <profile>
             <id>windows-amd64</id>
             <activation>
@@ -56,12 +110,12 @@
                 </os>
             </activation>
             <properties>
-                <os_name>windows</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary-x64.dll</lib_name>
             </properties>
             <build>
                 <plugins>
+
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>native-maven-plugin</artifactId>
@@ -73,7 +127,6 @@
                                     <className>arthas.VmTool</className>
                                 </javahInclude>
                             </javahIncludes>
-                            <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
                             <javahOS>${os_name}</javahOS>
                             <sources>
                                 <source>
@@ -87,6 +140,9 @@
                             <compilerProvider>generic-classic</compilerProvider>
                             <compilerExecutable>g++</compilerExecutable>
                             <compilerStartOptions>
+                                <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
+                                <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                                <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                                 <compilerStartOption>${os_arch_option}</compilerStartOption>
                                 <compilerStartOption>-fpic</compilerStartOption>
                                 <compilerStartOption>-shared</compilerStartOption>
@@ -110,10 +166,9 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>javah</id>
+                                <id>compile-and-link</id>
                                 <phase>compile</phase>
                                 <goals>
-                                    <goal>javah</goal>
                                     <goal>initialize</goal>
                                     <goal>compile</goal>
                                     <goal>link</goal>
@@ -124,6 +179,7 @@
                 </plugins>
             </build>
         </profile>
+
     </profiles>
 
     <build>
@@ -132,12 +188,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <encoding>UTF-8</encoding>
-                    <showDeprecation>true</showDeprecation>
+                    <compilerArgs>
+                        <!-- 需要使用 3.8.0 及之后版本，使用javac -h 生成头文件 -->
+                        <arg>-h</arg>
+                        <arg>${project.build.directory}/native/include</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
+
             <!-- 请不要删除这里的maven-jar-plugin，也不要升级它的版本，否则很可能无法正常打包 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -155,8 +213,6 @@
                             <className>arthas.VmTool</className>
                         </javahInclude>
                     </javahIncludes>
-                    <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
-                    <javahOS>${os_name}</javahOS>
                     <sources>
                         <source>
                             <directory>src/main/native/src</directory>
@@ -169,6 +225,9 @@
                     <compilerProvider>generic-classic</compilerProvider>
                     <compilerExecutable>g++</compilerExecutable>
                     <compilerStartOptions>
+                        <compilerStartOption>-I${JAVA_HOME}/include</compilerStartOption>
+                        <compilerStartOption>-I${JAVA_HOME}/include/${os_name}</compilerStartOption>
+                        <compilerStartOption>-I${project.build.directory}/native/include</compilerStartOption>
                         <compilerStartOption>${os_arch_option}</compilerStartOption>
                         <compilerStartOption>-fpic</compilerStartOption>
                         <compilerStartOption>-shared</compilerStartOption>
@@ -181,7 +240,7 @@
                         <linkerStartOption>${os_arch_option}</linkerStartOption>
                         <linkerStartOption>-fpic</linkerStartOption>
                         <linkerStartOption>-shared</linkerStartOption>
-                        <linkerStartOption>-o</linkerStartOption>
+                        <!-- <linkerStartOption>-o</linkerStartOption> -->
                     </linkerStartOptions>
                     <linkerEndOptions>
                         <linkerEndOption>-o ${project.build.directory}/${lib_name}</linkerEndOption>
@@ -189,10 +248,9 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>javah</id>
+                        <id>compile-and-link</id>
                         <phase>compile</phase>
                         <goals>
-                            <goal>javah</goal>
                             <goal>initialize</goal>
                             <goal>compile</goal>
                             <goal>link</goal>

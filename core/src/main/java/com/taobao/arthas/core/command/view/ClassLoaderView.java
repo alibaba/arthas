@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderStat;
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderUrlStat;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassLoaderModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
@@ -14,6 +15,7 @@ import com.taobao.text.util.RenderUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author gongdewei 2020/4/21
@@ -46,8 +48,39 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
         if (result.getClassLoaderStats() != null){
             drawClassLoaderStats(process, result.getClassLoaderStats());
         }
+        if (result.getUrlStats() != null) {
+            drawUrlStats(process, result.getUrlStats());
+        }
     }
 
+    private void drawUrlStats(CommandProcess process, Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats) {
+        for (Entry<ClassLoaderVO, ClassLoaderUrlStat> entry : urlStats.entrySet()) {
+            ClassLoaderVO classLoaderVO = entry.getKey();
+            ClassLoaderUrlStat urlStat = entry.getValue();
+
+            // 忽略 sun.reflect.DelegatingClassLoader 等动态ClassLoader
+            if (urlStat.getUsedUrls().isEmpty() && urlStat.getUnUsedUrls().isEmpty()) {
+                continue;
+            }
+
+            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+            table.row(new LabelElement(classLoaderVO.getName() + ", hash:" + classLoaderVO.getHash())
+                    .style(Decoration.bold.bold()));
+            Collection<String> usedUrls = urlStat.getUsedUrls();
+            table.row(new LabelElement("Used URLs:").style(Decoration.bold.bold()));
+            for (String url : usedUrls) {
+                table.row(url);
+            }
+            Collection<String> UnnsedUrls = urlStat.getUnUsedUrls();
+            table.row(new LabelElement("Unused URLs:").style(Decoration.bold.bold()));
+            for (String url : UnnsedUrls) {
+                table.row(url);
+            }
+            process.write(RenderUtil.render(table, process.width()))
+                    .write("\n");
+        }
+    }
+    
     private void drawClassLoaderStats(CommandProcess process, Map<String, ClassLoaderStat> classLoaderStats) {
         Element element = renderStat(classLoaderStats);
         process.write(RenderUtil.render(element, process.width()))

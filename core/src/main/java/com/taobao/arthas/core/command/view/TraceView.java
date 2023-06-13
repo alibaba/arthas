@@ -24,6 +24,7 @@ public class TraceView extends ResultView<TraceModel> {
     private static final String STEP_HAS_BOARD = "|   ";
     private static final String STEP_EMPTY_BOARD = "    ";
     private static final String TIME_UNIT = "ms";
+    private static final char PERCENTAGE = '%';
 
     // 是否输出耗时
     private boolean isPrintCost = true;
@@ -98,10 +99,10 @@ public class TraceView extends ResultView<TraceModel> {
 
             //trace_id
             if (threadNode.getTraceId() != null) {
-                sb.append(";trace_id="+threadNode.getTraceId());
+                sb.append(";trace_id=").append(threadNode.getTraceId());
             }
             if (threadNode.getRpcId() != null) {
-                sb.append(";rpc_id="+threadNode.getRpcId());
+                sb.append(";rpc_id=").append(threadNode.getRpcId());
             }
         } else if (node instanceof ThrowNode) {
             ThrowNode throwNode = (ThrowNode) node;
@@ -117,12 +118,29 @@ public class TraceView extends ResultView<TraceModel> {
     private String renderCost(MethodNode node) {
         StringBuilder sb = new StringBuilder();
         if (node.getTimes() <= 1) {
-            sb.append("[").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
+            if(node.parent() instanceof ThreadNode) {
+                sb.append('[').append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
+            }else {
+                MethodNode parentNode = (MethodNode) node.parent();
+                String percentage = String.format("%.2f", node.getCost()*100.0/parentNode.getTotalCost());
+                sb.append('[').append(percentage).append(PERCENTAGE).append(" ").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append(" ").append("] ");
+
+            }
         } else {
-            sb.append("[min=").append(nanoToMillis(node.getMinCost())).append(TIME_UNIT).append(",max=")
-                    .append(nanoToMillis(node.getMaxCost())).append(TIME_UNIT).append(",total=")
-                    .append(nanoToMillis(node.getTotalCost())).append(TIME_UNIT).append(",count=")
-                    .append(node.getTimes()).append("] ");
+            if(node.parent() instanceof ThreadNode) {
+                sb.append("[min=").append(nanoToMillis(node.getMinCost())).append(TIME_UNIT).append(",max=")
+                        .append(nanoToMillis(node.getMaxCost())).append(TIME_UNIT).append(",total=")
+                        .append(nanoToMillis(node.getTotalCost())).append(TIME_UNIT).append(",count=")
+                        .append(node.getTimes()).append("] ");
+            }else {
+                MethodNode parentNode = (MethodNode) node.parent();
+                String percentage = String.format("%.2f",node.getTotalCost()*100.0/parentNode.getTotalCost());
+                sb.append('[').append(percentage).append(PERCENTAGE).append(" min=").append(nanoToMillis(node.getMinCost())).append(TIME_UNIT).append(",max=")
+                        .append(nanoToMillis(node.getMaxCost())).append(TIME_UNIT).append(",total=")
+                        .append(nanoToMillis(node.getTotalCost())).append(TIME_UNIT).append(",count=")
+                        .append(node.getTimes()).append("] ");
+            }
+
         }
         return sb.toString();
     }

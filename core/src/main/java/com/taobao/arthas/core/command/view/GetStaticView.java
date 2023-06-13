@@ -22,11 +22,10 @@ public class GetStaticView extends ResultView<GetStaticModel> {
             process.write("\n");
             return;
         }
-        int expand = result.getExpand();
         if (result.getField() != null) {
             ObjectVO field = result.getField();
-            String valueStr = StringUtils.objectToString(expand >= 0 ? new ObjectView(field.getValue(), expand).draw() : field.getValue());
-            process.write("field: " + field.getName() + "\n" + valueStr + "\n");
+            String valueStr = StringUtils.objectToString(field.needExpand() ? new ObjectView(field).draw() : field.getObject());
+            process.write("field: " + result.getFieldName() + "\n" + valueStr + "\n");
         } else if (result.getMatchedClasses() != null) {
             Element table = ClassUtils.renderMatchedClasses(result.getMatchedClasses());
             process.write(RenderUtil.render(table)).write("\n");

@@ -14,7 +14,7 @@ public class ArthasConstants {
      */
     public static final String NETTY_LOCAL_ADDRESS = "arthas-netty-LocalAddress";
 
-    public static final int MAX_HTTP_CONTENT_LENGTH = 1024 * 1024 * 8;
+    public static final int MAX_HTTP_CONTENT_LENGTH = 1024 * 1024 * 10;
 
     public static final String ARTHAS_OUTPUT = "arthas-output";
 
@@ -26,7 +26,7 @@ public class ArthasConstants {
     public static final int TELNET_PORT = 3658;
 
     public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
-    public static final int WEBSOCKET_IDLE_SECONDS = 60;
+    public static final int WEBSOCKET_IDLE_SECONDS = 10;
 
     /**
      * HTTP cookie id

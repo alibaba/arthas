@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2021-07-22
+#    date : 2023-04-19
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.5.3
+ARTHAS_SCRIPT_VERSION=3.6.8
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -85,6 +85,8 @@ ARTHAS_HOME=
 # define arthas's lib
 if [ -z "${ARTHAS_LIB_DIR}" ]; then
     ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+else
+    echo "[INFO] ARTHAS_LIB_DIR: ${ARTHAS_LIB_DIR}"
 fi
 
 # target process id to attach
@@ -184,7 +186,7 @@ case "$(uname -s)" in
     *)          OS_TYPE="UNKNOWN"
 esac
 
-# check curl/grep/awk/telent/unzip command
+# check curl/grep/awk/telnet/unzip command
 if ! [ -x "$(command -v curl)" ]; then
   echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
@@ -391,12 +393,32 @@ update_if_necessary()
     fi
 }
 
+# jps command may crash, so need to check it
+check_jps() {
+    "${JAVA_HOME}/bin/jps" > /dev/null 2>&1
+    local exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo "jps command failed with exit code ${exit_code}" >&2
+    fi
+    return $exit_code
+}
+
 call_jps()
 {
-    if [ "${VERBOSE}" = true ] ; then
-        "${JAVA_HOME}"/bin/jps -l -v
+    check_jps
+    local exit_code=$?
+    if [[ "$exit_code" -eq 0 ]]; then
+        # jps command is ok
+        local jps_command=("${JAVA_HOME}/bin/jps" "-l")
+        if [ "${VERBOSE}" = true ] ; then
+            jps_command=("${JAVA_HOME}/bin/jps" "-l" "-v")
+        fi
+        local jps_output=$("${jps_command[@]}")
+        echo "$jps_output"
     else
-        "${JAVA_HOME}"/bin/jps -l
+        # jps command failed, use ps and grep
+        ps_output=$(ps aux | grep java | grep -v grep | awk '{print $2" "$11}')
+        echo "$ps_output"
     fi
 }
 
@@ -453,7 +475,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.5.3
+  ./as.sh --use-version 3.6.8
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump

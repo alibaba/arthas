@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class VMOptionCommand extends AnnotatedCommand {
                     process.end(-1, "In order to change the system properties, you must specify the property value.");
                     return;
                 } else {
-                    process.appendResult(new VMOptionModel(Arrays.asList(option)));
+                    process.appendResult(new VMOptionModel(Collections.singletonList(option)));
                 }
             } else {
                 VMOption vmOption = hotSpotDiagnosticMXBean.getVMOption(name);

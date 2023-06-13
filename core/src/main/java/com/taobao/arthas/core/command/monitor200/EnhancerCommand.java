@@ -20,17 +20,13 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.Ansi;
-import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Option;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -51,6 +47,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected boolean verbose;
 
+    protected int maxNumOfMatchedClass;
+
     @Option(longName = "exclude-class-pattern")
     @Description("exclude class name pattern, use either '.' or '/' as separator")
     public void setExcludeClassPattern(String excludeClassPattern) {
@@ -67,6 +65,13 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     @Description("Enables print verbose information, default value false.")
     public void setVerbosee(boolean verbose) {
         this.verbose = verbose;
+    }
+
+    @Option(shortName = "m", longName = "maxMatch")
+    @DefaultValue("50")
+    @Description("The maximum of matched class.")
+    public void setMaxNumOfMatchedClass(int maxNumOfMatchedClass) {
+        this.maxNumOfMatchedClass = maxNumOfMatchedClass;
     }
 
     /**
@@ -165,7 +170,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
             // 注册通知监听器
             process.register(listener, enhancer);
-            effect = enhancer.enhance(inst);
+            effect = enhancer.enhance(inst, this.maxNumOfMatchedClass);
 
             if (effect.getThrowable() != null) {
                 String msg = "error happens when enhancing class: "+effect.getThrowable().getMessage();
@@ -176,6 +181,11 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
+                if (!StringUtils.isEmpty(effect.getOverLimitMsg())) {
+                    process.appendResult(new EnhancerModel(effect, false));
+                    process.end(-1);
+                    return;
+                }
                 // might be method code too large
                 process.appendResult(new EnhancerModel(effect, false, "No class or method is affected"));
 
@@ -189,8 +199,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                         + "1. Execute `" + smCommand + "` to make sure the method you are tracing actually exists (it might be in your parent class).\n"
                         + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
                         + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
-                        + "4. Check arthas log: " + logStr + "\n"
-                        + "5. Visit " + issueStr + " for more details.";
+                        + "4. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
+                        + "5. Check arthas log: " + logStr + "\n"
+                        + "6. Visit " + issueStr + " for more details.";
                 process.end(-1, msg);
                 return;
             }

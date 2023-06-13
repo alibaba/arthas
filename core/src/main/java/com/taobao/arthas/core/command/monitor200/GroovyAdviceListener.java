@@ -1,10 +1,10 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.ScriptSupportCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.advisor.Advice;
-import com.taobao.arthas.core.advisor.ArthasMethod;
 
 /**
  * Groovy support has been completed dropped in Arthas 3.0 because of severer memory leak.
@@ -39,7 +39,7 @@ public class GroovyAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
-        scriptListener.afterReturning(output, Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject));
+        scriptListener.afterReturning(output, Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject));
     }
 
     @Override

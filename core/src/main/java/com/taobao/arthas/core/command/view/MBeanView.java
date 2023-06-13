@@ -17,7 +17,6 @@ import java.util.Map;
 
 import static com.taobao.text.ui.Element.label;
 import static javax.management.MBeanOperationInfo.*;
-import static javax.management.MBeanOperationInfo.UNKNOWN;
 
 /**
  * View of 'mbean' command

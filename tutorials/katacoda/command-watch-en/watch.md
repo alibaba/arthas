@@ -11,7 +11,7 @@ There are four different scenarios for `watch` command, which makes it rather co
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|*expression*|expression to monitor|
+|*expression*|expression to watch, default value `{params, target, returnObj}`|
 |*condition-expression*|condition expression to filter|
 |[b]|before method being invoked|
 |[e]|when method encountering exceptions|
@@ -26,7 +26,7 @@ F.Y.I
 3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
 4. `in parameters` and `out parameters` are different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other *watching* points;
 5. there are no `return values` and `exceptions` when using `-b`.
-
+6. In the result of the watch command, the `location` information will be printed. There are three possible values for `location`: `AtEnter`, `AtExit`, and `AtExceptionExit`. Corresponding to the method entry, the method returns normally, and the method throws an exception.
 
 Advanced:
 * [Special usages](https://github.com/alibaba/arthas/issues/71)
@@ -34,28 +34,44 @@ Advanced:
 
 ### Usage
 
-#### Check the `out parameters` and `return value`
+#### Check the `out parameters`, `this` and `return value`
 
-`watch demo.MathGame primeFactors "{params,returnObj}" -x 2`{{execute T2}}
-
-Press `Q`{{execute T2}} or `Ctrl+C` to abort
+> The expression to watch, default value `{params, target, returnObj}`
 
 ```bash
-$ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
-ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
+$ watch demo.MathGame primeFactors -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 32 ms, listenerId: 5
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2021-08-31 15:22:57; [cost=0.220625ms] result=@ArrayList[
+    @Object[][
+        @Integer[-179173],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@31cefde0],
+        illegalArgumentCount=@Integer[44],
+    ],
+    null,
+]
+method=demo.MathGame.primeFactors location=AtExit
+ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
     @Object[][
         @Integer[1],
     ],
+    @MathGame[
+        random=@Random[java.util.Random@31cefde0],
+        illegalArgumentCount=@Integer[44],
+    ],
     @ArrayList[
-        @Integer[3],
-        @Integer[19],
-        @Integer[191],
-        @Integer[49199],
+        @Integer[2],
+        @Integer[2],
+        @Integer[26947],
     ],
 ]
 ```
+
+* In the above result, the method is executed twice, the first result is `location=AtExceptionExit`, indicating that the method throws an exception, so `returnObj` is null
+* In the second result is `location=AtExit`, indicating that the method returns normally, so you can see that the result of `returnObj` is an ArrayList
 
 #### Check `in parameters`
 
