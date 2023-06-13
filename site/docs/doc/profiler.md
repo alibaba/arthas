@@ -177,7 +177,7 @@ profiler start --framebuf 5000000
 
 ## 配置 include/exclude 来过滤数据
 
-如果应用比较复杂，生成的内容很多，想只关注部分 stack traces，可以通过 include/exclude 过滤 stack traces，include表示定义的匹配表达式必须出现在stack traces，相反exclude表示定义的匹配表达式一定不会出现在stack traces。 匹配表达式可以以*开始或者结束,*表示任何（可能为空）字符序列。 比如
+如果应用比较复杂，生成的内容很多，想只关注部分 stack traces，可以通过 include/exclude 过滤 stack traces，include 表示定义的匹配表达式必须出现在 stack traces，相反 exclude 表示定义的匹配表达式一定不会出现在 stack traces。 匹配表达式可以以*开始或者结束,*表示任何（可能为空）字符序列。 比如
 
 ```bash
 profiler start --include 'java/*' --include 'com/taobao/arthas/*' --exclude '*Unsafe.park*'
