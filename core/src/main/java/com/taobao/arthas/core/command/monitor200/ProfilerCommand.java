@@ -54,7 +54,7 @@ import one.profiler.Counter;
         + "  profiler stop --format html   # output file format, support html,jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
-        + "  profiler start --include 'java/*' --include 'demo/*' --exclude '*Unsafe.park*'\n"
+        + "  profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
         + "  profiler status\n"
         + "  profiler resume              # Start or resume profiling without resetting collected data.\n"
         + "  profiler getSamples          # Get the number of samples collected during the profiling session\n"
