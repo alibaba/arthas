@@ -185,7 +185,7 @@ If the application is complex and generates a lot of content, and you want to fo
 profiler start --include'java/*' --include 'com/taobao/arthas/*' --exclude'*Unsafe.park*'
 ```
 
-> Both include/exclude support setting multiple values, but need to be configured at the end of the command line.
+> Both `--include/--exclude` support setting multiple values, but need to be configured at the end of the command line.
 
 ## Specify execution time
 

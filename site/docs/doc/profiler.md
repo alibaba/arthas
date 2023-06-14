@@ -183,7 +183,7 @@ profiler start --framebuf 5000000
 profiler start --include 'java/*' --include 'com/taobao/arthas/*' --exclude '*Unsafe.park*'
 ```
 
-> include/exclude 都支持设置多个值 ，但是需要配置在命令行的最后。
+> `--include/--exclude` 都支持设置多个值 ，但是需要配置在命令行的最后。
 
 ## 指定执行时间
 
