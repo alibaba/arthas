@@ -62,6 +62,7 @@
         <module>spy</module>
         <module>arthas-vmtool</module>
         <module>tunnel-common</module>
+        <module>tunnel-rpc</module>
         <module>tunnel-client</module>
         <module>core</module>
         <module>agent</module>
