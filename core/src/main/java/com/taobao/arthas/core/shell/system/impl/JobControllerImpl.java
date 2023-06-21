@@ -215,6 +215,7 @@ public class JobControllerImpl implements JobController {
         injectHandler(stdoutHandlerChain, pipelineTokens);
         if (redirectHandler != null) {
             stdoutHandlerChain.add(redirectHandler);
+            term.write("redirect output file will be: " + redirectHandler.getFilePath()+"\n");
         } else {
             stdoutHandlerChain.add(new TermHandler(term));
             if (GlobalOptions.isSaveResult) {
