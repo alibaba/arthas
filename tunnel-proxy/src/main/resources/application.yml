@@ -3,7 +3,7 @@ logging:
     name: ${spring.application.name}
 
 server:
-  port: 9999
+  port: 8563
 
 spring:
   thymeleaf:

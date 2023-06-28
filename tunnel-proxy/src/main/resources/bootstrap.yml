@@ -1,19 +1,18 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
   application:
     name: arthas-tunnel-proxy
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     compatibility-verifier:
       enabled: false
     nacos:
       config:
         username: nacos
-        password: puyiwm
-        server-addr: 10.2.2.47:8848
+        password: nacos
+        server-addr: localhost:8848
         namespace: demo
         group: spring-cloud
-        service: ${spring.application.name}
         enabled: false
         metadata:
           user.name: ${spring.security.user.name}
@@ -21,7 +20,7 @@ spring:
 
 management:
   server:
-    port: 19999
+    port: 9563
   endpoints:
     web:
       base-path: /actuator
