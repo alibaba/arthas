@@ -6,8 +6,8 @@ function getUrlParam(name: string) {
   const urlparam = new URLSearchParams(window.location.search)
   return urlparam.get(name)
 }
-function tunnelWebConsoleLink(agentId: string, targetServer: string) {
-  return `/?targetServer=${targetServer}&agentId=${agentId}`;
+function tunnelWebConsoleLink(agentId: string, tunnelPort: number, targetServer: string) {
+  return `/?targetServer=${targetServer}&port=${tunnelPort}&agentId=${agentId}`;
 }
 
 const fetchMyApps = () => {
@@ -44,7 +44,7 @@ onMounted(() => {
       <tr v-for="(agentInfoRecord) in agentInfos" :key="agentInfoRecord[0]" class="hover">
         <td>
           <a class="btn btn-primary btn-sm"
-            :href="tunnelWebConsoleLink(agentInfoRecord[0], agentInfoRecord[1].clientConnectHost)">{{
+            :href="tunnelWebConsoleLink(agentInfoRecord[0], agentInfoRecord[1].clientConnectTunnelPort, agentInfoRecord[1].clientConnectHost)">{{
                 agentInfoRecord[1].host
             }}</a>
         </td>
