@@ -29,6 +29,7 @@
     "xterm-addon-webgl": "^0.13.0"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.16",
     "@types/node": "^18.7.2",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.7",

@@ -29,6 +29,7 @@ const outputHerf = computed(() => {
 const fitAddon = new FitAddon();
 const webglAddon = new WebglAddon();
 let xterm = new Terminal({ allowProposedApi: true })
+let agentIds = null
 
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
@@ -199,6 +200,54 @@ function requestFullScreen(element: HTMLElement) {
   }
 }
 
+function loadAuthorizedAgents() {
+  var result = reqApi("/api/arthas/access/agents", "get");
+  agents = result;
+  initServiceSelect("#selectServer", registerApplications, "");
+  $("#selectServer").change(function (e) {
+    var service = $('#selectServer option:selected').val();
+    selectServiceOnchange(service)
+  });
+}
+
+function loadOptionalService(id: string, list: string | any[], key: string) {
+  $(id).html('');
+  for (let i = 0; i < list.length; i++) {
+    $(id).append("<option value=" + list[i].service + ">" + list[i].service + "</option>");
+  }
+  registerServiceOnchangeEvent(list[0].service);
+}
+
+function registerServiceOnchangeEvent(service) {
+  var filter = agentIds.filter(p => p.service == service)[0];
+  var list = filter.agents;
+  $("#selectAgent").html('');
+  for (var i = 0; i < list.length; i++) {
+    var agent = list[i];
+    var opt = service + arthasAgentSplit + agent.id;
+    var text = agent.info.host + ':' + agent.info.port;
+    $("#selectAgent").append("<option value=" + opt + ">" + text + "</option>");
+  }
+}
+
+function reqApi(url: string, method: string) {
+  let result = null;
+  $.ajax({
+    url: url,
+    type: method,
+    async: true,
+    headers: {
+      'Content-Type': 'application/json;charset=utf8;',
+    },
+    success: function (data) {
+      result = data;
+    },
+    error: function (data) {
+      console.log("error");
+    }
+  });
+  return result;
+}
 </script>
 
 <template>
@@ -228,7 +277,7 @@ function requestFullScreen(element: HTMLElement) {
         </div>
         <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
             :src="arthasLogo" alt="Arthas" title="Welcome to Arthas web console"></a>
-
+        <span class="navbar-version" style="font-size: 18px">v3.6.7</span>
         <ul class="menu menu-vertical 2xl:menu-horizontal hidden">
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
@@ -270,18 +319,15 @@ function requestFullScreen(element: HTMLElement) {
         </div>
       </div>
       <div class="navbar-end">
-        <div class="btn-group   2xl:btn-group-horizontal btn-group-horizontal"
-        :class="{
-          'md:btn-group-vertical':isTunnel
-        }">
+        <div class="btn-group   2xl:btn-group-horizontal btn-group-horizontal">
           <button
             class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            @click.prevent="startConnect(true)">Connect</button>
+            @click.prevent="startConnect(true)">连接</button>
           <button
             class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            @click.prevent="disconnect">Disconnect</button>
+            @click.prevent="disconnect">断开</button>
           <a class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            :href="outputHerf" target="_blank">Arthas Output</a>
+            :href="outputHerf" target="_blank">火焰图</a>
         </div>
       </div>
     </nav>
