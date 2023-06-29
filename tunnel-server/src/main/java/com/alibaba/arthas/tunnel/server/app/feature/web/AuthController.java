@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.arthas.tunnel.server.feature.web;
+package com.alibaba.arthas.tunnel.server.app.feature.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

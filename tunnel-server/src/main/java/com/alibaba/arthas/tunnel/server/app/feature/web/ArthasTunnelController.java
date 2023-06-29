@@ -1,16 +1,16 @@
-package com.alibaba.arthas.tunnel.server.feature.web;
+package com.alibaba.arthas.tunnel.server.app.feature.web;
 
 import com.alibaba.arthas.tunnel.server.AgentInfo;
 import com.alibaba.arthas.tunnel.server.TunnelServer;
-import com.alibaba.arthas.tunnel.server.feature.env.ArthasTunnelProperties;
-import com.alibaba.arthas.tunnel.server.feature.model.ArthasAgent;
-import com.alibaba.arthas.tunnel.server.feature.model.ArthasAgentGroup;
+import com.alibaba.arthas.tunnel.server.app.feature.env.ArthasTunnelProperties;
+import com.alibaba.arthas.tunnel.server.app.feature.model.ArthasAgent;
+import com.alibaba.arthas.tunnel.server.app.feature.model.ArthasAgentGroup;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,17 +35,22 @@ public class ArthasTunnelController {
 
     private final ArthasTunnelProperties arthasTunnelProperties;
 
-    private final ReactiveUserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @GetMapping(value = "/arthas/access/agents")
     public List<ArthasAgentGroup> getAgents(Principal principal) {
-        Set<String> roles = getCurrentUserRole(principal.getName());
+            Set<String> roles = getCurrentUserRole(principal.getName());
         if (roles.isEmpty()) {
             return Collections.emptyList();
         }
         boolean isSuperUser = isSuperAdmin(roles);
 
         Map<String, AgentInfo> agentInfoMap = tunnelServer.getAgentInfoMap();
+        AgentInfo testInfo = new AgentInfo();
+        testInfo.setHost("localhost");
+        testInfo.setPort(8080);
+        agentInfoMap.put("test", testInfo);
+
         Map<String, List<ArthasAgent>> map = new HashMap<>(16);
         agentInfoMap.forEach((k, v) -> {
             String[] split = k.split(arthasTunnelProperties.getAgentSpilt(), 2);
@@ -77,11 +82,11 @@ public class ArthasTunnelController {
             return Collections.emptySet();
         }
 
-        UserDetails u = userDetailsService.findByUsername(userName).block();
-        if (u == null) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+        if (userDetails == null) {
             return Collections.emptySet();
         }
-        return u.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+        return userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .filter(Objects::nonNull).collect(Collectors.toSet());
     }
 

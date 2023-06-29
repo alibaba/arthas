@@ -1,4 +1,4 @@
-package com.alibaba.arthas.tunnel.server.feature.security;
+package com.alibaba.arthas.tunnel.server.app.feature.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

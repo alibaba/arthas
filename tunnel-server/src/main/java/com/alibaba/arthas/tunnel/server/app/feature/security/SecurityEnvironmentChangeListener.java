@@ -1,7 +1,6 @@
-package com.alibaba.arthas.tunnel.server.feature.security;
+package com.alibaba.arthas.tunnel.server.app.feature.security;
 
-import com.alibaba.arthas.tunnel.proxy.config.env.TunnelProperties;
-import com.alibaba.arthas.tunnel.proxy.web.security.TunnelReactiveUserDetailsService;
+import com.alibaba.arthas.tunnel.server.app.feature.env.ArthasTunnelProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -22,7 +21,7 @@ import java.util.Set;
 @Component
 public class SecurityEnvironmentChangeListener implements ApplicationListener<EnvironmentChangeEvent> {
 
-    private final TunnelReactiveUserDetailsService userDetailsService;
+    private final ArthasUserDetailsService userDetailsService;
 
     private final TaskExecutor taskExecutor;
 
@@ -38,7 +37,7 @@ public class SecurityEnvironmentChangeListener implements ApplicationListener<En
     private boolean checkSecurityUsersChanged(EnvironmentChangeEvent event) {
         Set<String> keys = event.getKeys();
         for (String key : keys) {
-            if (key.startsWith(TunnelProperties.PREFIX)) {
+            if (key.startsWith(ArthasTunnelProperties.PREFIX)) {
                 return true;
             }
         }

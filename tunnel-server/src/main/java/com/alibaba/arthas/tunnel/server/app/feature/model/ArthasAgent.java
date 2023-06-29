@@ -1,13 +1,12 @@
-package com.alibaba.arthas.tunnel.server.feature.model;
+package com.alibaba.arthas.tunnel.server.app.feature.model;
 
+import com.alibaba.arthas.tunnel.server.AgentInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.List;
-
 /**
- * Arthas Agent 分组
+ * Arthas Agent
  *
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 3.6.7
@@ -15,9 +14,9 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 @Data
-public class ArthasAgentGroup {
+public class ArthasAgent {
 
-    private String service;
+    private String id;
 
-    private List<ArthasAgent> agents;
+    private AgentInfo info;
 }

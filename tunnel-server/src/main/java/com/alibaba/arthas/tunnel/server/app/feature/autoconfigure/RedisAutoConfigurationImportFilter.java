@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.arthas.tunnel.server.feature.autoconfigure;
+package com.alibaba.arthas.tunnel.server.app.feature.autoconfigure;
 
 import org.springframework.boot.autoconfigure.AutoConfigurationImportFilter;
 import org.springframework.boot.autoconfigure.AutoConfigurationMetadata;

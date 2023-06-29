@@ -6,6 +6,7 @@ import { WebglAddon } from "xterm-addon-webgl"
 import { MenuAlt2Icon } from "@heroicons/vue/outline"
 import fullPic from "~/assert/fullsc.png"
 import arthasLogo from "~/assert/arthas.png"
+import {list} from "postcss";
 const { isTunnel = false } = defineProps<{
   isTunnel?: boolean
 }>()
@@ -29,7 +30,6 @@ const outputHerf = computed(() => {
 const fitAddon = new FitAddon();
 const webglAddon = new WebglAddon();
 let xterm = new Terminal({ allowProposedApi: true })
-let agentIds = null
 
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
@@ -200,38 +200,8 @@ function requestFullScreen(element: HTMLElement) {
   }
 }
 
-function loadAuthorizedAgents() {
-  var result = reqApi("/api/arthas/access/agents", "get");
-  agents = result;
-  initServiceSelect("#selectServer", registerApplications, "");
-  $("#selectServer").change(function (e) {
-    var service = $('#selectServer option:selected').val();
-    selectServiceOnchange(service)
-  });
-}
-
-function loadOptionalService(id: string, list: string | any[], key: string) {
-  $(id).html('');
-  for (let i = 0; i < list.length; i++) {
-    $(id).append("<option value=" + list[i].service + ">" + list[i].service + "</option>");
-  }
-  registerServiceOnchangeEvent(list[0].service);
-}
-
-function registerServiceOnchangeEvent(service) {
-  var filter = agentIds.filter(p => p.service == service)[0];
-  var list = filter.agents;
-  $("#selectAgent").html('');
-  for (var i = 0; i < list.length; i++) {
-    var agent = list[i];
-    var opt = service + arthasAgentSplit + agent.id;
-    var text = agent.info.host + ':' + agent.info.port;
-    $("#selectAgent").append("<option value=" + opt + ">" + text + "</option>");
-  }
-}
-
-function reqApi(url: string, method: string) {
-  let result = null;
+function ajaxRequest(url: string, method: string) {
+  let result;
   $.ajax({
     url: url,
     type: method,
@@ -248,6 +218,33 @@ function reqApi(url: string, method: string) {
   });
   return result;
 }
+
+/*function loadAuthorizedAgents() {
+  let agents = ajaxRequest("/api/arthas/access/agents", "get");
+  if (agents == null) {
+    return;
+  }
+
+  const serviceElementId = '#service';
+  $(serviceElementId).html('');
+  for (let i = 0; i < agents.length; i++) {
+    $(serviceElementId).append("<option value=" + agents[i].service + ">" + agents[i].service + "</option>");
+  }
+
+  const agentElementId = 'agent';
+  $(serviceElementId).change(function (e) {
+    const service = $(serviceElementId + ' option:selected').val();
+    const filter = agents.filter(p => p.service == service)[0];
+    const agentList = filter.agents;
+    $(agentElementId).html('');
+    for (let i = 0; i < agentList.length; i++) {
+      const agent = agentList[i];
+      const opt = service + '@' + agent.id;
+      const text = agent.info.host + ':' + agent.info.port;
+      $(agentElementId).append("<option value=" + opt + ">" + text + "</option>");
+    }
+  });
+}*/
 </script>
 
 <template>
@@ -297,15 +294,15 @@ function reqApi(url: string, method: string) {
 
       </div>
       <div class="navbar-center ">
-        <div class=" xl:flex-row form-control"        
-        :class="{
+        <div class=" xl:flex-row form-control"
+             :class="{
           'xl:flex-row':isTunnel,
           'lg:flex-row':!isTunnel
         }">
           <label class="input-group input-group-sm mr-2">
             <span>IP</span>
             <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
-              v-model="ip" />
+                   v-model="ip" />
           </label>
           <label class="input-group input-group-sm mr-2">
             <span>Port</span>
@@ -314,20 +311,20 @@ function reqApi(url: string, method: string) {
           <label v-if="isTunnel" class="input-group input-group-sm mr-2">
             <span>AgentId</span>
             <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
-              v-model="agentID" />
+                   v-model="agentID" />
           </label>
         </div>
       </div>
       <div class="navbar-end">
-        <div class="btn-group   2xl:btn-group-horizontal btn-group-horizontal">
+        <div class="btn-group 2xl:btn-group-horizontal btn-group-horizontal">
           <button
-            class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            @click.prevent="startConnect(true)">连接</button>
+              class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
+              @click.prevent="startConnect(true)">Connect</button>
           <button
-            class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            @click.prevent="disconnect">断开</button>
+              class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
+              @click.prevent="disconnect">Disconnect</button>
           <a class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-            :href="outputHerf" target="_blank">火焰图</a>
+             :href="outputHerf" target="_blank">Arthas Output</a>
         </div>
       </div>
     </nav>

@@ -1,6 +1,6 @@
-package com.alibaba.arthas.tunnel.server.feature.autoconfigure;
+package com.alibaba.arthas.tunnel.server.app.feature.autoconfigure;
 
-import com.alibaba.arthas.tunnel.server.feature.env.ArthasTunnelProperties;
+import com.alibaba.arthas.tunnel.server.app.feature.env.ArthasTunnelProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

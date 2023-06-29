@@ -1,17 +1,16 @@
-package com.alibaba.arthas.tunnel.server.feature.security;
+package com.alibaba.arthas.tunnel.server.app.feature.security;
 
-import com.alibaba.arthas.tunnel.server.feature.env.ArthasTunnelProperties;
+import com.alibaba.arthas.tunnel.server.app.feature.env.ArthasTunnelProperties;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
@@ -21,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * 自定义 ReactiveUserDetailsService
+ * 自定义 UserDetailsService
  *
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 3.6.6
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class TunnelReactiveUserDetailsService implements ReactiveUserDetailsService {
+public class ArthasUserDetailsService implements UserDetailsService {
 
     private final Map<String, UserDetails> users = new ConcurrentHashMap<>();
 
@@ -38,10 +37,9 @@ public class TunnelReactiveUserDetailsService implements ReactiveUserDetailsServ
     private final SecurityUserHelper securityUserHelper;
 
     @Override
-    public Mono<UserDetails> findByUsername(String username) {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String key = getKey(username);
-        UserDetails result = this.users.get(key);
-        return (result != null) ? Mono.just(User.withUserDetails(result).build()) : Mono.empty();
+        return this.users.get(key);
     }
 
     @PostConstruct
