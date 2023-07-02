@@ -51,7 +51,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>arthas-all</name>
+    <name>arthas</name>
     <description>arthas</description>
     <url>https://github.com/alibaba/arthas</url>
 

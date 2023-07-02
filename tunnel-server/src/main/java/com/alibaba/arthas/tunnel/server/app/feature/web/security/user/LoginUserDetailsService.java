@@ -1,11 +1,10 @@
-package com.alibaba.arthas.tunnel.server.app.feature.security;
+package com.alibaba.arthas.tunnel.server.app.feature.web.security.user;
 
-import com.alibaba.arthas.tunnel.server.app.feature.env.ArthasTunnelProperties;
+import com.alibaba.arthas.tunnel.server.app.feature.env.SecurityProperties;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,11 +27,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class ArthasUserDetailsService implements UserDetailsService {
+public class LoginUserDetailsService implements UserDetailsService {
 
     private final Map<String, UserDetails> users = new ConcurrentHashMap<>();
 
-    private final ArthasTunnelProperties arthasTunnelProperties;
+    private final SecurityProperties securityProperties;
 
     private final SecurityUserHelper securityUserHelper;
 
@@ -48,12 +47,14 @@ public class ArthasUserDetailsService implements UserDetailsService {
     }
 
     public void refreshUsers() {
-        Set<SecurityProperties.User> users = arthasTunnelProperties.getUsers();
+        Set<org.springframework.boot.autoconfigure.security.SecurityProperties.User> users = securityProperties.getUsers();
         if (CollectionUtils.isEmpty(users)) {
             return;
         }
 
-        Set<UserDetails> userDetails = users.stream().map(securityUserHelper::getUserDetails).collect(Collectors.toSet());
+        Set<UserDetails> userDetails = users.stream()
+                .map(securityUserHelper::getUserDetails)
+                .collect(Collectors.toSet());
         resetUsers(userDetails);
     }
 

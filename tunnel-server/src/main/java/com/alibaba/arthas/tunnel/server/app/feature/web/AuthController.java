@@ -16,8 +16,16 @@
 
 package com.alibaba.arthas.tunnel.server.app.feature.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.alibaba.arthas.tunnel.server.app.feature.dto.SingleResponse;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenService;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.token.AccessToken;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.user.LoginUserDetails;
+import com.google.common.collect.Maps;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 认证控制器
@@ -25,16 +33,16 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 2.4.x
  */
-@Controller
+@RequiredArgsConstructor
+@Slf4j
+@RestController
 public class AuthController {
 
-    @GetMapping("/login")
-    public String toLogin() {
-        return "login";
-    }
+    private final JwtTokenService jwtTokenService;
 
-    @GetMapping("/logout")
-    public String logout() {
-        return "login";
+    @PostMapping("/api/auth")
+    public SingleResponse<AccessToken> authenticate(@RequestBody LoginUserDetails user) {
+        AccessToken accessToken = jwtTokenService.authenticate(user, Maps.newHashMap());
+        return SingleResponse.of(accessToken);
     }
 }

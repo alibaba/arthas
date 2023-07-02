@@ -1,4 +1,4 @@
-package com.alibaba.arthas.tunnel.server.app.feature.model;
+package com.alibaba.arthas.tunnel.server.app.feature.dto;
 
 import com.alibaba.arthas.tunnel.server.AgentInfo;
 import lombok.Data;
