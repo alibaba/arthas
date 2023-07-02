@@ -11,6 +11,7 @@
 /nb-configuration.xml
 **/target
 core/src/main/resources/com/taobao/arthas/core/res/version
+tunnel-server/src/main/resources/static
 **/*.orig
 
 site/src/site/sphinx/_build

@@ -115,5 +115,5 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 :exit_bat
-if %exitProcess%==1 exit %ERROR_CODE%
+if "%exitProcess%"=="1" exit %ERROR_CODE%
 exit /B %ERROR_CODE%

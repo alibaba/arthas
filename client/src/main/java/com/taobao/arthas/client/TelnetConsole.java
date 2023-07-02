@@ -215,7 +215,7 @@ public class TelnetConsole {
 
         if (telnetConsole.isHelp()) {
             System.out.println(usage(cli));
-            return STATUS_ERROR;
+            return STATUS_OK;
         }
 
         // Try to read cmds

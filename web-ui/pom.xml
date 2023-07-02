@@ -12,8 +12,7 @@
     <packaging>pom</packaging>
 
     <name>web-ui</name>
-    <!-- FIXME change it to the project's website -->
-    <!--    <url>http://www.example.com</url>-->
+    <url>https://github.com/alibaba/arthas</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -71,12 +70,21 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>vite build</id>
+                        <id>vite build:ui</id>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
                         <configuration>
-                            <arguments>vite build</arguments>
+                            <arguments>vite build --mode ui</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>vite build:tunnel</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>vite build --mode tunnel</arguments>
                         </configuration>
                     </execution>
                 </executions>

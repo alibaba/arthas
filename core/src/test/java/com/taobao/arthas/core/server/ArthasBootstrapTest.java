@@ -3,13 +3,14 @@ package com.taobao.arthas.core.server;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Field;
 
 import org.jboss.modules.ModuleClassLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.FieldSetter;
 
+import com.alibaba.bytekit.utils.ReflectionUtils;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.core.bytecode.TestHelper;
 import com.taobao.arthas.core.config.Configure;
@@ -40,9 +41,13 @@ public class ArthasBootstrapTest {
         Configure configure = Mockito.mock(Configure.class);
         Mockito.when(configure.getEnhanceLoaders())
                 .thenReturn("java.lang.ClassLoader,org.jboss.modules.ConcurrentClassLoader");
-        FieldSetter.setField(arthasBootstrap, ArthasBootstrap.class.getDeclaredField("configure"), configure);
-        FieldSetter.setField(arthasBootstrap, ArthasBootstrap.class.getDeclaredField("instrumentation"),
-                instrumentation);
+        Field configureField = ArthasBootstrap.class.getDeclaredField("configure");
+        configureField.setAccessible(true);
+        ReflectionUtils.setField(configureField, arthasBootstrap, configure);
+
+        Field instrumentationField = ArthasBootstrap.class.getDeclaredField("instrumentation");
+        instrumentationField.setAccessible(true);
+        ReflectionUtils.setField(instrumentationField, arthasBootstrap, instrumentation);
 
         org.jboss.modules.ModuleClassLoader moduleClassLoader = Mockito.mock(ModuleClassLoader.class);
 

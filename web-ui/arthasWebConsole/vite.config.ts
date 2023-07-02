@@ -5,25 +5,59 @@ import * as path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const proxyTarget =`${env.VITE_ARTHAS_PROXY_IP}:${env.VITE_ARTHAS_PROXY_PORT}`;
+  const proxyTarget =
+    `${env.VITE_ARTHAS_PROXY_IP}:${env.VITE_ARTHAS_PROXY_PORT}`;
+
   console.log("Arthas proxy :", proxyTarget);
+  let outDir, input, root, proxy, base;
+
+  if (mode === "tunnel") {
+    outDir = path.resolve(__dirname, `dist/tunnel`);
+    root = "./all/tunnel";
+    base = "./"
+    input = {
+      tunnel: path.resolve(__dirname, "all/tunnel/index.html"),
+      apps: path.resolve(__dirname, "all/tunnel/apps.html"),
+      agents: path.resolve(__dirname, "all/tunnel/agents.html"),
+    };
+    proxy = {
+      "/api": {
+        target: `http://${proxyTarget}`,
+        changeOrigin: true,
+      },
+    };
+  } else if (mode === "ui") {
+    outDir = path.resolve(__dirname, `dist/ui`);
+    base = "/"
+    root = "./all/ui";
+    input = {
+      main: path.resolve(__dirname, "all/ui/index.html"),
+      ui: path.resolve(__dirname, "all/ui/ui/index.html"),
+    };
+    proxy = {
+      "/api": {
+        target: `http://${proxyTarget}`,
+        changeOrigin: true,
+      },
+    };
+  }
+
   return {
     plugins: [vue({
-      reactivityTransform: true,
+      reactivityTransform: path.resolve(__dirname, "all/ui"),
     })],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./ui/src/"),
+        "@": path.resolve(__dirname, "all/ui/ui/src"),
+        "~": path.resolve(__dirname, "all/share"),
       },
     },
     build: {
       emptyOutDir: true,
+      outDir,
       minify: "esbuild",
       rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, "index.html"),
-          ui: path.resolve(__dirname, "ui/index.html"),
-        },
+        input,
         output: {
           chunkFileNames: "static/js/[name]-[hash].js",
           entryFileNames: "static/js/[name]-[hash].js",
@@ -37,14 +71,11 @@ export default defineConfig(({ mode }) => {
     define: {
       "__VUE_OPTIONS_API__": false,
     },
-    base: "/",
+    base,
+    publicDir: path.resolve(__dirname, "all/share/public"),
+    root,
     server: {
-      proxy: {
-        "/api": {
-          target: `http://${proxyTarget}`,
-          changeOrigin: true,
-        }
-      },
+      proxy
     },
   };
 });
