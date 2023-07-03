@@ -2,28 +2,30 @@ package com.alibaba.arthas.tunnel.server.app.feature.autoconfigure;
 
 import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
 import com.alibaba.arthas.tunnel.server.app.feature.env.SecurityProperties;
-import com.alibaba.arthas.tunnel.server.app.feature.web.security.filter.JwtAuthorizationFilter;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.handler.ForbiddenAccessDeniedHandler;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.handler.UnauthorizedEntryPoint;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.config.JwtSecurityConfigurer;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.filter.JwtAuthorizationFilter;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenProvider;
-import com.alibaba.arthas.tunnel.server.app.feature.web.security.user.LoginUserDetailsService;
-import com.alibaba.arthas.tunnel.server.app.feature.web.security.user.SecurityUserHelper;
+import com.alibaba.nacos.common.utils.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 /**
  * Web 自定义授权配置
@@ -39,31 +41,39 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration(proxyBeanMethods = false)
 public class WebSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    private final SecurityProperties securityProperties;
 
     private final ArthasProperties arthasProperties;
 
     private final CorsFilter corsFilter;
 
-    private final AuthenticationManager authenticationManager;
-
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final UserDetailsService userDetailsService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+        httpSecurity.csrf().disable()
+                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(new UnauthorizedEntryPoint())
                 .accessDeniedHandler(new ForbiddenAccessDeniedHandler())
                 .and()
-                .authorizeRequests()
-                .antMatchers("/api/auth/*").permitAll()
-                .anyRequest().authenticated()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .httpBasic()
                 .and()
                 .apply(securityConfigurationAdapter());
+
+        if (CollectionUtils.isNotEmpty(securityProperties.getAnonymousUrls())) {
+            List<String> anonymousUrls = securityProperties.getAnonymousUrls();
+            String[] urls = anonymousUrls.toArray(new String[0]);
+            httpSecurity.authorizeRequests().antMatchers(urls).anonymous();
+        }
+
+        httpSecurity.authorizeRequests().anyRequest().authenticated();
 
         // allow iframe
         if (arthasProperties.isEnableIframeSupport()) {
@@ -77,15 +87,18 @@ public class WebSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(SecurityProperties securityProperties,
-                                                 SecurityUserHelper securityUserHelper) {
-        return new LoginUserDetailsService(securityProperties, securityUserHelper);
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+    }
+
+    @Override
+    protected UserDetailsService userDetailsService() {
+        return userDetailsService;
     }
 
     private JwtSecurityConfigurer securityConfigurationAdapter() {
-        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(authenticationManager,
-                jwtTokenProvider, antPathMatcher);
+        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(jwtTokenProvider);
         return new JwtSecurityConfigurer(filter);
     }
 }

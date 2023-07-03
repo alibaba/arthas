@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.regex.Pattern;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Component
 public class SecurityUserHelper {
 
     private static final String NOOP_PASSWORD_PREFIX = "{noop}";

@@ -18,8 +18,6 @@ package com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.config;
 
 import lombok.*;
 
-import java.util.List;
-
 /**
  * JWT 配置
  *
@@ -43,10 +41,4 @@ public class JwtConfig {
 	private long tokenValidityInSecondsForRememberMe = 2592000;
 
 	private String header = "Authorization";
-
-	private List<String> anonymousUrls;
-
-	private List<String> permitAllUrls;
-
-	private List<String> authenticatedUrls;
 }

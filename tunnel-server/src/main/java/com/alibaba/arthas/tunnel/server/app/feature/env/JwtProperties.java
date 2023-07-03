@@ -19,8 +19,6 @@ package com.alibaba.arthas.tunnel.server.app.feature.env;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
-
 /**
  * JWT 配置
  *
@@ -42,10 +40,4 @@ public class JwtProperties {
 	private long tokenValidityInSeconds = 1800;
 
 	private long tokenValidityInSecondsForRememberMe = 2592000;
-
-	private List<String> anonymousUrls;
-
-	private List<String> permitAllUrls;
-
-	private List<String> authenticatedUrls;
 }

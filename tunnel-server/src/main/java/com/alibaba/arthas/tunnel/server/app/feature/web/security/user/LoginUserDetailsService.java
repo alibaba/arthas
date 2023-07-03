@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Component
 public class LoginUserDetailsService implements UserDetailsService {
 
     private final Map<String, UserDetails> users = new ConcurrentHashMap<>();
@@ -47,7 +45,8 @@ public class LoginUserDetailsService implements UserDetailsService {
     }
 
     public void refreshUsers() {
-        Set<org.springframework.boot.autoconfigure.security.SecurityProperties.User> users = securityProperties.getUsers();
+        Set<org.springframework.boot.autoconfigure.security.SecurityProperties.User> users =
+                securityProperties.getUsers();
         if (CollectionUtils.isEmpty(users)) {
             return;
         }

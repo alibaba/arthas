@@ -1,6 +1,6 @@
 package com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.config;
 
-import com.alibaba.arthas.tunnel.server.app.feature.web.security.filter.JwtAuthorizationFilter;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.filter.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
