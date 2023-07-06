@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication(scanBasePackages = { "com.alibaba.arthas.tunnel.server.app",
-        "com.alibaba.arthas.tunnel.server.endpoint" })
+        "com.alibaba.arthas.tunnel.server.endpoint", "com.alibaba.arthas.tunnel.rpc"})
 @EnableCaching
 public class ArthasTunnelApplication {
 

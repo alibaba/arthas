@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.alibaba.arthas.tunnel.rpc.grpc.auto";
+
+message Metadata {
+  string type = 3;
+  string clientIp = 8;
+  map<string, string> headers = 7;
+}
+
+message Payload {
+  Metadata metadata = 2;
+  google.protobuf.Any body = 3;
+}
+
+service Request {
+  // Sends a commonRequest
+  rpc request (Payload) returns (Payload) {
+  }
+}
+
+service BiRequestStream {
+  // Sends a biStreamRequest
+  rpc requestBiStream (stream Payload) returns (stream Payload) {
+  }
+}
