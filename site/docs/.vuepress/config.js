@@ -91,7 +91,7 @@ export default defineUserConfig({
             .map((page) => [
               page.path.replace(/^\/en\/doc\//, "/doc/en/"),
               page.path,
-            ])
+            ]),
         );
 
         delete redirects["/doc/en/"];

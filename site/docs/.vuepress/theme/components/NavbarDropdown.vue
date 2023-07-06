@@ -16,7 +16,7 @@ const props = defineProps({
 const { item } = toRefs(props);
 
 const dropdownAriaLabel = computed(
-  () => item.value.ariaLabel || item.value.text
+  () => item.value.ariaLabel || item.value.text,
 );
 
 const open = ref(false);
@@ -25,7 +25,7 @@ watch(
   () => route.path,
   () => {
     open.value = false;
-  }
+  },
 );
 
 /**
