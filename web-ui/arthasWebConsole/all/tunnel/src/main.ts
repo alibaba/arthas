@@ -1,7 +1,8 @@
 import { createApp, h } from "vue";
-import App from "~/component/Console.vue";
+import App from "./App.vue";
 const app = createApp(h(App, { isTunnel: true }));
 import "xterm/css/xterm.css";
 import "~/main.css";
-app
-  .mount("#app");
+import router from "./router/router";
+
+app.use(router).mount("#app");

@@ -21,7 +21,7 @@ public class SecurityProperties {
 
     private Set<org.springframework.boot.autoconfigure.security.SecurityProperties.User> users;
 
-    private List<String> anonymousUrls = Lists.newArrayList("/api/auth");
+    private List<String> anonymousUrls = Lists.newArrayList();
 
     private List<String> permitAllUrls;
 

@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -62,13 +62,14 @@ public class JwtAutoConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(SecurityUserHelper securityUserHelper) {
-        return new LoginUserDetailsService(securityProperties, securityUserHelper);
+    public UserDetailsService userDetailsService(SecurityUserHelper securityUserHelper,
+                                                 PasswordEncoder passwordEncoder) {
+        return new LoginUserDetailsService(securityProperties, securityUserHelper, passwordEncoder);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

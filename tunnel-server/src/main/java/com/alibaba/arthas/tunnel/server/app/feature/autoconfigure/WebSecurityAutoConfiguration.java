@@ -7,7 +7,6 @@ import com.alibaba.arthas.tunnel.server.app.feature.web.security.handler.Unautho
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.config.JwtSecurityConfigurer;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.filter.JwtAuthorizationFilter;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenProvider;
-import com.alibaba.nacos.common.utils.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,8 +23,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
-
-import java.util.List;
 
 /**
  * Web 自定义授权配置
@@ -67,13 +64,16 @@ public class WebSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .apply(securityConfigurationAdapter());
 
-        if (CollectionUtils.isNotEmpty(securityProperties.getAnonymousUrls())) {
+        httpSecurity.authorizeRequests()
+                .antMatchers("/api/auth").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .anyRequest().permitAll();
+
+        /*if (CollectionUtils.isNotEmpty(securityProperties.getAnonymousUrls())) {
             List<String> anonymousUrls = securityProperties.getAnonymousUrls();
             String[] urls = anonymousUrls.toArray(new String[0]);
             httpSecurity.authorizeRequests().antMatchers(urls).anonymous();
-        }
-
-        httpSecurity.authorizeRequests().anyRequest().authenticated();
+        }*/
 
         // allow iframe
         if (arthasProperties.isEnableIframeSupport()) {

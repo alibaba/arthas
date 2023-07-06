@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -33,10 +34,11 @@ public class LoginUserDetailsService implements UserDetailsService {
 
     private final SecurityUserHelper securityUserHelper;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String key = getKey(username);
-        return this.users.get(key);
+        return this.users.get(username);
     }
 
     @PostConstruct
@@ -67,11 +69,12 @@ public class LoginUserDetailsService implements UserDetailsService {
                 continue;
             }
             log.info("Add user, username = {}, password = {}", user.getUsername(), password);
-            this.users.put(getKey(user.getUsername()), user);
+            this.users.put(user.getUsername(),
+                    LoginUserDetails.builder()
+                            .username(user.getUsername())
+                            .password(passwordEncoder.encode(user.getPassword()))
+                            .authorities(user.getAuthorities())
+                            .build());
         }
-    }
-
-    private String getKey(String username) {
-        return username.toLowerCase();
     }
 }

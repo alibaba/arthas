@@ -23,6 +23,7 @@
     "pinia": "^2.0.15",
     "vue": "^3.2.25",
     "vue-router": "4",
+    "vuex": "^4.1.0",
     "xstate": "^4.32.1",
     "xterm": "^5.0.0",
     "xterm-addon-fit": "^0.6.0",

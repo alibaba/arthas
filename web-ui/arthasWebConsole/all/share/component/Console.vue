@@ -6,7 +6,6 @@ import { WebglAddon } from "xterm-addon-webgl"
 import { MenuAlt2Icon } from "@heroicons/vue/outline"
 import fullPic from "~/assert/fullsc.png"
 import arthasLogo from "~/assert/arthas.png"
-import {list} from "postcss";
 const { isTunnel = false } = defineProps<{
   isTunnel?: boolean
 }>()
@@ -158,7 +157,6 @@ function startConnect(silent: boolean = false) {
     // init webSocket
     initWs(silent);
   }
-
 }
 
 function disconnect() {
@@ -198,25 +196,6 @@ function requestFullScreen(element: HTMLElement) {
       wscript.SendKeys("{F11}");
     }
   }
-}
-
-function ajaxRequest(url: string, method: string) {
-  let result;
-  $.ajax({
-    url: url,
-    type: method,
-    async: true,
-    headers: {
-      'Content-Type': 'application/json;charset=utf8;',
-    },
-    success: function (data) {
-      result = data;
-    },
-    error: function (data) {
-      console.log("error");
-    }
-  });
-  return result;
 }
 
 /*function loadAuthorizedAgents() {
