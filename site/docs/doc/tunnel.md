@@ -106,9 +106,11 @@ Tunnel server 会以`_`做分隔符，提取出`appName`，方便按应用进行
 ## Tunnel Server 的管理页面
 
 ::: tip
-需要在 spring boot 的`application.properties`里配置 `arthas.enable-detail-pages=true`
+需要在 tunnel-server 的`application.properties`里配置 `arthas.enable-detail-pages=true`，也可以用命令行参数指定： `java -Darthas.enable-detail-pages=true -jar arthas-tunnel-server.jar`
 
-**注意，开放管理页面有风险！管理页面没有安全拦截功能，务必自行增加安全措施。**
+支持的配置项： [tunnel-server application.properties](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/resources/application.properties)
+
+**注意，开放管理页面有风险！管理页面没有安全拦截功能，务必自行增加安全措施，不要开放到公网。**
 :::
 
 在本地启动 tunnel-server，然后使用`as.sh` attach，并且指定应用名`--app-name test`：
