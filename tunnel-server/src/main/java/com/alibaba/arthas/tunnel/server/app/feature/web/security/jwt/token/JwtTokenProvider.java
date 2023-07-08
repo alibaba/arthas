@@ -20,12 +20,14 @@ import com.alibaba.arthas.tunnel.server.app.feature.web.security.exception.Unaut
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.config.JwtConfig;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.constant.JwtConstants;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.token.AccessToken;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.util.ServletUtils;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +36,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -157,5 +160,19 @@ public class JwtTokenProvider implements InitializingBean {
 
 	public Claims parseClaims(AccessToken accessToken) {
 		return jwtParser.parseClaimsJws(accessToken.getValue()).getBody();
+	}
+
+	public String getUsername() {
+		HttpServletRequest request = ServletUtils.getRequest();
+		String bearerToken = request.getHeader(jwtConfig.getHeader());
+		if (StringUtils.isBlank(bearerToken) ||
+				!bearerToken.startsWith(JwtConstants.BEARER_PREFIX)) {
+			return null;
+		}
+		AccessToken accessToken = AccessToken.builder()
+					.value(bearerToken.substring(JwtConstants.BEARER_PREFIX.length()))
+					.build();
+		Authentication authentication = getAuthentication(accessToken);
+		return authentication.getName();
 	}
 }

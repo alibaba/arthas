@@ -46,7 +46,7 @@ export default defineComponent({
           const json = await response.json()
           sessionStorage.setItem('username', form.value.username)
           sessionStorage.setItem('token', json.data.value)
-          router.push('/')
+          await router.push('/')
         } else {
           alert('登录失败')
         }

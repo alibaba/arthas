@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref, computed  } from "vue";
-import { Terminal } from "xterm"
-import { FitAddon } from 'xterm-addon-fit';
-import { WebglAddon } from "xterm-addon-webgl"
-import { MenuAlt2Icon } from "@heroicons/vue/outline"
+import {computed, onMounted, reactive, ref, watchEffect} from "vue";
+import {Terminal} from "xterm"
+import {FitAddon} from 'xterm-addon-fit';
+import {WebglAddon} from "xterm-addon-webgl"
+import {MenuAlt2Icon} from "@heroicons/vue/outline"
 import fullPic from "~/assert/fullsc.png"
 import arthasLogo from "~/assert/arthas.png"
-const { isTunnel = false } = defineProps<{
-  isTunnel?: boolean
-}>()
-
+// const { isTunnel = false } = defineProps<{
+//   isTunnel?: boolean
+// }>()
+const isTunnel = import.meta.env.MODE === 'tunnel';
 let ws: WebSocket | undefined;
 let intervalReadKey = -1
 const DEFAULT_SCROLL_BACK = 1000
@@ -23,12 +23,12 @@ const fullSc = ref(true)
 const agentID = ref('')
 const outputHerf = computed(() => {
   console.log(agentID.value)
-  return isTunnel?`proxy/${agentID.value}/arthas-output/`:`/arthas-output/`
+  return isTunnel ? `proxy/${agentID.value}/arthas-output/` : `/arthas-output/`
 })
-// const isTunnel = import.meta.env.MODE === 'tunnel'
 const fitAddon = new FitAddon();
 const webglAddon = new WebglAddon();
-let xterm = new Terminal({ allowProposedApi: true })
+const isConnected = ref(false)
+let xterm = new Terminal({allowProposedApi: true})
 
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
@@ -40,8 +40,8 @@ onMounted(() => {
   startConnect(true);
   window.addEventListener('resize', function () {
     if (ws !== undefined && ws !== null) {
-      const { cols, rows } = fitAddon.proposeDimensions()!
-      ws.send(JSON.stringify({ action: 'resize', cols, rows: rows }));
+      const {cols, rows} = fitAddon.proposeDimensions()!
+      ws.send(JSON.stringify({action: 'resize', cols, rows: rows}));
       fitAddon.fit();
     }
   });
@@ -65,6 +65,7 @@ function getWsUri() {
   }
   return uri
 }
+
 /** init websocket **/
 function initWs(silent: boolean) {
   let uri = getWsUri()
@@ -79,9 +80,9 @@ function initWs(silent: boolean) {
 
     let scrollback = getUrlParam('scrollback') ?? '0';
 
-    const { cols, rows } = initXterm(scrollback)
+    const {cols, rows} = initXterm(scrollback)
     xterm.onData(function (data) {
-      ws?.send(JSON.stringify({ action: 'read', data: data }))
+      ws?.send(JSON.stringify({action: 'read', data: data}))
     });
     ws!.onmessage = function (event: MessageEvent) {
       if (event.type === 'message') {
@@ -89,10 +90,10 @@ function initWs(silent: boolean) {
         xterm.write(data);
       }
     };
-    ws?.send(JSON.stringify({ action: 'resize', cols, rows }));
+    ws?.send(JSON.stringify({action: 'resize', cols, rows}));
     intervalReadKey = window.setInterval(function () {
       if (ws != null && ws.readyState === 1) {
-        ws.send(JSON.stringify({ action: 'read', data: "" }));
+        ws.send(JSON.stringify({action: 'read', data: ""}));
       }
     }, 30000);
   }
@@ -105,6 +106,7 @@ function initWs(silent: boolean) {
       alert(message.reason);
     }
   };
+  isConnected.value = true
 }
 
 /** init xterm **/
@@ -130,7 +132,7 @@ function initXterm(scrollback: string) {
 
 function isValidNumber(scrollNumber: number) {
   return scrollNumber >= MIN_SCROLL_BACK &&
-    scrollNumber <= MAX_SCROLL_BACK;
+      scrollNumber <= MAX_SCROLL_BACK;
 }
 
 const connectGuard = (silent: boolean): boolean => {
@@ -151,6 +153,7 @@ const connectGuard = (silent: boolean): boolean => {
   }
   return true
 }
+
 /** begin connect **/
 function startConnect(silent: boolean = false) {
   if (connectGuard(silent)) {
@@ -169,6 +172,7 @@ function disconnect() {
     fitAddon.dispose()
     webglAddon.dispose()
     fullSc.value = false
+    isConnected.value = false
     alert('Connection was closed successfully!');
   } catch {
     alert('No connection, please start connect first.');
@@ -198,32 +202,59 @@ function requestFullScreen(element: HTMLElement) {
   }
 }
 
-/*function loadAuthorizedAgents() {
-  let agents = ajaxRequest("/api/arthas/access/agents", "get");
-  if (agents == null) {
-    return;
-  }
+const apps: string[] = reactive([])
+const services = ref([])
+const selectedService = ref('')
+const selectedAgents = ref([])
 
-  const serviceElementId = '#service';
-  $(serviceElementId).html('');
-  for (let i = 0; i < agents.length; i++) {
-    $(serviceElementId).append("<option value=" + agents[i].service + ">" + agents[i].service + "</option>");
-  }
+const loadServices = async () => {
+  services.value = await fetchAgentGroup()
+      .then(data => data.map((item: { service: any; agents: any; }) => ({ service: item.service, agents: item.agents })))
+}
 
-  const agentElementId = 'agent';
-  $(serviceElementId).change(function (e) {
-    const service = $(serviceElementId + ' option:selected').val();
-    const filter = agents.filter(p => p.service == service)[0];
-    const agentList = filter.agents;
-    $(agentElementId).html('');
-    for (let i = 0; i < agentList.length; i++) {
-      const agent = agentList[i];
-      const opt = service + '@' + agent.id;
-      const text = agent.info.host + ':' + agent.info.port;
-      $(agentElementId).append("<option value=" + opt + ">" + text + "</option>");
-    }
-  });
-}*/
+const getSelectedAgents = () => {
+  const selected = services.value.find(item => item['service'] === selectedService.value)
+  if (selected) {
+    selectedAgents.value = selected['agents']
+  } else {
+    selectedAgents.value = []
+  }
+  agentID.value = ''
+}
+
+const onServiceChange = () => {
+  getSelectedAgents()
+}
+
+watchEffect(() => {
+  if (selectedService.value) {
+    getSelectedAgents()
+  } else {
+    selectedAgents.value = []
+    agentID.value = ''
+  }
+})
+
+const fetchAgentGroup = async () => {
+  const token = sessionStorage.getItem('token');
+  try {
+    const response = await fetch('/api/arthas/agents',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          }
+        }
+    );
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+onMounted(() => {
+  loadServices()
+})
 </script>
 
 <template>
@@ -237,17 +268,17 @@ function requestFullScreen(element: HTMLElement) {
           <ul tabindex="0" class="dropdown-content menu shadow bg-base-100">
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
-                target="_blank">Documentation
+                 target="_blank">Documentation
                 <span class="sr-only">(current)</span></a>
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-                href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
+                 href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
                 Tutorials</a>
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://github.com/alibaba/arthas"
-                target="_blank">Github</a>
+                 target="_blank">Github</a>
             </li>
           </ul>
         </div>
@@ -257,53 +288,65 @@ function requestFullScreen(element: HTMLElement) {
         <ul class="menu menu-vertical 2xl:menu-horizontal hidden">
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
-              target="_blank">Documentation
+               target="_blank">文档
               <span class="sr-only">(current)</span></a>
           </li>
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-              href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
-              Tutorials</a>
+               href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">在线教程</a>
           </li>
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://github.com/alibaba/arthas"
-              target="_blank">Github</a>
+               target="_blank">Github</a>
           </li>
         </ul>
 
       </div>
       <div class="navbar-center ">
-        <div class=" xl:flex-row form-control"
-             :class="{
-          'xl:flex-row':isTunnel,
-          'lg:flex-row':!isTunnel
-        }">
-          <label class="input-group input-group-sm mr-2">
+        <div class="xl:flex-row form-control">
+<!--          <label class="input-group input-group-sm mr-2">
             <span>IP</span>
             <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
-                   v-model="ip" />
+                   v-model="ip"/>
           </label>
           <label class="input-group input-group-sm mr-2">
             <span>Port</span>
-            <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port" />
+            <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port"/>
           </label>
           <label v-if="isTunnel" class="input-group input-group-sm mr-2">
             <span>AgentId</span>
             <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
-                   v-model="agentID" />
+                               v-model="agentID" />
+          </label>-->
+
+          <label class="input-group input-group-sm mr-2">
+            服务：
+            <select v-model="selectedService" @change="onServiceChange">
+              <option value="" disabled>请选择服务</option>
+              <option v-for="service in services" :key="service.service" :value="service.service">{{ service['service'] }}</option>
+            </select>
+          </label>
+          <label class="input-group input-group-sm mr-2">
+            代理：
+            <select v-model="agentID" >
+              <option value="" disabled>请选择代理</option>
+              <option v-for="agent in selectedAgents" :key="agent.id" :value="selectedService + '@' + agent.id">{{ agent.info.host }}:{{ agent.info.port }}</option>
+            </select>
           </label>
         </div>
       </div>
       <div class="navbar-end">
         <div class="btn-group 2xl:btn-group-horizontal btn-group-horizontal">
-          <button
+          <button v-if="!isConnected"
               class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-              @click.prevent="startConnect(true)">Connect</button>
-          <button
+              @click.prevent="startConnect(true)">连接
+          </button>
+          <button v-if="isConnected"
               class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-              @click.prevent="disconnect">Disconnect</button>
+              @click.prevent="disconnect">断开
+          </button>
           <a class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-             :href="outputHerf" target="_blank">Arthas Output</a>
+             :href="outputHerf" target="_blank">火焰图</a>
         </div>
       </div>
     </nav>
@@ -334,5 +377,9 @@ function requestFullScreen(element: HTMLElement) {
   border: 0;
   cursor: pointer;
   background-color: black;
+}
+
+button {
+  margin-right: 5px;
 }
 </style>

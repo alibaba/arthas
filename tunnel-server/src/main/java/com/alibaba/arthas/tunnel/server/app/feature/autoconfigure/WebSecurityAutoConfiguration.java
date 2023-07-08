@@ -65,8 +65,8 @@ public class WebSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
                 .apply(securityConfigurationAdapter());
 
         httpSecurity.authorizeRequests()
-                .antMatchers("/api/auth").permitAll()
-                .antMatchers("/api/**").authenticated()
+//                .antMatchers("/api/auth").permitAll()
+//                .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll();
 
         /*if (CollectionUtils.isNotEmpty(securityProperties.getAnonymousUrls())) {

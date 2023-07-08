@@ -4,6 +4,7 @@ import com.alibaba.arthas.tunnel.server.AgentInfo;
 import com.alibaba.arthas.tunnel.server.TunnelServer;
 import com.alibaba.arthas.tunnel.server.app.feature.dto.ArthasAgent;
 import com.alibaba.arthas.tunnel.server.app.feature.dto.ArthasAgentGroup;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenProvider;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,9 +34,11 @@ public class ArthasTunnelController {
 
     private final UserDetailsService userDetailsService;
 
+    private final JwtTokenProvider jwtTokenProvider;
+
     @GetMapping(value = "/api/arthas/agents")
-    public List<ArthasAgentGroup> getAgents(Principal principal) {
-        Set<String> roles = getCurrentUserRole(principal.getName());
+    public List<ArthasAgentGroup> getAgents() {
+        Set<String> roles = getCurrentUserRole(jwtTokenProvider.getUsername());
         if (roles.isEmpty()) {
             return Collections.emptyList();
         }
