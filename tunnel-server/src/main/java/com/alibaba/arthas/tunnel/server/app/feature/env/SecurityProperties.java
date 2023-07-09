@@ -1,10 +1,8 @@
 package com.alibaba.arthas.tunnel.server.app.feature.env;
 
-import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,10 +18,4 @@ public class SecurityProperties {
     public static final String PREFIX = "spring.security";
 
     private Set<org.springframework.boot.autoconfigure.security.SecurityProperties.User> users;
-
-    private List<String> anonymousUrls = Lists.newArrayList();
-
-    private List<String> permitAllUrls;
-
-    private List<String> authenticatedUrls;
 }

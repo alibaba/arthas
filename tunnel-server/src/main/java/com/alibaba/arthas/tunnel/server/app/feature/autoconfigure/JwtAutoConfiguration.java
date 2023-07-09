@@ -6,6 +6,7 @@ import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.config.JwtC
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenProvider;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenService;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.jwt.token.JwtTokenStore;
+import com.alibaba.arthas.tunnel.server.app.feature.web.security.token.AccessToken;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.user.LoginUserDetailsService;
 import com.alibaba.arthas.tunnel.server.app.feature.web.security.user.SecurityUserHelper;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +76,23 @@ public class JwtAutoConfiguration {
     @Bean
     public SecurityUserHelper securityUserHelper(ObjectProvider<PasswordEncoder> passwordEncoder) {
         return new SecurityUserHelper(passwordEncoder);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public JwtTokenStore tokenStore() {
+        return new JwtTokenStore() {
+
+            @Override
+            public boolean validateAccessToken(AccessToken token) {
+                return true;
+            }
+
+            @Override
+            public void storeAccessToken(AccessToken token) {}
+
+            @Override
+            public void removeAccessToken(AccessToken token) {}
+        };
     }
 }

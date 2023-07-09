@@ -38,8 +38,6 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration(proxyBeanMethods = false)
 public class WebSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final SecurityProperties securityProperties;
-
     private final ArthasProperties arthasProperties;
 
     private final CorsFilter corsFilter;
@@ -65,15 +63,9 @@ public class WebSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
                 .apply(securityConfigurationAdapter());
 
         httpSecurity.authorizeRequests()
-//                .antMatchers("/api/auth").permitAll()
-//                .antMatchers("/api/**").authenticated()
+                .antMatchers("/api/auth").permitAll()
+                .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll();
-
-        /*if (CollectionUtils.isNotEmpty(securityProperties.getAnonymousUrls())) {
-            List<String> anonymousUrls = securityProperties.getAnonymousUrls();
-            String[] urls = anonymousUrls.toArray(new String[0]);
-            httpSecurity.authorizeRequests().antMatchers(urls).anonymous();
-        }*/
 
         // allow iframe
         if (arthasProperties.isEnableIframeSupport()) {
