@@ -6,6 +6,8 @@ import {WebglAddon} from "xterm-addon-webgl"
 import {MenuAlt2Icon} from "@heroicons/vue/outline"
 import fullPic from "~/assert/fullsc.png"
 import arthasLogo from "~/assert/arthas.png"
+import {useRouter} from 'vue-router'
+
 // const { isTunnel = false } = defineProps<{
 //   isTunnel?: boolean
 // }>()
@@ -202,6 +204,14 @@ function requestFullScreen(element: HTMLElement) {
   }
 }
 
+const router = useRouter()
+
+function logout() {
+  sessionStorage.removeItem('username');
+  sessionStorage.removeItem('token');
+  router.push('/login');
+}
+
 const apps: string[] = reactive([])
 const services = ref([])
 const selectedService = ref('')
@@ -209,7 +219,7 @@ const selectedAgents = ref([])
 
 const loadServices = async () => {
   services.value = await fetchAgentGroup()
-      .then(data => data.map((item: { service: any; agents: any; }) => ({ service: item.service, agents: item.agents })))
+      .then(data => data.map((item: { service: any; agents: any; }) => ({service: item.service, agents: item.agents})))
 }
 
 const getSelectedAgents = () => {
@@ -268,13 +278,12 @@ onMounted(() => {
           <ul tabindex="0" class="dropdown-content menu shadow bg-base-100">
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
-                 target="_blank">Documentation
+                 target="_blank">文档
                 <span class="sr-only">(current)</span></a>
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-                 href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
-                Tutorials</a>
+                 href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">在线教程</a>
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://github.com/alibaba/arthas"
@@ -284,7 +293,7 @@ onMounted(() => {
         </div>
         <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="mr-2 w-20"><img
             :src="arthasLogo" alt="Arthas" title="Welcome to Arthas web console"></a>
-        <span class="navbar-version" style="font-size: 18px">v3.6.7</span>
+        <span class="navbar-version" style="font-size: 18px;margin-right: 30px">v3.6.7</span>
         <ul class="menu menu-vertical 2xl:menu-horizontal hidden">
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
@@ -302,51 +311,72 @@ onMounted(() => {
         </ul>
 
       </div>
-      <div class="navbar-center ">
+      <div class="navbar-end">
         <div class="xl:flex-row form-control">
-<!--          <label class="input-group input-group-sm mr-2">
-            <span>IP</span>
-            <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
-                   v-model="ip"/>
-          </label>
-          <label class="input-group input-group-sm mr-2">
-            <span>Port</span>
-            <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port"/>
-          </label>
-          <label v-if="isTunnel" class="input-group input-group-sm mr-2">
-            <span>AgentId</span>
-            <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
-                               v-model="agentID" />
-          </label>-->
+          <!--          <label class="input-group input-group-sm mr-2">
+                      <span>IP</span>
+                      <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
+                             v-model="ip"/>
+                    </label>
+                    <label class="input-group input-group-sm mr-2">
+                      <span>Port</span>
+                      <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port"/>
+                    </label>
+                    <label v-if="isTunnel" class="input-group input-group-sm mr-2">
+                      <span>AgentId</span>
+                      <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
+                                         v-model="agentID" />
+                    </label>-->
 
-          <label class="input-group input-group-sm mr-2">
-            服务：
-            <select v-model="selectedService" @change="onServiceChange">
+          <label class="input-group input-group-md" style="white-space: nowrap;">
+            <span class="bg-transparent font-bold">服务</span>
+            <select v-model="selectedService" @change="onServiceChange"
+                    class="mr-3 form-select border border-gray-300" style="min-width: 140px;height:32px;">
               <option value="" disabled>请选择服务</option>
-              <option v-for="service in services" :key="service.service" :value="service.service">{{ service['service'] }}</option>
+              <option v-for="service in services" :key="service.service" :value="service.service">{{
+                  service['service']
+                }}
+              </option>
             </select>
           </label>
-          <label class="input-group input-group-sm mr-2">
-            代理：
-            <select v-model="agentID" >
+          <label class="input-group input-group-md" style="white-space: nowrap;">
+            <span class="bg-transparent font-bold">代理</span>
+            <select v-model="agentID" class="mr-3 form-select border border-gray-300"
+                    style="min-width: 140px;height:32px;">
               <option value="" disabled>请选择代理</option>
-              <option v-for="agent in selectedAgents" :key="agent.id" :value="selectedService + '@' + agent.id">{{ agent.info.host }}:{{ agent.info.port }}</option>
+              <option v-for="agent in selectedAgents" :key="agent.id" :value="selectedService + '@' + agent.id">
+                {{ agent.info.host }}:{{ agent.info.port }}
+              </option>
             </select>
           </label>
         </div>
-      </div>
-      <div class="navbar-end">
         <div class="btn-group 2xl:btn-group-horizontal btn-group-horizontal">
           <button v-if="!isConnected"
-              class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-              @click.prevent="startConnect(true)">连接
+                  class="mr-2 btn btn-sm bg-green-500 hover:bg-green-700 focus:bg-green-700 border-none normal-case"
+                  @click.prevent="startConnect(true)">
+            <span class="mr-2">
+              <i class="fas fa-window-restore"></i>
+            </span>连接
           </button>
           <button v-if="isConnected"
-              class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-              @click.prevent="disconnect">断开
+                  class="mr-2 btn btn-sm bg-orange-500 hover:bg-orange-700 focus:bg-orange-700 border-none normal-case"
+                  @click.prevent="disconnect">
+            <span class="mr-2">
+              <i class="fas fa-window-close"></i>
+            </span>断开
           </button>
-          <a class="btn btn-sm bg-secondary hover:bg-secondary-focus border-none text-secondary-content focus:bg-secondary-focus normal-case"
-             :href="outputHerf" target="_blank">火焰图</a>
+          <a class="mr-2 btn btn-sm bg-red-500 hover:bg-red-700 focus:bg-red-700 border-none normal-case"
+             :href="outputHerf" target="_blank"><span class="mr-2">
+              <i class="fas fa-fire"></i>
+            </span>火焰图
+          </a>
+
+          <button class="btn btn-sm bg-gray-500 hover:bg-gray-700 focus:bg-gray-700 border-none normal-case"
+                  @click.prevent="logout">
+            <span class="mr-2">
+              <i class="fas fa-power-off"></i>
+            </span>注销
+          </button>
         </div>
       </div>
     </nav>
@@ -377,9 +407,5 @@ onMounted(() => {
   border: 0;
   cursor: pointer;
   background-color: black;
-}
-
-button {
-  margin-right: 5px;
 }
 </style>

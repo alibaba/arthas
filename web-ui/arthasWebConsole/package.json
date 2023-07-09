@@ -12,6 +12,7 @@
     "preview:tunnel": "vite preview --mode tunnel"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@headlessui/vue": "^1.6.6",
     "@heroicons/vue": "^1.0.6",
     "@highlightjs/vue-plugin": "^2.1.0",
