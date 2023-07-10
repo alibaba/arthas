@@ -1,0 +1,29 @@
+{
+  "title": "Debug ognl express in Arthas",
+  "description": "Debug ognl express in Arthas",
+  "details": {
+      "steps": [
+          {
+              "text": "step1.md",
+              "code": "setup.sh"
+          }
+      ],
+      "intro": {
+          "text": "intro.md"
+      },
+      "finish": {
+        "text": "finish.md"
+      }
+  },
+  "files": [
+  ],
+  "environment": {
+      "hideHiddenFiles": true,
+      "uilayout": "editor-terminal",
+      "uisettings": "java",
+      "uieditorpath": "/root/example/ognl-demo"
+  },
+  "backend": {
+      "imageid": "openjdk:15"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Arthas 获取Spring Context 案例",
+  "description": "Arthas 获取Spring Context 案例",
+  "difficulty": "高级使用者",
+  "time": "10分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "获取Spring Context",
+        "text": "case-get-spring-context.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

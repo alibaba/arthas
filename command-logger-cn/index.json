@@ -1,0 +1,45 @@
+{
+  "title": "Arthas logger命令",
+  "description": "Arthas logger命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "启动math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "启动arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "logger命令",
+        "text": "logger.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

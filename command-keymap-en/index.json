@@ -1,0 +1,45 @@
+{
+  "title": "Arthas keymap",
+  "description": "Arthas keymap",
+  "details": {
+    "steps": [
+      {
+        "title": "Start arthas-demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "keymap command",
+        "text": "keymap.md"
+      },
+      {
+        "title": "The default keymap",
+        "text": "default-keymap.md"
+      },
+      {
+        "title": "Custom shortcuts",
+        "text": "custom-shortcuts.md"
+      },
+      {
+        "title": "Shortcuts for jobs",
+        "text": "shortcuts-for-jobs.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

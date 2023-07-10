@@ -1,0 +1,45 @@
+{
+  "title": "Arthas The ClassLoaders in Spring Boot application",
+  "description": "Arthas The ClassLoaders in Spring Boot application",
+  "difficulty": "expert",
+  "time": "10 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "The ClassLoaders in Spring Boot application",
+        "text": "case-classloader.md"
+      }  
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

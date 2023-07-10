@@ -1,0 +1,45 @@
+{
+  "title": "Arthas keymap命令教程",
+  "description": "Arthas keymap命令教程",
+  "details": {
+    "steps": [
+      {
+        "title": "启动math-game",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "keymap 命令",
+        "text": "keymap.md"
+      },
+      {
+        "title": "默认的快捷键",
+        "text": "default-keymap.md"
+      },
+      {
+        "title": "自定义快捷键",
+        "text": "custom-shortcuts.md"
+      },
+      {
+        "title": "后台异步命令相关快捷键",
+        "text": "shortcuts-for-jobs.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

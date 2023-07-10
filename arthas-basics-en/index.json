@@ -1,0 +1,57 @@
+{
+  "title": "Arthas Basics",
+  "description": "Arthas Basics",
+  "details": {
+    "steps": [
+      {
+        "title": "Start arthas-demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Dashboard",
+        "text": "dashboard.md"
+      },
+      {
+        "title": "Thread",
+        "text": "thread.md"
+      },
+      {
+        "title": "Sc",
+        "text": "sc.md"
+      },
+      {
+        "title": "Jad",
+        "text": "jad.md"
+      },
+      {
+        "title": "Watch",
+        "text": "watch.md"
+      },
+      {
+        "title": "Vmtool",
+        "text": "vmtool.md"
+      },
+      {
+        "title": "Exit/Stop",
+        "text": "exit.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

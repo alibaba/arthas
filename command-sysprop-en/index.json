@@ -1,0 +1,55 @@
+{
+  "title": "Arthas sysprop Command",
+  "description": "Arthas sysprop Command",
+  "difficulty": "master",
+  "time": "10-20 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "sysprop Command",
+        "text": "sysprop.md"
+      },
+      {
+        "title": "Check all properties",
+        "text": "check-all-properties.md"
+      },
+      {
+        "title": "Check One Single Property",
+        "text": "check-one-single-property.md"
+      },
+      {
+        "title": "Auto completion",
+        "text": "auto-completion.md"
+      },
+      {
+        "title": "Completion of history commands",
+        "text": "completion-of-history-commands.md"
+      },
+      {
+        "title": "Pipeline",
+        "text": "pipeline.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

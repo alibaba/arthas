@@ -1,0 +1,45 @@
+{
+  "title": "Arthas reset命令教程",
+  "description": "Arthas reset命令教程",
+  "details": {
+    "steps": [
+      {
+        "title": "启动math-game",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "reset 命令",
+        "text": "reset.md"
+      },
+      {
+        "title": "reset 使用参考",
+        "text": "reset-usage.md"
+      },
+      {
+        "title": "reset 还原指定类",
+        "text": "reset-specified-class.md"
+      },
+      {
+        "title": "reset 还原所有类",
+        "text": "reset-all-classes.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

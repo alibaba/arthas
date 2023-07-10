@@ -1,0 +1,104 @@
+{
+  "title": "Arthas Advanced",
+  "description": "Arthas Advanced",
+  "details": {
+    "steps": [
+      {
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "JVM Infomation",
+        "text": "jvm-info.md"
+      },
+      {
+        "title": "Tips",
+        "text": "tips.md"
+      },
+      {
+        "title": "sc/sm view loaded classes",
+        "text": "sc-sm.md"
+      },
+      {
+        "title": "Jad",
+        "text": "jad.md"
+      },
+      {
+        "title": "Ognl",
+        "text": "ognl.md"
+      },
+      {
+        "title": "Case: Troubleshooting method invoke exception",
+        "text": "case-watch-method-exception.md"
+      },
+      {
+        "title": "Case: Hotswap code",
+        "text": "case-jad-mc-redefine.md"
+      },
+      {
+        "title": "Case: Change Logger Level",
+        "text": "case-ognl-update-logger-level.md"
+      },
+      {
+        "title": "Case: Troubleshoot logger conflicts",
+        "text": "case-logger-config-problem.md"
+      },
+      {
+        "title": "Case: Get the Spring Context",
+        "text": "case-get-spring-context.md"
+      },
+      {
+        "title": "Case: Troubleshooting HTTP request returns 401",
+        "text": "case-http-401.md"
+      },
+      {
+        "title": "Case: Troubleshooting HTTP request returns 404",
+        "text": "case-http-404.md"
+      },
+      {
+        "title": "Case: The ClassLoaders in Spring Boot application",
+        "text": "case-classloader.md"
+      },
+      {
+        "title": "Case: Find CPU usage Top N threads",
+        "text": "case-thread.md"
+      },
+      {
+        "title": "Web Console",
+        "text": "web-console.md"
+      },
+      {
+        "title": "Exit/Stop",
+        "text": "exit.md"
+      },
+      {
+        "title": "arthas-boot supported options",
+        "text": "arthas-boot-details.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

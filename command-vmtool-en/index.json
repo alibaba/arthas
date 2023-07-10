@@ -1,0 +1,57 @@
+{
+  "title": "Arthas vmtool command",
+  "description": "Arthas vmtool command",
+  "difficulty": "master",
+  "time": "10 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Start demo",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Arthas vmtool command",
+        "text": "vmtool.md"
+      },
+      {
+        "title": "Arthas vmtool command",
+        "text": "vmtool-spring.md"
+      },
+      {
+        "title": "Arthas vmtool command",
+        "text": "vmtool-classloader.md"
+      },
+      {
+        "title": "Arthas vmtool command",
+        "text": "vmtool-gc.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}
