@@ -122,6 +122,10 @@ tr {
   line-height: 40px;
 }
 
+input {
+  color: #333333;
+}
+
 .login-form {
   margin: 150px auto 0;
   width: 400px;

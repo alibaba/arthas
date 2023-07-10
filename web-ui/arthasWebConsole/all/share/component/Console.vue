@@ -75,7 +75,7 @@ function initWs(silent: boolean) {
   ws.onerror = function () {
     ws ?? ws!.close();
     ws = undefined;
-    !silent && alert('Connect error');
+    !silent && alert('连接错误');
   };
   ws.onopen = function () {
     fullSc.value = true
@@ -139,18 +139,18 @@ function isValidNumber(scrollNumber: number) {
 
 const connectGuard = (silent: boolean): boolean => {
   if (ip.value.trim() === '' || port.value.trim() === '') {
-    alert('Ip or port can not be empty');
+    alert('Ip 或者端口不能为空');
     return false;
   }
   if (isTunnel && agentID.value == '') {
     if (silent) {
       return false;
     }
-    alert('AgentId can not be empty');
+    alert('请选择 Agent 实例');
     return false;
   }
   if (ws) {
-    alert('Already connected');
+    alert('Agent 已连接');
     return false;
   }
   return true
@@ -175,9 +175,10 @@ function disconnect() {
     webglAddon.dispose()
     fullSc.value = false
     isConnected.value = false
-    alert('Connection was closed successfully!');
+    // alert('Connection was closed successfully!');
   } catch {
-    alert('No connection, please start connect first.');
+    // alert('No connection, please start connect first.');
+    alert('关闭连接异常');
   }
 }
 
@@ -207,6 +208,9 @@ function requestFullScreen(element: HTMLElement) {
 const router = useRouter()
 
 function logout() {
+  if (ws) {
+    disconnect();
+  }
   sessionStorage.removeItem('username');
   sessionStorage.removeItem('token');
   router.push('/login');
@@ -283,7 +287,7 @@ onMounted(() => {
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-                 href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">在线教程</a>
+                 href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">教程</a>
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://github.com/alibaba/arthas"
@@ -302,7 +306,7 @@ onMounted(() => {
           </li>
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-               href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">在线教程</a>
+               href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">教程</a>
           </li>
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://github.com/alibaba/arthas"
@@ -311,28 +315,28 @@ onMounted(() => {
         </ul>
 
       </div>
-      <div class="navbar-end">
+      <div class="navbar-end" style="min-width: 500px;">
         <div class="xl:flex-row form-control">
-          <!--          <label class="input-group input-group-sm mr-2">
-                      <span>IP</span>
-                      <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
-                             v-model="ip"/>
-                    </label>
-                    <label class="input-group input-group-sm mr-2">
-                      <span>Port</span>
-                      <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port"/>
-                    </label>
-                    <label v-if="isTunnel" class="input-group input-group-sm mr-2">
-                      <span>AgentId</span>
-                      <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
-                                         v-model="agentID" />
-                    </label>-->
+      <!--<label class="input-group input-group-sm mr-2">
+            <span>IP</span>
+            <input type="text" placeholder="please enter ip address" class="input input-bordered input-sm "
+                   v-model="ip"/>
+          </label>
+          <label class="input-group input-group-sm mr-2">
+            <span>Port</span>
+            <input type="text" placeholder="please enter port" class="input input-sm input-bordered" v-model="port"/>
+          </label>
+          <label v-if="isTunnel" class="input-group input-group-sm mr-2">
+            <span>AgentId</span>
+            <input type="text" placeholder="please enter AgentId" class="input input-sm input-bordered"
+                               v-model="agentID" />
+          </label>-->
 
           <label class="input-group input-group-md" style="white-space: nowrap;">
-            <span class="bg-transparent font-bold">服务</span>
+            <span class="bg-transparent font-bold" style="font-size: 16px;">应用</span>
             <select v-model="selectedService" @change="onServiceChange"
                     class="mr-3 form-select border border-gray-300" style="min-width: 140px;height:32px;">
-              <option value="" disabled>请选择服务</option>
+              <option value="" disabled>请选择应用</option>
               <option v-for="service in services" :key="service.service" :value="service.service">{{
                   service['service']
                 }}
@@ -340,10 +344,10 @@ onMounted(() => {
             </select>
           </label>
           <label class="input-group input-group-md" style="white-space: nowrap;">
-            <span class="bg-transparent font-bold">代理</span>
-            <select v-model="agentID" class="mr-3 form-select border border-gray-300"
+            <span class="bg-transparent font-bold" style="font-size: 16px;">实例</span>
+            <select v-model="agentID" class="mr-5 form-select border border-gray-300"
                     style="min-width: 140px;height:32px;">
-              <option value="" disabled>请选择代理</option>
+              <option value="" disabled>请选择实例</option>
               <option v-for="agent in selectedAgents" :key="agent.id" :value="selectedService + '@' + agent.id">
                 {{ agent.info.host }}:{{ agent.info.port }}
               </option>
@@ -353,7 +357,7 @@ onMounted(() => {
         <div class="btn-group 2xl:btn-group-horizontal btn-group-horizontal">
           <button v-if="!isConnected"
                   class="mr-2 btn btn-sm bg-green-500 hover:bg-green-700 focus:bg-green-700 border-none normal-case"
-                  @click.prevent="startConnect(true)">
+                  @click.prevent="startConnect(false)">
             <span class="mr-2">
               <i class="fas fa-window-restore"></i>
             </span>连接
