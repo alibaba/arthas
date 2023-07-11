@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-      - 3.6.x
+      - 3.6.*
     paths-ignore:
       - '**.md'
   pull_request:
@@ -38,18 +38,12 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
 
-      - name: Build with Maven
-        run: |
-          chmod +x mvnw
-          ./mvnw -ntp -pl tunnel-proxy package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
       - name: Publish to Docker Hub
         run: |
-          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
-          chmod +x mvnw
-          ./mvnw -ntp -Pgithub -pl tunnel-proxy jib:build -Dimage=shiyindaxiaojie/arthas-tunnel-proxy -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker build -f docker/Dockerfile-Tunnel -t $DOCKER_IMAGE .
+          docker push $DOCKER_IMAGE
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_IMAGE: shiyindaxiaojie/arthas-tunnel-server:3.6.7
