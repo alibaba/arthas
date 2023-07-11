@@ -41,7 +41,7 @@ jobs:
       - name: Publish to Docker Hub
         run: |
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker build -f docker/Dockerfile-Tunnel -t $DOCKER_IMAGE .
+          docker build -f Dockerfile-Tunnel -t $DOCKER_IMAGE .
           docker push $DOCKER_IMAGE
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
