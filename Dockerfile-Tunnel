@@ -1,16 +1,12 @@
 FROM maven:3.8.4-openjdk-8 as mavenrepo
 
-WORKDIR /app
-COPY web-ui web-ui
-COPY tunnel-server tunnel-server
-COPY pom.xml pom.xml
 RUN mvn -pl web-ui,tunnel-server package -DskipTests
 
 FROM openjdk:8-jdk-alpine
 ENV TZ=Asia/Shanghai
 ENV JAVA_OPTS="-Xmx256m -Xms256m -Xmn128m"
 
-COPY --from=mavenrepo /app/tunnel-server/target/arthas-tunnel-server-3.6.7-fatjar.jar /usr/local/app.jar
+COPY --from=mavenrepo /tunnel-server/target/arthas-tunnel-server-3.6.7-fatjar.jar /usr/local/app.jar
 
 EXPOSE 8080
 
