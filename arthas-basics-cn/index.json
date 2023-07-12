@@ -51,7 +51,7 @@
     "uilayout": "terminal"
   },
   "backend": {
-    "imageid": "openjdk:15",
+    "imageid": "ubuntu",
     "environmentsprotocol": "http"
   }
 }

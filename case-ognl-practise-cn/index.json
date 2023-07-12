@@ -24,6 +24,6 @@
       "uieditorpath": "/root/example/ognl-demo"
   },
   "backend": {
-      "imageid": "openjdk:15"
+      "imageid": "ubuntu"
   }
 }
