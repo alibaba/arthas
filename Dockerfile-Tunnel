@@ -17,4 +17,4 @@ COPY --from=mavenrepo /app/tunnel-server/target/arthas-tunnel-server-3.6.7-fatja
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "$JAVA_OPTS", "-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom", "-jar", "/usr/local/app.jar"]
+ENTRYPOINT java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar /usr/local/app.jar
