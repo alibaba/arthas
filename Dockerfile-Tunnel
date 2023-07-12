@@ -15,4 +15,4 @@ COPY --from=mavenrepo /app/tunnel-server/target/arthas-tunnel-server-3.6.7-fatja
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "${JAVA_OPTS}", "/usr/local/app.jar"]
+CMD ["java", "-jar", "$JAVA_OPTS", "/usr/local/app.jar"]
