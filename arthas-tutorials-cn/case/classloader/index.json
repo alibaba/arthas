@@ -1,6 +1,5 @@
 {
   "title": "Arthas 理解Spring Boot应用的ClassLoader结构 案例",
-  "description": "Arthas 理解Spring Boot应用的ClassLoader结构 案例",
   "difficulty": "高级使用者",
   "time": "10分钟",
   "details": {

@@ -1,16 +1,8 @@
 {
   "title": "Arthas 在线教程",
   "items": [
-    {
-      "title": "Arthas 基础",
-      "discription": "",
-      "path": "arthas-basics"
-    },
-    {
-      "title": "Arthas 进阶",
-      "discription": "",
-      "path": "arthas-advanced"
-    },
+    { "path": "arthas-basics" },
+    { "path": "arthas-advanced" },
     { "path": "./command/cat" },
     { "path": "./command/classloader" },
     { "path": "./command/cls" },

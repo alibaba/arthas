@@ -1,16 +1,8 @@
 {
   "title": "Arthas English Tutorials",
   "items": [
-    {
-      "title": "Arthas Basics",
-      "discription": "",
-      "path": "arthas-basics"
-    },
-    {
-      "title": "Arthas Advanced",
-      "discription": "",
-      "path": "arthas-advanced"
-    },
+    { "path": "arthas-basics" },
+    { "path": "arthas-advanced" },
     { "path": "./command/cat" },
     { "path": "./command/classloader" },
     { "path": "./command/cls" },
@@ -68,6 +60,5 @@
     { "path": "./case/thread" },
     { "path": "./case/watch-method-exception" },
     { "path": "./case/web-console" }
-
   ]
 }
