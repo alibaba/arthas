@@ -14,7 +14,7 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard 负载�
 1. 服务发现：自动获取接入的应用列表 IP 和端口，无须手动输入 AgentId
 2. 权限控制：基于 Spring Security 实现登录控制，并支持 Nacos 动态绑定账号与服务
 
-> 本文档只介绍 `arthas-tunnel-proxy` 项目，其他细节请查阅 [官方文档](https://github.com/alibaba/arthas)。
+> 本文档只介绍 `arthas-tunnel-server` 项目，其他细节请查阅 [官方文档](https://github.com/alibaba/arthas)。
 
 ## 演示图例
 
@@ -56,14 +56,15 @@ arthas:
 本项目不依赖外部组件，可以直接启动运行。
 
 1. 在项目目录下运行 `mvn install`（如果不想运行测试，可以加上 `-DskipTests` 参数）。
-2. 进入 `tunnel-proxy` 目录，执行 `mvn spring-boot:run` 或者启动 `ArthasProxyApplication` 类。运行成功的话，可以看到 `Spring Boot` 启动成功的界面。
+2. 进入 `tunnel-server` 目录，执行 `mvn spring-boot:run` 或者启动 `ArthasTunnelApplication` 类。运行成功的话，可以看到 `Spring Boot` 启动成功的界面。
+3. 进入 `web-ui` 目录，执行 `yarn run dev:tunnel` 或者 `yarn run dev:ui`。运行后控制台日志输出 `http://localhost:8000` 地址，点击访问。
 
 ### 镜像启动
 
-本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/arthas-tunnel-proxy)，请执行参考命令运行。
+本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/arthas-tunnel-server)，请执行参考命令运行。
 
 ```bash
-docker run -p 9999:9999 --name=arthas-tunnel-proxy -d shiyindaxiaojie/arthas-tunnel-proxy
+docker run -p 8080:8080 --name=arthas-tunnel-server -d shiyindaxiaojie/arthas-tunnel-server
 ```
 
 ## 如何部署
@@ -73,7 +74,7 @@ docker run -p 9999:9999 --name=arthas-tunnel-proxy -d shiyindaxiaojie/arthas-tun
 执行 `mvn clean package` 打包成一个 fat jar，参考如下命令启动编译后的控制台。
 
 ```bash
-java -Dserver.port=9999 -jar target/arthas-tunnel-proxy.jar
+java -Dserver.port=8080 -jar target/arthas-tunnel-server.jar
 ```
 
 ### Docker 部署
@@ -94,7 +95,7 @@ java -Dserver.port=9999 -jar target/arthas-tunnel-proxy.jar
 </settings>
 ````
 
-在项目根目录执行 `mvn -Pgithub -pl tunnel-proxy jib:build -Djib.disableUpdateChecks=true` 打包为镜像。
+在项目根目录执行 `mvn -Pgithub -pl tunnel-server jib:build -Djib.disableUpdateChecks=true` 打包为镜像。
 
 ### Helm 部署
 
