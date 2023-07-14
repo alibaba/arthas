@@ -1,15 +1,15 @@
 {
-  "title": "Arthas Http API案例",
+  "title": "Arthas Http API 案例",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
     "steps": [
       {
-        "title": "启动arthas demo",
+        "title": "启动 arthas demo",
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
@@ -29,11 +29,11 @@
         "text": "web-ui.md"
       },
       {
-        "title": "watch命令输出map对象",
+        "title": "watch 命令输出 map 对象",
         "text": "watch-output-map.md"
       },
       {
-        "title": "获取Java应用的Classpath",
+        "title": "获取 Java 应用的 Classpath",
         "text": "classpath-java-app.md"
       }
     ],

@@ -1,19 +1,19 @@
 {
-  "title": "Arthas dump命令",
+  "title": "Arthas dump 命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
     "steps": [
       {
-        "title": "启动arthas demo",
+        "title": "启动 arthas demo",
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "dump命令",
+        "title": "dump 命令",
         "text": "dump.md"
       }
     ],

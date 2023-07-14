@@ -1,5 +1,5 @@
 {
-  "title": "Arthas 动态更新应用Logger Level 案例",
+  "title": "Arthas 动态更新应用 Logger Level 案例",
   "difficulty": "高级使用者",
   "time": "10分钟",
   "details": {
@@ -13,7 +13,7 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "动态更新应用Logger Level",
+        "title": "动态更新应用 Logger Level",
         "text": "case-ognl-update-logger-level.md"
       }
     ],

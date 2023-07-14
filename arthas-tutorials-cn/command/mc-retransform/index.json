@@ -1,23 +1,23 @@
 {
-  "title": "Arthas mc-retransform命令",
+  "title": "Arthas mc-retransform 命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
     "steps": [
       {
-        "title": "启动math-game",
+        "title": "启动 math-game",
         "text": "start-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "mc命令",
+        "title": "mc 命令",
         "text": "mc.md"
       },
       {
-        "title": "retransform命令",
+        "title": "retransform 命令",
         "text": "retransform.md"
       },
       {
@@ -25,7 +25,7 @@
         "text": "case-jad-mc-retransform.md"
       },
       {
-        "title": "retransform命令更多说明",
+        "title": "retransform 命令更多说明",
         "text": "retransform-more.md"
       }
     ],

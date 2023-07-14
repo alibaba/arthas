@@ -1,19 +1,19 @@
 {
-  "title": "Arthas sm命令",
+  "title": "Arthas sm 命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
     "steps": [
       {
-        "title": "启动arthas demo",
+        "title": "启动 arthas demo",
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "sm命令",
+        "title": "sm 命令",
         "text": "sm.md"
       }
     ],

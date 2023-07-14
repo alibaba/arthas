@@ -1,5 +1,5 @@
 {
-  "title": "Arthas 理解Spring Boot应用的ClassLoader结构 案例",
+  "title": "Arthas 理解 Spring Boot 应用的 ClassLoader 结构案例",
   "difficulty": "高级使用者",
   "time": "10分钟",
   "details": {
@@ -13,7 +13,7 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "理解Spring Boot应用的ClassLoader结构",
+        "title": "理解 Spring Boot 应用的 ClassLoader 结构",
         "text": "case-classloader.md"
       }
     ],

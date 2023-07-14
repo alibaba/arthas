@@ -1,5 +1,5 @@
 {
-  "title": "Arthas jvm命令",
+  "title": "Arthas jvm 命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
@@ -9,19 +9,19 @@
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "jvm命令",
+        "title": "jvm 命令",
         "text": "jvm.md"
       },
       {
-        "title": "jvm使用参考",
+        "title": "jvm 使用参考",
         "text": "jvm-usage.md"
       },
       {
-        "title": "jvm使用参考",
+        "title": "jvm 使用参考",
         "text": "notes-on-column-headers.md"
       }
     ],

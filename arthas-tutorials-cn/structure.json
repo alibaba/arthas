@@ -47,7 +47,7 @@
     { "path": "./command/wc" },
     { "path": "./case/async-jobs" },
     { "path": "./case/boot-details" },
-    { "path": "./case/classloader" },
+    { "path": "./case/classloader-case" },
     { "path": "./case/get-spring-context" },
     { "path": "./case/http-401" },
     { "path": "./case/http-404" },
@@ -57,7 +57,7 @@
     { "path": "./case/ognl-practise" },
     { "path": "./case/ognl-update-logger-level" },
     { "path": "./case/save-log" },
-    { "path": "./case/thread" },
+    { "path": "./case/thread-case" },
     { "path": "./case/watch-method-exception" },
     { "path": "./case/web-console" }
   ]

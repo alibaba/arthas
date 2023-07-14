@@ -1,5 +1,5 @@
 {
-  "title": "Arthas perfcounter命令",
+  "title": "Arthas perfcounter 命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
@@ -9,11 +9,11 @@
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "perfcounter命令",
+        "title": "perfcounter 命令",
         "text": "perfcounter.md"
       }
     ],

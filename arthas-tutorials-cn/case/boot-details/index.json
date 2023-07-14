@@ -1,5 +1,5 @@
 {
-  "title": "Arthas arthas-boot支持的参数 案例",
+  "title": "Arthas arthas-boot 支持的参数案例",
   "difficulty": "高级使用者",
   "time": "10分钟",
   "details": {
@@ -9,7 +9,7 @@
         "text": "arthas-demo.md"
       },
       {
-        "title": "arthas-boot支持的参数",
+        "title": "arthas-boot 支持的参数",
         "text": "arthas-boot-details.md"
       },
       {
@@ -17,7 +17,7 @@
         "text": "boot-examples.md"
       },
       {
-        "title": "使用as.sh",
+        "title": "使用 as.sh",
         "text": "use-as-sh.md"
       }
     ],

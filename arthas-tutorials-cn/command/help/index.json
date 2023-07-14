@@ -1,13 +1,13 @@
 {
-  "title": "Arthas Help命令教程",
+  "title": "Arthas Help 命令",
   "details": {
     "steps": [
       {
-        "title": "启动math-game",
+        "title": "启动 math-game",
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
@@ -15,7 +15,7 @@
         "text": "help.md"
       },
       {
-        "title": "查看具体命令的help信息",
+        "title": "查看具体命令的 help 信息",
         "text": "help-sysprop.md"
       }
     ],

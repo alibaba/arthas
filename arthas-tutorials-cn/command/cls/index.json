@@ -1,13 +1,13 @@
 {
-  "title": "Arthas cls命令教程",
+  "title": "Arthas cls 命令",
   "details": {
     "steps": [
       {
-        "title": "启动math-game",
+        "title": "启动 math-game",
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {

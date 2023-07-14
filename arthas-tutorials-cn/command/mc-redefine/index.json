@@ -1,23 +1,23 @@
 {
-  "title": "Arthas mc-redefine命令",
+  "title": "Arthas mc-redefine 命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
     "steps": [
       {
-        "title": "启动math-game",
+        "title": "启动 math-game",
         "text": "start-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "mc命令",
+        "title": "mc 命令",
         "text": "mc.md"
       },
       {
-        "title": "redefine命令",
+        "title": "redefine 命令",
         "text": "redefine.md"
       },
       {

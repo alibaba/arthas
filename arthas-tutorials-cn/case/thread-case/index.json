@@ -1,5 +1,5 @@
 {
-  "title": "Arthas 查找Top N线程 案例",
+  "title": "Arthas 查找 Top N 线程案例",
   "difficulty": "高级使用者",
   "time": "10分钟",
   "details": {
@@ -13,7 +13,7 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "查找Top N线程",
+        "title": "查找 Top N 线程",
         "text": "case-thread.md"
       }
     ],

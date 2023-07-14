@@ -5,11 +5,11 @@
   "details": {
     "steps": [
       {
-        "title": "启动arthas demo",
+        "title": "启动 arthas demo",
         "text": "arthas-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {

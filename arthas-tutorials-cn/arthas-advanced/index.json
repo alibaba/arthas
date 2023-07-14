@@ -3,15 +3,15 @@
   "details": {
     "steps": [
       {
-        "title": "启动math-game",
+        "title": "启动 math-game",
         "text": "start-demo.md"
       },
       {
-        "title": "启动arthas-boot",
+        "title": "启动 arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "查看JVM信息",
+        "title": "查看 JVM 信息",
         "text": "jvm-info.md"
       },
       {
@@ -39,31 +39,31 @@
         "text": "case-jad-mc-redefine.md"
       },
       {
-        "title": "案例: 动态更新应用Logger Level",
+        "title": "案例: 动态更新应用 Logger Level",
         "text": "case-ognl-update-logger-level.md"
       },
       {
-        "title": "案例: 排查logger冲突问题",
+        "title": "案例: 排查 logger 冲突问题",
         "text": "case-logger-config-problem.md"
       },
       {
-        "title": "案例: 获取Spring Context",
+        "title": "案例: 获取 Spring Context",
         "text": "case-get-spring-context.md"
       },
       {
-        "title": "案例: 排查HTTP请求返回401",
+        "title": "案例: 排查 HTTP 请求返回 401",
         "text": "case-http-401.md"
       },
       {
-        "title": "案例: 排查HTTP请求返回404",
+        "title": "案例: 排查 HTTP 请求返回 404",
         "text": "case-http-404.md"
       },
       {
-        "title": "案例: 理解Spring Boot应用的ClassLoader结构",
+        "title": "案例: 理解 Spring Boot 应用的 ClassLoader 结构",
         "text": "case-classloader.md"
       },
       {
-        "title": "案例：查找Top N线程",
+        "title": "案例：查找 Top N 线程",
         "text": "case-thread.md"
       },
       {
@@ -75,7 +75,7 @@
         "text": "exit.md"
       },
       {
-        "title": "arthas-boot支持的参数",
+        "title": "arthas-boot 支持的参数",
         "text": "arthas-boot-details.md"
       }
     ],
