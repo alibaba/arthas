@@ -15,9 +15,10 @@
       {
         "title": "Troubleshoot logger conflicts",
         "text": "case-logger-config-problem.md"
-      }  
+      }
     ],
     "intro": {
+      "foreground": "foreground.sh",
       "text": "intro.md"
     },
     "finish": {

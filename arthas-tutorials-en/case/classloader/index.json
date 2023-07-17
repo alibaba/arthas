@@ -15,9 +15,10 @@
       {
         "title": "The ClassLoaders in Spring Boot application",
         "text": "case-classloader.md"
-      }  
+      }
     ],
     "intro": {
+      "foreground": "foreground.sh",
       "text": "intro.md"
     },
     "finish": {

@@ -1,28 +1,28 @@
 {
   "title": "Debug ognl express in Arthas",
   "details": {
-      "steps": [
-          {
-              "text": "step1.md",
-              "code": "setup.sh"
-          }
-      ],
-      "intro": {
-          "text": "intro.md"
-      },
-      "finish": {
-        "text": "finish.md"
+    "steps": [
+      {
+        "text": "step1.md",
+        "code": "setup.sh"
       }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "files": [
-  ],
+  "files": [],
   "environment": {
-      "hideHiddenFiles": true,
-      "uilayout": "editor-terminal",
-      "uisettings": "java",
-      "uieditorpath": "/root/example/ognl-demo"
+    "hideHiddenFiles": true,
+    "uilayout": "editor-terminal",
+    "uisettings": "java",
+    "uieditorpath": "/root/example/ognl-demo"
   },
   "backend": {
-      "imageid": "ubuntu"
+    "imageid": "ubuntu"
   }
 }

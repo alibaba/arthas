@@ -15,9 +15,10 @@
       {
         "title": "Troubleshooting HTTP request returns 401",
         "text": "case-http-401.md"
-      }  
+      }
     ],
     "intro": {
+      "foreground": "foreground.sh",
       "text": "intro.md"
     },
     "finish": {

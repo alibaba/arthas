@@ -15,9 +15,10 @@
       {
         "title": "Hotswap code",
         "text": "case-jad-mc-redefine.md"
-      }  
+      }
     ],
     "intro": {
+      "foreground": "foreground.sh",
       "text": "intro.md"
     },
     "finish": {

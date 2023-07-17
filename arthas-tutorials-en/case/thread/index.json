@@ -15,9 +15,10 @@
       {
         "title": "Find CPU usage Top N threads",
         "text": "case-thread.md"
-      }  
+      }
     ],
     "intro": {
+      "foreground": "foreground.sh",
       "text": "intro.md"
     },
     "finish": {
