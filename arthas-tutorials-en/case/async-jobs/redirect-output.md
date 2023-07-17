@@ -1,4 +1,3 @@
-
 The job output can be redirect to the specified file by > or >>, and can be used together with &. By doing this, you can achieve running commands asynchronously, for example:
 
 `trace demo.MathGame primeFactors >> test.out &`{{execute T2}}

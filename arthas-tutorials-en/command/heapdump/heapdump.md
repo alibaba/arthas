@@ -1,4 +1,3 @@
-
 > dump java heap in hprof binary format, like `jmap`.
 
 

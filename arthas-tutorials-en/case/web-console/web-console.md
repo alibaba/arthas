@@ -1,5 +1,3 @@
-
-
 Arthas supports connections via a Web Socket.
 
 

@@ -1,4 +1,3 @@
-
 > 查看classloader的继承树，urls，类加载信息
 
 `classloader` 命令将 JVM 中所有的classloader的信息统计出来，并可以展示继承树，urls等。

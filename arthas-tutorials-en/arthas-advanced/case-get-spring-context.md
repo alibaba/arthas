@@ -1,5 +1,3 @@
-
-
 In this case, the user can get the spring context, get the bean, and invoke the method.
 
 ### Use the tt command to record the invocation of the specified method

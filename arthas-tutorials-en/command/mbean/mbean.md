@@ -1,4 +1,3 @@
-
 show Mbean information
 
 This command can show or monitor Mbean attribute information.

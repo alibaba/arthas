@@ -1,5 +1,3 @@
-
-
 下面介绍`classloader`命令的功能。
 
 先访问一个jsp网页，触发jsp的加载： https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/hello

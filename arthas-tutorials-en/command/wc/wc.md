@@ -1,4 +1,3 @@
-
 Count lines.
 
 `jad demo.MathGame main`{{execute T2}}

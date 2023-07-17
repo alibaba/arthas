@@ -1,4 +1,3 @@
-
 ## Exit/Stop Arthas
 
 Arthas can be exited with the `exit`{{execute interrupt}} or `quit`{{execute interrupt}} command.

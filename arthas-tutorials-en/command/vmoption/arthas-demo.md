@@ -1,7 +1,3 @@
-
-
-
-
 Download `math-game.jar` and start with the `java -jar` command:
 
 `wget https://arthas.aliyun.com/math-game.jar

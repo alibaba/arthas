@@ -1,4 +1,3 @@
-
 > 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图
 
 `profiler` 命令支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。

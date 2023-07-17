@@ -1,4 +1,3 @@
-
 First write `hello, world` into `/tmp/a.txt`:
 
 `echo "hello, world" > /tmp/a.txt`{{execute T2}}

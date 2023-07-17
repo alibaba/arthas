@@ -1,4 +1,3 @@
-
 通过`session`命令可以查看当前会话的信息，显示JAVA_PID和SESSION_ID的值。
 
 `session`{{execute T2}}

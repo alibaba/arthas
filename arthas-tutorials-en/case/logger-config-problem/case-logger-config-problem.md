@@ -1,6 +1,3 @@
-
-
-
 In this case, show how to troubleshoot logger conflicts.
 
 ### Find the ClassLoader of the UserController

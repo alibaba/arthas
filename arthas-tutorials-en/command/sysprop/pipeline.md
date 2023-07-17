@@ -1,4 +1,3 @@
-
 Arthas supports some simple commands after the pipeline, such as:
 
 `sysprop | grep java`{{execute T2}} 

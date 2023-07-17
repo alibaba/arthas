@@ -1,4 +1,3 @@
-
 `ctrl + c`: Terminate current command
 
 `ctrl + z`: Suspend the current command, you can restore this command with bg/fg, or kill it.

@@ -1,4 +1,3 @@
-
 > Search classes loaded by JVM.
 
 `sc` stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.

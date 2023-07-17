@@ -1,4 +1,3 @@
-
 The `ognl` command can execute code dynamically.
 
 ### Invoke the static method

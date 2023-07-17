@@ -1,4 +1,3 @@
-
 > Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
 The `profiler` command supports generate flame graph for application hotspots.

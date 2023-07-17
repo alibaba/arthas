@@ -1,4 +1,3 @@
-
 The `sysprop`{{execute T2}} command allows you to examine the system properties from the target JVM.
 
 ## Usage

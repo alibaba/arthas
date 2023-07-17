@@ -1,4 +1,3 @@
-
 Arthas Support express install on Linux/Unix/Mac：
 
 `curl -L https://arthas.aliyun.com/install.sh | sh`{{execute T2}}

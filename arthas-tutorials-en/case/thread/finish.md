@@ -1,4 +1,3 @@
-
 Through this tutorial, now you know how to Find CPU usage Top N threads. If you have more tips or questions, please feel free to tell or ask in Issue.
 
 * Issues: https://github.com/alibaba/arthas/issues

@@ -1,4 +1,3 @@
-
 比如希望在后台执行trace命令，那么调用下面命令
 
 `trace demo.MathGame primeFactors &`{{execute T2}}

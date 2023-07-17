@@ -1,4 +1,3 @@
-
 * *ID*: JVM thread ID, pls. note this ID is different from the nativeID in jstack
 
 * *NAME*: thread name

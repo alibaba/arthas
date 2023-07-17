@@ -1,4 +1,3 @@
-
 Check the current JVM Perf Counter information.
 
 `perfcounter -h`{{execute T2}}

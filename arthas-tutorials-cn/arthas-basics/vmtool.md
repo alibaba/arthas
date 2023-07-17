@@ -1,4 +1,3 @@
-
 通过`vmtool`命令，可以搜索内存对象。
 
 `vmtool --action getInstances --className java.lang.String --limit 10`{{execute T2}}

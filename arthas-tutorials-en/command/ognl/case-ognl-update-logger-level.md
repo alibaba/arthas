@@ -1,4 +1,3 @@
-
 In this case, show how to dynamically modify the Logger Level.
 
 ### Find the ClassLoader of the UserController

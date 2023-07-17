@@ -1,4 +1,3 @@
-
 按行统计输出结果
 
 `jad demo.MathGame main`{{execute T2}}

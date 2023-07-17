@@ -1,4 +1,3 @@
-
 `sysenv`{{execute T2}} 命令可以查看当前JVM的环境属性(`System Property`)，与`sysprop`类似
 
 ## 使用参考

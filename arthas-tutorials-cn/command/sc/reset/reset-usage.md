@@ -1,4 +1,3 @@
-
  `reset -h`{{execute T2}}
 
 ```bash

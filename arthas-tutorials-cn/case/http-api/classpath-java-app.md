@@ -1,4 +1,3 @@
-
 通过Http api查询Java应用的System properties，提取`java.class.path`的值。
 
 `json_data=$(curl -Ss -XPOST http://localhost:8563/api -d '

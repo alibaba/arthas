@@ -1,4 +1,3 @@
-
 The `sysenv`{{execute T2}} command allows you to view the current JVM environment variables. (Similar to `sysenv`.)
 
 ## Usage

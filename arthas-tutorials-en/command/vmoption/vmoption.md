@@ -1,4 +1,3 @@
-
 Display, and update the vm diagnostic options.
 
 `vmoption -h`{{execute T2}}

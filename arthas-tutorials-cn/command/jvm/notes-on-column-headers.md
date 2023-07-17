@@ -1,4 +1,3 @@
-
 ### THREAD相关
 
 * `COUNT`: JVM当前活跃的线程数

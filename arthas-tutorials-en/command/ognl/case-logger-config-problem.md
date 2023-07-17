@@ -1,6 +1,3 @@
-
-
-
 In this case, show how to troubleshoot logger conflicts.
 
 ### View the logger system used by the app

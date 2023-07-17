@@ -1,4 +1,3 @@
-
 The `ognl` command can execute code dynamically.
 
 Check the usage: `ognl --help`{{execute T2}}

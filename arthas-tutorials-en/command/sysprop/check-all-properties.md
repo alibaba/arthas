@@ -1,4 +1,3 @@
-
 `sysprop`{{execute T2}} 
 
 ```bash

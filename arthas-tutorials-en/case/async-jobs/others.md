@@ -1,4 +1,3 @@
-
 * Support up to 8 commands at the same time to redirect the output to the log files.
 
 * Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.

@@ -1,5 +1,3 @@
-
-
 ## 退出Arthas
 
 用 `exit`{{execute interrupt}} 或者 `quit`{{execute interrupt}} 命令可以退出Arthas。

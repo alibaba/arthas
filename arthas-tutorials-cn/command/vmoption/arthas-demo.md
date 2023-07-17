@@ -1,7 +1,3 @@
-
-
-
-
 下载`math-game.jar`，再用`java -jar`命令启动：
 
 `wget https://arthas.aliyun.com/math-game.jar

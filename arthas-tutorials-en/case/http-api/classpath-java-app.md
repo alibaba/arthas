@@ -1,4 +1,3 @@
-
 Get system properties of the Java application through Http api and
 extract the value of `java.class.path`.
 

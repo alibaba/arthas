@@ -1,4 +1,3 @@
-
 `session`can examine the current session, get the values of JAVA_PID and SESSION_ID.
 
 `session`{{execute T2}}

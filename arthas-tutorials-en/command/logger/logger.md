@@ -1,4 +1,3 @@
-
 Print the logger information, update the logger level
 
 ### Usage

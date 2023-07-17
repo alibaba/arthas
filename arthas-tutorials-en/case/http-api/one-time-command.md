@@ -1,4 +1,3 @@
-
 Similar to executing batch commands, the one-time commands are executed
 synchronously. No need to create a session, no need to set the
 `sessionId` option.

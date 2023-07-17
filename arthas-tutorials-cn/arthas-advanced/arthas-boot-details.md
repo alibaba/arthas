@@ -1,5 +1,3 @@
-
-
 `arthas-boot.jar` 支持很多参数，可以执行 `java -jar arthas-boot.jar -h`{{execute T2}} 来查看。
 
 ## 允许外部访问

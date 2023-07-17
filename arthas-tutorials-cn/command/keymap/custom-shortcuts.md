@@ -1,4 +1,3 @@
-
 首先退出Arthas, 在当前用户目录下新建`$USER_HOME/.arthas/conf/inputrc`文件，可加入自定义配置。
 
 `exit`{{execute interrupt}}

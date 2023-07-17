@@ -1,5 +1,3 @@
-
-
 Currently, visiting http://localhost/user/0 will return a 500 error:
 
 `curl http://localhost/user/0`{{execute T3}}

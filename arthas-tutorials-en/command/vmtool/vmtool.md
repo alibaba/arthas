@@ -1,6 +1,3 @@
-
-
-
 Use the `vmtool` command to find the jvm object.
 
 

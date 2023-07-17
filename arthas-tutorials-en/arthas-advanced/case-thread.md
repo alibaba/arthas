@@ -1,5 +1,3 @@
-
-
 ### View all thread information
 
 `thread`{{execute T2}}

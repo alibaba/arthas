@@ -1,4 +1,3 @@
-
 If you want to list all background jobs, you can execute the jobs command and the results are as follows:
 
 `jobs`{{execute T2}}

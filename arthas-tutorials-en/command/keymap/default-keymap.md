@@ -1,4 +1,3 @@
-
 |  Shortcut  | Shortcut Description  |  Command Name  |  Command Description  |
 |  ----  | ----  |  ----  | ----  |
 | `"\C-a"`  | ctrl + a | beginning-of-line  | go to the beginning of the line |

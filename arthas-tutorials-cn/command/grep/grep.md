@@ -1,4 +1,3 @@
-
 类似传统的`grep`命令。
 
 `grep -h`{{execute T2}}

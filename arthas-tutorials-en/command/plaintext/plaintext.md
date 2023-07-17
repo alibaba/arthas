@@ -1,4 +1,3 @@
-
 remove the ANSI color
 
 Example:

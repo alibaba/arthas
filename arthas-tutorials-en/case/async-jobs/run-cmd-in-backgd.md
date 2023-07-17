@@ -1,4 +1,3 @@
-
 For example, execute the trace command in the background:
 
 `trace demo.MathGame primeFactors &`{{execute T2}}

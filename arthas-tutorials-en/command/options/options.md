@@ -1,4 +1,3 @@
-
 > Global options
 
 |Name| Default Value   |         Description             |

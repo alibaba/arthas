@@ -1,7 +1,3 @@
-
-
-
-
 下载`demo-arthas-spring-boot.jar`，再用`java -jar`命令启动：
 
 `wget https://github.com/hengyunabc/spring-boot-inside/raw/master/demo-arthas-spring-boot/demo-arthas-spring-boot.jar

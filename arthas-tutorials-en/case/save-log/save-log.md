@@ -1,5 +1,3 @@
-
-
 Log command outputs for later analysis
 
 By default, this behavior is turned off. To enable it, execute the command below:

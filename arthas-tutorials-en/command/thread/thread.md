@@ -1,5 +1,3 @@
-
-
 ## thread
 
 Check the basic info and stack trace of the target thread.

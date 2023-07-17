@@ -1,4 +1,3 @@
-
 > Trace method calling path, and output the time cost for each node in the path.
 
 `trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.

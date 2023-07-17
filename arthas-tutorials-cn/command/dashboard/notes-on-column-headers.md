@@ -1,4 +1,3 @@
-
 * *ID*: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应
 
 * *NAME*: 线程名

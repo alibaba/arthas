@@ -1,4 +1,3 @@
-
 ![](https://arthas.aliyun.com/doc/_images/arthas-web-ui.png "arthas web ui")
 
 一个基于Http API接口实现的Web UI，访问地址为： https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/ui 。

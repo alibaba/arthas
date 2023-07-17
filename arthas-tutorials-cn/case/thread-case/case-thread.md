@@ -1,4 +1,3 @@
-
 ### 查看所有线程信息
 
 `thread`{{execute T2}}

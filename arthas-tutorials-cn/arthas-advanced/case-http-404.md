@@ -1,5 +1,3 @@
-
-
 在这个案例里，展示排查HTTP 404问题的技巧。
 
 访问： https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/a.txt 

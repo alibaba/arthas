@@ -1,4 +1,3 @@
-
 The following describes the commands for viewing `JVM` information in Arthas.
 
 ### sysprop

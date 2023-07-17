@@ -1,7 +1,3 @@
-
-
-
-
 在新的`Terminal 2`里，下载`arthas-boot.jar`，再用`java -jar`命令启动：
 
 `wget https://arthas.aliyun.com/arthas-boot.jar

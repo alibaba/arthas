@@ -1,5 +1,3 @@
-
-
 `arthas-boot.jar` supports many parameters and can be viewed by `java -jar arthas-boot.jar -h`{{execute T2}}.
 
 ## Allow external network access

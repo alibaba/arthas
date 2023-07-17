@@ -1,4 +1,3 @@
-
 在新的`Terminal 2`里，下载`arthas-boot.jar`：
 
 `wget https://arthas.aliyun.com/arthas-boot.jar`{{execute T2}}

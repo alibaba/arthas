@@ -1,4 +1,3 @@
-
 > Memory compiler, compiles `.java` files into `.class` files in memory.
 
 The classloader can be specified with the `-c`/`--classLoaderClass` option, the output directory can be specified with the `-d` option.

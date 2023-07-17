@@ -1,4 +1,3 @@
-
 ### Thread related
 
 * `COUNT`: the count of active threads

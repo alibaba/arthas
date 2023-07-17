@@ -1,4 +1,3 @@
-
 `sysprop java.version`{{execute T2}} 
 
 ```bash

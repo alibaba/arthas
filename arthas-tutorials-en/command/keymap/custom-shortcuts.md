@@ -1,4 +1,3 @@
-
 Specify customization in `$USER_HOME/.arthas/conf/inputrc` file in the current user home directory.
 
 `exit`{{execute interrupt}}

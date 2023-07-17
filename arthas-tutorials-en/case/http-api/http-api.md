@@ -1,4 +1,3 @@
-
 ### Overview
 
 Http API provides a RESTful-like interactive interface, and both

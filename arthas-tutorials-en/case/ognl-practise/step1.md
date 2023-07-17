@@ -1,4 +1,3 @@
-
 Demonstrate the workflow of the `ognl` expression in the `watch` command in Arthas. You can modify the expressions in `Demo.java`, and compile and run the code.
 
 Project: https://github.com/hengyunabc/ognl-demo

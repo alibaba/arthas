@@ -1,4 +1,3 @@
-
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装：
 
 `curl -L https://arthas.aliyun.com/install.sh | sh`{{execute T2}}

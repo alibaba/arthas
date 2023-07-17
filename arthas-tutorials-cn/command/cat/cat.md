@@ -1,4 +1,3 @@
-
 首先向`/tmp/a.txt`文件中写入`hello, world`：
 
 `echo "hello, world" > /tmp/a.txt`{{execute T2}}

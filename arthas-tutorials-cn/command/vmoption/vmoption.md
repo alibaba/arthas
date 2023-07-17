@@ -1,4 +1,3 @@
-
 查看，更新VM诊断相关的参数
 
 `vmoption -h`{{execute T2}}

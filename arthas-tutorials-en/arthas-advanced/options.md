@@ -1,6 +1,3 @@
-
-
-
 There are some switches in Arthas that can be viewed with the `options`{{execute T2}} command.
 
 

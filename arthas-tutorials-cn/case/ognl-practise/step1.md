@@ -1,4 +1,3 @@
-
 演示Arthas里`watch`命令中`ognl`表达式的工作流程。用户可以自己修改`Demo.java`里的表达式，再执行验证。
 
 项目地址： https://github.com/hengyunabc/ognl-demo

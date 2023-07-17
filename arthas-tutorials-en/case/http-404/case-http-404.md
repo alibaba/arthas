@@ -1,5 +1,3 @@
-
-
 In this case, the user will resolve the HTTP 404 issue.
 
 Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/a.txt 
