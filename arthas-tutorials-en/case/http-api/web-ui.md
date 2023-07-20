@@ -1,7 +1,7 @@
 ![](https://arthas.aliyun.com/doc/_images/arthas-web-ui.png "arthas web ui")
 
 A Web UI based on Http API, visit url :
-https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/ui .
+{{TRAFFIC_HOST1_8563}}/ui .
 
 Completed functions:
 

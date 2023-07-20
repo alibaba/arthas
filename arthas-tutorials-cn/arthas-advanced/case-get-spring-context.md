@@ -8,7 +8,7 @@
 
 `tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod`{{execute T2}}
 
-访问：https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/1
+访问：{{TRAFFIC_HOST1_80}}/user/1
 
 可以看到`tt`命令捕获到了一个请求：
 

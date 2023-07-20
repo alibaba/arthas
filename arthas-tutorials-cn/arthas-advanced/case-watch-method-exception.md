@@ -1,6 +1,6 @@
 ### 现象
 
-目前，访问 http://localhost/user/0 ，会返回500异常：
+目前，访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
 
 `curl http://localhost/user/0`{{execute T3}}
 
@@ -70,9 +70,9 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
-当访问 https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/1 时，`watch`命令没有输出
+当访问 {{TRAFFIC_HOST1_80}}/user/1 时，`watch`命令没有输出
 
-当访问 https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/101 时，`watch`会打印出结果。
+当访问 {{TRAFFIC_HOST1_80}}/user/101 时，`watch`会打印出结果。
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'

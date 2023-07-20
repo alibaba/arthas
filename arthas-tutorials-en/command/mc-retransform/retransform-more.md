@@ -59,5 +59,5 @@ If you want to eliminate the impact after performing retransform on a class, you
 
 After deleting the retransform entry above and explicitly triggering the retransform, you can use the `jad` command to confirm that the result of the previous retransform has been eliminated.
 
-Visit https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/0 again, an exception will be thrown.
+Visit {{TRAFFIC_HOST1_80}}/user/0 again, an exception will be thrown.
 

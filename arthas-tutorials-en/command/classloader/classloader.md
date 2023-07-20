@@ -16,7 +16,7 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 
 ### Usage
 
-First visit the jsp page: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/hello
+First visit the jsp page: {{TRAFFIC_HOST1_80}}/hello
 
 ### List all ClassLoaders
 

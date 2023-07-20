@@ -1,6 +1,6 @@
-Currently, visiting http://localhost/user/0 will return a 500 error:
+Currently, visiting [{{TRAFFIC_HOST1_80}}/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
 
-`curl http://localhost/user/0`{{execute T3}}
+`curl {{TRAFFIC_HOST1_80}}/user/0`{{execute T3}}
 
 ```
 {"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
@@ -18,7 +18,7 @@ Execute in Arthas:
 1. The first argument is the class name, which supports wildcards.
 2. The second argument is the function name, which supports wildcards.
 
-Visit `curl http://localhost/user/0`{{execute T3}} , the `watch` command will print the parameters and exception
+Visit `curl {{TRAFFIC_HOST1_80}}/user/0`{{execute T3}} , the `watch` command will print the parameters and exception
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * '{params, throwExp}'
@@ -68,9 +68,9 @@ The `watch` command supports conditional expressions in the fourth argument, suc
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
-When visit https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/1 , the `watch` command print nothing.
+When visit {{TRAFFIC_HOST1_80}}/user/1 , the `watch` command print nothing.
 
-When visit https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/101 , the `watch` command will print:
+When visit {{TRAFFIC_HOST1_80}}/user/101 , the `watch` command will print:
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'

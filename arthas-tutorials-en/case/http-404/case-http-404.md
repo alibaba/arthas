@@ -1,6 +1,6 @@
 In this case, the user will resolve the HTTP 404 issue.
 
-Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/a.txt 
+Visit: {{TRAFFIC_HOST1_80}}/a.txt 
 
 The result is:
 
@@ -16,7 +16,7 @@ Start trace:
 
 `trace javax.servlet.Servlet * > /tmp/servlet.txt`{{execute T2}}
 
-Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/a.txt
+Visit: {{TRAFFIC_HOST1_80}}/a.txt
 
 In `Terminal 3`, view the contents of `/tmp/servlet.txt`:
 

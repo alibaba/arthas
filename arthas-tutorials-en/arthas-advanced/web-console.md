@@ -3,7 +3,7 @@ Arthas supports connections via a Web Socket.
 
 ## The Web Console in the tutorial
 
-http://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/?ip=[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com&port=80
+{{TRAFFIC_HOST1_8563}}
 
 > Note: The 80 port is accessed in the tutorial because port forwarding. In the local, you need to access port 8563.
 

@@ -19,7 +19,7 @@
 
 ### 使用参考
 
-先访问一个jsp网页，触发jsp的加载： https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/hello
+先访问一个jsp网页，触发jsp的加载： {{TRAFFIC_HOST1_80}}/hello
 
 ### 列出所有ClassLoader
 

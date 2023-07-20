@@ -1,6 +1,6 @@
 This case introduces the ability to dynamically update code via the `jad`/`mc`/`redefine` command.
 
-Currently, visiting http://localhost/user/0 will return a 500 error:
+Currently, visiting [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
 
 `curl http://localhost/user/0`{{execute T3}}
 
@@ -86,7 +86,7 @@ redefine success, size: 1
 
 ### Check the results of the hotswap code
 
-After the `redefine` command is executed successfully, visit https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/0 again.
+After the `redefine` command is executed successfully, visit {{TRAFFIC_HOST1_80}}/user/0 again.
 
 The result is:
 

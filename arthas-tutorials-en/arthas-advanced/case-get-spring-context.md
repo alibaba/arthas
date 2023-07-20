@@ -8,7 +8,7 @@ In this case, the user can get the spring context, get the bean, and invoke the 
 
 `tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod`{{execute T2}}
 
-Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/1
+Visit: {{TRAFFIC_HOST1_80}}/user/1
 
 You can see that the `tt` command record an invocation:
 

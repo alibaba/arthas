@@ -1,6 +1,6 @@
 In this case, the user will resolve the HTTP 401 issue.
 
-Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/admin
+Visit: {{TRAFFIC_HOST1_80}}/admin
 
 The result is:
 
@@ -17,7 +17,7 @@ Start trace:
 
 `trace javax.servlet.Filter *`{{execute T2}}
 
-Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/admin
+Visit: {{TRAFFIC_HOST1_80}}/admin
 
 At the deepest level of the call tree, you can find `AdminFilterConfig$AdminFilter` which returns `401`:
 
@@ -36,7 +36,7 @@ Run:
 
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
-Visit: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/admin
+Visit: {{TRAFFIC_HOST1_80}}/admin
 
 The Result:
 
