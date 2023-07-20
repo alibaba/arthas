@@ -23,6 +23,3 @@
 ## 打印运行的详情
 
 `java -jar arthas-boot.jar -v`{{execute T2}}
-
-
-

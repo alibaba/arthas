@@ -4,7 +4,7 @@
     "steps": [
       {
         "text": "step1.md",
-        "code": "setup.sh"
+        "foreground": "setup.sh"
       }
     ],
     "intro": {

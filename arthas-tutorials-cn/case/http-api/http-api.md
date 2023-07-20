@@ -28,11 +28,11 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 请求数据格式说明：
 
 * `action` : 请求的动作/行为，可选值请参考"请求Action"小节。
-*  `requestId` : 可选请求ID，由客户端生成。
-*  `sessionId` : Arthas会话ID，一次性命令不需要设置会话ID。
-*  `consumerId` : Arthas消费者ID，用于多人共享会话。
-*  `command` : Arthas command line 。
-*  `execTimeout` : 命令同步执行的超时时间(ms)，默认为30000。
+* `requestId` : 可选请求ID，由客户端生成。
+* `sessionId` : Arthas会话ID，一次性命令不需要设置会话ID。
+* `consumerId` : Arthas消费者ID，用于多人共享会话。
+* `command` : Arthas command line 。
+* `execTimeout` : 命令同步执行的超时时间(ms)，默认为30000。
 
 注意: 不同的action使用到参数不同，根据具体的action来设置参数。
 
@@ -41,12 +41,12 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 目前支持的请求Action如下： 
 
 * `exec` : 同步执行命令，命令正常结束或者超时后中断命令执行后返回命令的执行结果。
-*  `async_exec` : 异步执行命令，立即返回命令的调度结果，命令执行结果通过`pull_results`获取。
-*  `interrupt_job` : 中断会话当前的命令，类似Telnet `Ctrl + c`的功能。
-*  `pull_results` : 获取异步执行的命令的结果，以http 长轮询（long-polling）方式重复执行
-*  `init_session` : 创建会话
-*  `join_session` : 加入会话，用于支持多人共享同一个Arthas会话
-*  `close_session` : 关闭会话
+* `async_exec` : 异步执行命令，立即返回命令的调度结果，命令执行结果通过`pull_results`获取。
+* `interrupt_job` : 中断会话当前的命令，类似Telnet `Ctrl + c`的功能。
+* `pull_results` : 获取异步执行的命令的结果，以http 长轮询（long-polling）方式重复执行
+* `init_session` : 创建会话
+* `join_session` : 加入会话，用于支持多人共享同一个Arthas会话
+* `close_session` : 关闭会话
 
 #### 响应状态
 

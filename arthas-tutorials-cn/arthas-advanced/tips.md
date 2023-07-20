@@ -21,7 +21,6 @@ java.vm.vendor                java.vendor.url               java.vm.name
 ...
 ```
 
-
 ### readline的快捷键支持
 
 Arthas支持常见的命令行快捷键，比如`Ctrl + A`跳转行首，`Ctrl + E`跳转行尾。
