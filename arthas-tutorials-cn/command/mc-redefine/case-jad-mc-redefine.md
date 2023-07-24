@@ -16,9 +16,9 @@
 
 jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
-再打开一个`Terminal 3`，然后用vim来编辑`/tmp/UserController.java`：
+再打开一个`Terminal 3`，然后用 `sed` 来编辑`/tmp/UserController.java`：
 
-`vim /tmp/UserController.java`{{execute T3}}
+`sed -i 's/throw new IllegalArgumentException("id < 1")/return new User(id, "name" + id)/g' /tmp/UserController.java`{{execute T3}}
 
 比如当 user id 小于1时，也正常返回，不抛出异常：
 
