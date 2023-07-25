@@ -12,7 +12,7 @@ With the help of `tt` (*TimeTunnel*), you can check the contexts of the methods 
 
 `tt -t demo.MathGame primeFactors`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C` to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 ```bash
 $ tt -t demo.MathGame primeFactors

@@ -25,4 +25,4 @@ The `jvm`{{execute T2}} command prints out various details of the `JVM`.
 
 The `dashboard`{{execute T2}} command can view the real-time data panel of the current system.
 
-Enter `Q`{{execute T2}} or `Ctrl+C` to exit the dashboard command.
+Enter `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to exit the dashboard command.

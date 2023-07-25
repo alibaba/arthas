@@ -25,7 +25,7 @@ Thanks for `advice`'s data structure, it is possible to observe from varieties o
 
 `stack demo.MathGame primeFactors`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C` to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 ```bash
 $ stack demo.MathGame primeFactors

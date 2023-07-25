@@ -24,7 +24,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 252 ms.
 
 ### 使用tt命令从调用记录里获取到spring context
 
-输入 `Q`{{execute T2}} 或者 `Ctrl + C` 退出上面的 `tt -t`命令。
+输入 `Q`{{exec interrupt}} 或者 `Ctrl + C`{{exec interrupt}} 退出上面的 `tt -t`命令。
 
 `tt -i 1000 -w 'target.getApplicationContext()'`{{execute T2}}
 

@@ -33,7 +33,7 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 
 The user can see that the actual thrown exception is `IllegalArgumentException`.
 
-The user can exit the watch command by typing `Q`{{execute T2}} or `Ctrl+C`.
+The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
 
 If the user want to expand the result, can use the `-x` option:
 
