@@ -20,15 +20,13 @@ English version goes [here](README.md).
 
 ## 贡献指南
 
-如果你想为Arthas在线教程做出贡献，欢迎为Arthas在线教程提交Pull Request。
+如果你想为 Arthas 在线教程做出贡献，欢迎为 Arthas 在线教程提交 Pull Request。
 
-访问https://www.katacoda.com/docs 来了解更多创建Katacoda教程的信息，也可以参考这里的一篇阿里云开发者社区的推送：https://developer.aliyun.com/article/752183
+访问 https://killercoda.com/creators 来了解更多创建 Killercoda 教程的信息
 
-Katacoda教程文件夹的示例：https://github.com/katacoda/scenario-example
+Killercoda 教程文件夹的示例：https://github.com/killercoda/scenario-examples
 
-之后，如果你已经完成了编写，你只需要把你的教程文件夹放在此文件夹，并在相关页面中添加链接。
-
-菜单页面源代码位于：https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/_include_html/arthas-tutorials.html
+之后，如果你已经完成了编写，你只需要把你的教程文件夹放在此文件夹即可。
 
 ## 关于
 

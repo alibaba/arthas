@@ -22,13 +22,11 @@
 
 If you want to contribute to the Arthas online tutorials, you are welcome to submit pull requests for the Arthas online tutorials.
 
-Visit https://www.katacoda.com/docs to learn more about creating Katacoda scenarios. You can also refer to the article of Alibaba cloud developer community here(In Chinese): https://developer.aliyun.com/article/752183
+Visit https://killercoda.com/creators to learn more about creating Katacoda scenarios.
 
-For examples of the scenarios folder, visit https://github.com/katacoda/scenario-example
+For examples of the scenarios folder, visit https://github.com/killercoda/scenario-examples
 
 After that, if you have finished doing writing jobs, You just need to put your scenarios folder here in this folder, and add links in the related pages, that's all.
-
-Menu page source code is at https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/_include_html/arthas-tutorials.html
 
 ## About
 
