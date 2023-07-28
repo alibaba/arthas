@@ -1,6 +1,12 @@
 echo "设置环境..."
-docker create -i -p80:80 -p8563:8563 -p3658:3658 --name arthas openjdk:11-jdk-stretch bash
-docker start arthas
-echo docker exec -it arthas bash >> ~/.bashrc
+
+mkdir -p /home/local/java
+cd /home/local/java
+wget https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz
+tar -zxvf openjdk-11.0.1_linux-x64_bin.tar.gz
+echo 'export JAVA_HOME=/home/local/java/jdk-11.0.1
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> ~/.bashrc
+source ~/.bashrc
+
 clear
-docker exec -it arthas bash
