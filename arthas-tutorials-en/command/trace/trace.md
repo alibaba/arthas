@@ -39,7 +39,7 @@ After version 3.3.0, you can use the Dynamic Trace feature to add new matching c
 
 `trace demo.MathGame run`{{execute T2}}
 
-Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
+Press `Q`{{exec}} or `Ctrl+C`{{exec interrupt}} to abort
 
 ```bash
 $ trace demo.MathGame run

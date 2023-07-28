@@ -41,7 +41,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors -x 2`{{execute T2}}
 
-按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
+按 `Q`{{exec}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 ```bash
 $ watch demo.MathGame primeFactors -x 2

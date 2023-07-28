@@ -39,7 +39,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 
 `monitor -c 5 demo.MathGame primeFactors`{{execute T2}}
 
-Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
+Press `Q`{{exec}} or `Ctrl+C`{{exec interrupt}} to abort
 
 ```bash
 $ monitor -c 5 demo.MathGame primeFactors

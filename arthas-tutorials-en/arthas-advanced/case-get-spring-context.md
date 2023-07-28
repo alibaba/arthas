@@ -24,7 +24,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 252 ms.
 
 ### Use the tt command to get the spring context from the invocation record.
 
-Type `Q`{{exec interrupt}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t` command above.
+Type `Q`{{exec}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t` command above.
 
 `tt -i 1000 -w 'target.getApplicationContext()'`{{execute T2}}
 

@@ -76,7 +76,7 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
-Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
+Press `Q`{{exec}} or `Ctrl+C`{{exec interrupt}} to abort
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
