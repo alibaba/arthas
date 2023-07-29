@@ -3,8 +3,6 @@ Arthas supports connections via a Web Socket.
 
 ## The Web Console in the tutorial
 
-{{TRAFFIC_HOST1_8563}}
-
 > Note: The 80 port is accessed in the tutorial because port forwarding. In the local, you need to access port 8563.
 
 ## Local
