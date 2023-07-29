@@ -1,6 +1,6 @@
 * 推荐直接使用[ognl](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-ognl)命令，更加灵活。
 
-通过getstatic命令可以方便的查看类的静态属性。使用方法为`getstatic class_name field_name`
+通过 [getstatic 命令](https://arthas.aliyun.com/doc/getstatic.html) 可以方便的查看类的静态属性。使用方法为`getstatic class_name field_name`
 
 `getstatic demo.MathGame random`{{execute T2}}
 

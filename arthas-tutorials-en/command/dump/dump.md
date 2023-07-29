@@ -10,6 +10,7 @@
 |`[d:]`|set the destination directory for class files|
 |`[E]`|turn on regex match, the default behavior is wild card match|
 
+[dump command Docs](https://arthas.aliyun.com/en/doc/dump.html)
 ### Usage
 
 `dump java.lang.String`{{execute T2}}

@@ -20,6 +20,7 @@ Check the current JVM Perf Counter information.
  -d, --details                        print all perf counter details
  -h, --help                           this help
 ```
+[perfcounter command Docs](https://arthas.aliyun.com/en/doc/perfcounter.html)
 
 ## Usage
 

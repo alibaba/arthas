@@ -11,6 +11,8 @@ Reference: [Instrumentation#retransformClasses](https://docs.oracle.com/javase/8
 |`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[p:]`|absolute path of the external `*.class`, multiple paths are separated with 'space'|
 
+[retransform command Docs]([mc command Docs](https://arthas.aliyun.com/en/doc/retransform.html))
+
 ### Restrictions of the retransform command
 
 * New field/method is not allowed

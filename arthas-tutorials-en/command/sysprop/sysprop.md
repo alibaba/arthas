@@ -24,3 +24,5 @@ USAGE:
  <property-name>                             property name
  <property-value>                            property value
 ```
+
+[sysprop command Docs](https://arthas.aliyun.com/en/doc/sysprop.html)

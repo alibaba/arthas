@@ -2,7 +2,7 @@ Check the `parameters`, `return values` and `exceptions` of the methods at diffe
 
 `watch` is a powerful command but due to its feasibility and complexity, it's quite hard to locate the issue effectively. 
 
-In such difficulties, `tt` comes into play. 
+In such difficulties, [tt command](https://arthas.aliyun.com/en/doc/tt.html) comes into play. 
 
 With the help of `tt` (*TimeTunnel*), you can check the contexts of the methods at different times in execution history. 
 

@@ -7,7 +7,7 @@
 
 ## 彻底退出Arthas
 
-`exit/quit`命令只是退出当前session，arthas server还在目标进程中运行。
+[exit/quit 命令](https://arthas.aliyun.com/doc/quit.html) 只是退出当前session，arthas server还在目标进程中运行。
 
 想完全退出Arthas，可以执行 `stop`{{execute interrupt}} 命令。
 

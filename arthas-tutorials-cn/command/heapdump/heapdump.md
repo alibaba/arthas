@@ -1,5 +1,6 @@
 > dump java heap, 类似jmap命令的heap dump功能。
 
+[heapdump 相关文档](https://arthas.aliyun.com/doc/heapdump.html)
 
 ### 使用参考
 

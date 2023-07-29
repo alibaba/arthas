@@ -5,7 +5,7 @@ monitor
 
 Monitor invocation for the method matched with `class-pattern` and `method-pattern`.
 
-`monitor` is not a command returning immediately.
+[monitor command](https://arthas.aliyun.com/en/doc/monitor.html) is not a command returning immediately.
 
 A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses `Ctrl+C`.
 

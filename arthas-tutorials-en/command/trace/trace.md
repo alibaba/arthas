@@ -13,6 +13,8 @@
 |`[n:]`|execution times|
 |#cost|time cost|
 
+[trace command Docs](https://arthas.aliyun.com/en/doc/trace.html)
+
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
 Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.

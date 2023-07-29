@@ -1,4 +1,4 @@
-在Arthas里，有一个单独的`ognl`命令，可以动态执行代码。
+在Arthas里，有一个单独的 [ognl 命令](https://arthas.aliyun.com/doc/ognl.html)，可以动态执行代码。
 
 
 查看用法：`ognl --help`{{execute T2}}

@@ -1,5 +1,7 @@
 > 加载外部的`.class`文件，redefine jvm已加载的类。
 
+[redefine 相关文档](https://arthas.aliyun.com/doc/redefine.html)
+
 参考：[Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
 ### 常见问题

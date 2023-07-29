@@ -19,6 +19,8 @@
 |`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
+[sc 命令文档](https://arthas.aliyun.com/doc/sc.html)
+
 > class-pattern支持全限定名，如com.taobao.test.AAA，也支持com/taobao/test/AAA这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦。
 
 > sc 默认开启了子类匹配功能，也就是说所有当前类的子类也会被搜索出来，想要精确的匹配，请打开`options disable-sub-class true`开关

@@ -1,5 +1,6 @@
 > Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 
+[mc 相关文档](https://arthas.aliyun.com/doc/mc.html)
 
 可以通过`-c`/`--classLoaderClass`参数指定classloader，`-d`参数指定输出目录
 

@@ -1,5 +1,7 @@
 > Load the external `*.class` files to re-define the loaded classes in JVM.
 
+[redefine command Docs](https://arthas.aliyun.com/en/doc/redefine.html)
+
 Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
 ### Frequently asked questions

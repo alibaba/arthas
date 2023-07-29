@@ -1,5 +1,7 @@
 Print the logger information, update the logger level
 
+[logger command Docs](https://arthas.aliyun.com/en/doc/logger.html)
+
 ### Usage
 
 #### Print the logger information

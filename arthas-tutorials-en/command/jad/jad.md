@@ -1,6 +1,6 @@
 > Decompile the specified classes.
 
-`jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
+[jad command](https://arthas.aliyun.com/en/doc/jad.html) helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
 
 * The decompiled code is syntax highlighted for better readability in Arthas console.
 * It is possible that there's grammar error in the decompiled code, but it should not affect your interpretation.

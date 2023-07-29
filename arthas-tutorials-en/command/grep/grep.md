@@ -1,4 +1,4 @@
-Similar to the traditional `grep` command.
+Similar to the traditional [grep command](https://arthas.aliyun.com/en/doc/grep.html).
 
 `grep -h`{{execute T2}}
 

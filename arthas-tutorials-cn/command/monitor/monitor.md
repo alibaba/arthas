@@ -2,7 +2,7 @@
 
 对匹配 `class-pattern`／`method-pattern`的类、方法的调用进行监控。
 
-`monitor` 命令是一个非实时返回命令.
+[monitor 命令](https://arthas.aliyun.com/doc/monitor.html)是一个非实时返回命令.
 
 实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 `Ctrl+C` 为止。
 

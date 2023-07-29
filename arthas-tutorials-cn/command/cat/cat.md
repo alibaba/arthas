@@ -2,7 +2,7 @@
 
 `echo "hello, world" > /tmp/a.txt`{{execute T2}}
 
-通过`cat`命令可以打印文件内容，和linux里的cat命令类似。
+通过 [cat 命令](https://arthas.aliyun.com/doc/cat.html) 可以打印文件内容，和linux里的cat命令类似。
 
 `cat /tmp/a.txt`{{execute T2}}
 

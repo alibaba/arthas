@@ -1,6 +1,6 @@
 show Mbean information
 
-This command can show or monitor Mbean attribute information.
+[mbean command](https://arthas.aliyun.com/en/doc/mbean.html) can show or monitor Mbean attribute information.
 
 ### Parameters
 

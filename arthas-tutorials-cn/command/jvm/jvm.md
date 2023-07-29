@@ -1,4 +1,4 @@
-`jvm`{{execute T2}} 命令可以查看当前JVM信息。
+`jvm`{{execute T2}} 命令可以查看当前JVM信息 - [jvm 相关文档](https://arthas.aliyun.com/doc/jvm.html)。
 
 ## 查找Java应用的classpath
 

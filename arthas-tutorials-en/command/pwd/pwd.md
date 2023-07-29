@@ -1,3 +1,3 @@
-Use `pwd` to get working directory name
+Use [pwd command](https://arthas.aliyun.com/en/doc/pwd.html) to get working directory name
 
 `pwd`{{execute T2}}

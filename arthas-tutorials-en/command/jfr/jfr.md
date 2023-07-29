@@ -2,7 +2,7 @@
 Java Flight Recorder (JFR) is a tool for collecting diagnostic and profiling data about a running Java application. It is integrated into the Java Virtual Machine (JVM) and causes almost no performance overhead, so it can be used even in heavily loaded production environments.
 :::
 
-The `jfr`  command supports starting and stopping  JFR recordings during dynamic program running. Recording collects data about *events*. Events occur in the JVM or the Java application at a specific point in time. Each event has a name, a time stamp, and an optional *payload*. The payload is the data associated with an event, for example, the CPU usage, the Java heap size before and after the event, the thread ID of the lock holder, and so on.
+The [jfr  command](https://arthas.aliyun.com/en/doc/jfr.html) supports starting and stopping  JFR recordings during dynamic program running. Recording collects data about *events*. Events occur in the JVM or the Java application at a specific point in time. Each event has a name, a time stamp, and an optional *payload*. The payload is the data associated with an event, for example, the CPU usage, the Java heap size before and after the event, the thread ID of the lock holder, and so on.
 
 The basic usage of the `jfr` command is`jfr cmd [actionArg]`
 >  Note: jfr is supported only after the 8u262 version of jdk8

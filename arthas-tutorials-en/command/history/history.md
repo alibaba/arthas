@@ -1,4 +1,4 @@
-Use `history` to view command history
+Use [history command](https://arthas.aliyun.com/en/doc/history.html) to view command history
 
 `history`{{execute T2}}
 

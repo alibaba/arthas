@@ -15,6 +15,8 @@
 |`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[n:]`|Maximum number of matching classes with details (100 by default)|
 
+[sm command Docs](https://arthas.aliyun.com/en/doc/sm.html)
+
 ### Usage
 
 * View methods of `java.lang.String`:

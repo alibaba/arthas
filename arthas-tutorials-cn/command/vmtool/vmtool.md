@@ -1,4 +1,4 @@
-下面使用`vmtool`命令查找jvm对象。
+下面使用 [vmtool 命令](https://arthas.aliyun.com/doc/vmtool.html) 查找jvm对象。
 
 
 ### 查找jvm里的字符串对象

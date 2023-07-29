@@ -4,7 +4,7 @@ With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.htm
 
 ### Parameters & Options
 
-There are four different scenarios for `watch` command, which makes it rather complicated. 
+There are four different scenarios for [watch command](https://arthas.aliyun.com/en/doc/watch.html), which makes it rather complicated. 
 
 |Name|Specification|
 |---:|:---|

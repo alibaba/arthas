@@ -12,6 +12,8 @@ Most often we know one method gets called, but we have no idea on which code pat
 |`[E]`|turn on regex match, the default behavior is wildcard match|
 |`[n:]`|execution times|
 
+[stack command Docs](https://arthas.aliyun.com/en/doc/stack.html)
+
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
 Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.

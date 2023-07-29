@@ -6,6 +6,8 @@
 
 于是乎，TimeTunnel 命令就诞生了。
 
+[tt 命令文档](https://arthas.aliyun.com/doc/tt.html)
+
 ### 使用参考
 
 #### 记录调用

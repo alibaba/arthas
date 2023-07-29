@@ -12,6 +12,8 @@
 | job-timeout        | 1d    | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒 |
 | print-parent-fields       | true    | 是否打印在parent class里的filed |
 
+[options 命令文档](https://arthas.aliyun.com/doc/options.html)
+
 ### 查看所有的options
 
 `options`{{execute T2}}

@@ -16,6 +16,8 @@
 |`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
+[sm 命令文档](https://arthas.aliyun.com/doc/sm.html)
+
 ### 使用参考
 
 * 查找`java.lang.String`类的具体方法

@@ -20,6 +20,7 @@
  -d, --details                        print all perf counter details
  -h, --help                           this help
 ```
+[perfcounter 命令文档](https://arthas.aliyun.com/doc/perfcounter.html)
 
 ## 使用参考
 

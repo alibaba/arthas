@@ -9,3 +9,5 @@
 | [b]  | 找出当前阻塞其他线程的线程 |
 | [i <value>]  | 指定cpu占比统计的采样间隔，单位为毫秒 |
 |[--all]|显示所有匹配的线程|
+
+[thread 命令文档](https://arthas.aliyun.com/doc/thread.html)

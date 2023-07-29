@@ -1,6 +1,6 @@
 > 查看classloader的继承树，urls，类加载信息
 
-`classloader` 命令将 JVM 中所有的classloader的信息统计出来，并可以展示继承树，urls等。
+[classloader 命令](https://arthas.aliyun.com/doc/classloader.html)将 JVM 中所有的classloader的信息统计出来，并可以展示继承树，urls等。
 
 可以让指定的classloader去getResources，打印出所有查找到的resources的url。对于`ResourceNotFoundException`比较有用。
 

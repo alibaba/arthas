@@ -1,4 +1,4 @@
-The `ognl` command can execute code dynamically.
+The [ognl command](https://arthas.aliyun.com/en/doc/ognl.html) can execute code dynamically.
 
 Check the usage: `ognl --help`{{execute T2}}
 

@@ -1,4 +1,4 @@
-Use the `vmtool` command to find the jvm object.
+Use the [vmtool command](https://arthas.aliyun.com/en/doc/vmtool.html) to find the jvm object.
 
 
 ### Find string objects in jvm

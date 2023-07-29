@@ -1,6 +1,6 @@
 查看 Mbean 的信息
 
-这个命令可以便捷的查看或监控 Mbean 的属性信息。
+[mbean 命令](https://arthas.aliyun.com/doc/mbean.html)可以便捷的查看或监控 Mbean 的属性信息。
 
 ### 参数说明
 

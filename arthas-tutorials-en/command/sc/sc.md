@@ -16,6 +16,8 @@
 |`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[n:]`|Maximum number of matching classes with details (100 by default)|
 
+[sc command Docs](https://arthas.aliyun.com/en/doc/sc.html)
+
 > *class-patten* supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'. <br/><br/>
 > `sc` turns on matching sub-class match by default, that is, `sc` will also search the sub classes of the target class too. If exact-match is desired, pls. use `options disable-sub-class true`.
 

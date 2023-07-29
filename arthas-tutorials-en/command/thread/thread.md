@@ -11,3 +11,5 @@ Check the basic info and stack trace of the target thread.
 | [b]  | locate the thread blocking the others |
 | [i <value>]  | specify the interval to collect data to compute CPU ratios (ms) |
 |[--all]|Show all matching threads|
+
+[thread command Docs](https://arthas.aliyun.com/en/doc/thread.html)

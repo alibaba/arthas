@@ -2,7 +2,7 @@ First write `hello, world` into `/tmp/a.txt`:
 
 `echo "hello, world" > /tmp/a.txt`{{execute T2}}
 
-Use `cat` to concatenate and print files, which is pretty much alike in linux.
+Use [`cat` command](https://arthas.aliyun.com/en/doc/cat.html) to concatenate and print files, which is pretty much alike in linux.
 
 `cat /tmp/a.txt`{{execute T2}}
 

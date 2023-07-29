@@ -1,6 +1,6 @@
 * It is recommended to use the [OGNL] (https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-ognl) command, which will be more flexible.
 
-Check the static fields of classes conveniently, the usage is `getstatic class_name field_name`.
+Use [getstatic command](https://arthas.aliyun.com/en/doc/getstatic.html) to Check the static fields of classes conveniently, the usage is `getstatic class_name field_name`.
 
 `getstatic demo.MathGame random`{{execute T2}}
 
