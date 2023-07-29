@@ -1,6 +1,6 @@
 > Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
-The `profiler` command supports generate flame graph for application hotspots.
+[profiler command](https://arthas.aliyun.com/doc/profiler.html) supports generate flame graph for application hotspots.
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
 
@@ -37,15 +37,14 @@ Copyright 2019 Andrei Pangin
 
 ### Start profiler
 
-`profiler start -e itimer`{{execute T2}}
+`profiler start -e cpu`{{execute T2}}
 
 ```
-$ profiler start
-Started [cpu] profiling
+$ profiler start -e cpu
+Profiling started
 ```
 
-> By default, the sample event is `cpu`. Can be specified with the `--event` parameter.
-> Since katacoda environment doesn't support `perf_events`，here use `-e itimer` to specify event to be `itimer`
+> By default, the sample event is `cpu`. Can be specified with the `--e` parameter.
 
 
 ### Get the number of samples collected
@@ -63,10 +62,9 @@ $ profiler getSamples
 
 ```bash
 $ profiler status
-[cpu] profiling is running for 4 seconds
+Profiling is running for 11 seconds
 ```
 
-Can view which `event` and sampling time.
 
 ### Stop profiler
 
@@ -79,17 +77,17 @@ By default, the result file is `html` format. You can also specify it with the `
 
 ```bash
 $ profiler stop --format html
-profiler output file: /tmp/test/arthas-output/20211207-111550.html
-OK
+profiler output file: /root/arthas-output/20230729-090342.html
+ok
 ```
 
 Or use the file name name format in the `--file` parameter. For example, `--file /tmp/result.html`.
 
-`profiler stop --file /tmp/result.html`{{execute T2}}
+`profiler stop --file /root/arthas-output/result.html`{{execute T2}}
 
 ### View profiler results under arthas-output via browser
 
-By default, arthas uses http port 8563, which can be opened: https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ View the `arthas-output` directory below Profiler results:
+By default, arthas uses http port 8563, [click to open]({{TRAFFIC_HOST1_8563}}/arthas-output/) View the `arthas-output` directory below Profiler results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
@@ -97,7 +95,6 @@ Click to view specific results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-svg.jpg)
 
-> If using the chrome browser, may need to be refreshed multiple times.
 
 ### Profiler supported events
 
@@ -150,6 +147,7 @@ You can use the `--event` parameter to specify the event to sample, such as samp
 
 ```bash
 $ profiler start --event alloc
+Profiling started
 ```
 
 
@@ -179,10 +177,10 @@ profiler execute 'start,framebuf=5000000'
 
 Stop sampling and save to the specified file:
 
-`profiler execute 'stop,file=/tmp/result.html'`{{execute T2}}
+`profiler execute 'stop,file=/root/arthas-output/result.html'`{{execute T2}}
 
 ```bash
-profiler execute 'stop,file=/tmp/result.html'
+profiler execute 'stop,file=/root/arthas-output/result.html'
 ```
 
 Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)

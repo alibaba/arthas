@@ -1,6 +1,6 @@
 > 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图
 
-`profiler` 命令支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
+[profiler命令](https://arthas.aliyun.com/doc/profiler.html) 支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
@@ -36,15 +36,14 @@ Copyright 2019 Andrei Pangin
 
 ### 启动profiler
 
-`profiler start -e itimer`{{execute T2}}
+`profiler start -e cpu`{{execute T2}}
 
 ```
-$ profiler start -e itimer
-Started [itimer] profiling
+$ profiler start -e cpu
+Profiling started
 ```
 
-> 默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--event`参数来指定。
-> 因为katacoda环境不支持perf_events，所以这里使用`-e itimer`参数指定event为itimer
+> 默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--e`参数来指定。
 
 
 
@@ -63,10 +62,9 @@ $ profiler getSamples
 
 ```bash
 $ profiler status
-[itimer] profiling is running for 4 seconds
+Profiling is running for 11 seconds
 ```
 
-可以查看当前profiler在采样哪种`event`和采样时间。
 
 ### 停止profiler
 
@@ -78,17 +76,17 @@ $ profiler status
 
 ```bash
 $ profiler stop --format html
-profiler output file: /tmp/test/arthas-output/20211207-111550.html
-OK
+profiler output file: /root/arthas-output/20230729-090342.html
+ok
 ```
 
-或者在`--file`参数里用文件名指名格式。比如`--file /tmp/result.html` 。
+或者在`--file`参数里用文件名指名格式。比如`--file /root/arthas-output/result.html` 。
 
-`profiler stop --file /tmp/result.html`{{execute T2}}
+`profiler stop --file /root/arthas-output/result.html`{{execute T2}}
 
 ### 通过浏览器查看arthas-output下面的profiler结果
 
-默认情况下，arthas使用8563http端口，则可以打开： https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ 目录下面的profiler结果：
+默认情况下，arthas使用8563http端口，[点击打开]({{TRAFFIC_HOST1_8563}}/arthas-output/) arthas-output/ 目录下面的profiler结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
@@ -96,7 +94,7 @@ OK
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-svg.jpg)
 
-> 如果是chrome浏览器，可能需要多次刷新。
+
 
 ### profiler支持的events
 
@@ -158,7 +156,7 @@ $ profiler start --event alloc
 
 ```bash
 $ profiler resume
-Started [cpu] profiling
+Profiling started
 ```
 
 `start`和`resume`的区别是：`start`是新开始采样，`resume`会保留上次`stop`时的数据。
@@ -178,10 +176,10 @@ profiler execute 'start,framebuf=5000000'
 
 停止采样，并保存到指定文件里：
 
-`profiler execute 'stop,file=/tmp/result.html'`{{execute T2}}
+`profiler execute 'stop,file=/root/arthas-output/result.html'`{{execute T2}}
 
 ```bash
-profiler execute 'stop,file=/tmp/result.html'
+profiler execute 'stop,file=/root/arthas-output/result.html'
 ```
 
 具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)
