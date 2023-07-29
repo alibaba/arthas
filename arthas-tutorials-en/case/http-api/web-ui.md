@@ -1,7 +1,6 @@
 ![](https://arthas.aliyun.com/doc/_images/arthas-web-ui.png "arthas web ui")
 
-A Web UI based on Http API, visit url :
-{{TRAFFIC_HOST1_8563}}/ui .
+A Web UI based on Http API, [visit Web UI]({{TRAFFIC_HOST1_8563}}/ui).
 
 Completed functions:
 

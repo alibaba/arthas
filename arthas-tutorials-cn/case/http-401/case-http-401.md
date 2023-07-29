@@ -1,6 +1,6 @@
 在这个案例里，展示排查HTTP 401问题的技巧。
 
-访问： {{TRAFFIC_HOST1_80}}/admin
+访问： [打开 80 端口]({{TRAFFIC_HOST1_80}})/admin
 
 结果是：
 
@@ -17,7 +17,7 @@ Something went wrong: 401 Unauthorized
 
 `trace javax.servlet.Filter *`{{execute T2}}
 
-访问： {{TRAFFIC_HOST1_80}}/admin
+访问： [打开 80 端口]({{TRAFFIC_HOST1_80}})/admin
 
 可以在调用树的最深层，找到`AdminFilterConfig$AdminFilter`返回了`401`：
 
@@ -35,7 +35,7 @@ Something went wrong: 401 Unauthorized
 
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
-访问： {{TRAFFIC_HOST1_80}}/admin
+访问： [打开 80 端口]({{TRAFFIC_HOST1_80}})/admin
 
 ```bash
 $ stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'

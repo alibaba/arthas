@@ -1,6 +1,6 @@
 ### 现象
 
-目前，访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
+目前，访问 [http://localhost/user/0]([打开 80 端口]({{TRAFFIC_HOST1_80}})/user/0) ，会返回500异常：
 
 `curl http://localhost/user/0`{{execute T3}}
 
@@ -88,9 +88,9 @@ ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
-当访问 {{TRAFFIC_HOST1_80}}/user/1 时，`watch`命令没有输出
+当访问 [打开 80 端口]({{TRAFFIC_HOST1_80}})/user/1 时，`watch`命令没有输出
 
-当访问 {{TRAFFIC_HOST1_80}}/user/101 时，`watch`会打印出结果。
+当访问 [打开 80 端口]({{TRAFFIC_HOST1_80}})/user/101 时，`watch`会打印出结果。
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'
