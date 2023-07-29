@@ -1,6 +1,6 @@
 > Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
-[profiler command](https://arthas.aliyun.com/doc/profiler.html) supports generate flame graph for application hotspots.
+[profiler command](https://arthas.aliyun.com/en/doc/profiler.html) supports generate flame graph for application hotspots.
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
 
