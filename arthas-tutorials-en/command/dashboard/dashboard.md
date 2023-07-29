@@ -38,7 +38,7 @@ processors                                                     8
 uptime                                                         272s
 ```
 
-Enter `Q`{{exec}} or `Ctrl+C`{{exec interrupt}} to exit the dashboard command.
+Enter `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to exit the dashboard command.
 
 
 ### Notes on column headers

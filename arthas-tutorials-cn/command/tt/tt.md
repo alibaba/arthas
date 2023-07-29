@@ -14,7 +14,7 @@
 
 `tt -t demo.MathGame primeFactors`{{execute T2}}
 
-按 `Q`{{exec}} 或者 `Ctrl+c`{{exec interrupt}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 ```bash
 $ tt -t demo.MathGame primeFactors

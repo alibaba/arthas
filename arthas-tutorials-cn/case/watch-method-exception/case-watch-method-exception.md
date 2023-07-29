@@ -35,7 +35,7 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 
 可以看到实际抛出的异常是`IllegalArgumentException`。
 
-可以输入 `Q`{{exec}} 或者 `Ctrl+C`{{exec interrupt}} 退出watch命令。
+可以输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出watch命令。
 
 如果想把获取到的结果展开，可以用`-x`参数：
 
