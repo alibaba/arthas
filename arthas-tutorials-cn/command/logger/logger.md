@@ -1,6 +1,6 @@
 查看logger信息，更新logger level
 
-[logger 相关文档](https://arthas.aliyun.com/doc/logger.html)
+[logger 命令文档](https://arthas.aliyun.com/doc/logger.html)
 
 ### 使用参考
 

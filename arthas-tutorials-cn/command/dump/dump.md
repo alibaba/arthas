@@ -10,7 +10,7 @@
 |`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 
-[dump 相关文档](https://arthas.aliyun.com/doc/dump.html)
+[dump 命令文档](https://arthas.aliyun.com/doc/dump.html)
 
 ### 使用参考
 
