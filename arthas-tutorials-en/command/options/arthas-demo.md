@@ -1,4 +1,4 @@
-Download `math-game.jar` and start with the `java -jar` command:
+Download `math-game.jar` - [[Source]](https://github.com/alibaba/arthas/blob/af70d95383ddc3692dbcd0e9c1cbfc201ae43a98/math-game/src/main/java/demo/MathGame.java) and start with the `java -jar` command:
 
 ```
 wget https://arthas.aliyun.com/math-game.jar
