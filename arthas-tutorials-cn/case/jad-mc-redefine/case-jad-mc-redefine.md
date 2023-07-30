@@ -85,7 +85,7 @@ redefine success, size: 1
 
 ### 热修改代码结果
 
-`redefine`成功之后，再次访问  [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0)，结果是：
+`redefine`成功之后，再次访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0)，结果是：
 
 ```
 {
