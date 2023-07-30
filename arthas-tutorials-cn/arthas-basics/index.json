@@ -41,6 +41,7 @@
     ],
     "intro": {
       "foreground": "foreground.sh",
+      "verify": "verify.sh",
       "text": "intro.md"
     },
     "finish": {

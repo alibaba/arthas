@@ -3,12 +3,11 @@
   "details": {
     "steps": [
       {
-        "text": "step1.md",
-        "foreground": "setup.sh"
+        "text": "step1.md"
       }
     ],
     "intro": {
-      "foreground": "foreground.sh",
+      "foreground": "foreground-ognl.sh",
       "text": "intro.md"
     },
     "finish": {
