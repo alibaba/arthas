@@ -1,11 +1,11 @@
 由用户创建及管理Arthas会话，适用于复杂的交互过程。访问流程如下：
 
-* 创建会话
-* 加入会话(可选）
-* 拉取命令结果
-* 执行一系列命令
-* 中断命令执行
-* 关闭会话
+- 创建会话
+- 加入会话(可选）
+- 拉取命令结果
+- 执行一系列命令
+- 中断命令执行
+- 关闭会话
 
 #### 创建会话
 
@@ -19,15 +19,15 @@
 
 ```json
 {
-   "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-   "consumerId" : "5ae4e5fbab8b4e529ac404f260d4e2d1_1",
-   "state" : "SUCCEEDED"
+  "sessionId": "b09f1353-202c-407b-af24-701b744f971e",
+  "consumerId": "5ae4e5fbab8b4e529ac404f260d4e2d1_1",
+  "state": "SUCCEEDED"
 }
 ```
 
 提取会话ID和消费者ID。
 
-当前会话ID为： 
+当前会话ID为：
 
 `session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
@@ -53,9 +53,9 @@
 
 ```json
 {
-   "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
-   "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-   "state" : "SUCCEEDED"
+  "consumerId": "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
+  "sessionId": "b09f1353-202c-407b-af24-701b744f971e",
+  "state": "SUCCEEDED"
 }
 ```
 
@@ -98,41 +98,39 @@
 
 ```json
 {
-   "body" : {
-      "results" : [
-         {
-            "inputStatus" : "DISABLED",
-            "jobId" : 0,
-            "type" : "input_status"
-         },
-         {
-            "type" : "message",
-            "jobId" : 0,
-            "message" : "Welcome to arthas!"
-         },
-         {
-            "tutorials" : "https://arthas.aliyun.com/doc/arthas-tutorials.html",
-            "time" : "2020-08-06 15:56:43",
-            "type" : "welcome",
-            "jobId" : 0,
-            "pid" : "7909",
-            "wiki" : "https://arthas.aliyun.com/doc",
-            "version" : "3.3.7"
-         },
-         {
-            "inputStatus" : "ALLOW_INPUT",
-            "type" : "input_status",
-            "jobId" : 0
-         }
-      ]
-   },
-   "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-   "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
-   "state" : "SUCCEEDED"
+  "body": {
+    "results": [
+      {
+        "inputStatus": "DISABLED",
+        "jobId": 0,
+        "type": "input_status"
+      },
+      {
+        "type": "message",
+        "jobId": 0,
+        "message": "Welcome to arthas!"
+      },
+      {
+        "tutorials": "https://arthas.aliyun.com/doc/arthas-tutorials.html",
+        "time": "2020-08-06 15:56:43",
+        "type": "welcome",
+        "jobId": 0,
+        "pid": "7909",
+        "wiki": "https://arthas.aliyun.com/doc",
+        "version": "3.3.7"
+      },
+      {
+        "inputStatus": "ALLOW_INPUT",
+        "type": "input_status",
+        "jobId": 0
+      }
+    ]
+  },
+  "sessionId": "b09f1353-202c-407b-af24-701b744f971e",
+  "consumerId": "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
+  "state": "SUCCEEDED"
 }
-
 ```
-
 
 #### 异步执行命令
 
@@ -142,21 +140,20 @@
 
 ```json
 {
-   "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
-   "state" : "SCHEDULED",
-   "body" : {
-      "jobStatus" : "READY",
-      "jobId" : 3,
-      "command" : "watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" "
-   }
+  "sessionId": "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
+  "state": "SCHEDULED",
+  "body": {
+    "jobStatus": "READY",
+    "jobId": 3,
+    "command": "watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" "
+  }
 }
 ```
 
-* `state` : `SCHEDULED` 状态表示已经解析命令生成任务，但未开始执行。
-* `body.jobId` :
+- `state` : `SCHEDULED` 状态表示已经解析命令生成任务，但未开始执行。
+- `body.jobId` :
   异步执行命令的任务ID，可以根据此任务ID来过滤在`pull_results`输出的命令结果。
-* `body.jobStatus` : 任务状态`READY`表示未开始执行。
-
+- `body.jobStatus` : 任务状态`READY`表示未开始执行。
 
 切换到上面自动拉取结果消息脚本的shell（Terminal 4），查看输出：
 
@@ -254,32 +251,31 @@ throwExp}`，所以watch结果的value为一个长度为3的数组，每个元�
 
 中断会话正在运行的前台Job（前台任务）：
 
-`
-curl -Ss -XPOST http://localhost:8563/api -d '''
+`curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"interrupt_job",
   "sessionId" : "'"$session_id"'"
 }
-''' | json_pp
-`{{execute T3}}
+''' | json_pp`{{execute T3}}
 
 ```json
 {
-   "state" : "SUCCEEDED",
-   "body" : {
-      "jobStatus" : "TERMINATED",
-      "jobId" : 3
-   }
+  "state": "SUCCEEDED",
+  "body": {
+    "jobStatus": "TERMINATED",
+    "jobId": 3
+  }
 }
 ```
 
 #### 关闭会话
+
 指定会话ID，关闭会话。
 
 `curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"close_session", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
 ```json
 {
-   "state" : "SUCCEEDED"
+  "state": "SUCCEEDED"
 }
 ```

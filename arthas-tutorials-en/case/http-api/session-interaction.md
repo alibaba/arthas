@@ -1,12 +1,12 @@
 Users create and manage Arthas sessions, which are suitable for complex
 interactive processes. The access process is as follows:
 
-* Create a session
-* Join the session (optional)
-* Pull command results
-* Execute a series of commands
-* Interrupt command execution
-* Close the session
+- Create a session
+- Join the session (optional)
+- Pull command results
+- Execute a series of commands
+- Interrupt command execution
+- Close the session
 
 #### Create session
 
@@ -20,15 +20,15 @@ Response result:
 
 ```json
 {
-   "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-   "consumerId" : "5ae4e5fbab8b4e529ac404f260d4e2d1_1",
-   "state" : "SUCCEEDED"
+  "sessionId": "b09f1353-202c-407b-af24-701b744f971e",
+  "consumerId": "5ae4e5fbab8b4e529ac404f260d4e2d1_1",
+  "state": "SUCCEEDED"
 }
 ```
 
 extract session ID and consumer ID.
 
-The new session ID is: 
+The new session ID is:
 
 `session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
@@ -36,7 +36,7 @@ The new session ID is:
 
 Please take a note of your session ID here, it will be entered in Terminal 4 in the following steps.
 
-consumer ID is: 
+consumer ID is:
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
@@ -60,15 +60,15 @@ Response result:
 
 ```json
 {
-   "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
-   "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-   "state" : "SUCCEEDED"
+  "consumerId": "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
+  "sessionId": "b09f1353-202c-407b-af24-701b744f971e",
+  "state": "SUCCEEDED"
 }
 ```
 
 extract new consumer ID.
 
-The new consumer ID is 
+The new consumer ID is
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
@@ -83,7 +83,6 @@ you need to call `join_session` to allocate a new consumer.
 
 Each consumer is allocated a cache queue separately, and the pull order
 does not affect the content received by the consumer.
-
 
 The request parameters require session ID and consumer ID:
 
@@ -109,41 +108,39 @@ The response content is as follows:
 
 ```json
 {
-   "body" : {
-      "results" : [
-         {
-            "inputStatus" : "DISABLED",
-            "jobId" : 0,
-            "type" : "input_status"
-         },
-         {
-            "type" : "message",
-            "jobId" : 0,
-            "message" : "Welcome to arthas!"
-         },
-         {
-            "tutorials" : "https://arthas.aliyun.com/doc/arthas-tutorials.html",
-            "time" : "2020-08-06 15:56:43",
-            "type" : "welcome",
-            "jobId" : 0,
-            "pid" : "7909",
-            "wiki" : "https://arthas.aliyun.com/doc",
-            "version" : "3.3.7"
-         },
-         {
-            "inputStatus" : "ALLOW_INPUT",
-            "type" : "input_status",
-            "jobId" : 0
-         }
-      ]
-   },
-   "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-   "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
-   "state" : "SUCCEEDED"
+  "body": {
+    "results": [
+      {
+        "inputStatus": "DISABLED",
+        "jobId": 0,
+        "type": "input_status"
+      },
+      {
+        "type": "message",
+        "jobId": 0,
+        "message": "Welcome to arthas!"
+      },
+      {
+        "tutorials": "https://arthas.aliyun.com/doc/arthas-tutorials.html",
+        "time": "2020-08-06 15:56:43",
+        "type": "welcome",
+        "jobId": 0,
+        "pid": "7909",
+        "wiki": "https://arthas.aliyun.com/doc",
+        "version": "3.3.7"
+      },
+      {
+        "inputStatus": "ALLOW_INPUT",
+        "type": "input_status",
+        "jobId": 0
+      }
+    ]
+  },
+  "sessionId": "b09f1353-202c-407b-af24-701b744f971e",
+  "consumerId": "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
+  "state": "SUCCEEDED"
 }
-
 ```
-
 
 #### Execute commands asynchronously
 
@@ -153,21 +150,21 @@ Response of `async_exec`:
 
 ```json
 {
-   "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
-   "state" : "SCHEDULED",
-   "body" : {
-      "jobStatus" : "READY",
-      "jobId" : 3,
-      "command" : "watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" "
-   }
+  "sessionId": "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
+  "state": "SCHEDULED",
+  "body": {
+    "jobStatus": "READY",
+    "jobId": 3,
+    "command": "watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" "
+  }
 }
 ```
 
-* `state` : The status of `SCHEDULED` means that the command has been
+- `state` : The status of `SCHEDULED` means that the command has been
   parsed and generated the job, but the execution has not started.
-* `body.jobId` : The job id of command execution, filter the command
+- `body.jobId` : The job id of command execution, filter the command
   results output in `pull_results` according to this job ID.
-* `body.jobStatus` : The job status `READY` means that execution has not started.
+- `body.jobStatus` : The job status `READY` means that execution has not started.
 
 Switch to the shell output of the script that continuously pulls the result message (Terminal 4):
 
@@ -257,7 +254,6 @@ Switch to the shell output of the script that continuously pulls the result mess
 }
 ```
 
-
 The `value` of the watch command result is the value of watch-experss,
 and the above command is `{params, returnObj, throwExp}`, so the value
 of the watch result is an array of length 3, and each element
@@ -273,11 +269,11 @@ Interrupt the running foreground job of the session:
 
 ```json
 {
-   "state" : "SUCCEEDED",
-   "body" : {
-      "jobStatus" : "TERMINATED",
-      "jobId" : 3
-   }
+  "state": "SUCCEEDED",
+  "body": {
+    "jobStatus": "TERMINATED",
+    "jobId": 3
+  }
 }
 ```
 
@@ -289,6 +285,6 @@ Specify the session ID to close the session.
 
 ```json
 {
-   "state" : "SUCCEEDED"
+  "state": "SUCCEEDED"
 }
 ```
