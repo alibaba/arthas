@@ -9,12 +9,7 @@
 
 比如获取Arthas版本号：
 
-`curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"exec",
-  "command":"version"
-}
-' | json_pp`{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"exec", "command":"version" }' | json_pp`{{execute T3}}
 
 响应内容如下：
 

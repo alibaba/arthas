@@ -30,26 +30,7 @@
 
 然后把`"\C-h": backward-delete-char`换成`"\C-h": backward-char`，修改后的keymap配置即以下内容:
 
-`cat > /root/.arthas/conf/inputrc <<EOF
-"\C-a": beginning-of-line
-"\C-e": end-of-line
-"\C-f": forward-word
-"\C-b": backward-word
-"\e[D": backward-char
-"\e[C": forward-char
-"\e[B": next-history
-"\e[A": previous-history
-"\C-h": backward-char
-"\C-?": backward-delete-char
-"\C-u": undo
-"\C-d": delete-char
-"\C-k": kill-line
-"\C-i": complete
-"\C-j": accept-line
-"\C-m": accept-line
-"\C-w": backward-delete-word
-"\C-x\e[3~": backward-kill-line
-"\e\C-?": backward-kill-word`{{execute T2}}
+`echo '\C-a": beginning-of-line\n"\C-e": end-of-line\n"\C-f": forward-word\n"\C-b": backward-word\n"\e[D": backward-char\n"\e[C": forward-char\n"\e[B": next-history\n"\e[A": previous-history\n"\C-h": backward-char\n"\C-?": backward-delete-char\n"\C-u": undo\n"\C-d": delete-char\n"\C-k": kill-line\n"\C-i": complete\n"\C-j": accept-line"\C-m": accept-line\n"\C-w": backward-delete-word\n"\C-x\e[3~": backward-kill-line\n"\e\C-?": backward-kill-word'`{{execute T2}}
 
 然后重新连接即可。
 

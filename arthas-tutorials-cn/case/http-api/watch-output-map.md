@@ -30,13 +30,7 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 用Http api 执行上面的命令，注意对JSON双引号转义：
 
-`curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
-{
-  "action":"exec",
-  "execTimeout": 30000,
-  "command":"watch *MathGame prime* '#{ \"params\" : params, \"returnObj\" : returnObj, \"throwExp\": throwExp}' -n 3 "
-}
-EOF`{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '{"action":"exec","execTimeout":30000,"command":"watch *MathGame prime* #{\"params\":params,\"returnObj\":returnObj,\"throwExp\":throwExp} -n 3 "}'`{{execute T3}}
 
 Http api 执行结果：
 
