@@ -12,14 +12,7 @@ interactive processes. The access process is as follows:
 
 Create session and save output into bash environment.
 
-```
-session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"init_session"
-}
-')
-echo $session_data | json_pp
-```{{execute T3}}
+`session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"init_session" }'); echo $session_data | json_pp`{{execute T3}}
 
 Note: The `json_pp` tool formats the output content as pretty json.
 
@@ -37,10 +30,7 @@ extract session ID and consumer ID.
 
 The new session ID is: 
 
-```
-session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g')
-echo $session_id
-```{{execute T3}}
+`session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
 `b09f1353-202c-407b-af24-701b744f971e`;
 
@@ -48,10 +38,7 @@ Please take a note of your session ID here, it will be entered in Terminal 4 in 
 
 consumer ID is: 
 
-```
-consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
-echo $consumer_id
-```{{execute T3}}
+`consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
 `5ae4e5fbab8b4e529ac404f260d4e2d1_1`.
 
@@ -67,15 +54,7 @@ history.
 
 Join session and save output into bash environment.
 
-```
-session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"join_session",
-  "sessionId" : "'"$session_id"'"
-}
-')
-echo $session_data | json_pp
-```{{execute T3}}
+`session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"join_session", "sessionId" : "'"$session_id"'" }'); echo $session_data | json_pp`{{execute T3}}
 
 Response result:
 
@@ -91,10 +70,7 @@ extract new consumer ID.
 
 The new consumer ID is 
 
-```
-consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
-echo $consumer_id
-```{{execute T3}}
+`consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` .
 
@@ -111,15 +87,7 @@ does not affect the content received by the consumer.
 
 The request parameters require session ID and consumer ID:
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"pull_results",
-  "sessionId" : "'"$session_id"'",
-  "consumerId" : "'"$consumer_id"'"
-}
-' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp`{{execute T3}}
 
 Use Bash scripts to regularly pull results messages:
 
@@ -127,29 +95,15 @@ Please enter the sessionID from your Terminal 3 in Terminal 4, an example is her
 
 `b09f1353-202c-407b-af24-701b744f971e`
 
-```
-echo -n "Enter your sessionId in T3:"
-read  session_id
-```{{execute T4}}
+`echo -n "Enter your sessionId in T3:"; read  session_id`{{execute T4}}
 
 Also, Please enter the consumerID, an example is here：
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2`
 
-```
-echo -n "Enter your consumerId in T3:"
-read  consumer_id
-```{{execute T4}}
+`echo -n "Enter your consumerId in T3:"; read  consumer_id`{{execute T4}}
 
-```
-while true; do curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"pull_results",
-  "sessionId" : "'"$session_id"'",
-  "consumerId" : "'"$consumer_id"'"
-}
-' | json_pp; sleep 2; done
-```{{execute T4}}
+`while true; do curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp; sleep 2; done`{{execute T4}}
 
 The response content is as follows:
 
@@ -193,15 +147,7 @@ The response content is as follows:
 
 #### Execute commands asynchronously
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '''
-{
-  "action":"async_exec",
-  "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ",
-  "sessionId" : "'"$session_id"'"
-}
-''' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"async_exec", "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
 Response of `async_exec`:
 
@@ -323,14 +269,7 @@ Please refer to the section "Make watch command output a map object".
 
 Interrupt the running foreground job of the session:
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '''
-{
-  "action":"interrupt_job",
-  "sessionId" : "'"$session_id"'"
-}
-''' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"interrupt_job", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
 ```json
 {
@@ -346,14 +285,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 Specify the session ID to close the session.
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '''
-{
-  "action":"close_session",
-  "sessionId" : "'"$session_id"'"
-}
-''' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"close_session", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
 ```json
 {

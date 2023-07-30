@@ -1,27 +1,15 @@
 Get system properties of the Java application through Http api and
 extract the value of `java.class.path`.
 
-```
-json_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"exec",
-  "command":"sysprop"
-}')
-```{{execute T3}}
+`json_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"exec", "command":"sysprop" }')`{{execute T3}}
 
 * Extract value with `sed`:
 
-```
-class_path=$(echo $json_data | tr -d '\n' | sed 's/.*"java.class.path":"\([^"]*\).*/\1/')
-echo "classpath: $class_path"
-```{{execute T3}}
+`class_path=$(echo $json_data | tr -d '\n' | sed 's/.*"java.class.path":"\([^"]*\).*/\1/'); echo "classpath: $class_path"`{{execute T3}}
 
 * Extract value with `json_pp/awk`:
 
-```
-class_path=$(echo $json_data | tr -d '\n' | json_pp | grep java.class.path | awk -F'"' '{ print $4 }')
-echo "classpath: $class_path"
-```{{execute T3}}
+`class_path=$(echo $json_data | tr -d '\n' | json_pp | grep java.class.path | awk -F'"' '{ print $4 }'); echo "classpath: $class_path"`{{execute T3}}
 
 Output:
 

@@ -11,14 +11,7 @@
 
 创建会话, 保存输出到bash环境变量
 
-```
-session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"init_session"
-}
-')
-echo $session_data | json_pp
-```{{execute T3}}
+`session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"init_session" }'); echo $session_data | json_pp`{{execute T3}}
 
 注： `json_pp` 工具将输出内容格式化为pretty json。
 
@@ -36,10 +29,7 @@ echo $session_data | json_pp
 
 当前会话ID为： 
 
-```
-session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g')
-echo $session_id
-```{{execute T3}}
+`session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
 `b09f1353-202c-407b-af24-701b744f971e`;
 
@@ -47,10 +37,7 @@ echo $session_id
 
 当前消费者ID为：
 
-```
-consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
-echo $consumer_id
-```{{execute T3}}
+`consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
 `5ae4e5fbab8b4e529ac404f260d4e2d1_1 `。
 
@@ -60,15 +47,7 @@ echo $consumer_id
 
 加入会话，保存输出到bash环境变量
 
-```
-session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"join_session",
-  "sessionId" : "'"$session_id"'"
-}
-')
-echo $session_data | json_pp
-```{{execute T3}}
+`session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"join_session", "sessionId" : "'"$session_id"'" }'); echo $session_data | json_pp`{{execute T3}}
 
 响应结果：
 
@@ -84,10 +63,7 @@ echo $session_data | json_pp
 
 新的消费者ID为
 
-```
-consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
-echo $consumer_id
-```{{execute T3}}
+`consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` 。
 
@@ -100,15 +76,7 @@ echo $consumer_id
 
 请求参数需要指定会话ID及消费者ID:
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"pull_results",
-  "sessionId" : "'"$session_id"'",
-  "consumerId" : "'"$consumer_id"'"
-}
-' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp`{{execute T3}}
 
 用Bash脚本定时拉取结果消息:
 
@@ -116,29 +84,15 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 `b09f1353-202c-407b-af24-701b744f971e`
 
-```
-echo -n "Enter your sessionId in T3:"
-read  session_id
-```{{execute T4}}
+`echo -n "Enter your sessionId in T3:"; read  session_id`{{execute T4}}
 
 同样，接着输入Terminal 3中的消费者ID，这里的例子如下：
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `
 
-```
-echo -n "Enter your consumerId in T3:"
-read  consumer_id
-```{{execute T4}}
+`echo -n "Enter your consumerId in T3:"; read  consumer_id`{{execute T4}}
 
-```
-while true; do curl -Ss -XPOST http://localhost:8563/api -d '
-{
-  "action":"pull_results",
-  "sessionId" : "'"$session_id"'",
-  "consumerId" : "'"$consumer_id"'"
-}
-' | json_pp; sleep 2; done
-```{{execute T4}}
+`while true; do curl -Ss -XPOST http://localhost:8563/api -d '{"action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp; sleep 2; done`{{execute T4}}
 
 响应内容如下：
 
@@ -182,15 +136,7 @@ while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 
 #### 异步执行命令
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '''
-{
-  "action":"async_exec",
-  "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ",
-  "sessionId" : "'"$session_id"'"
-}
-''' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"async_exec", "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
 `async_exec` 的结果：
 
@@ -330,14 +276,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 #### 关闭会话
 指定会话ID，关闭会话。
 
-```
-curl -Ss -XPOST http://localhost:8563/api -d '''
-{
-  "action":"close_session",
-  "sessionId" : "'"$session_id"'"
-}
-''' | json_pp
-```{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"close_session", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
 ```json
 {
