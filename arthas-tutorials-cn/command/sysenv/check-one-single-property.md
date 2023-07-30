@@ -1,4 +1,4 @@
-`sysenv USER`{{execute T2}} 
+`sysenv USER`{{execute T2}}
 
 ```bash
 $ sysenv USER

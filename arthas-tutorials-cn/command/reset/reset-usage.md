@@ -1,4 +1,4 @@
- `reset -h`{{execute T2}}
+`reset -h`{{execute T2}}
 
 ```bash
 $ reset -h
@@ -17,5 +17,4 @@ $ reset -h
  -h, --help                                                         this help
  -E, --regex                                                        Enable regular expression to match (wildcard matching by default)
  <class-pattern>                                                    Path and classname of Pattern Matching
- ```
- 
+```

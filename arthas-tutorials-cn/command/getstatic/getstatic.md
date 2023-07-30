@@ -1,4 +1,4 @@
-* 推荐直接使用[ognl](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=ognl)命令，更加灵活。
+- 推荐直接使用[ognl](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=ognl)命令，更加灵活。
 
 通过 [getstatic 命令](https://arthas.aliyun.com/doc/getstatic.html) 可以方便的查看类的静态属性。使用方法为`getstatic class_name field_name`
 
@@ -26,7 +26,7 @@ field: random
 ]
 ```
 
-* 指定classLoader
+- 指定classLoader
 
 注意hashcode是变化的，需要先查看当前的ClassLoader信息，使用`sc -d <ClassName>`提取对应ClassLoader的hashcode。
 
@@ -40,11 +40,11 @@ $ getstatic -c 3d4eac69 demo.MathGame random
 
 `getstatic --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame random`{{execute T2}}
 
-  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+- 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
 
 `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 如果该静态属性是一个复杂对象，还可以支持在该属性上通过ognl表示进行遍历，过滤，访问对象的内部属性等操作。
 
-* OGNL特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-* OGNL表达式官方指南：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- OGNL特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+- OGNL表达式官方指南：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)

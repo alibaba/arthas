@@ -5,9 +5,9 @@ generate the desired value, please refer to
 
 > Maps can also be created using a special syntax.
 >
->#{ "foo" : "foo value", "bar" : "bar value" }
+> #{ "foo" : "foo value", "bar" : "bar value" }
 >
->This creates a Map initialized with mappings for "foo" and "bar".
+> This creates a Map initialized with mappings for "foo" and "bar".
 
 The following command generates values ​​in map format:
 
@@ -33,15 +33,13 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 Execute the above command with Http api, pay attention to escaping the JSON double quotes:
 
-`
-curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
+`curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
 {
   "action":"exec",
   "execTimeout": 30000,
   "command":"watch *MathGame prime* '#{ \"params\" : params, \"returnObj\" : returnObj, \"throwExp\": throwExp}' -n 3 "
 }
-EOF
-`{{execute T3}}
+EOF`{{execute T3}}
 
 Http api execution result:
 

@@ -4,7 +4,6 @@
 
 当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。
 
-
 ```
 $ dashboard
 ID   NAME                           GROUP           PRIORITY   STATE     %CPU      DELTA_TIME TIME      INTERRUPTE DAEMON
@@ -42,30 +41,29 @@ uptime                                                         272s
 
 输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 可以退出dashboard命令。
 
-
-
 ### 数据说明
 
-* ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应。
-* NAME: 线程名
-* GROUP: 线程组名
-* PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高
-* STATE: 线程的状态
-* CPU%: 线程的cpu使用率。比如采样间隔1000ms，某个线程的增量cpu时间为100ms，则cpu使用率=100/1000=10%
-* DELTA_TIME: 上次采样之后线程运行增量CPU时间，数据格式为`秒`
-* TIME: 线程运行总CPU时间，数据格式为`分:秒`
-* INTERRUPTED: 线程当前的中断位状态
-* DAEMON: 是否是daemon线程
+- ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应。
+- NAME: 线程名
+- GROUP: 线程组名
+- PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高
+- STATE: 线程的状态
+- CPU%: 线程的cpu使用率。比如采样间隔1000ms，某个线程的增量cpu时间为100ms，则cpu使用率=100/1000=10%
+- DELTA_TIME: 上次采样之后线程运行增量CPU时间，数据格式为`秒`
+- TIME: 线程运行总CPU时间，数据格式为`分:秒`
+- INTERRUPTED: 线程当前的中断位状态
+- DAEMON: 是否是daemon线程
 
 #### JVM内部线程
+
 Java 8之后支持获取JVM内部线程CPU时间，这些线程只有名称和CPU时间，没有ID及状态等信息（显示ID为-1）。
 通过内部线程可以观测到JVM活动，如GC、JIT编译等占用CPU情况，方便了解JVM整体运行状况。
 
-* 当JVM 堆(heap)/元数据(metaspace)空间不足或OOM时，可以看到GC线程的CPU占用率明显高于其他的线程。
-* 当执行`trace/watch/tt/redefine`等命令后，可以看到JIT线程活动变得更频繁。因为JVM热更新class字节码时清除了此class相关的JIT编译结果，需要重新编译。
+- 当JVM 堆(heap)/元数据(metaspace)空间不足或OOM时，可以看到GC线程的CPU占用率明显高于其他的线程。
+- 当执行`trace/watch/tt/redefine`等命令后，可以看到JIT线程活动变得更频繁。因为JVM热更新class字节码时清除了此class相关的JIT编译结果，需要重新编译。
 
 JVM内部线程包括下面几种：
-* JIT编译线程: 如 `C1 CompilerThread0`, `C2 CompilerThread0` 
-* GC线程: 如`GC Thread0`, `G1 Young RemSet Sampling`  
-* 其它内部线程: 如`VM Periodic Task Thread`, `VM Thread`, `Service Thread`
 
+- JIT编译线程: 如 `C1 CompilerThread0`, `C2 CompilerThread0`
+- GC线程: 如`GC Thread0`, `G1 Young RemSet Sampling`
+- 其它内部线程: 如`VM Periodic Task Thread`, `VM Thread`, `Service Thread`

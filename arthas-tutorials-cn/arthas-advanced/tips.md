@@ -35,11 +35,10 @@ Arthas支持常见的命令行快捷键，比如`Ctrl + A`跳转行首，`Ctrl +
 
 如果想查看所有的历史命令，也可以通过 `history`{{execute T2}} 命令查看到。
 
-
 ### pipeline
 
 Arthas支持在pipeline之后，执行一些简单的命令，比如：
 
-`sysprop | grep java`{{execute T2}} 
+`sysprop | grep java`{{execute T2}}
 
-`sysprop | wc -l`{{execute T2}} 
+`sysprop | wc -l`{{execute T2}}

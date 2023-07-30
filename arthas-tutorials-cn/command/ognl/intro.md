@@ -16,5 +16,5 @@
 
 本教程会以一个普通的Spring Boot应用为例，演示ognl命令。
 
-* Github: https://github.com/alibaba/arthas
-* 文档: https://arthas.aliyun.com/doc/
+- Github: https://github.com/alibaba/arthas
+- 文档: https://arthas.aliyun.com/doc/

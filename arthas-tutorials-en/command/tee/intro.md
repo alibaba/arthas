@@ -32,5 +32,5 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 
 This tutorial takes a simple application as an example to demonstrate the the usage of tee.
 
-* Github: https://github.com/alibaba/arthas
-* Documentation: https://arthas.aliyun.com/doc/en
+- Github: https://github.com/alibaba/arthas
+- Documentation: https://arthas.aliyun.com/doc/en

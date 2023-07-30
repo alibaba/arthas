@@ -1,4 +1,4 @@
-`sysprop`{{execute T2}} 
+`sysprop`{{execute T2}}
 
 ```bash
 $ sysprop

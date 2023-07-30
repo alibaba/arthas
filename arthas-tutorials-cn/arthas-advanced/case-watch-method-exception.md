@@ -16,10 +16,8 @@
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}'`{{execute T2}}
 
-
 1. 第一个参数是类名，支持通配
 2. 第二个参数是函数名，支持通配
-
 
 访问 `curl http://localhost/user/0`{{execute T3}} ,`watch`命令会打印调用的参数和异常
 
@@ -45,24 +43,22 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 
 在上面的例子里，第三个参数是`返回值表达式`，它实际上是一个`ognl`表达式，它支持一些内置对象：
 
-* loader
-* clazz
-* method
-* target
-* params
-* returnObj
-* throwExp
-* isBefore
-* isThrow
-* isReturn
+- loader
+- clazz
+- method
+- target
+- params
+- returnObj
+- throwExp
+- isBefore
+- isThrow
+- isReturn
 
 你可以利用这些内置对象来组成不同的表达式。比如返回一个数组：
 
 `watch com.example.demo.arthas.user.UserController * '{params[0], target, returnObj}'`{{execute T2}}
 
-
 更多参考： https://arthas.aliyun.com/doc/advice-class.html
-
 
 ### 条件表达式
 
@@ -89,7 +85,6 @@ ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[
 `watch`命令支持`-e`选项，表示只捕获抛出异常时的请求：
 
 `watch com.example.demo.arthas.user.UserController * "{params[0],throwExp}" -e`{{execute T2}}
-
 
 ### 按照耗时进行过滤
 

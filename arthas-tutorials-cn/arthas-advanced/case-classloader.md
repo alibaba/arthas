@@ -29,8 +29,7 @@ $ classloader -l
  sun.misc.Launcher$ExtClassLoader@7494e528                        4            7494e528  null
 ```
 
-* TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
-
+- TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
 
 ### 列出ClassLoader里加载的所有类
 
@@ -44,7 +43,7 @@ $ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader
  org.apache.jsp.jsp.hello_jsp
 ```
 
-* 注：同ognl, 也可用`-c <hashcode>`而不用`--classLoaderClass`指定
+- 注：同ognl, 也可用`-c <hashcode>`而不用`--classLoaderClass`指定
 
 ### 反编译jsp的代码
 
@@ -61,7 +60,6 @@ ClassLoader:
 ```
 
 ### 查看ClassLoader树
-
 
 `classloader -t`{{execute T2}}
 
@@ -80,6 +78,7 @@ $ classloader -t
 
         +-org.apache.jasper.servlet.JasperLoader@21ae0fe2
 ```
+
 注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面相关命令：
 
 ### 列出ClassLoader的urls
@@ -134,4 +133,3 @@ load class success.
  class-loader
  classLoaderHash   null
 ```
-

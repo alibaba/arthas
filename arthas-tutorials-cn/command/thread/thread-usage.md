@@ -28,10 +28,10 @@ $ thread -n 3
 "VM Periodic Task Thread" [Internal] cpuUsage=0.07% deltaTime=0ms time=584ms
 ```
 
-* 没有线程ID，包含`[Internal]`表示为JVM内部线程，参考`dashboard`命令的介绍。
-* `cpuUsage`为采样间隔时间内线程的CPU使用率，与`dashboard`命令的数据一致。
-* `deltaTime`为采样间隔时间内线程的增量CPU时间，小于1ms时被取整显示为0ms。
-* `time` 线程运行总CPU时间。
+- 没有线程ID，包含`[Internal]`表示为JVM内部线程，参考`dashboard`命令的介绍。
+- `cpuUsage`为采样间隔时间内线程的CPU使用率，与`dashboard`命令的数据一致。
+- `deltaTime`为采样间隔时间内线程的增量CPU时间，小于1ms时被取整显示为0ms。
+- `time` 线程运行总CPU时间。
 
 注意：线程栈为第二采样结束时获取，不能表明采样间隔时间内该线程都是在处理相同的任务。建议间隔时间不要太长，可能间隔时间越大越不准确。
 可以根据具体情况尝试指定不同的间隔时间，观察输出结果。
@@ -128,7 +128,7 @@ $ thread -b
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
     at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
     at java.lang.Thread.run(Thread.java:745)
- 
+
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
@@ -136,12 +136,13 @@ $ thread -b
 **注意**， 目前只支持找出synchronized关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
 
 ### thread -i, 指定采样时间间隔
-* `thread -i 1000` : 统计最近1000ms内的线程CPU时间。
- 
+
+- `thread -i 1000` : 统计最近1000ms内的线程CPU时间。
+
 `thread -i 1000`{{execute T2}}
 
-* `thread -n 3 -i 1000` : 列出1000ms内最忙的3个线程栈
- 
+- `thread -n 3 -i 1000` : 列出1000ms内最忙的3个线程栈
+
 `thread -n 3 -i 1000`{{execute T2}}
 
 ```bash
@@ -159,7 +160,7 @@ $ thread -n 3 -i 1000
     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
     at java.lang.Thread.run(Thread.java:756)
- 
+
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
 ...

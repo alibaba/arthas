@@ -4,7 +4,6 @@
 
 `reset`{{execute T2}}
 
-
 ```bash
 $ trace demo.MathGame primeFactors
 Press Q or Ctrl+C to abort.

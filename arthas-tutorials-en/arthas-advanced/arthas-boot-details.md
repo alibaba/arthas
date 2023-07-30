@@ -6,9 +6,7 @@ By default, the arthas server listens for the IP of `127.0.0.1`. If you want rem
 
 `java -jar arthas-boot.jar --target-ip`{{execute T2}}
 
-
 ## List all versions
-
 
 `java -jar arthas-boot.jar --versions`{{execute T2}}
 
@@ -23,6 +21,3 @@ Use the specified version:
 ## Print verbose information
 
 `java -jar arthas-boot.jar -v`{{execute T2}}
-
-
-

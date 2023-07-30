@@ -1,4 +1,3 @@
-	
 ### List the top n busiest threads with detailed stack trace
 
 `thread -n 3`{{execute T2}}
@@ -29,17 +28,16 @@ $ thread -n 3
 "VM Periodic Task Thread" [Internal] cpuUsage=0.07% deltaTime=0ms time=584ms
 ```
 
-* Without thread ID, including `[Internal]` means JVM internal thread, refer to the introduction of `dashboard` command.
-* `cpuUsage` is the CPU usage of the thread during the sampling interval, consistent with the data of the `dashboard` command.
-* `deltaTime` is the incremental CPU time of the thread during the sampling interval. If it is less than 1ms, it will be rounded and displayed as 0ms.
-* `time` The total CPU time of thread.
+- Without thread ID, including `[Internal]` means JVM internal thread, refer to the introduction of `dashboard` command.
+- `cpuUsage` is the CPU usage of the thread during the sampling interval, consistent with the data of the `dashboard` command.
+- `deltaTime` is the incremental CPU time of the thread during the sampling interval. If it is less than 1ms, it will be rounded and displayed as 0ms.
+- `time` The total CPU time of thread.
 
-**Note:** The thread stack is acquired at the end of the second sampling, which does not indicate that the thread is 
-processing the same task during the sampling interval. It is recommended that the interval time should not be too long. 
+**Note:** The thread stack is acquired at the end of the second sampling, which does not indicate that the thread is
+processing the same task during the sampling interval. It is recommended that the interval time should not be too long.
 The larger the interval time, the more inaccurate.
 
 You can try to specify different intervals according to the specific situation and observe the output results.
-
 
 #### List first page threads' info when no options provided
 
@@ -127,7 +125,7 @@ $ thread -b
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
     at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
     at java.lang.Thread.run(Thread.java:745)
- 
+
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
@@ -136,11 +134,11 @@ $ thread -b
 
 ### thread -i, specify the sampling interval
 
-* `thread -i 1000`: Count the thread cpu time of the last 1000ms.
+- `thread -i 1000`: Count the thread cpu time of the last 1000ms.
 
 `thread -i 1000`{{execute T2}}
 
-* `thread -n 3 -i 1000`: List the 3 busiest thread stacks in 1000ms.
+- `thread -n 3 -i 1000`: List the 3 busiest thread stacks in 1000ms.
 
 `thread -n 3 -i 1000`{{execute T2}}
 
@@ -159,7 +157,7 @@ $ thread -n 3 -i 1000
     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
     at java.lang.Thread.run(Thread.java:756)
- 
+
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
 ...

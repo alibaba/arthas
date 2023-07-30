@@ -1,20 +1,20 @@
-* *ID*: JVM thread ID, pls. note this ID is different from the nativeID in jstack
+- _ID_: JVM thread ID, pls. note this ID is different from the nativeID in jstack
 
-* *NAME*: thread name
+- _NAME_: thread name
 
-* *GROUP*: thread group name
+- _GROUP_: thread group name
 
-* *PRIORITY*: thread priority, ranged from 1 to 10. The greater number, the higher priority
+- _PRIORITY_: thread priority, ranged from 1 to 10. The greater number, the higher priority
 
-* *STATE*: thread state
+- _STATE_: thread state
 
-* *CPU%*: the ratio of CPU usage for the thread, sampled every 100ms
+- _CPU%_: the ratio of CPU usage for the thread, sampled every 100ms
 
-* *TIME*: total running time in minute:`second format`
+- _TIME_: total running time in minute:`second format`
 
-* *INTERRUPTED*: the thread interruption state
+- _INTERRUPTED_: the thread interruption state
 
-* *DAEMON*: daemon thread or not
+- _DAEMON_: daemon thread or not
 
 ## Screenshot
 

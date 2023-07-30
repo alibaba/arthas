@@ -7,4 +7,3 @@ At this time, the trace command will be executed in the background, and the resu
 `pwd`{{execute T2}}
 
 `cat test.out`{{execute T2}}
-

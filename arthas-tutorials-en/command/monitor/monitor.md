@@ -1,5 +1,4 @@
-monitor
-=======
+# monitor
 
 > Monitor method invocation.
 
@@ -13,27 +12,27 @@ On Arthas's server side, the command is running as a background job, but the wea
 
 ### Items to monitor
 
-|Item|Specification|
-|---:|:---|
-|timestamp|timestamp|
-|class|Java class|
-|method|method (constructor and regular methods)|
-|total|calling times|
-|success|success count|
-|fail|failure count|
-|rt|average RT|
-|fail-rate|failure ratio|
+|      Item | Specification                            |
+| --------: | :--------------------------------------- |
+| timestamp | timestamp                                |
+|     class | Java class                               |
+|    method | method (constructor and regular methods) |
+|     total | calling times                            |
+|   success | success count                            |
+|      fail | failure count                            |
+|        rt | average RT                               |
+| fail-rate | failure ratio                            |
 
 ### Parameters
 
 Parameter `[c:]` stands for cycles of statistics. Its value is an integer value in seconds.
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|`[E]`|turn on regex matching while the default is wildcard matching|
-|`[c:]`|cycle of statistics, the default value: `120`s|
+|             Name | Specification                                                 |
+| ---------------: | :------------------------------------------------------------ |
+|  _class-pattern_ | pattern for the class name                                    |
+| _method-pattern_ | pattern for the method name                                   |
+|            `[E]` | turn on regex matching while the default is wildcard matching |
+|           `[c:]` | cycle of statistics, the default value: `120`s                |
 
 ### Usage
 

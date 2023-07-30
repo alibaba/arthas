@@ -20,6 +20,7 @@ Check the current JVM Perf Counter information.
  -d, --details                        print all perf counter details
  -h, --help                           this help
 ```
+
 [perfcounter command Docs](https://arthas.aliyun.com/en/doc/perfcounter.html)
 
 ## Usage
@@ -36,7 +37,7 @@ $ perfcounter
  java.property.java.version                   11.0.4
  java.property.java.vm.info                   mixed mode
  java.property.java.vm.name                   OpenJDK 64-Bit Server VM
- ```
+```
 
 Print more information with the `-d` option:
 

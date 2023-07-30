@@ -1,6 +1,7 @@
 演示Arthas里`watch`命令中`ognl`表达式的工作流程。用户可以自己修改`Demo.java`里的表达式，再执行验证。
 
 项目地址： https://github.com/hengyunabc/ognl-demo
+
 # 打开Demo.java文件
 
 `src/main/java/com/example/ognl/Demo.java`{{open}}
@@ -8,7 +9,6 @@
 # 编译运行代码
 
 `mvn compile exec:java`{{execute}}
-
 
 输出结果包含`ognl`表达式输出结果：
 
@@ -28,7 +28,6 @@ AtEnter, conditionExpress: params[0] > 1, conditionResult: true
 ]
 ```
 
-
 以上输出结果，对应在代码里的表达式是：
 
 ```java
@@ -45,7 +44,6 @@ watch com.example.ognl.TestService test "{target, params, returnObj, #cost}" "pa
 # 查看函数抛出异常时的表达式结果
 
 `mvn compile exec:java -DexceptionCase=true`{{execute}}
-
 
 The output:
 

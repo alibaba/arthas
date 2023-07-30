@@ -4,15 +4,15 @@ show Mbean information
 
 ### Parameters
 
-|  Name   | Specification  |
-|  ----  | ----  |
-|  name-pattern	|  pattern for the Mbean name |
-|  attribute-pattern |  pattern for the attribute name |
-|  [m]	|  show meta information |
-|  [i:]	|  specify the interval to refresh attribute value (ms) |
-|  [n:]	|  execution times |
-|  [E]	|  turn on regex matching while the default mode is wildcard matching. Only effect on the attribute name |
-	
+| Name              | Specification                                                                                         |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| name-pattern      | pattern for the Mbean name                                                                            |
+| attribute-pattern | pattern for the attribute name                                                                        |
+| [m]               | show meta information                                                                                 |
+| [i:]              | specify the interval to refresh attribute value (ms)                                                  |
+| [n:]              | execution times                                                                                       |
+| [E]               | turn on regex matching while the default mode is wildcard matching. Only effect on the attribute name |
+
 ## Usage
 
 ### Show all Mbean names

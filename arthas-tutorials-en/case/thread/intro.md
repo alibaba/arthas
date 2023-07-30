@@ -32,5 +32,5 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 
 This tutorial takes a simple application as an example to demonstrate the use case of Find CPU usage Top N threads.
 
-* Github: https://github.com/alibaba/arthas
-* Docs: https://arthas.aliyun.com/doc/en
+- Github: https://github.com/alibaba/arthas
+- Docs: https://arthas.aliyun.com/doc/en

@@ -1,6 +1,6 @@
 比如查看`sysprop`命令的帮助信息：
 
-`help sysprop`{{execute T2}} 
+`help sysprop`{{execute T2}}
 
 ```bash
 [arthas@50759]$ help sysprop
@@ -25,4 +25,3 @@
 ```
 
 可以看到具体的命令的参数，示例和WKI地址。
-

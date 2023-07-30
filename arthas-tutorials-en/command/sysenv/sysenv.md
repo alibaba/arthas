@@ -2,7 +2,7 @@ The `sysenv`{{execute T2}} command allows you to view the current JVM environmen
 
 ## Usage
 
-`sysenv -h`{{execute T2}} 
+`sysenv -h`{{execute T2}}
 
 ```
  USAGE:
@@ -22,4 +22,5 @@ The `sysenv`{{execute T2}} command allows you to view the current JVM environmen
  -h, --help                                                 this help
  <env-name>                                                 env name
 ```
+
 [sysenv command Docs](https://arthas.aliyun.com/en/doc/sysenv.html)

@@ -29,8 +29,7 @@ $ classloader -l
  sun.misc.Launcher$ExtClassLoader@7494e528                        4            7494e528  null
 ```
 
-* The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
-
+- The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
 
 Please write down your classLoaderHash here, in the case here, it's `65361d9a`. It will be used in the future steps.
 
@@ -53,7 +52,6 @@ $ classloader -a -c 65361d9a
 `sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### View the ClassLoader tree
-
 
 `classloader -t`{{execute T2}}
 
@@ -112,6 +110,7 @@ For example, try loading `ch.qos.logback.classic.spi.StackTraceElementProxy` wit
 First check with `sc ch.qos.logback.classic.spi.StackTraceElementProxy`{{execute T2}}, you can see that it's unloaded:
 
 `classloader -c <classLoaderHash> --load java.lang.String`
+
 ```bash
 Affect(row-cnt:0) cost in 18 ms.
 ```

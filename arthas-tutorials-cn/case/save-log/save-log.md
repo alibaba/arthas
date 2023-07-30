@@ -26,5 +26,4 @@ job id  : 2
 cache location  : /Users/admin/logs/arthas-cache/28198/2
 ```
 
-* 参考： https://arthas.aliyun.com/doc/async.html
-
+- 参考： https://arthas.aliyun.com/doc/async.html

@@ -6,7 +6,6 @@ Open a new tab, and then in the terminal of `Tab 2`, download `arthas-boot.jar` 
 
 `arthas-boot.jar` supports many parameters and can be viewed by `java -jar arthas-boot.jar -h`{{execute T2}}.
 
-
 ```bash
 $ java -jar arthas-boot.jar -h
 [INFO] arthas-boot version: 3.3.6
@@ -64,4 +63,4 @@ Options and Arguments:
     --select <value>            select target process by classname or
                                 JARfilename
  <pid>                          Target pid
- ```
+```

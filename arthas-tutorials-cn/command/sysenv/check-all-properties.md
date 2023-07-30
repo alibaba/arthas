@@ -1,4 +1,4 @@
-`sysenv`{{execute T2}} 
+`sysenv`{{execute T2}}
 
 ```bash
 $ sysenv

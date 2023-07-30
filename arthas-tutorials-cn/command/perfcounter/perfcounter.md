@@ -20,6 +20,7 @@
  -d, --details                        print all perf counter details
  -h, --help                           this help
 ```
+
 [perfcounter 命令文档](https://arthas.aliyun.com/doc/perfcounter.html)
 
 ## 使用参考
@@ -36,7 +37,7 @@ $ perfcounter
  java.property.java.version                   11.0.4
  java.property.java.vm.info                   mixed mode
  java.property.java.vm.name                   OpenJDK 64-Bit Server VM
- ```
+```
 
 可以用-d参数打印更多信息：
 

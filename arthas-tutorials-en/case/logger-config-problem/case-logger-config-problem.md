@@ -36,7 +36,6 @@ Take `UserController` as an example, it uses slf4j api, but the actual logger sy
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
-
 ```bash
 $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
@@ -55,9 +54,7 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 
 ### Find the configuration file actually loaded by the logback
 
-
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
-
 
 ### Use the classloader command to find possible logger configuration files
 
@@ -69,6 +66,7 @@ $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClas
 
 Affect(row-cnt:1) cost in 13 ms.
 ```
+
 You can know the specific source of the loaded configuration.
 
 You can try to load files that are prone to conflict:
@@ -76,5 +74,3 @@ You can try to load files that are prone to conflict:
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback.xml`{{execute T2}}
 
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r log4j.properties`{{execute T2}}
-
-

@@ -21,13 +21,11 @@ java.vm.vendor                java.vendor.url               java.vm.name
 ...
 ```
 
-
 ### Readline shortcut key support
 
 Arthas supports common command line shortcuts, such as `Ctrl + A` to jump to the beginning of the line, and `Ctrl + E` to jump to the end of the line.
 
 More shortcuts can be viewed with the `keymap`{{execute T2}} command.
-
 
 ### Completion of history commands
 
@@ -41,6 +39,6 @@ If you want to see all the history commands, you can also view them with the `hi
 
 Arthas supports some simple commands after the pipeline, such as:
 
-`sysprop | grep java`{{execute T2}} 
+`sysprop | grep java`{{execute T2}}
 
-`sysprop | wc -l`{{execute T2}} 
+`sysprop | wc -l`{{execute T2}}

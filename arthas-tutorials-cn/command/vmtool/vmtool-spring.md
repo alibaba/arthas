@@ -5,7 +5,7 @@
 `vmtool --action getInstances --className org.springframework.context.ApplicationContext `{{execute T2}}
 
 ```bash
-$ vmtool --action getInstances --className org.springframework.context.ApplicationContext 
+$ vmtool --action getInstances --className org.springframework.context.ApplicationContext
 @ApplicationContext[][
     @AnnotationConfigEmbeddedWebApplicationContext[org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@12028586: startup date [Thu May 13 16:08:38 UTC 2021]; root of context hierarchy],
 ]
@@ -25,12 +25,9 @@ $ vmtool --action getInstances --className org.springframework.context.Applicati
 
 查找所有的spring beans名字：
 
-
 `vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'`{{execute T2}}
 
-
 调用`userController.findUserById(1)`函数：
-
 
 `vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBean("userController").findUserById(1)'`{{execute T2}}
 
@@ -43,7 +40,6 @@ $ vmtool --action getInstances --className org.springframework.context.Applicati
 ```
 
 ### 查找所有的spring mapping对象
-
 
 `vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping`{{execute T2}}
 

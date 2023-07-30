@@ -1,12 +1,10 @@
 在Arthas里，有一个单独的`ognl`命令，可以动态执行代码。
 
-
 ### 调用static函数
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
 可以检查`Terminal 1`（不是arthas的Terminal 2）里的进程输出，可以发现打印出了`hello ognl`。
-
 
 ### 查找UserController的ClassLoader
 
@@ -36,7 +34,7 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 ]
 ```
 
- `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 ### 获取静态类的静态字段
 
@@ -66,5 +64,5 @@ $ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("j
 
 一些更复杂的用法，可以参考：
 
-* OGNL特殊用法请参考：https://github.com/alibaba/arthas/issues/71
-* OGNL表达式官方指南：https://commons.apache.org/proper/commons-ognl/language-guide.html
+- OGNL特殊用法请参考：https://github.com/alibaba/arthas/issues/71
+- OGNL表达式官方指南：https://commons.apache.org/proper/commons-ognl/language-guide.html

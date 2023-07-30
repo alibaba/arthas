@@ -32,5 +32,5 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 
 This tutorial takes a normal Spring Boot application as an example to demonstrate Hotswap code.
 
-* Github: https://github.com/alibaba/arthas
-* Docs: https://arthas.aliyun.com/doc/en
+- Github: https://github.com/alibaba/arthas
+- Docs: https://arthas.aliyun.com/doc/en

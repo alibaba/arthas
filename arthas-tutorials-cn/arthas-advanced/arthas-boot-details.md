@@ -6,9 +6,7 @@
 
 `java -jar arthas-boot.jar --target-ip`{{execute T2}}
 
-
 ## 列出所有的版本
-
 
 `java -jar arthas-boot.jar --versions`{{execute T2}}
 

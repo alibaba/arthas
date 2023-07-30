@@ -29,4 +29,3 @@ With `-d` option, it will print the deatils of the method.
 Find specific methods, such as the constructors:
 
 `sm java.math.RoundingMode <init>`{{execute T2}}
-

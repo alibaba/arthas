@@ -4,5 +4,5 @@
 
 This tutorial takes a normal Spring Boot application as an example to demonstrate the advanced usage of the Arthas.
 
-* Github: https://github.com/alibaba/arthas
-* Docs: https://arthas.aliyun.com/doc/en
+- Github: https://github.com/alibaba/arthas
+- Docs: https://arthas.aliyun.com/doc/en

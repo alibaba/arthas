@@ -4,15 +4,15 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 
 ### Options
 
-|Name|Specification|
-|---:|:---|
-|[l]|list all classloader instances|
-|[t]|print classloader's hierarchy|
-|[a]|list all the classes loaded by all the classloaders (use it with great caution since the output can be huge)|
-|[c:]|print classloader's hashcode|
-|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
-|`[c: r:]`|using ClassLoader to search resource|
-|`[c: load:]`|using ClassLoader to load class|
+|                  Name | Specification                                                                                                |
+| --------------------: | :----------------------------------------------------------------------------------------------------------- |
+|                   [l] | list all classloader instances                                                                               |
+|                   [t] | print classloader's hierarchy                                                                                |
+|                   [a] | list all the classes loaded by all the classloaders (use it with great caution since the output can be huge) |
+|                  [c:] | print classloader's hashcode                                                                                 |
+| `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression.                                              |
+|             `[c: r:]` | using ClassLoader to search resource                                                                         |
+|          `[c: load:]` | using ClassLoader to load class                                                                              |
 
 ### Usage
 
@@ -45,7 +45,7 @@ $ classloader -l
  sun.misc.Launcher$ExtClassLoader@7494e528                        4            7494e528  null
 ```
 
-* The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
+- The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
 
 Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
 
@@ -80,7 +80,6 @@ $ classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader
 `sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### View the ClassLoader tree
-
 
 `classloader -t`{{execute T2}}
 
@@ -139,6 +138,7 @@ For example, try loading `ch.qos.logback.classic.spi.StackTraceElementProxy` wit
 First check with `sc ch.qos.logback.classic.spi.StackTraceElementProxy`{{execute T2}}, you can see that it's unloaded:
 
 `classloader -c <classLoaderHash> --load java.lang.String`
+
 ```bash
 Affect(row-cnt:0) cost in 18 ms.
 ```

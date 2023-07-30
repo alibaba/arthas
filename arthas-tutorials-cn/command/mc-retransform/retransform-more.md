@@ -2,7 +2,6 @@
 
 参考：[Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
-
 ### 查看 retransform entry
 
 `retransform -l`{{execute T2}}
@@ -15,7 +14,7 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
                 serController
 ```
 
-* TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry对应的 .class文件的次数，但并不表明transform一定成功。
+- TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry对应的 .class文件的次数，但并不表明transform一定成功。
 
 ### 删除指定 retransform entry
 
@@ -51,8 +50,8 @@ com.example.demo.arthas.user.UserController
 
 如果对某个类执行 retransform 之后，想消除影响，则需要：
 
-* 删除这个类对应的 retransform entry
-* 重新触发 retransform
+- 删除这个类对应的 retransform entry
+- 重新触发 retransform
 
 > 如果不清除掉所有的 retransform entry，并重新触发 retransform ，则arthas stop时，retransform过的类仍然生效。
 

@@ -4,6 +4,6 @@
 
 `demo-arthas-spring-boot`是一个很简单的spring boot应用，源代码：[查看](https://github.com/hengyunabc/spring-boot-inside/tree/master/demo-arthas-spring-boot)
 
-启动之后，可以访问80端口：[打开 80 端口]({{TRAFFIC_HOST1_80}}) 
+启动之后，可以访问80端口：[打开 80 端口]({{TRAFFIC_HOST1_80}})
 
 ![Demo Web](../../assets/demo-web.png)

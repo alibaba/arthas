@@ -14,15 +14,11 @@
 
 `sysenv`{{execute T2}} 命令可以获取到环境变量。和`sysprop`命令类似。
 
-
-
 ### jvm
 
 `jvm`{{execute T2}} 命令会打印出`JVM`的各种详细信息。
 
-
 ### dashboard
-
 
 `dashboard`{{execute T2}} 命令可以查看当前系统的实时数据面板。
 

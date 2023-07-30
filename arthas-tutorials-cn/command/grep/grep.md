@@ -54,6 +54,6 @@
 
 `thread | grep -m 10 -e  "TIMED_WAITING|WAITING"`{{execute T2}}
 
-###  除了显示符合范本样式的那一行之外，`-A`指定显示该行之后的内容，`-B`指定显示该行之前的内容。
+### 除了显示符合范本样式的那一行之外，`-A`指定显示该行之后的内容，`-B`指定显示该行之前的内容。
 
 `sysenv | grep JAVA -A2 -B3`{{execute T2}}

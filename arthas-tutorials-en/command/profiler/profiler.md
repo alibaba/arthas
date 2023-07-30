@@ -6,15 +6,15 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 
 ### Supported Options
 
-|Name|Specification|
-|---:|:---|
-|*action*|Action to execute|
-|*actionArg*|Attribute name pattern|
-|[i:]|sampling interval in ns (default: 10'000'000, i.e. 10 ms)|
-|[f:]|dump output to specified directory|
-|[d:]|run profiling for specified seconds|
-|[e:]|which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu|
- 
+|        Name | Specification                                                                    |
+| ----------: | :------------------------------------------------------------------------------- |
+|    _action_ | Action to execute                                                                |
+| _actionArg_ | Attribute name pattern                                                           |
+|        [i:] | sampling interval in ns (default: 10'000'000, i.e. 10 ms)                        |
+|        [f:] | dump output to specified directory                                               |
+|        [d:] | run profiling for specified seconds                                              |
+|        [e:] | which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu |
+
 ### View all supported actions
 
 `profiler actions`{{execute T2}}
@@ -23,7 +23,6 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 $ profiler actions
 Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
 ```
-
 
 ### View version
 
@@ -46,7 +45,6 @@ Profiling started
 
 > By default, the sample event is `cpu`. Can be specified with the `--e` parameter.
 
-
 ### Get the number of samples collected
 
 `profiler getSamples`{{execute T2}}
@@ -65,9 +63,7 @@ $ profiler status
 Profiling is running for 11 seconds
 ```
 
-
 ### Stop profiler
-
 
 #### Generating html format results
 
@@ -94,7 +90,6 @@ By default, arthas uses http port 8563, [click to open]({{TRAFFIC_HOST1_8563}}/a
 Click to view specific results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-svg.jpg)
-
 
 ### Profiler supported events
 
@@ -150,7 +145,6 @@ $ profiler start --event alloc
 Profiling started
 ```
 
-
 ### Resume sampling
 
 `profiler resume`{{execute T2}}
@@ -164,12 +158,11 @@ The difference between `start` and `resume` is: `start` is the new start samplin
 
 You can verify the number of samples by executing `profiler getSamples`.
 
-
 ### Use `execute` action to execute complex commands
 
 `profiler execute 'start,framebuf=5000000'`{{execute T2}}
 
-For example, start sampling:  
+For example, start sampling:
 
 ```bash
 profiler execute 'start,framebuf=5000000'

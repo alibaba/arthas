@@ -4,5 +4,5 @@
 
 This tutorial show how to debug `ognl` express in Arths.
 
-* Github: https://github.com/alibaba/arthas
-* Docs: https://arthas.aliyun.com/doc/en
+- Github: https://github.com/alibaba/arthas
+- Docs: https://arthas.aliyun.com/doc/en

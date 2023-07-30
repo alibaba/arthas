@@ -1,4 +1,4 @@
-`sysprop java.version`{{execute T2}} 
+`sysprop java.version`{{execute T2}}
 
 ```bash
 $ sysprop java.version
@@ -7,9 +7,9 @@ java.version=1.8.0_51
 
 ## 修改单个属性
 
-`sysprop user.country`{{execute T2}} 
+`sysprop user.country`{{execute T2}}
 
-`sysprop user.country CN`{{execute T2}} 
+`sysprop user.country CN`{{execute T2}}
 
 ```bash
 $ sysprop user.country

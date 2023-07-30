@@ -4,7 +4,6 @@ Enter `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to exit
 
 `reset`{{execute T2}}
 
-
 ```bash
 $ trace demo.MathGame primeFactors
 Press Q or Ctrl+C to abort.

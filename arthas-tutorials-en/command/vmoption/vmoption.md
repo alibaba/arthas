@@ -22,9 +22,9 @@ Display, and update the vm diagnostic options.
  -h, --help                           this help
  <name>                               VMOption name
  <value>                              VMOption value
- ```
+```
 
- [vmoption command Docs](https://arthas.aliyun.com/en/doc/vmoption.html)
+[vmoption command Docs](https://arthas.aliyun.com/en/doc/vmoption.html)
 
 ## Usage
 
@@ -72,6 +72,7 @@ Display, and update the vm diagnostic options.
 ```
 
 ### Update individual option
+
 `vmoption PrintGC true`{{execute T2}}
 
 ```bash

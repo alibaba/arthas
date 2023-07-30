@@ -4,13 +4,13 @@ Most often we know one method gets called, but we have no idea on which code pat
 
 ### Parameters
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*condition-expression*|condition expression|
-|`[E]`|turn on regex match, the default behavior is wildcard match|
-|`[n:]`|execution times|
+|                   Name | Specification                                               |
+| ---------------------: | :---------------------------------------------------------- |
+|        _class-pattern_ | pattern for the class name                                  |
+|       _method-pattern_ | pattern for the method name                                 |
+| _condition-expression_ | condition expression                                        |
+|                  `[E]` | turn on regex match, the default behavior is wildcard match |
+|                 `[n:]` | execution times                                             |
 
 [stack command Docs](https://arthas.aliyun.com/en/doc/stack.html)
 
@@ -18,8 +18,8 @@ There's one thing worthy noting here is observation expression. The observation 
 
 Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
-* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
-* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
+- OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
@@ -59,7 +59,6 @@ ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
 Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 ```
 
-
 #### Filtering by cost
 
 `stack demo.MathGame primeFactors '#cost>5'`{{execute T2}}
@@ -74,5 +73,3 @@ ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
     @demo.MathGame.run()
         at demo.MathGame.main(MathGame.java:16)
 ```
-
-

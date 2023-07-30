@@ -10,7 +10,6 @@ Project: https://github.com/hengyunabc/ognl-demo
 
 `mvn compile exec:java`{{execute}}
 
-
 输出结果包含`ognl`表达式输出结果：
 
 ```java
@@ -29,7 +28,6 @@ AtEnter, conditionExpress: params[0] > 1, conditionResult: true
 ]
 ```
 
-
 Expression in the code:
 
 ```java
@@ -46,7 +44,6 @@ watch com.example.ognl.TestService test "{target, params, returnObj, #cost}" "pa
 # View the expression result when the method throws an exception
 
 `mvn compile exec:java -DexceptionCase=true`{{execute}}
-
 
 The output:
 

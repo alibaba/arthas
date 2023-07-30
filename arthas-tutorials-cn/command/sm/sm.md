@@ -6,21 +6,21 @@
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|*method-pattern*|方法名表达式匹配|
-|[d]|展示每个方法的详细信息|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
-|`[c:]`|指定class的 ClassLoader 的 hashcode|
-|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
+|              参数名称 | 参数说明                                    |
+| --------------------: | :------------------------------------------ |
+|       _class-pattern_ | 类名表达式匹配                              |
+|      _method-pattern_ | 方法名表达式匹配                            |
+|                   [d] | 展示每个方法的详细信息                      |
+|                   [E] | 开启正则表达式匹配，默认为通配符匹配        |
+|                `[c:]` | 指定class的 ClassLoader 的 hashcode         |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name  |
+|                `[n:]` | 具有详细信息的匹配类的最大数量（默认为100） |
 
 [sm 命令文档](https://arthas.aliyun.com/doc/sm.html)
 
 ### 使用参考
 
-* 查找`java.lang.String`类的具体方法
+- 查找`java.lang.String`类的具体方法
 
 `sm java.lang.String`{{execute T2}}
 
@@ -73,7 +73,7 @@ java.lang.String->intern
 Affect(row-cnt:44) cost in 1342 ms.
 ```
 
-* 指定ClassLoader
+- 指定ClassLoader
 
 查找ClassLoaderHash：
 
@@ -84,7 +84,7 @@ $ sc -d demo.MathGame | grep classLoaderHash
  classLoaderHash   70dea4e
 ```
 
-* 指定classLoader
+- 指定classLoader
 
 注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
 
@@ -108,11 +108,11 @@ demo.MathGame print(ILjava/util/List;)V
 Affect(row-cnt:5) cost in 2 ms.
 ```
 
-  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+- 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
 
 `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
-* 查找`java.lang.String#toString`函数并打印详细信息
+- 查找`java.lang.String#toString`函数并打印详细信息
 
 `sm -d java.lang.String toString`{{execute T2}}
 

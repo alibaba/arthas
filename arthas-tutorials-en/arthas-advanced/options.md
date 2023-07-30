@@ -1,10 +1,8 @@
 There are some switches in Arthas that can be viewed with the `options`{{execute T2}} command.
 
-
 View the value of a single option, such as
 
 `options unsafe`{{execute T2}}
-
 
 ## Allow to enhance the classes of JDK
 

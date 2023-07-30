@@ -13,4 +13,3 @@ After exiting Arthas, you can also connect with `java -jar arthas-boot.jar`{{exe
 The `exit/quit` command simply exits the current session and the arthas server still runs in the target process.
 
 To completely exit Arthas, you can execute the `stop`{{execute interrupt}} command.
-

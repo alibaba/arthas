@@ -4,14 +4,14 @@
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|*method-pattern*|方法名表达式匹配|
-|*condition-express*|条件表达式|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
-|`[n:]`|命令执行次数|
-|`#cost`|方法执行耗时|
+|            参数名称 | 参数说明                             |
+| ------------------: | :----------------------------------- |
+|     _class-pattern_ | 类名表达式匹配                       |
+|    _method-pattern_ | 方法名表达式匹配                     |
+| _condition-express_ | 条件表达式                           |
+|                 [E] | 开启正则表达式匹配，默认为通配符匹配 |
+|              `[n:]` | 命令执行次数                         |
+|             `#cost` | 方法执行耗时                         |
 
 [trace 命令文档](https://arthas.aliyun.com/doc/trace.html)
 
@@ -19,11 +19,10 @@
 
 观察的维度也比较多，主要体现在参数 `advice` 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。
 
-
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+- OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如`trace *StringUtils isBlank '#cost>100'`表示当执行时间超过100ms的时候，才会输出trace的结果。
 
@@ -36,7 +35,6 @@
 参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
 
 3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
-
 
 ### 使用参考
 
@@ -79,10 +77,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 20 ms.
 Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
 ```
 
-
 #### 包含jdk的函数
 
-* `--skipJDKMethod <value> `   skip jdk method trace, default value true.
+- `--skipJDKMethod <value> ` skip jdk method trace, default value true.
 
 `trace --skipJDKMethod false demo.MathGame run`{{execute T2}}
 
@@ -156,7 +153,6 @@ trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ### 动态trace
 
 3.3.0 版本后支持。
-
 
 打开终端1，trace `run`函数，可以看到打印出 `listenerId: 1`：
 

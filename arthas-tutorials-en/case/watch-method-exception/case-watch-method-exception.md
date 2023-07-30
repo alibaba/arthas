@@ -14,7 +14,6 @@ Execute in Arthas:
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}'`{{execute T2}}
 
-
 1. The first argument is the class name, which supports wildcards.
 2. The second argument is the function name, which supports wildcards.
 
@@ -29,7 +28,6 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
     @IllegalArgumentException[java.lang.IllegalArgumentException: id < 1],
 ]
 ```
-
 
 The user can see that the actual thrown exception is `IllegalArgumentException`.
 
@@ -61,24 +59,22 @@ ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
 
 In the above example, the third argument is the `return value expression`, which is actually an `ognl` expression that supports some built-in objects:
 
-* loader
-* clazz
-* method
-* target
-* params
-* returnObj
-* throwExp
-* isBefore
-* isThrow
-* isReturn
+- loader
+- clazz
+- method
+- target
+- params
+- returnObj
+- throwExp
+- isBefore
+- isThrow
+- isReturn
 
 You can use these built-in objects in the expressions. For example, return an array:
 
 `watch com.example.demo.arthas.user.UserController * '{params[0], target, returnObj}'`{{execute T2}}
 
-
 More references: https://arthas.aliyun.com/doc/en/advice-class.html
-
 
 ### The conditional expression
 
@@ -105,7 +101,6 @@ ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[
 The `watch` command supports the `-e` option, which means that only requests that throw an exception are caught:
 
 `watch com.example.demo.arthas.user.UserController * "{params[0],throwExp}" -e`{{execute T2}}
-
 
 ### Filter by cost
 

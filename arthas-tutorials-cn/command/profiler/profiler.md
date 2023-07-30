@@ -6,14 +6,14 @@
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*action*|要执行的操作|
-|*actionArg*|属性名模式|
-|[i:]|采样间隔（单位：ns）（默认值：10'000'000，即10 ms）|
-|[f:]|将输出转储到指定路径|
-|[d:]|运行评测指定秒|
-|[e:]|要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu|
+|    参数名称 | 参数说明                                                      |
+| ----------: | :------------------------------------------------------------ |
+|    _action_ | 要执行的操作                                                  |
+| _actionArg_ | 属性名模式                                                    |
+|        [i:] | 采样间隔（单位：ns）（默认值：10'000'000，即10 ms）           |
+|        [f:] | 将输出转储到指定路径                                          |
+|        [d:] | 运行评测指定秒                                                |
+|        [e:] | 要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu |
 
 ### 查看所有支持的action
 
@@ -45,8 +45,6 @@ Profiling started
 
 > 默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--e`参数来指定。
 
-
-
 ### 获取已采集的sample的数量
 
 `profiler getSamples`{{execute T2}}
@@ -64,7 +62,6 @@ $ profiler getSamples
 $ profiler status
 Profiling is running for 11 seconds
 ```
-
 
 ### 停止profiler
 
@@ -93,8 +90,6 @@ ok
 点击可以查看具体的结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-svg.jpg)
-
-
 
 ### profiler支持的events
 
@@ -149,7 +144,6 @@ Perf events:
 $ profiler start --event alloc
 ```
 
-
 ### 恢复采样
 
 `profiler resume`{{execute T2}}
@@ -162,7 +156,6 @@ Profiling started
 `start`和`resume`的区别是：`start`是新开始采样，`resume`会保留上次`stop`时的数据。
 
 通过执行`profiler getSamples`可以查看samples的数量来验证。
-
 
 ### 使用`execute`来执行复杂的命令
 

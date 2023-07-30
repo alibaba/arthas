@@ -1,6 +1,5 @@
 在这个案例里，动态修改应用的Logger Level。
 
-
 ### 查找UserController的ClassLoader
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
@@ -61,4 +60,3 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 通过获取`root` logger，可以修改全局的logger level：
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
-

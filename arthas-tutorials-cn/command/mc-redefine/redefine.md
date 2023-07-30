@@ -6,11 +6,11 @@
 
 ### 常见问题
 
-* redefine的class不能修改、添加、删除类的field和method，包括方法参数、方法名称及返回值
+- redefine的class不能修改、添加、删除类的field和method，包括方法参数、方法名称及返回值
 
-* 如果mc失败，可以在本地开发环境编译好class文件，上传到目标系统，使用redefine热加载class
+- 如果mc失败，可以在本地开发环境编译好class文件，上传到目标系统，使用redefine热加载class
 
-* 目前redefine 和watch/trace/jad/tt等命令冲突，以后重新实现redefine功能会解决此问题
+- 目前redefine 和watch/trace/jad/tt等命令冲突，以后重新实现redefine功能会解决此问题
 
 > 注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。
 
@@ -21,14 +21,13 @@
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|[c:]|ClassLoader的hashcode|
-|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|[p:]|外部的`.class`文件的完整路径，支持多个|
-
+|              参数名称 | 参数说明                                   |
+| --------------------: | :----------------------------------------- |
+|                  [c:] | ClassLoader的hashcode                      |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
+|                  [p:] | 外部的`.class`文件的完整路径，支持多个     |
 
 ### redefine的限制
 
-* 不允许新增加field/method
-* 正在跑的函数，没有退出不能生效。
+- 不允许新增加field/method
+- 正在跑的函数，没有退出不能生效。

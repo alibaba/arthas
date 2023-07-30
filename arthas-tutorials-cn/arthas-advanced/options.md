@@ -1,17 +1,14 @@
 在Arthas里有一些开关，可以通过 `options`{{execute T2}} 命令来查看。
 
-
 查看单个option的值，比如
 
 `options unsafe`{{execute T2}}
-
 
 ## 允许增强JDK的类
 
 默认情况下`unsafe`为false，即watch/trace等命令不会增强JVM的类，即`java.*`下面的类。
 
 如果想增强JVM里的类，可以执行 `options unsafe true`{{execute T2}} ，设置`unsafe`为true。
-
 
 ## 以JSON格式打印对象
 

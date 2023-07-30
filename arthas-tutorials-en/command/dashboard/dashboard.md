@@ -1,9 +1,8 @@
-The  [dashboard command](https://arthas.aliyun.com/en/doc/dashboard.html) allows you to view the real-time data panel of the current system.
+The [dashboard command](https://arthas.aliyun.com/en/doc/dashboard.html) allows you to view the real-time data panel of the current system.
 
 Run `dashboard`{{exec}}
 
 When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat, including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
-
 
 ```
 $ dashboard
@@ -42,34 +41,34 @@ uptime                                                         272s
 
 Enter `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to exit the dashboard command.
 
-
 ### Notes on column headers
 
-* ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack
-* NAME: thread name
-* GROUP: thread group name
-* PRIORITY: thread priority, ranged from 1 to 10. The greater number, the higher priority
-* STATE: thread state
-* CPU%: the ratio of CPU usage for the thread. For example, the sampling interval is 1000ms, and the incremental cpu time
- of a thread is 100ms, then the cpu usage rate=100/1000=10%
-* DELTA_TIME: incremental CPU time of thread running after the last sampling in `second` format
-* TIME: total CPU time of the thread in `minute:second` format
-* INTERRUPTED: the thread interruption state
-* DAEMON: daemon thread or not
-
+- ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack
+- NAME: thread name
+- GROUP: thread group name
+- PRIORITY: thread priority, ranged from 1 to 10. The greater number, the higher priority
+- STATE: thread state
+- CPU%: the ratio of CPU usage for the thread. For example, the sampling interval is 1000ms, and the incremental cpu time
+  of a thread is 100ms, then the cpu usage rate=100/1000=10%
+- DELTA_TIME: incremental CPU time of thread running after the last sampling in `second` format
+- TIME: total CPU time of the thread in `minute:second` format
+- INTERRUPTED: the thread interruption state
+- DAEMON: daemon thread or not
 
 #### JVM internal threads
+
 After Java 8, it is supported to obtain the CPU time of JVM internal threads. These threads only have the name and CPU time,
- without ID and status information (display ID is -1).
- 
+without ID and status information (display ID is -1).
+
 JVM activities can be observed through internal threads, such as GC, JIT compilation, etc., to perceive the overall status of JVM.
 
-* When the JVM heap/metaspace space is insufficient or OOM, it can be seen that the CPU usage of the GC threads is 
- significantly higher than other threads.
-* After executing commands such as `trace/watch/tt/redefine`, you can see that JIT threads activities become more frequent.
- Because the JIT compilation data related to this class is cleared when the JVM hot update the class bytecode, it needs to be recompiled.
+- When the JVM heap/metaspace space is insufficient or OOM, it can be seen that the CPU usage of the GC threads is
+  significantly higher than other threads.
+- After executing commands such as `trace/watch/tt/redefine`, you can see that JIT threads activities become more frequent.
+  Because the JIT compilation data related to this class is cleared when the JVM hot update the class bytecode, it needs to be recompiled.
 
 JVM internal threads include the following:
-* JIT compilation thread: such as `C1 CompilerThread0`, `C2 CompilerThread0` 
-* GC thread: such as `GC Thread0`, `G1 Young RemSet Sampling`  
-* Other internal threads: such as`VM Periodic Task Thread`, `VM Thread`, `Service Thread`
+
+- JIT compilation thread: such as `C1 CompilerThread0`, `C2 CompilerThread0`
+- GC thread: such as `GC Thread0`, `G1 Young RemSet Sampling`
+- Other internal threads: such as`VM Periodic Task Thread`, `VM Thread`, `Service Thread`

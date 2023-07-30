@@ -1,6 +1,6 @@
 In this case, the user will resolve the HTTP 404 issue.
 
-Visit: {{TRAFFIC_HOST1_80}}/a.txt 
+Visit: {{TRAFFIC_HOST1_80}}/a.txt
 
 The result is:
 

@@ -7,4 +7,3 @@
 `pwd`{{execute T2}}
 
 `cat test.out`{{execute T2}}
-

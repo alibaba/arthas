@@ -29,7 +29,7 @@ $ classloader -l
  sun.misc.Launcher$ExtClassLoader@7494e528                        4            7494e528  null
 ```
 
-* TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
+- TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
 
 请记下你的classLoaderHash，后面需要使用它。在这里，它是 `65361d9a`。
 
@@ -52,7 +52,6 @@ $ classloader -a -c 65361d9a
 `sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### 查看ClassLoader树
-
 
 `classloader -t`{{execute T2}}
 
@@ -94,6 +93,7 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 $ classloader -c 1be6f5c3 -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
 ```
+
 也可以尝试查找类的class文件：
 
 `classloader -c <classLoaderHash> -r java/lang/String.class`

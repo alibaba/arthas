@@ -27,7 +27,6 @@
 ...
 ```
 
-
 #### 查看指定名字的logger信息
 
 `logger -n org.springframework.web`{{execute T2}}
@@ -108,7 +107,6 @@ update logger level success.
 ```
 
 #### 查看没有appender的logger的信息
-
 
 默认情况下，`logger`命令只打印有appender的logger的信息。如果想查看没有`appender`的logger的信息，可以加上参数`--include-no-appender`。
 

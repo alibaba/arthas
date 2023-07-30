@@ -1,8 +1,6 @@
 ### 指定 classloader name
 
-
 `vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext`{{execute T2}}
-
 
 ### 指定 classloader hash
 
@@ -25,4 +23,3 @@ $ sc -d org.springframework.context.ApplicationContext
 ```bash
 vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext
 ```
-

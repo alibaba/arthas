@@ -6,7 +6,6 @@ The `ognl` command can execute code dynamically.
 
 The `Terminal 1` will print `hello ognl`.
 
-
 ### Find the ClassLoader of the UserController
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
@@ -34,6 +33,7 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
     logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
 ]
 ```
+
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 ### Get static fields of static classes
@@ -66,5 +66,5 @@ The `ognl` expression in Arthas is an important feature, and the `ognl` expressi
 
 For some more complicated usages, refer to:
 
-* For special usage of OGNL, please refer to: https://github.com/alibaba/arthas/issues/71
-* Official Guide to OGNL Expressions: https://commons.apache.org/proper/commons-ognl/language-guide.html
+- For special usage of OGNL, please refer to: https://github.com/alibaba/arthas/issues/71
+- Official Guide to OGNL Expressions: https://commons.apache.org/proper/commons-ognl/language-guide.html

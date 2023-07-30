@@ -60,4 +60,3 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 By getting the `root` logger, the user can modify the global logger level:
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
-

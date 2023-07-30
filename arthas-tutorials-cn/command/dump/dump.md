@@ -2,13 +2,13 @@
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|`[c:]`|类所属 ClassLoader 的 hashcode|
-|`[d:]`|设置类文件的目标目录|
-|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
+|              参数名称 | 参数说明                                   |
+| --------------------: | :----------------------------------------- |
+|       _class-pattern_ | 类名表达式匹配                             |
+|                `[c:]` | 类所属 ClassLoader 的 hashcode             |
+|                `[d:]` | 设置类文件的目标目录                       |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
+|                   [E] | 开启正则表达式匹配，默认为通配符匹配       |
 
 [dump 命令文档](https://arthas.aliyun.com/doc/dump.html)
 
@@ -42,7 +42,7 @@ $ dump -d /tmp/output java.lang.String
 Affect(row-cnt:1) cost in 138 ms.
 ```
 
-* 指定classLoader
+- 指定classLoader
 
 注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
 
@@ -64,6 +64,6 @@ $ dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*
 Affect(row-cnt:1) cost in 39 ms.
 ```
 
-  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+- 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
 
 `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。

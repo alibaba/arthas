@@ -2,7 +2,7 @@ The `sysprop`{{execute T2}} command allows you to examine the system properties 
 
 ## Usage
 
-`sysprop -h`{{execute T2}} 
+`sysprop -h`{{execute T2}}
 
 ```
 USAGE:

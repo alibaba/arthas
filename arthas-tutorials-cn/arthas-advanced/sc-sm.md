@@ -4,7 +4,6 @@
 
 `sc` 命令可以查找到所有JVM已经加载到的类。
 
-
 如果搜索的是接口，还会搜索所有的实现类。比如查看所有的`Filter`实现类：
 
 `sc javax.servlet.Filter`{{execute T2}}
@@ -30,4 +29,3 @@
 也可以查找特定的函数，比如查找构造函数：
 
 `sm java.math.RoundingMode <init>`{{execute T2}}
-

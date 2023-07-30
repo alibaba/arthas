@@ -2,17 +2,17 @@
 
 [jad command](https://arthas.aliyun.com/en/doc/jad.html) helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
 
-* The decompiled code is syntax highlighted for better readability in Arthas console.
-* It is possible that there's grammar error in the decompiled code, but it should not affect your interpretation.
+- The decompiled code is syntax highlighted for better readability in Arthas console.
+- It is possible that there's grammar error in the decompiled code, but it should not affect your interpretation.
 
 ### Options
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|`[c:]`|hashcode of the class loader that loads the class|
-|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
-|`[E]`|turn on regex match while the default is wildcard match|
+|                  Name | Specification                                                   |
+| --------------------: | :-------------------------------------------------------------- |
+|       _class-pattern_ | pattern for the class name                                      |
+|                `[c:]` | hashcode of the class loader that loads the class               |
+| `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression. |
+|                 `[E]` | turn on regex match while the default is wildcard match         |
 
 ### Usage
 

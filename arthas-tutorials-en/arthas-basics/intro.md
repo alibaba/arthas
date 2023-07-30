@@ -4,5 +4,5 @@
 
 `Arthas` supports JDK 6+, supports Linux/Mac/Windows.
 
-* Github: https://github.com/alibaba/arthas
-* Documentation: https://arthas.aliyun.com/doc/en
+- Github: https://github.com/alibaba/arthas
+- Documentation: https://arthas.aliyun.com/doc/en

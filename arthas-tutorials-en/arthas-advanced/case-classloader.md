@@ -29,8 +29,7 @@ $ classloader -l
  sun.misc.Launcher$ExtClassLoader@7494e528                        4            7494e528  null
 ```
 
-* The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
-
+- The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
 
 ### List all classes loaded in ClassLoader
 
@@ -44,7 +43,7 @@ $ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader
  org.apache.jsp.jsp.hello_jsp
 ```
 
-* PS: Same as `ognl`, you can also use `-c <hashcode>` instead of `--classLoaderClass` to specify
+- PS: Same as `ognl`, you can also use `-c <hashcode>` instead of `--classLoaderClass` to specify
 
 ### Decompile dynamically generated jsp classes
 
@@ -61,7 +60,6 @@ ClassLoader:
 ```
 
 ### View the ClassLoader tree
-
 
 `classloader -t`{{execute T2}}
 
@@ -135,4 +133,3 @@ load class success.
  class-loader
  classLoaderHash   null
 ```
-

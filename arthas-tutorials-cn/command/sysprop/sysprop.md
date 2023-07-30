@@ -2,7 +2,7 @@
 
 ## 使用参考
 
-`sysprop -h`{{execute T2}} 
+`sysprop -h`{{execute T2}}
 
 ```
 USAGE:
@@ -24,4 +24,5 @@ USAGE:
  <property-name>                             property name
  <property-value>                            property value
 ```
+
 [sysprop 命令文档](https://arthas.aliyun.com/doc/sysprop.html)

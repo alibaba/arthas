@@ -5,23 +5,25 @@ Java Flight Recorder (JFR) 是一种用于收集有关正在运行的 Java 应�
 [jfr 命令](https://arthas.aliyun.com/doc/jfr.html)支持在程序动态运行过程中开启和关闭JFR记录。 记录收集有关event的数据。事件在特定时间点发生在 JVM 或 Java 应用程序中。每个事件都有一个名称、一个时间戳和一个可选的有效负载。负载是与事件相关的数据，例如 CPU 使用率、事件前后的 Java 堆大小、锁持有者的线程 ID 等。
 
 `jfr` 命令基本运行结构是 `jfr cmd [actionArg]`
->  注意： JDK8的8u262 版本之后才支持 jfr
+
+> 注意： JDK8的8u262 版本之后才支持 jfr
+
 ## 参数说明
 
-|      参数名称 | 参数说明                                                     |
-| ------------: | :----------------------------------------------------------- |
-|         _cmd_ | 要执行的命令，支持的命令【start，status，dump，stop】         |
-|   _actionArg_ | 属性名模式                                                   |
-|          [n:] | 记录名称                                                     |
-|          [r:] | 记录id值                                                     |
-| [dumponexit:] | 程序退出时，是否要dump出 .jfr文件，默认为false               |
+|      参数名称 | 参数说明                                                                              |
+| ------------: | :------------------------------------------------------------------------------------ |
+|         _cmd_ | 要执行的命令，支持的命令【start，status，dump，stop】                                 |
+|   _actionArg_ | 属性名模式                                                                            |
+|          [n:] | 记录名称                                                                              |
+|          [r:] | 记录id值                                                                              |
+| [dumponexit:] | 程序退出时，是否要dump出 .jfr文件，默认为false                                        |
 |          [d:] | 延迟多久后启动 JFR 记录，支持带单位配置，eg: 60s,2m,5h,3d. 不带单位就是秒，默认无延迟 |
-|   [duration:] | JFR 记录持续时间，支持单位配置，不带单位就是秒，默认一直记录 |
-|          [s:] | 采集 Event 的详细配置文件，默认是default.jfc 位于 `$JAVA_HOME/lib/jfr/default.jfc` |
-|          [f:] | 将输出转储到指定路径                                         |
-|     [maxage:] | 缓冲区数据最大文件记录保存时间，支持单位配置，不带单位就是秒，默认是不限制 |
-|    [maxsize:] | 缓冲区的最大文件大小，支持单位配置， 不带单位是字节，m或者M代表MB，g或者G代表GB。 |
-|      [state:] | jfr记录状态                                                  |
+|   [duration:] | JFR 记录持续时间，支持单位配置，不带单位就是秒，默认一直记录                          |
+|          [s:] | 采集 Event 的详细配置文件，默认是default.jfc 位于 `$JAVA_HOME/lib/jfr/default.jfc`    |
+|          [f:] | 将输出转储到指定路径                                                                  |
+|     [maxage:] | 缓冲区数据最大文件记录保存时间，支持单位配置，不带单位就是秒，默认是不限制            |
+|    [maxsize:] | 缓冲区的最大文件大小，支持单位配置， 不带单位是字节，m或者M代表MB，g或者G代表GB。     |
+|      [state:] | jfr记录状态                                                                           |
 
 ## 启动 JFR 记录
 
@@ -119,7 +121,6 @@ Stop recording 1, The result will be written to:
 默认情况下，arthas 使用 8563 端口，则可以打开： [http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) 查看到`arthas-output`目录下面的 JFR 记录结果：
 
 ![](/images/arthas-output-recording.png)
-
 
 生成的结果可以用支持 jfr 格式的工具来查看。比如：
 

@@ -1,6 +1,6 @@
 For example, to view the help information for the command `sysprop`:
 
-`help sysprop`{{execute T2}} 
+`help sysprop`{{execute T2}}
 
 ```bash
 [arthas@50759]$ help sysprop
@@ -25,4 +25,3 @@ For example, to view the help information for the command `sysprop`:
 ```
 
 You can see the arguments, examples and WKI of specific commands.
-

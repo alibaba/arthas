@@ -2,7 +2,6 @@
 
 Reference: [Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
-
 ### View retransform entry
 
 `retransform -l`{{execute T2}}
@@ -15,7 +14,7 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
                 serController
 ```
 
-* TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.
+- TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.
 
 ### Delete the specified retransform entry
 
@@ -51,13 +50,11 @@ com.example.demo.arthas.user.UserController
 
 If you want to eliminate the impact after performing retransform on a class, you need to:
 
-* Delete the retransform entry corresponding to this class
-* Re-trigger retransform
+- Delete the retransform entry corresponding to this class
+- Re-trigger retransform
 
 > If you do not clear all retransform entries and trigger retransform again, the retransformed classes will still take effect when arthas stop.
-
 
 After deleting the retransform entry above and explicitly triggering the retransform, you can use the `jad` command to confirm that the result of the previous retransform has been eliminated.
 
 Visit {{TRAFFIC_HOST1_80}}/user/0 again, an exception will be thrown.
-

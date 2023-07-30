@@ -16,7 +16,6 @@ This logic will be modified by `retransform` command below.
 
 The result of jad command will be saved in the `/tmp/UserController.java` file.
 
-
 Then open `Terminal 3`, use `sed` to edit `/tmp/UserController.java`:
 
 `sed -i 's/throw new IllegalArgumentException("id < 1")/return new User(id, "name" + id)/g' /tmp/UserController.java`{{execute T3}}

@@ -2,7 +2,6 @@
 
 `thread`{{execute T2}}
 
-
 ### View the stack of specific threads
 
 View the stack of thread ID 16:

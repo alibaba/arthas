@@ -44,7 +44,6 @@ Print the logger information, update the logger level
                    c-1.1.11.jar!/
 ```
 
-
 Please write down your classLoaderHash here, in the case here, it's `5674cd4d`. It will be used in the future steps.
 
 Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
@@ -93,7 +92,7 @@ The value of `--classloaderclass` is the class name of classloader. It can only 
 update logger level success.
 ```
 
-PS: Here it will come up with an error message in tutorial, we have to specify the classloader. 
+PS: Here it will come up with an error message in tutorial, we have to specify the classloader.
 
 #### Speecify classloader to update logger level
 
@@ -108,7 +107,6 @@ You can first use `sc -d yourClassName` to check specified classloader hashcodeï
 ```
 
 #### View the logger information without appenders
-
 
 By default, the `logger` command only prints information about the logger with appenders. If you want to see information about loggers without `appender`, you can use the parameter `--include-no-appender`.
 

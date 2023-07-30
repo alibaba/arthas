@@ -2,7 +2,7 @@
 
 ## 使用参考
 
-`sysenv -h`{{execute T2}} 
+`sysenv -h`{{execute T2}}
 
 ```
  USAGE:

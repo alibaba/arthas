@@ -4,18 +4,17 @@
 
 可以让指定的classloader去getResources，打印出所有查找到的resources的url。对于`ResourceNotFoundException`比较有用。
 
-
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|[l]|按类加载实例进行统计|
-|[t]|打印所有ClassLoader的继承树|
-|[a]|列出所有ClassLoader加载的类，请谨慎使用|
-|`[c:]`|ClassLoader的hashcode|
-|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|`[c: r:]`|用ClassLoader去查找resource|
-|`[c: load:]`|用ClassLoader去加载指定的类|
+|              参数名称 | 参数说明                                   |
+| --------------------: | :----------------------------------------- |
+|                   [l] | 按类加载实例进行统计                       |
+|                   [t] | 打印所有ClassLoader的继承树                |
+|                   [a] | 列出所有ClassLoader加载的类，请谨慎使用    |
+|                `[c:]` | ClassLoader的hashcode                      |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
+|             `[c: r:]` | 用ClassLoader去查找resource                |
+|          `[c: load:]` | 用ClassLoader去加载指定的类                |
 
 ### 使用参考
 
@@ -48,7 +47,7 @@ $ classloader -l
  sun.misc.Launcher$ExtClassLoader@7494e528                        4            7494e528  null
 ```
 
-* TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
+- TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
 
 注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
 
@@ -83,7 +82,6 @@ $ classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader
 `sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### 查看ClassLoader树
-
 
 `classloader -t`{{execute T2}}
 
@@ -125,6 +123,7 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
 ```
+
 也可以尝试查找类的class文件：
 
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`{{execute T2}}

@@ -2,9 +2,9 @@ watch的结果值由计算`watch-express` ognl表达式产生，可以通过改�
 
 > Maps can also be created using a special syntax.
 >
->#{ "foo" : "foo value", "bar" : "bar value" }
+> #{ "foo" : "foo value", "bar" : "bar value" }
 >
->This creates a Map initialized with mappings for "foo" and "bar".
+> This creates a Map initialized with mappings for "foo" and "bar".
 
 下面的命令生成map格式的值：
 
@@ -30,15 +30,13 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 用Http api 执行上面的命令，注意对JSON双引号转义：
 
-`
-curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
+`curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
 {
   "action":"exec",
   "execTimeout": 30000,
   "command":"watch *MathGame prime* '#{ \"params\" : params, \"returnObj\" : returnObj, \"throwExp\": throwExp}' -n 3 "
 }
-EOF
-`{{execute T3}}
+EOF`{{execute T3}}
 
 Http api 执行结果：
 

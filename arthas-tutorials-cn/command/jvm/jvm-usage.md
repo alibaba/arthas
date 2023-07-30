@@ -37,13 +37,13 @@ RUNTIME
 --------------------------------------------------------------------------------------------------------------
  GARBAGE-COLLECTORS
 --------------------------------------------------------------------------------------------------------------
- PS Scavenge                            name : PS Scavenge                                                                             
- [count/time (ms)]                      collectionCount : 7                                                                            
-                                        collectionTime : 68                                                                            
-                                                                                                                                       
- PS MarkSweep                           name : PS MarkSweep                                                                            
- [count/time (ms)]                      collectionCount : 1                                                                            
-                                        collectionTime : 47 
+ PS Scavenge                            name : PS Scavenge
+ [count/time (ms)]                      collectionCount : 7
+                                        collectionTime : 68
+
+ PS MarkSweep                           name : PS MarkSweep
+ [count/time (ms)]                      collectionCount : 1
+                                        collectionTime : 47
 
 --------------------------------------------------------------------------------------------------------------
  MEMORY-MANAGERS
@@ -64,15 +64,15 @@ RUNTIME
 --------------------------------------------------------------------------------------------------------------
  MEMORY
 --------------------------------------------------------------------------------------------------------------
- HEAP-MEMORY-USAGE                      init : 268435456(256.0 MiB)                                                                    
- [memory in bytes]                      used : 18039504(17.2 MiB)                                                                      
-                                        committed : 181403648(173.0 MiB)                                                               
-                                        max : 3817865216(3.6 GiB)                                                                      
-                                                                                                                                       
- NO-HEAP-MEMORY-USAGE                   init : 2555904(2.4 MiB)                                                                        
- [memory in bytes]                      used : 33926216(32.4 MiB)                                                                      
-                                        committed : 35176448(33.5 MiB)                                                                 
-                                        max : -1(-1 B)  
+ HEAP-MEMORY-USAGE                      init : 268435456(256.0 MiB)
+ [memory in bytes]                      used : 18039504(17.2 MiB)
+                                        committed : 181403648(173.0 MiB)
+                                        max : 3817865216(3.6 GiB)
+
+ NO-HEAP-MEMORY-USAGE                   init : 2555904(2.4 MiB)
+ [memory in bytes]                      used : 33926216(32.4 MiB)
+                                        committed : 35176448(33.5 MiB)
+                                        max : -1(-1 B)
 
 --------------------------------------------------------------------------------------------------------------
  OPERATING-SYSTEM
@@ -99,4 +99,3 @@ RUNTIME
  OPEN-FILE-DESCRIPTOR-COUNT     100
 Affect(row-cnt:0) cost in 88 ms.
 ```
-

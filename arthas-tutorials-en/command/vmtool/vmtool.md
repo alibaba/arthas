@@ -1,6 +1,5 @@
 Use the [vmtool command](https://arthas.aliyun.com/en/doc/vmtool.html) to find the jvm object.
 
-
 ### Find string objects in jvm
 
 `vmtool --action getInstances --className java.lang.String`{{execute T2}}
