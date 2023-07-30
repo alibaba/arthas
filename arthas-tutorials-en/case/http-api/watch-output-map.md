@@ -33,7 +33,7 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 Execute the above command with Http api, pay attention to escaping the JSON double quotes:
 
-`curl -Ss -XPOST http://localhost:8563/api -d '{"action":"exec","execTimeout":30000,"command":"watch *MathGame prime* #{\"params\":params,\"returnObj\":returnObj,\"throwExp\":throwExp} -n 3 "}'`{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '{"action":"exec","execTimeout":30000,"command":"watch *MathGame prime* #{\"params\":params,\"returnObj\":returnObj,\"throwExp\":throwExp} -n 3 "}' | json_pp`{{execute T3}}
 
 Http api execution result:
 

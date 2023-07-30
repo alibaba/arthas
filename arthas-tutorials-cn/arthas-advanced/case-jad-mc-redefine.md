@@ -1,6 +1,6 @@
 下面介绍通过`jad`/`mc`/`redefine` 命令实现动态更新代码的功能。
 
-目前，访问 [http://localhost/user/0]([打开 80 端口]({{TRAFFIC_HOST1_80}})/user/0) ，会返回500异常：
+目前，访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
 
 `curl http://localhost/user/0`{{execute T3}}
 
@@ -79,7 +79,7 @@ redefine success, size: 1
 
 ### 热修改代码结果
 
-`redefine`成功之后，再次访问 [打开 80 端口]({{TRAFFIC_HOST1_80}})/user/0 ，结果是：
+`redefine`成功之后，再次访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
 
 ```
 {

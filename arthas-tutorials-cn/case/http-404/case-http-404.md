@@ -1,6 +1,6 @@
 在这个案例里，展示排查HTTP 404问题的技巧。
 
-访问： [打开 a.txt]({{TRAFFIC_HOST1_80}}/a.txt)
+访问： [a.txt]({{TRAFFIC_HOST1_80}}/a.txt)
 
 结果是：
 
@@ -16,7 +16,7 @@ Something went wrong: 404 Not Found
 
 `trace javax.servlet.Servlet * > /tmp/servlet.txt`{{execute T2}}
 
-访问： [打开 a.txt]({{TRAFFIC_HOST1_80}}/a.txt)
+访问： [a.txt]({{TRAFFIC_HOST1_80}}/a.txt)
 
 在`Terminal 3`里，查看`/tmp/servlet.txt`的内容：
 

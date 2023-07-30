@@ -2,13 +2,13 @@
 
 项目地址： https://github.com/hengyunabc/ognl-demo
 
-# 打开Demo.java文件
+# 打开 Demo.java 文件
 
-`src/main/java/com/example/ognl/Demo.java`{{open}}
+`cat src/main/java/com/example/ognl/Demo.java`{{execute}}
 
 # 编译运行代码
 
-`mvn compile exec:java`{{execute}}
+先通过 `apt install -y maven`{{execute}} 安装 maven 再运行 `mvn compile exec:java`{{execute}}
 
 输出结果包含`ognl`表达式输出结果：
 

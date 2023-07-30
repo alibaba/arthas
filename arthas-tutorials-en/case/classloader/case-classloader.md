@@ -1,6 +1,6 @@
 The following describes the usage of the `classloader` command.
 
-First visit the jsp page: {{TRAFFIC_HOST1_80}}/hello
+First visit the jsp page: [visite hello jsp page]({{TRAFFIC_HOST1_80}}/hello)
 
 ### List all ClassLoaders
 

@@ -4,13 +4,13 @@ Project: https://github.com/hengyunabc/ognl-demo
 
 # Open the Demo.java file
 
-`src/main/java/com/example/ognl/Demo.java`{{open}}
+`cat src/main/java/com/example/ognl/Demo.java`{{execute}}
 
 # Compile and run the code
 
-`mvn compile exec:java`{{execute}}
+First install maven by `apt install -y maven`{{execute}} then run `mvn compile exec:java`{{execute}}
 
-输出结果包含`ognl`表达式输出结果：
+The output result includes the `ognl ` expression output result:
 
 ```java
 AtEnter, conditionExpress: params[0] > 1, conditionResult: true

@@ -1,5 +1,35 @@
 在这个案例里，展示排查logger冲突的方法。
 
+### 查找UserController的ClassLoader
+
+`sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
+
+```bash
+$ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
+ classLoaderHash   1be6f5c3
+```
+
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+
+如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
+
+```bash
+$ ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger
+```
+
+对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+```bash
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+```
+
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+
 ### 确认应用使用的logger系统
 
 以`UserController`为例，它使用的是slf4j api，但实际使用到的logger系统是logback。

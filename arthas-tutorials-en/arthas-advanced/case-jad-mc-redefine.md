@@ -1,8 +1,8 @@
 This case introduces the ability to dynamically update code via the `jad`/`mc`/`redefine` command.
 
-Currently, visiting [{{TRAFFIC_HOST1_80}}/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
+Currently, visiting [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
 
-`curl {{TRAFFIC_HOST1_80}}/user/0`{{execute T3}}
+`curl http://localhost/user/0`{{execute T3}}
 
 ```
 {"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
@@ -45,11 +45,17 @@ $ sc -d *UserController | grep classLoaderHash
 
 It can be found that it is loaded by spring boot `LaunchedURLClassLoader@1be6f5c3`.
 
-Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
+
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 ### mc
 
-After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `-c` or `--classLoaderClass` option:
+After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `--classLoaderClass` option:
 
 `mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{execute T2}}
 
@@ -79,7 +85,7 @@ redefine success, size: 1
 
 ### Check the results of the hotswap code
 
-After the `redefine` command is executed successfully, visit {{TRAFFIC_HOST1_80}}/user/0 again.
+After the `redefine` command is executed successfully, visit [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) again.
 
 The result is:
 

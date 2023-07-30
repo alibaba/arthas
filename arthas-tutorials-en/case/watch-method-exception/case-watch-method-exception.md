@@ -82,9 +82,9 @@ The `watch` command supports conditional expressions in the fourth argument, suc
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
-When visit {{TRAFFIC_HOST1_80}}/user/1 , the `watch` command print nothing.
+When visit [/user/1]({{TRAFFIC_HOST1_80}}/user/1) , the `watch` command print nothing.
 
-When visit {{TRAFFIC_HOST1_80}}/user/101 , the `watch` command will print:
+When visit [/user/101]({{TRAFFIC_HOST1_80}}/user/101) , the `watch` command will print:
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'

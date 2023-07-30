@@ -1,6 +1,6 @@
 下面介绍`classloader`命令的功能。
 
-先访问一个jsp网页，触发jsp的加载： [打开 80 端口]({{TRAFFIC_HOST1_80}})/hello
+先访问一个jsp网页，触发jsp的加载： [访问 hello 页面]({{TRAFFIC_HOST1_80}}/hello)
 
 ### 列出所有ClassLoader
 
@@ -31,33 +31,25 @@ $ classloader -l
 
 - TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
 
+请记下你的classLoaderHash，后面需要使用它。在这里，它是 `65361d9a`。
+
+注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面所有所述命令：
+
 ### 列出ClassLoader里加载的所有类
 
 列出上面的`org.apache.jasper.servlet.JasperLoader`加载的类：
 
-`classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader`{{execute T2}}
+`classloader -a -c <classLoaderHash>`
 
 ```bash
-$ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader
+$ classloader -a -c 65361d9a
  hash:1698045338, org.apache.jasper.servlet.JasperLoader@65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
 
-- 注：同ognl, 也可用`-c <hashcode>`而不用`--classLoaderClass`指定
+### 查看类的classloader层次
 
-### 反编译jsp的代码
-
-`jad org.apache.jsp.jsp.hello_jsp`{{execute T2}}
-
-```bash
-$ jad org.apache.jsp.jsp.hello_jsp
-
-ClassLoader:
-+-org.apache.jasper.servlet.JasperLoader@65361d9a
-  +-TomcatEmbeddedWebappClassLoader
-      context: ROOT
-...
-```
+`sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### 查看ClassLoader树
 
@@ -79,16 +71,14 @@ $ classloader -t
         +-org.apache.jasper.servlet.JasperLoader@21ae0fe2
 ```
 
-注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面相关命令：
+### 查看URLClassLoader实际的urls
 
-### 列出ClassLoader的urls
+比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来指定classloader，从而查看URLClassLoader实际的urls：
 
-比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`或者`--classLoaderClass`参数来列出它的所有urls：
-
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
+`classloader -c <classLoaderHash>`
 
 ```
-$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
+$ classloader -c 1be6f5c3
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spring-boot-starter-aop-1.5
 .13.RELEASE.jar!/
@@ -97,25 +87,43 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### 加载指定ClassLoader里的资源文件
 
-查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
+查找指定的资源文件： `classloader -c <classLoaderHash> -r logback-spring.xml`
 
 ```
-$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
+$ classloader -c 1be6f5c3 -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
+```
+
+也可以尝试查找类的class文件：
+
+`classloader -c <classLoaderHash> -r java/lang/String.class`
+
+```bash
+$ classloader -c 1b6d3586 -r java/lang/String.class
+ jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
 ```
 
 ### 尝试加载指定的类
 
-比如用上面的spring LaunchedURLClassLoader 尝试加载 `java.lang.String` ：
+比如用上面的spring LaunchedURLClassLoader 尝试加载 `ch.qos.logback.classic.spi.StackTraceElementProxy` ：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`{{execute T2}}
+首先使用`sc ch.qos.logback.classic.spi.StackTraceElementProxy`{{execute T2}}查看，可发现未加载：
 
+```bash
+Affect(row-cnt:0) cost in 18 ms.
 ```
-$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String
+
+因而使用spring LaunchedURLClassLoader 尝试加载：
+
+`classloader -c <classLoaderHash> --load ch.qos.logback.classic.spi.StackTraceElementProxy`
+
+```bash
+$ classloader -c 1be6f5c3 --load ch.qos.logback.classic.spi.StackTraceElementProxy
 load class success.
- class-info        java.lang.String
- code-source
- name              java.lang.String
+ class-info        ch.qos.logback.classic.spi.StackTraceElementProxy
+ code-source       file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classic-1.
+                   1.11.jar!/
+ name              ch.qos.logback.classic.spi.StackTraceElementProxy
  isInterface       false
  isAnnotation      false
  isEnum            false
@@ -125,11 +133,20 @@ load class success.
  isMemberClass     false
  isPrimitive       false
  isSynthetic       false
- simple-name       String
- modifier          final,public
+ simple-name       StackTraceElementProxy
+ modifier          public
  annotation
- interfaces        java.io.Serializable,java.lang.Comparable,java.lang.CharSequence
+ interfaces        java.io.Serializable
  super-class       +-java.lang.Object
- class-loader
- classLoaderHash   null
+ class-loader      +-org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+                     +-sun.misc.Launcher$AppClassLoader@70dea4e
+                       +-sun.misc.Launcher$ExtClassLoader@56a96482
+ classLoaderHash   5674cd4d
+```
+
+再次使用`sc ch.qos.logback.classic.spi.StackTraceElementProxy`{{execute T2}}查看，发现已经加载：
+
+```bash
+ch.qos.logback.classic.spi.StackTraceElementProxy
+Affect(row-cnt:1) cost in 19 ms.
 ```

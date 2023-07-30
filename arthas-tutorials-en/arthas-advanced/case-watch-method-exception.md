@@ -1,6 +1,6 @@
-Currently, visiting [{{TRAFFIC_HOST1_80}}/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
+Currently, visiting [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
 
-`curl {{TRAFFIC_HOST1_80}}/user/0`{{execute T3}}
+`curl http://localhost/user/0`{{execute T3}}
 
 ```
 {"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
@@ -17,7 +17,7 @@ Execute in Arthas:
 1. The first argument is the class name, which supports wildcards.
 2. The second argument is the function name, which supports wildcards.
 
-Visit `curl {{TRAFFIC_HOST1_80}}/user/0`{{execute T3}} , the `watch` command will print the parameters and exception
+Visit `curl http://localhost/user/0`{{execute T3}} , the `watch` command will print the parameters and exception
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * '{params, throwExp}'
@@ -36,6 +36,24 @@ The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{
 If the user want to expand the result, can use the `-x` option:
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2`{{execute T2}}
+
+```bash
+$ watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 2) cost in 190 ms, listenerId: 1
+ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
+    @Object[][
+        @Integer[0],
+    ],
+    java.lang.IllegalArgumentException: id < 1
+        at com.example.demo.arthas.user.UserController.findUserById(UserController.java:19)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    ...
+,
+]
+```
 
 ### The return value expression
 
@@ -64,9 +82,9 @@ The `watch` command supports conditional expressions in the fourth argument, suc
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
-When visit {{TRAFFIC_HOST1_80}}/user/1 , the `watch` command print nothing.
+When visit [/user/1]({{TRAFFIC_HOST1_80}}/user/1) , the `watch` command print nothing.
 
-When visit {{TRAFFIC_HOST1_80}}/user/101 , the `watch` command will print:
+When visit [/user/101]({{TRAFFIC_HOST1_80}}/user/101) , the `watch` command will print:
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'
