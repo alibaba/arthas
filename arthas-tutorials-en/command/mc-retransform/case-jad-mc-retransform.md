@@ -32,11 +32,12 @@ For example, when the user id is less than 1, it also returns normally without t
     }
 ```
 
-### [mc](https://arthas.aliyun.com/en/doc/mc.html) 
+### [mc](https://arthas.aliyun.com/en/doc/mc.html)
 
 The (Memory Compiler) command can be used to compile and load the UserController.The classLoaderHash can be specified using the -c flag, or the –classLoaderClass parameter can be used to specify the ClassLoader. Here, for the sake of continuity, the classLoaderClass is used.
 
 ### Querying the UserController Class Loader
+
 #### Using the sc command to search for the ClassLoader that loaded the UserController
 
 Go back `Tab 2` and run `sc -d *UserController | grep classLoaderHash`{{exec}}
@@ -53,7 +54,7 @@ After saving to `/tmp/UserController.java`, it can be compiled using the mc (Mem
 
 `mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{exec}}
 
-###  [redefine](https://arthas.aliyun.com/en/doc/redefine.html)
+### [redefine](https://arthas.aliyun.com/en/doc/redefine.html)
 
 Then reload the newly compiled `UserController.class` with the `redefine` command:
 

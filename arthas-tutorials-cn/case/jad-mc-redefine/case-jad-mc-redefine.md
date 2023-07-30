@@ -37,11 +37,14 @@ jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 (Memory Compiler)命令来编译加载 UserController
 可以通过-c 指定 classLoaderHash 或者--classLoaderClass 参数指定ClassLoader，这里为了操作连贯性使用 classLoaderClass
 
-### 查询UserController类加载器 
-####  sc查找加载UserController的ClassLoader
+### 查询UserController类加载器
+
+#### sc查找加载UserController的ClassLoader
+
 回到 `Tab 2` 里运行 `sc -d *UserController | grep classLoaderHash`{{exec}}
 
 #### classloader 查询类加载器名称
+
 `classloader  -l`{{exec}} 查询所有的类加载器列表, `UserController classLoaderHash` 值对应的类加载器为 `org.springframework.boot.loader.LaunchedURLClassLoader`
 
 ### mc 编译加载 UserController
