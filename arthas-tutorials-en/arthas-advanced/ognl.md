@@ -1,4 +1,4 @@
-The `ognl` command can execute code dynamically.
+The [ognl command](https://arthas.aliyun.com/en/doc/ognl.html) can execute code dynamically.
 
 ### Invoke the static method
 

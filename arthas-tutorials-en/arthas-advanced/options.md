@@ -1,4 +1,4 @@
-There are some switches in Arthas that can be viewed with the `options`{{execute T2}} command.
+There are some switches in Arthas that can be viewed with the `options`{{execute T2}} command - [options command Docs](https://arthas.aliyun.com/en/doc/options.html).
 
 View the value of a single option, such as
 

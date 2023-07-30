@@ -1,4 +1,4 @@
-通过`watch`命令可以查看函数的参数/返回值/异常信息。
+通过 [watch 命令](https://arthas.aliyun.com/doc/watch.html)可以查看函数的参数/返回值/异常信息。
 
 `watch demo.MathGame primeFactors returnObj`{{execute T2}}
 

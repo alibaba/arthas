@@ -1,4 +1,4 @@
-The `watch` command can view the parameter/return value/exception of the method.
+The [watch command](https://arthas.aliyun.com/en/doc/watch.html) can view the parameter/return value/exception of the method.
 
 `watch demo.MathGame primeFactors returnObj`{{execute T2}}
 

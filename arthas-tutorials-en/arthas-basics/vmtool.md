@@ -1,4 +1,4 @@
-The `vmtool` command can search object in JVM.
+The [vmtool command](https://arthas.aliyun.com/en/doc/vmtool.html) can search object in JVM.
 
 `vmtool --action getInstances --className java.lang.String --limit 10`{{execute T2}}
 

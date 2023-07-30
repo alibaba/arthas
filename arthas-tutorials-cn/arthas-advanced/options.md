@@ -1,4 +1,4 @@
-在Arthas里有一些开关，可以通过 `options`{{execute T2}} 命令来查看。
+在Arthas里有一些开关，可以通过 `options`{{execute T2}} 命令来查看 - [options 命令文档](https://arthas.aliyun.com/doc/options.html)。
 
 查看单个option的值，比如
 
