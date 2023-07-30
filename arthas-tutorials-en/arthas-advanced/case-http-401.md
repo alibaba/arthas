@@ -34,7 +34,7 @@ Run:
 
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
-Visit: {{TRAFFIC_HOST1_80}}/admin
+Visit: [/admin]({{TRAFFIC_HOST1_80}}/admin)
 
 The Result:
 

@@ -4,8 +4,6 @@ The [ognl command](https://arthas.aliyun.com/en/doc/ognl.html) can execute code 
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
-The `Terminal 1` will print `hello ognl`.
-
 ### Find the ClassLoader of the UserController
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}

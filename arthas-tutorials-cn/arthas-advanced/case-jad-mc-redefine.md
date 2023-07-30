@@ -1,12 +1,6 @@
 下面介绍通过`jad`/`mc`/`redefine` 命令实现动态更新代码的功能。
 
-目前，访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
-
-`curl http://localhost/user/0`{{execute T3}}
-
-```
-{"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
-```
+目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
 
 下面通过热更新代码，修改这个逻辑。
 
@@ -16,9 +10,13 @@
 
 jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
-再打开一个`Terminal 3`，然后用 `sed` 来编辑`/tmp/UserController.java`：
+再打开一个终端于 `Tab 3`，然后在 `Tab3` 里用 `sed` 来编辑`/tmp/UserController.java`：
 
 `sed -i 's/throw new IllegalArgumentException("id < 1")/return new User(id, "name" + id)/g' /tmp/UserController.java`{{execute T3}}
+
+使用 `cat` 命令查看修改后的内容：
+
+`cat /tmp/UserController.java`{{exec}}
 
 比如当 user id 小于1时，也正常返回，不抛出异常：
 
@@ -34,39 +32,27 @@ jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
     }
 ```
 
-### sc查找加载UserController的ClassLoader
+### [mc](https://arthas.aliyun.com/doc/mc.html)
 
-`sc -d *UserController | grep classLoaderHash`{{execute T2}}
+(Memory Compiler)命令来编译加载 UserController
+可以通过-c 指定 classLoaderHash 或者--classLoaderClass 参数指定ClassLoader，这里为了操作连贯性使用 classLoaderClass
 
-```bash
-$ sc -d *UserController | grep classLoaderHash
- classLoaderHash   1be6f5c3
-```
+### 查询UserController类加载器 
+####  sc查找加载UserController的ClassLoader
+回到 `Tab 2` 里运行 `sc -d *UserController | grep classLoaderHash`{{exec}}
 
-可以发现是 spring boot `LaunchedURLClassLoader@1be6f5c3` 加载的。
+#### classloader 查询类加载器名称
+`classloader  -l`{{exec}} 查询所有的类加载器列表, `UserController classLoaderHash` 值对应的类加载器为 `org.springframework.boot.loader.LaunchedURLClassLoader`
 
-请记下你的classLoaderHash，后面需要使用它。在这里，它是 `1be6f5c3`。
+### mc 编译加载 UserController
 
-### mc
+保存到 `/tmp/UserController.java` 之后可以使用mc (Memory Compiler)命令来编译
 
-保存好`/tmp/UserController.java`之后，使用`mc`(Memory Compiler)命令来编译，并且通过`-c`或者`--classLoaderClass`参数指定ClassLoader：
+### mc 指定 classloader 编译 UserController
 
-`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{execute T2}}
+`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{exec}}
 
-```bash
-$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
-Memory compiler output:
-/tmp/com/example/demo/arthas/user/UserController.class
-Affect(row-cnt:1) cost in 346 ms
-```
-
-也可以通过`mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`，使用`-c`参数指定ClassLoaderHash:
-
-```bash
-$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
-```
-
-### redefine
+### [redefine](https://arthas.aliyun.com/doc/redefine.html)
 
 再使用`redefine`命令重新加载新编译好的`UserController.class`：
 
@@ -79,7 +65,7 @@ redefine success, size: 1
 
 ### 热修改代码结果
 
-`redefine`成功之后，再次访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
+`redefine`成功之后，再次访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
 
 ```
 {

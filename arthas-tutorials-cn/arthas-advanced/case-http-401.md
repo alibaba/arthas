@@ -34,7 +34,7 @@ Something went wrong: 401 Unauthorized
 
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
-访问： [打开 80 端口]({{TRAFFIC_HOST1_80}})/admin
+访问： [/admin]({{TRAFFIC_HOST1_80}}/admin)
 
 ```bash
 $ stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'

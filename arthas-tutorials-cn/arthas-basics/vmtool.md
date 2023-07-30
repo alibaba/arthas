@@ -1,19 +1,27 @@
 通过 [vmtool 命令](https://arthas.aliyun.com/doc/vmtool.html)，可以搜索内存对象。
 
-`vmtool --action getInstances --className java.lang.String --limit 10`{{execute T2}}
+###  获取class 实例
+
+`vmtool --action getInstances --className demo.MathGame --limit 10`{{exec}}
 
 ```bash
-$ vmtool --action getInstances --className java.lang.String --limit 10
-@String[][
-    @String[com/taobao/arthas/core/shell/session/Session],
-    @String[com.taobao.arthas.core.shell.session.Session],
-    @String[com/taobao/arthas/core/shell/session/Session],
-    @String[com/taobao/arthas/core/shell/session/Session],
-    @String[com/taobao/arthas/core/shell/session/Session.class],
-    @String[com/taobao/arthas/core/shell/session/Session.class],
-    @String[com/taobao/arthas/core/shell/session/Session.class],
-    @String[com/],
-    @String[java/util/concurrent/ConcurrentHashMap$ValueIterator],
-    @String[java/util/concurrent/locks/LockSupport],
+$ vmtool --action getInstances --className demo.MathGame --limit 10
+@MathGame[][
+    @MathGame[demo.MathGame@3349e2d],
+]
+```
+
+###  调用实例方法 
+
+#### 查看class 源码
+`jad demo.MathGame`{{exec}}
+
+#### 调用实例方法 
+`vmtool --action getInstances  --className demo.MathGame  --express 'instances[0].primeFactors(3)' -x 3`{{exec}}
+
+```
+vmtool --action getInstances  --className demo.MathGame  --express 'instances[0].primeFactors(3)' -x 3
+@ArrayList[
+    @Integer[3],
 ]
 ```

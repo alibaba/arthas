@@ -1,12 +1,6 @@
 ### 现象
 
-目前，访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
-
-`curl http://localhost/user/0`{{execute T3}}
-
-```
-{"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
-```
+目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
 
 但请求的具体参数，异常栈是什么呢？
 
@@ -19,7 +13,7 @@
 1. 第一个参数是类名，支持通配
 2. 第二个参数是函数名，支持通配
 
-访问 `curl http://localhost/user/0`{{execute T3}} ,`watch`命令会打印调用的参数和异常
+访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ,`watch`命令会打印调用的参数和异常
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * '{params, throwExp}'
@@ -38,6 +32,24 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 如果想把获取到的结果展开，可以用`-x`参数：
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2`{{execute T2}}
+
+```bash
+$ watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 2) cost in 190 ms, listenerId: 1
+ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
+    @Object[][
+        @Integer[0],
+    ],
+    java.lang.IllegalArgumentException: id < 1
+        at com.example.demo.arthas.user.UserController.findUserById(UserController.java:19)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    ...
+,
+]
+```
 
 ### 返回值表达式
 

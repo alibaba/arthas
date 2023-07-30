@@ -1,12 +1,6 @@
 ### 现象
 
-目前，访问 [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
-
-`curl http://localhost/user/0`{{execute T3}}
-
-```
-{"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
-```
+目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
 
 但请求的具体参数，异常栈是什么呢？
 
@@ -19,7 +13,7 @@
 1. 第一个参数是类名，支持通配
 2. 第二个参数是函数名，支持通配
 
-访问 `curl http://localhost/user/0`{{execute T3}} ,`watch`命令会打印调用的参数和异常
+访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ,`watch`命令会打印调用的参数和异常
 
 ```bash
 $ watch com.example.demo.arthas.user.UserController * '{params, throwExp}'

@@ -1,12 +1,6 @@
 This case introduces the ability to dynamically update code via the `jad`/`mc`/`redefine` command.
 
-Currently, visiting [http://localhost/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
-
-`curl http://localhost/user/0`{{execute T3}}
-
-```
-{"timestamp":1550223186170,"status":500,"error":"Internal Server Error","exception":"java.lang.IllegalArgumentException","message":"id < 1","path":"/user/0"}
-```
+Currently, visiting [/user/0]({{TRAFFIC_HOST1_80}}/user/0) will return a 500 error:
 
 This logic will be modified by `redefine` command below.
 
@@ -16,9 +10,13 @@ This logic will be modified by `redefine` command below.
 
 The result of jad command will be saved in the `/tmp/UserController.java` file.
 
-Then open `Terminal 3`, use `sed` to edit `/tmp/UserController.java`:
+Then open a new terminal in the `Tab 3`, then use `sed` to edit `/tmp/UserController.java`:
 
 `sed -i 's/throw new IllegalArgumentException("id < 1")/return new User(id, "name" + id)/g' /tmp/UserController.java`{{execute T3}}
+
+View the modified content using the `cat` command:
+
+`cat /tmp/UserController.java`{{exec}}
 
 For example, when the user id is less than 1, it also returns normally without throwing an exception:
 
@@ -34,45 +32,28 @@ For example, when the user id is less than 1, it also returns normally without t
     }
 ```
 
-### Use sc command to find the ClassLoader that loads the UserController
+### [mc](https://arthas.aliyun.com/en/doc/mc.html) 
 
-`sc -d *UserController | grep classLoaderHash`{{execute T2}}
+The (Memory Compiler) command can be used to compile and load the UserController.The classLoaderHash can be specified using the -c flag, or the –classLoaderClass parameter can be used to specify the ClassLoader. Here, for the sake of continuity, the classLoaderClass is used.
 
-```bash
-$ sc -d *UserController | grep classLoaderHash
- classLoaderHash   1be6f5c3
-```
+### Querying the UserController Class Loader
+#### Using the sc command to search for the ClassLoader that loaded the UserController
 
-It can be found that it is loaded by spring boot `LaunchedURLClassLoader@1be6f5c3`.
+Go back `Tab 2` and run `sc -d *UserController | grep classLoaderHash`{{exec}}
 
-Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
+#### Using the classloader command to query the names of the ClassLoaders
 
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
+The command `classloader -l`{{exec}} can be used to query a list of all ClassLoaders. The value of `UserController classLoaderHash` corresponds to the `org.springframework.boot.loader.LaunchedURLClassLoader` ClassLoader.
 
-For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+### mc Compiling and Loading UserController
 
-The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+After saving to `/tmp/UserController.java`, it can be compiled using the mc (Memory Compiler) command.
 
-### mc
+### mc Compiling UserController with a Specified ClassLoader
 
-After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `--classLoaderClass` option:
+`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{exec}}
 
-`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{execute T2}}
-
-```bash
-$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
-Memory compiler output:
-/tmp/com/example/demo/arthas/user/UserController.class
-Affect(row-cnt:1) cost in 346 ms
-```
-
-You can also execute `mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`，using `-c` to specify ClassLoaderHash:
-
-```bash
-$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
-```
-
-### redefine
+###  [redefine](https://arthas.aliyun.com/en/doc/redefine.html)
 
 Then reload the newly compiled `UserController.class` with the `redefine` command:
 
@@ -85,7 +66,7 @@ redefine success, size: 1
 
 ### Check the results of the hotswap code
 
-After the `redefine` command is executed successfully, visit {{TRAFFIC_HOST1_80}}/user/0 again.
+After the `redefine` command is executed successfully, visit [/user/0]({{TRAFFIC_HOST1_80}}/user/0) again.
 
 The result is:
 
