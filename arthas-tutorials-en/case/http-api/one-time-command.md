@@ -11,14 +11,14 @@ synchronously. No need to create a session, no need to set the
 
 For example, get the Arthas version number:
 
-```
+`
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"exec",
   "command":"version"
 }
 ' | json_pp
-```{{execute T3}}
+`{{execute T3}}
 
 The response is as follows:
 

@@ -308,14 +308,14 @@ throwExp}`，所以watch结果的value为一个长度为3的数组，每个元�
 
 中断会话正在运行的前台Job（前台任务）：
 
-```
+`
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"interrupt_job",
   "sessionId" : "'"$session_id"'"
 }
 ''' | json_pp
-```{{execute T3}}
+`{{execute T3}}
 
 ```json
 {
