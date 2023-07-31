@@ -182,7 +182,6 @@ public class JobControllerImpl implements JobController {
         boolean isPipeline = false;
         RedirectHandler redirectHandler = null;
         List<Function<String, String>> stdoutHandlerChain = new ArrayList<Function<String, String>>();
-        String cacheLocation = null;
         while (tokens.hasNext()) {
             CliToken remainingToken = tokens.next();
             if (remainingToken.isText()) {
@@ -197,8 +196,6 @@ public class JobControllerImpl implements JobController {
                     if (name == null) {
                         // 如果没有指定重定向文件名，那么重定向到以jobid命名的缓存中
                         name = LogUtil.cacheDir() + File.separator + Constants.PID + File.separator + jobId;
-                        cacheLocation = name;
-
                         if (getRedirectJobCount() == 8) {
                             throw new IllegalStateException("The amount of async command that saving result to file can't > 8");
                         }
@@ -216,18 +213,20 @@ public class JobControllerImpl implements JobController {
         injectHandler(stdoutHandlerChain, pipelineTokens);
         if (redirectHandler != null) {
             stdoutHandlerChain.add(redirectHandler);
-            term.write("redirect output file will be: " + redirectHandler.getFilePath() + "\n");
         } else if (runInBackground) {
-            RedirectHandler runInBackgroundRedirectHandler = new RedirectHandler();
-            stdoutHandlerChain.add(runInBackgroundRedirectHandler);
-            term.write("background job output file will be: " + runInBackgroundRedirectHandler.getFilePath() + "\n");
+            redirectHandler = new RedirectHandler();
+            stdoutHandlerChain.add(redirectHandler);
         } else {
             stdoutHandlerChain.add(new TermHandler(term));
             if (GlobalOptions.isSaveResult) {
                 RedirectHandler saveResultRedirectHandler = new RedirectHandler();
                 stdoutHandlerChain.add(saveResultRedirectHandler);
-                term.write("save result job output file will be : " + saveResultRedirectHandler.getFilePath() + "\n");
+                term.write("save result job output file location: " + saveResultRedirectHandler.getFilePath() + "\n");
             }
+        }
+        String cacheLocation = null;
+        if(redirectHandler !=null){
+            cacheLocation = redirectHandler.getFilePath();
         }
         ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
         ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput, resultDistributor);
