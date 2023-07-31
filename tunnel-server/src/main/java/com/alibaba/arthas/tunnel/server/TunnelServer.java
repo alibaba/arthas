@@ -97,7 +97,7 @@ public class TunnelServer {
                 if (tunnelClusterStore != null && clientConnectHost != null) {
                     try {
                         for (Entry<String, AgentInfo> entry : agentInfoMap.entrySet()) {
-                            tunnelClusterStore.addAgent(entry.getKey(), new AgentClusterInfo(entry.getValue(), clientConnectHost), 60 * 60, TimeUnit.SECONDS);
+                            tunnelClusterStore.addAgent(entry.getKey(), new AgentClusterInfo(entry.getValue(), clientConnectHost, port), 60 * 60, TimeUnit.SECONDS);
                         }
                     } catch (Throwable t) {
                         logger.error("update tunnel info error", t);
@@ -123,7 +123,7 @@ public class TunnelServer {
     public void addAgent(String id, AgentInfo agentInfo) {
         agentInfoMap.put(id, agentInfo);
         if (this.tunnelClusterStore != null) {
-            this.tunnelClusterStore.addAgent(id, new AgentClusterInfo(agentInfo, clientConnectHost), 60 * 60, TimeUnit.SECONDS);
+            this.tunnelClusterStore.addAgent(id, new AgentClusterInfo(agentInfo, clientConnectHost, port), 60 * 60, TimeUnit.SECONDS);
         }
     }
 

@@ -17,11 +17,11 @@ const fork = ref(6494);
 
 const getStarForkData = async () => {
   const stars = await fetch("https://arthas.aliyun.com/api/starCount").then(
-    (res) => res.json()
+    (res) => res.json(),
   );
 
   const forks = await fetch("https://arthas.aliyun.com/api/forkCount").then(
-    (res) => res.json()
+    (res) => res.json(),
   );
 
   star.value = stars || star.value;
