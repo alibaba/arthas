@@ -31,6 +31,7 @@ export const sidebarZH = {
             },
           ],
         },
+        "/doc/advice-class.html",
         {
           text: "命令列表",
           link: "/doc/commands.md",

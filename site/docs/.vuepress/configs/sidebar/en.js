@@ -31,6 +31,7 @@ export const sidebarEN = {
             },
           ],
         },
+        "/en/doc/advice-class.html",
         {
           text: "All Commands",
           link: "/en/doc/commands.md",
