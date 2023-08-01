@@ -55,20 +55,15 @@ jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
 `mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{exec}}
 
-### [redefine](https://arthas.aliyun.com/doc/redefine.html)
+### [retransform](https://arthas.aliyun.com/doc/retransform.html)
 
-再使用`redefine`命令重新加载新编译好的`UserController.class`：
+再使用`retransform`命令重新加载新编译好的`UserController.class`：
 
-`redefine /tmp/com/example/demo/arthas/user/UserController.class`{{execute T2}}
-
-```
-$ redefine /tmp/com/example/demo/arthas/user/UserController.class
-redefine success, size: 1
-```
+`retransform /tmp/com/example/demo/arthas/user/UserController.class`{{execute T2}}
 
 ### 热修改代码结果
 
-`redefine`成功之后，再次访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
+`retransform`成功之后，再次访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
 
 ```
 {

@@ -54,20 +54,15 @@ After saving to `/tmp/UserController.java`, it can be compiled using the mc (Mem
 
 `mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{exec}}
 
-### [redefine](https://arthas.aliyun.com/en/doc/redefine.html)
+### [retransform](https://arthas.aliyun.com/en/doc/retransform.html)
 
-Then reload the newly compiled `UserController.class` with the `redefine` command:
+Then reload the newly compiled `UserController.class` with the `retransform` command:
 
-`redefine /tmp/com/example/demo/arthas/user/UserController.class`{{execute T2}}
-
-```
-$ redefine /tmp/com/example/demo/arthas/user/UserController.class
-redefine success, size: 1
-```
+`retransform /tmp/com/example/demo/arthas/user/UserController.class`{{execute T2}}
 
 ### Check the results of the hotswap code
 
-After the `redefine` command is executed successfully, visit [/user/0]({{TRAFFIC_HOST1_80}}/user/0) again.
+After the `retransform` command is executed successfully, visit [/user/0]({{TRAFFIC_HOST1_80}}/user/0) again.
 
 The result is:
 
