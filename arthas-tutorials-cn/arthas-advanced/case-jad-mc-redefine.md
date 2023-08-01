@@ -35,7 +35,7 @@ jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 ### [mc](https://arthas.aliyun.com/doc/mc.html)
 
 (Memory Compiler)命令来编译加载 UserController
-可以通过-c 指定 classLoaderHash 或者--classLoaderClass 参数指定ClassLoader，这里为了操作连贯性使用 classLoaderClass
+可以通过 -c 指定 classLoaderHash 或者 --classLoaderClass 参数指定 ClassLoader，这里为了操作连贯性使用 classLoaderClass
 
 ### 查询UserController类加载器
 
