@@ -175,7 +175,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
 
         if (all) {
-            processAllClasses(process, inst);
+            String hashCode = this.hashCode;
+            if (StringUtils.isBlank(hashCode) && targetClassLoader != null) {
+                hashCode = "" + Integer.toHexString(targetClassLoader.hashCode());
+            }
+            processAllClasses(process, inst, hashCode);
         } else if (classLoaderSpecified && resource != null) {
             processResources(process, inst, targetClassLoader);
         } else if (classLoaderSpecified && this.loadClass != null) {
@@ -305,7 +309,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         process.end();
     }
 
-    private void processAllClasses(CommandProcess process, Instrumentation inst) {
+    private void processAllClasses(CommandProcess process, Instrumentation inst,String hashCode) {
         RowAffect affect = new RowAffect();
         getAllClasses(hashCode, inst, affect, process);
         if (checkInterrupted(process)) {
