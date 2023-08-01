@@ -55,10 +55,6 @@
         "text": "case-http-401.md"
       },
       {
-        "title": "案例: 排查 HTTP 请求返回 404",
-        "text": "case-http-404.md"
-      },
-      {
         "title": "案例: 理解 Spring Boot 应用的 ClassLoader 结构",
         "text": "case-classloader.md"
       },

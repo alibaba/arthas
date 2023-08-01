@@ -55,10 +55,6 @@
         "text": "case-http-401.md"
       },
       {
-        "title": "Case: Troubleshooting HTTP request returns 404",
-        "text": "case-http-404.md"
-      },
-      {
         "title": "Case: The ClassLoaders in Spring Boot application",
         "text": "case-classloader.md"
       },

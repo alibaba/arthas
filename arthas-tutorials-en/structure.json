@@ -51,7 +51,6 @@
     { "path": "./case/spring-classloader" },
     { "path": "./case/get-spring-context" },
     { "path": "./case/http-401" },
-    { "path": "./case/http-404" },
     { "path": "./case/http-api" },
     { "path": "./case/jad-mc-redefine" },
     { "path": "./case/logger-config-problem" },
