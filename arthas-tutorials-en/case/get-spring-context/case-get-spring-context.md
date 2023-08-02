@@ -24,4 +24,4 @@ Type `Q`{{exec interrupt}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t` c
 
 The above process of using the tt command to retrieve Spring beans and call functions, can be a bit cumbersome. However, you can simplify this process significantly by using vmtool. The command for this would be as follows:
 
-`vmtool --action getInstances --className com.example.demo.arthas.aop.HelloWorldService --express 'instances[0].getHelloMessage()'` {{exec}}
+`vmtool --action getInstances --className com.example.demo.arthas.aop.HelloWorldService --express 'instances[0].getHelloMessage()'`{{exec}}

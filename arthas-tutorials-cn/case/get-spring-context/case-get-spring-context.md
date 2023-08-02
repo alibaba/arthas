@@ -25,4 +25,4 @@
 
 上面的方法使用 tt 命令获取 spring bean，并调用函数，有点繁琐，更换为使用 [vmtool](https://arthas.aliyun.com/doc/vmtool.html) 将会极大的简化这个流程，命令如下：
 
-`vmtool --action getInstances --className com.example.demo.arthas.aop.HelloWorldService --express 'instances[0].getHelloMessage()'` {{exec}}
+`vmtool --action getInstances --className com.example.demo.arthas.aop.HelloWorldService --express 'instances[0].getHelloMessage()'`{{exec}}
