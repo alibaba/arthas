@@ -2,25 +2,13 @@ In this case, the user can get the spring context, get the bean, and invoke the 
 
 ### Use the tt command to record the invocation of the specified method
 
-`tt` is TimeTunnel, which records the parameters and return value of each invocation of the specified method.
-
-- https://arthas.aliyun.com/doc/tt.html
+[tt](https://arthas.aliyun.com/doc/tt.html) is TimeTunnel, which records the parameters and return value of each invocation of the specified method.
 
 `tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod`{{execute T2}}
 
 Visit: [/user/1]({{TRAFFIC_HOST1_80}}/user/1)
 
-You can see that the `tt` command record an invocation:
-
-```bash
-$ tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdaptePress Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 252 ms.
- INDE  TIMESTAMP    COST(  IS-R  IS-  OBJECT     CLASS               METHOD
- X                  ms)    ET    EXP
------------------------------------------------------------------------------------------
- 1000  2019-02-15   4.583  true  fal  0xc93cf1a  RequestMappingHand  invokeHandlerMethod
-       15:38:32     923          se              lerAdapter
-```
+You can see the `tt` command record an invocation
 
 ### Use the tt command to get the spring context from the invocation record.
 
@@ -28,25 +16,13 @@ Type `Q`{{exec interrupt}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t` c
 
 `tt -i 1000 -w 'target.getApplicationContext()'`{{execute T2}}
 
-```bash
-$ tt -i 1000 -w 'target.getApplicationContext()'
-@AnnotationConfigEmbeddedWebApplicationContext[
-    reader=@AnnotatedBeanDefinitionReader[org.springframework.context.annotation.AnnotatedBeanDefinitionReader@2e457641],
-    scanner=@ClassPathBeanDefinitionScanner[org.springframework.context.annotation.ClassPathBeanDefinitionScanner@6eb38026],
-    annotatedClasses=null,
-    basePackages=null,
-]
-Affect(row-cnt:1) cost in 439 ms.
-```
-
 ## Get the spring bean and invoke method
 
 `tt -i 1000 -w 'target.getApplicationContext().getBean("helloWorldService").getHelloMessage()'`{{execute T2}}
 
-The result is:
 
-```bash
-$ tt -i 1000 -w 'target.getApplicationContext().getBean("helloWorldService").getHelloMessage()'
-@String[Hello World]
-Affect(row-cnt:1) cost in 52 ms.
-```
+## Use the vmtool command to get the spring bean and invoke method
+
+The above process of using the tt command to retrieve Spring beans and call functions, can be a bit cumbersome. However, you can simplify this process significantly by using vmtool. The command for this would be as follows:
+
+`vmtool --action getInstances --className com.example.demo.arthas.aop.HelloWorldService --express 'instances[0].getHelloMessage()'` {{exec}}
