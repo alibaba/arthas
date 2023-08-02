@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -20,7 +21,7 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -77,7 +78,7 @@
     </modules>
 
     <properties>
-        <revision>3.6.9</revision>
+        <revision>3.7.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -448,7 +449,7 @@
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                  <flattenMode>minimum</flattenMode>
+                    <flattenMode>minimum</flattenMode>
                 </configuration>
                 <executions>
                     <execution>
