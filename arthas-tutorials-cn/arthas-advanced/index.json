@@ -35,6 +35,10 @@
         "text": "case-watch-method-exception.md"
       },
       {
+        "title": "案例：Arthas 后台异步任务",
+        "text": "async-jobs.md"
+      },
+      {
         "title": "案例: 热更新代码",
         "text": "case-jad-mc-redefine.md"
       },

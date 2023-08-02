@@ -6,7 +6,7 @@
     "steps": [
       {
         "title": "Arthas demo",
-        "text": "arthas-demo.md"
+        "text": "start-demo.md"
       },
       {
         "title": "Start arthas-boot",
@@ -15,34 +15,6 @@
       {
         "title": "后台异步任务",
         "text": "async-jobs.md"
-      },
-      {
-        "title": "使用&在后台执行任务",
-        "text": "run-cmd-in-backgd.md"
-      },
-      {
-        "title": "通过 jobs 查看任务",
-        "text": "list-backgd-jobs.md"
-      },
-      {
-        "title": "任务暂停和取消",
-        "text": "suspend-cancel-job.md"
-      },
-      {
-        "title": "fg、bg 命令，将命令转到前台、后台继续执行",
-        "text": "switch-foregd-backgd.md"
-      },
-      {
-        "title": "任务输出重定向",
-        "text": "redirect-output.md"
-      },
-      {
-        "title": "停止命令",
-        "text": "stop-job.md"
-      },
-      {
-        "title": "其他",
-        "text": "others.md"
       }
     ],
     "intro": {

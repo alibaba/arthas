@@ -35,6 +35,10 @@
         "text": "case-watch-method-exception.md"
       },
       {
+        "title": "Case: Arthas Async Jobs",
+        "text": "async-jobs.md"
+      },
+      {
         "title": "Case: Hotswap code",
         "text": "case-jad-mc-redefine.md"
       },
