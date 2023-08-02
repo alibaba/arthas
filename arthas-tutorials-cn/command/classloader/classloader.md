@@ -1,37 +1,41 @@
-The following describes the usage of the `classloader` command.
+下面介绍`classloader`命令的功能。
 
-First visit the jsp page: [visite hello jsp page]({{TRAFFIC_HOST1_80}}/hello)
+先访问一个jsp网页，触发jsp的加载： [访问 hello 页面]({{TRAFFIC_HOST1_80}}/hello)
 
-### List all ClassLoaders
+### 列出所有ClassLoader
 
 `classloader -l`{{execute T2}}
 
-The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
+### 统计 ClassLoader 实际使用 URL 和未使用的 URL
 
-### List all classes loaded in ClassLoader
+`classloader --url-stat`{{exec}}
 
-List all classes loaded by `org.apache.jasper.servlet.JasperLoader`:
+> 注意：基于 JVM 目前已加载的所有类统计，不代表 Unused URLs 可以从应用中删掉。因为可能将来需要从 Unused URLs 里加载类，或者需要加载 resources
+
+### 列出ClassLoader里加载的所有类
+
+列出上面的`org.apache.jasper.servlet.JasperLoader`加载的类：
 
 `classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader | grep hello`{{exec}}
 
-### Check the structure of classloader
+### 查看类的classloader层次
 
 `sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
-### View the ClassLoader tree
+### 查看ClassLoader树
 
 `classloader -t`{{execute T2}}
 
-### Show the URLs of the URLClassLoader
+### 查看URLClassLoader实际的urls
 
-For example, if you have found that the LaunchedURLClassLoader for Spring is `org.springframework.boot.loader.LaunchedURLClassLoader`, you can use the `-c <hashcode>` parameter to specify the class loader. Alternatively, you can use the `--classLoaderClass` option to specify the class name and view the actual URLs of the URLClassLoader.
+比如上面查看到的 spring LaunchedURLClassLoader 为 `org.springframework.boot.loader.LaunchedURLClassLoader`，可以通过 `-c <hashcode>` 参数来指定classloader，还有一种方法可以通过使用 `--classLoaderClass` 指定类名，从而查看URLClassLoader实际的urls：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{exec}}
 
-### Load the resource file in the specified ClassLoader
+### 查找 ClassLoader 里的资源文件
 
-Load the specified resource file: `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`
+查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{exec}}
 
-Use the classloader to load .class resource
+也可以尝试查找类的class文件：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`{{exec}}

@@ -6,7 +6,11 @@
 
 `classloader -l`{{execute T2}}
 
-TomcatEmbeddedWebappClassLoader 加载的 class 数量是0，所以在 spring boot embedded tomcat 里，它只是一个空壳，所有的类加载都是 `LaunchedURLClassLoader` 完成的
+### 统计 ClassLoader 实际使用 URL 和未使用的 URL
+
+`classloader --url-stat`{{exec}}
+
+> 注意：基于 JVM 目前已加载的所有类统计，不代表 Unused URLs 可以从应用中删掉。因为可能将来需要从 Unused URLs 里加载类，或者需要加载 resources
 
 ### 列出ClassLoader里加载的所有类
 
@@ -26,12 +30,12 @@ TomcatEmbeddedWebappClassLoader 加载的 class 数量是0，所以在 spring bo
 
 比如上面查看到的 spring LaunchedURLClassLoader 为 `org.springframework.boot.loader.LaunchedURLClassLoader`，可以通过 `-c <hashcode>` 参数来指定classloader，还有一种方法可以通过使用 `--classLoaderClass` 指定类名，从而查看URLClassLoader实际的urls：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{exec}}
 
 ### 查找 ClassLoader 里的资源文件
 
-查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`
+查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{exec}}
 
 也可以尝试查找类的class文件：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`{{exec}}

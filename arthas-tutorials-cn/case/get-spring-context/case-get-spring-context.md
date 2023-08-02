@@ -15,7 +15,6 @@
 输入 `Q`{{exec interrupt}} 或者 `Ctrl + C`{{exec interrupt}} 退出上面的 `tt -t`命令。  
 使用 `tt -l`{{exec}} 命令可以查看之前 `tt` 命令捕获到的请求信息。
 
-
 `tt -i 1000 -w 'target.getApplicationContext()'`{{execute T2}}
 
 ### 获取 spring bean，并调用函数
