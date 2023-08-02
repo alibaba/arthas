@@ -20,7 +20,6 @@ Type `Q`{{exec interrupt}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t` c
 
 `tt -i 1000 -w 'target.getApplicationContext().getBean("helloWorldService").getHelloMessage()'`{{execute T2}}
 
-
 ## Use the vmtool command to get the spring bean and invoke method
 
 The above process of using the tt command to retrieve Spring beans and call functions, can be a bit cumbersome. However, you can simplify this process significantly by using vmtool. The command for this would be as follows:
