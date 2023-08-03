@@ -9,6 +9,7 @@ For classloader with only one instance, it can be specified by `--classLoaderCla
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 ## Use ognl
+
 ### Use ognl command to get the logger
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
@@ -33,7 +34,7 @@ By getting the `root` logger, the user can modify the global logger level:
 
 The `logger ` command provides a more convenient way to dynamically set the logger level compared to using `ognl`.
 
-### Use logger command to get the logger 
+### Use logger command to get the logger
 
 `logger --name com.example.demo.arthas.user.UserController`{{exec}}
 
