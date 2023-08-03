@@ -17,7 +17,7 @@ Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then e
 #### View logger information for the special classloader
 
 Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.  
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
+If you are using `-c`, you will need to manually enter the hashcode obtained from `logger -n org.springframework.web | grep classLoaderHash`{{exec}} as follows: `-c <hashcode>`.  
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
 `logger --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}

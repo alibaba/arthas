@@ -14,8 +14,8 @@
 
 #### 查看指定classloader的logger信息
 
-注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
-如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`  
+注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，提取对应 ClassLoader 的 hashcode。
+如果你使用`-c`，你需要手动输入由 `logger -n org.springframework.web | grep classLoaderHash`{{exec}} 获取到的 hashcode：`-c <hashcode>`  
 对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
 
 `logger --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
