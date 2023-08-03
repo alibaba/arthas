@@ -4,44 +4,17 @@
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
 
-### Supported Options
-
-|        Name | Specification                                                                    |
-| ----------: | :------------------------------------------------------------------------------- |
-|    _action_ | Action to execute                                                                |
-| _actionArg_ | Attribute name pattern                                                           |
-|        [i:] | sampling interval in ns (default: 10'000'000, i.e. 10 ms)                        |
-|        [f:] | dump output to specified directory                                               |
-|        [d:] | run profiling for specified seconds                                              |
-|        [e:] | which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu |
-
 ### View all supported actions
 
 `profiler actions`{{execute T2}}
-
-```bash
-$ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
-```
 
 ### View version
 
 `profiler version`{{execute T2}}
 
-```bash
-$ profiler version
-Async-profiler 1.6 built on Sep  9 2019
-Copyright 2019 Andrei Pangin
-```
-
 ### Start profiler
 
 `profiler start -e cpu`{{execute T2}}
-
-```
-$ profiler start -e cpu
-Profiling started
-```
 
 > By default, the sample event is `cpu`. Can be specified with the `--e` parameter.
 
@@ -49,19 +22,9 @@ Profiling started
 
 `profiler getSamples`{{execute T2}}
 
-```
-$ profiler getSamples
-23
-```
-
 ### View profiler status
 
 `profiler status`{{execute T2}}
-
-```bash
-$ profiler status
-Profiling is running for 11 seconds
-```
 
 ### Stop profiler
 
@@ -70,12 +33,6 @@ Profiling is running for 11 seconds
 By default, the result file is `html` format. You can also specify it with the `--format` parameter:
 
 `profiler stop --format html`{{execute T2}}
-
-```bash
-$ profiler stop --format html
-profiler output file: /root/arthas-output/20230729-090342.html
-ok
-```
 
 Or use the file name name format in the `--file` parameter. For example, `--file /tmp/result.html`.
 
@@ -140,19 +97,9 @@ You can use the `--event` parameter to specify the event to sample, such as samp
 
 `profiler start --event alloc`{{execute T2}}
 
-```bash
-$ profiler start --event alloc
-Profiling started
-```
-
 ### Resume sampling
 
 `profiler resume`{{execute T2}}
-
-```bash
-$ profiler resume
-Started [cpu] profiling
-```
 
 The difference between `start` and `resume` is: `start` is the new start sampling, `resume` will retain the data of the last `stop`.
 
@@ -164,16 +111,10 @@ You can verify the number of samples by executing `profiler getSamples`.
 
 For example, start sampling:
 
-```bash
-profiler execute 'start,framebuf=5000000'
-```
+`profiler execute 'start,framebuf=5000000'`{{execute T2}}
 
 Stop sampling and save to the specified file:
 
 `profiler execute 'stop,file=/root/arthas-output/result.html'`{{execute T2}}
-
-```bash
-profiler execute 'stop,file=/root/arthas-output/result.html'
-```
 
 Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)

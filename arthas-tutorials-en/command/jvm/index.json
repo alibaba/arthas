@@ -15,6 +15,10 @@
       {
         "title": "jvm Command",
         "text": "jvm.md"
+      },
+      {
+        "title": "jvm Usage",
+        "text": "notes-on-column-headers.md"
       }
     ],
     "intro": {

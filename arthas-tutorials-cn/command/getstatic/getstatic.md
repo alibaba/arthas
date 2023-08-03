@@ -4,38 +4,9 @@
 
 `getstatic demo.MathGame random`{{execute T2}}
 
-```bash
-$ getstatic demo.MathGame random
-field: random
-@Random[
-    serialVersionUID=@Long[3905348978240129619],
-    seed=@AtomicLong[120955813885284],
-    multiplier=@Long[25214903917],
-    addend=@Long[11],
-    mask=@Long[281474976710655],
-    DOUBLE_UNIT=@Double[1.1102230246251565E-16],
-    BadBound=@String[bound must be positive],
-    BadRange=@String[bound must be greater than origin],
-    BadSize=@String[size must be non-negative],
-    seedUniquifier=@AtomicLong[-3282039941672302964],
-    nextNextGaussian=@Double[0.0],
-    haveNextNextGaussian=@Boolean[false],
-    serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
-    unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
-    seedOffset=@Long[24],
-]
-```
-
-- 指定 classLoader
-
-注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，使用`sc -d <ClassName>`提取对应 ClassLoader 的 hashcode。
-
-如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`
-
-```bash
-$ getstatic -c 3d4eac69 demo.MathGame random
-```
-
+- 指定 classLoader  
+注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，使用`sc -d <ClassName>`提取对应 ClassLoader 的 hashcode。  
+如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`  
 对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
 
 `getstatic --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame random`{{execute T2}}

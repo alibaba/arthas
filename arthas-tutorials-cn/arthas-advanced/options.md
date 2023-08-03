@@ -12,20 +12,7 @@
 
 ## 以 JSON 格式打印对象
 
-当 `json-format` 为 false 时，输出结果是：
+`options json-format`{{exec}}可以看到当前的 `json-format` 为 false  
+运行 `ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'`{{exec}} 得到的结果并不是 JSON 格式
 
-```bash
-$ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'
-@ArrayList[
-    @String[/usr/lib/jvm/java-8-oracle/jre],
-    @String[Java(TM) SE Runtime Environment],
-]
-```
-
-`options json-format true`{{execute T2}}
-
-当 `json-format` 为 true 时，输出结果是：
-
-```bash
-$ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#v["/usr/lib/jvm/java-8-oracle/jre","Java(TM) SE Runtime Environment"]
-```
+如果希望输出 JSON 格式，可以使用 `options json-format true`{{exec}} 开启，开启后再运行 `ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'`{{exec}} 这是可以看到输出的格式已经转变为 JSON 格式。

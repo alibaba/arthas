@@ -17,56 +17,9 @@
 
 `options`{{execute T2}}
 
-```bash
-$ options
- LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
---------------------------------------------------------------------------------------------
- 0      bool  unsafe       false  Option to support   This option enables to proxy function
-        ean                       system-level class  ality of JVM classes. Due to serious
-                                                      security risk a JVM crash is possibly
-                                                       be introduced. Do not activate it un
-                                                      less you are able to manage.
- 1      bool  dump         false  Option to dump the  This option enables the enhanced clas
-        ean                        enhanced classes   ses to be dumped to external file for
-                                                       further de-compilation and analysis.
- 1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
-        ean   ansform             batch reTransform   lasses with batch mode.
-                                  Class
- 2      bool  json-format  false  Option to support   This option enables to format object
-        ean                       JSON format of obj  output with JSON when -x option selec
-                                  ect output          ted.
- 1      bool  disable-sub  false  Option to control   This option disable to include sub cl
-        ean   -class              include sub class   ass when matching class.
-                                  when class matchin
-                                  g
- 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
-        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
-                                   is involved        on.
- 1      bool  save-result  false  Option to print co  This option enables to save each comm
-        ean                       mmand's result to   and's result to log file, which path
-                                  log file            is ${user.home}/logs/arthas-cache/res
-                                                      ult.log.
- 2      Stri  job-timeout  1d     Option to job time  This option setting job timeout,The u
-        ng                        out                 nit can be d, h, m, s for day, hour,
-                                                      minute, second. 1d is one day in defa
-                                                      ult
- 1      bool  print-paren  true   Option to print al  This option enables print files in pa
-        ean   t-fields            l fileds in parent  rent class, default value true.
-                                   class
-```
-
 ### Get special option value
 
 `options json-format`{{execute T2}}
-
-```
-$ options json-format
- LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
---------------------------------------------------------------------------------------------
- 2      bool  json-format  false  Option to support   This option enables to format object
-        ean                       JSON format of obj  output with JSON when -x option selec
-                                  ect output          ted.
-```
 
 > By default, `json-format` is false. When set `json-format` to true, commands like `wathc`/`tt` will print result with `json` format.
 
@@ -80,19 +33,6 @@ To enable saving command execution result, input the command below:
 
 `options save-result true`{{execute T2}}
 
-```
-$ options save-result true
- NAME         BEFORE-VALUE  AFTER-VALUE
-----------------------------------------
- save-result  false         true
-```
-
 Wait for a second, and you will see there exist some results:
 
 `cat /root/logs/arthas-cache/result.log`{{execute T2}}
-
-```bash
-$ cat /root/logs/arthas-cache/result.log
-2020-07-26 04:27:08 [arthas-command-execute] INFO  result -
-2020-07-26 04:27:08 [arthas-command-execute] INFO  result -
-```

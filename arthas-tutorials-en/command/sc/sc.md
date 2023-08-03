@@ -22,58 +22,12 @@
 
 ### Usage
 
-- Wildcards match search
-
-  `sc demo.*`{{execute T2}}
-
-  ```bash
-  $ sc demo.*
-  demo.MathGame
-  Affect(row-cnt:1) cost in 55 ms.
-  ```
-
-- View class details
-
-  `sc -d demo.MathGame`{{execute T2}}
-
-  ```bash
-  $ sc -d demo.MathGame
-  class-info        demo.MathGame
-  code-source       /private/tmp/math-game.jar
-  name              demo.MathGame
-  isInterface       false
-  isAnnotation      false
-  isEnum            false
-  isAnonymousClass  false
-  isArray           false
-  isLocalClass      false
-  isMemberClass     false
-  isPrimitive       false
-  isSynthetic       false
-  simple-name       MathGame
-  modifier          public
-  annotation
-  interfaces
-  super-class       +-java.lang.Object
-  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
-                      +-sun.misc.Launcher$ExtClassLoader@66350f69
-  classLoaderHash   3d4eac69
-
-  Affect(row-cnt:1) cost in 875 ms.
-  ```
-
-Take a note of the classLoaderHash here:`3d4eac69`, and use it to replace `<classLoaderHash>` and execute the following command.
+- Wildcards match search `sc demo.*`{{execute T2}}
+- View class details `sc -d demo.MathGame`{{execute T2}}
 
 - Specify classLoader
-
-Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
-
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
-
-```bash
-$ sc -c 3d4eac69 -d demo*
-```
-
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.  
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
 `sc --classLoaderClass sun.misc.Launcher$AppClassLoader -d demo*`{{execute T2}}
@@ -82,42 +36,4 @@ For classloader with only one instance, it can be specified by `--classLoaderCla
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
-- View class fields
-
-  `sc -d -f demo.MathGame`{{execute T2}}
-
-  ```bash
-  $ sc -d -f demo.MathGame
-  class-info        demo.MathGame
-  code-source       /private/tmp/math-game.jar
-  name              demo.MathGame
-  isInterface       false
-  isAnnotation      false
-  isEnum            false
-  isAnonymousClass  false
-  isArray           false
-  isLocalClass      false
-  isMemberClass     false
-  isPrimitive       false
-  isSynthetic       false
-  simple-name       MathGame
-  modifier          public
-  annotation
-  interfaces
-  super-class       +-java.lang.Object
-  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
-                      +-sun.misc.Launcher$ExtClassLoader@66350f69
-  classLoaderHash   3d4eac69
-  fields            modifierprivate,static
-                    type    java.util.Random
-                    name    random
-                    value   java.util.Random@522b4
-                            08a
-
-                    modifierprivate
-                    type    int
-                    name    illegalArgumentCount
-
-
-  Affect(row-cnt:1) cost in 19 ms.
-  ```
+- View class fields `sc -d -f demo.MathGame`{{execute T2}}

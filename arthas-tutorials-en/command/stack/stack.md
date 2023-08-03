@@ -29,47 +29,14 @@ Thanks for `advice`'s data structure, it is possible to observe from varieties o
 
 Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
-```bash
-$ stack demo.MathGame primeFactors
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
-ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)
-```
-
 #### Filtering by condition expression
 
 `stack demo.MathGame primeFactors 'params[0]<0' -n 2`{{execute T2}}
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
-```bash
-$ stack demo.MathGame primeFactors 'params[0]<0' -n 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 30 ms.
-ts=2018-12-04 01:34:27;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)
-
-ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)
-
-Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
-```
-
 #### Filtering by cost
 
 `stack demo.MathGame primeFactors '#cost>5'`{{execute T2}}
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
-
-```bash
-$ stack demo.MathGame primeFactors '#cost>5'
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
-ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)
-```

@@ -18,30 +18,9 @@
 
 按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
-```bash
-$ tt -t demo.MathGame primeFactors
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
- INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
--------------------------------------------------------------------------------------------------------------------------------------
- 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
-```
-
 - 命令参数解析
-
-  - `-t`
-
-    tt 命令有很多个主参数，`-t` 就是其中之一。这个参数的表明希望记录下类 `*Test` 的 `print` 方法的每次执行情况。
-
-  - `-n 3`
-
-    当你执行一个调用量不高的方法时可能你还能有足够的时间用 `CTRL+C` 中断 tt 命令记录的过程，但如果遇到调用量非常大的方法，瞬间就能将你的 JVM 内存撑爆。
-
-    此时你可以通过 `-n` 参数指定你需要记录的次数，当达到记录次数时 Arthas 会主动中断 tt 命令的记录过程，避免人工操作无法停止的情况。
+  - `-t` tt 命令有很多个主参数，`-t` 就是其中之一。这个参数的表明希望记录下类 `*Test` 的 `print` 方法的每次执行情况。
+  - `-n 3` 当你执行一个调用量不高的方法时可能你还能有足够的时间用 `CTRL+C` 中断 tt 命令记录的过程，但如果遇到调用量非常大的方法，瞬间就能将你的 JVM 内存撑爆。此时你可以通过 `-n` 参数指定你需要记录的次数，当达到记录次数时 Arthas 会主动中断 tt 命令的记录过程，避免人工操作无法停止的情况。
 
 - 表格字段说明
 
@@ -63,7 +42,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
   - Arthas 似乎很难区分出重载的方法
   - 我只需要观察特定参数，但是 tt 却全部都给我记录了下来
 
-  条件表达式也是用 `OGNL` 来编写，核心的判断对象依然是 `Advice` 对象。除了 `tt` 命令之外，`watch`、`trace`、`stack` 命令也都支持条件表达式。
+  条件表达式也是用 `OGNL` 来编写，核心的判断对象依然是 `Advice` 对象。除了 `tt` 命令之外，`watch`、`trace`、`stack` 命令也都支持条件表达式。
 
 - 解决方法重载
 
@@ -89,37 +68,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 
 `tt -l`{{execute T2}}
 
-```bash
-$ tt -l
- INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
--------------------------------------------------------------------------------------------------------------------------------------
- 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
-                              9
- 1005    2018-12-04 11:15:43  0.4776    false   true     0x4b67cf4d     MathGame                       primeFactors
-Affect(row-cnt:6) cost in 4 ms.
-```
-
 我需要筛选出 `primeFactors` 方法的调用信息
 
 `tt -s 'method.name=="primeFactors"'`{{execute T2}}
-
-```bash
-$ tt -s 'method.name=="primeFactors"'
- INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
--------------------------------------------------------------------------------------------------------------------------------------
- 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
- 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
-                              9
- 1005    2018-12-04 11:15:43  0.4776    false   true     0x4b67cf4d     MathGame                       primeFactors
-Affect(row-cnt:6) cost in 607 ms.
-```
 
 你需要一个 `-s` 参数。<span style="color:red;">同样的，搜索表达式的核心对象依旧是 `Advice` 对象。</span>
 
@@ -129,25 +80,6 @@ Affect(row-cnt:6) cost in 607 ms.
 
 `tt -i 1003`{{execute T2}}
 
-```bash
-$ tt -i 1003
- INDEX            1003
- GMT-CREATE       2018-12-04 11:15:41
- COST(ms)         0.186073
- OBJECT           0x4b67cf4d
- CLASS            demo.MathGame
- METHOD           primeFactors
- IS-RETURN        false
- IS-EXCEPTION     true
- PARAMETERS[0]    @Integer[-564322413]
- THROW-EXCEPTION  java.lang.IllegalArgumentException: number is: -564322413, need >= 2
-                      at demo.MathGame.primeFactors(MathGame.java:46)
-                      at demo.MathGame.run(MathGame.java:24)
-                      at demo.MathGame.main(MathGame.java:16)
-
-Affect(row-cnt:1) cost in 11 ms.
-```
-
 #### 重做一次调用
 
 当你稍稍做了一些调整之后，你可能需要前端系统重新触发一次你的调用，此时得求爷爷告奶奶的需要前端配合联调的同学再次发起一次调用。而有些场景下，这个调用不是这么好触发的。
@@ -156,27 +88,6 @@ Affect(row-cnt:1) cost in 11 ms.
 调用次数，通过 `--replay-interval` 指定多次调用间隔 (单位 ms, 默认 1000ms)
 
 `tt -i 1004 -p`{{execute T2}}
-
-```bash
-$ tt -i 1004 -p
- RE-INDEX       1004
- GMT-REPLAY     2018-12-04 11:26:00
- OBJECT         0x4b67cf4d
- CLASS          demo.MathGame
- METHOD         primeFactors
- PARAMETERS[0]  @Integer[946738738]
- IS-RETURN      true
- IS-EXCEPTION   false
- COST(ms)         0.186073
- RETURN-OBJ     @ArrayList[
-                    @Integer[2],
-                    @Integer[11],
-                    @Integer[17],
-                    @Integer[2531387],
-                ]
-Time fragment[1004] successfully replayed.
-Affect(row-cnt:1) cost in 14 ms.
-```
 
 你会发现结果虽然一样，但调用的路径发生了变化，有原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。
 

@@ -45,39 +45,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
-```bash
-$ watch demo.MathGame primeFactors -x 2
-Press Q or Ctrl+C to abort.
-Affect(class count: 1 , method count: 1) cost in 32 ms, listenerId: 5
-method=demo.MathGame.primeFactors location=AtExceptionExit
-ts=2021-08-31 15:22:57; [cost=0.220625ms] result=@ArrayList[
-    @Object[][
-        @Integer[-179173],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@31cefde0],
-        illegalArgumentCount=@Integer[44],
-    ],
-    null,
-]
-method=demo.MathGame.primeFactors location=AtExit
-ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@31cefde0],
-        illegalArgumentCount=@Integer[44],
-    ],
-    @ArrayList[
-        @Integer[2],
-        @Integer[2],
-        @Integer[26947],
-    ],
-]
-```
-
-- 上面的结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是 null
+- 从运行结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是 null
 - 在第二次结果里是`location=AtExit`，说明函数正常返回，因此可以看到`returnObj`结果是一个 ArrayList
 
 #### 观察方法入参
@@ -85,18 +53,6 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
-
-```bash
-$ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
-ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
-    @Object[][
-        @Integer[-1077465243],
-    ],
-    null,
-]
-```
 
 - 对比前一个例子，返回值为空（事件点为方法执行前，因此获取不到返回值）
 
@@ -106,45 +62,8 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
 
-```bash
-$ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
-ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@522b408a],
-        illegalArgumentCount=@Integer[13038],
-    ],
-    null,
-]
-ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@522b408a],
-        illegalArgumentCount=@Integer[13038],
-    ],
-    @ArrayList[
-        @Integer[2],
-        @Integer[2],
-        @Integer[2],
-        @Integer[5],
-        @Integer[5],
-        @Integer[73],
-        @Integer[241],
-        @Integer[439],
-    ],
-]
-```
-
-- 参数里`-n 2`，表示只执行两次
-
-- 这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果
-
+- 参数里`-n 2`，表示只执行两次  
+- 这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果  
 - 结果的输出顺序和事件发生的先后顺序一致，和命令中 `-s -b` 的顺序无关
 
 #### 调整`-x`的值，观察具体的方法参数值
@@ -152,37 +71,6 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
 `watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
-
-```bash
-$ watch demo.MathGame primeFactors "{params,target}" -x 3
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
-ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[
-            serialVersionUID=@Long[3905348978240129619],
-            seed=@AtomicLong[3133719055989],
-            multiplier=@Long[25214903917],
-            addend=@Long[11],
-            mask=@Long[281474976710655],
-            DOUBLE_UNIT=@Double[1.1102230246251565E-16],
-            BadBound=@String[bound must be positive],
-            BadRange=@String[bound must be greater than origin],
-            BadSize=@String[size must be non-negative],
-            seedUniquifier=@AtomicLong[-3282039941672302964],
-            nextNextGaussian=@Double[0.0],
-            haveNextNextGaussian=@Boolean[false],
-            serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
-            unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
-            seedOffset=@Long[24],
-        ],
-        illegalArgumentCount=@Integer[13159],
-    ],
-]
-```
 
 - `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是 1。
 
@@ -192,22 +80,10 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
 
-```bash
-$ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
-ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
-    @Integer[-18178089],
-    @MathGame[demo.MathGame@41cf53f9],
-]
-```
-
-- 只有满足条件的调用，才会有响应。
-
-- `watch-express` 单个值可以不加'{}'，多个值需要加'{a,b,c}'。
-
-- `condition-express` 不能加'{}'，可以使用逗号分隔子表达式，取表达式最后一个值来判断。
-
+- 只有满足条件的调用，才会有响应。  
+- `watch-express` 单个值可以不加'{}'，多个值需要加'{a,b,c}'。  
+- `condition-express` 不能加'{}'，可以使用逗号分隔子表达式，取表达式最后一个值来判断。  
+- 
 如果 watch 的方法存在同名的其它重载方法，可以通过下面的办法进行过滤：
 
 - 根据参数类型进行过滤
@@ -228,20 +104,6 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
 
-```bash
-$ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
-ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
-    @Integer[-1120397038],
-    java.lang.IllegalArgumentException: number is: -1120397038, need >= 2
-	at demo.MathGame.primeFactors(MathGame.java:46)
-	at demo.MathGame.run(MathGame.java:24)
-	at demo.MathGame.main(MathGame.java:16)
-,
-]
-```
-
 - `-e`表示抛出异常时才触发
 - express 中，表示异常信息的变量是`throwExp`
 
@@ -257,21 +119,6 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
 
-```bash
-$ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
-ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @ArrayList[
-        @Integer[5],
-        @Integer[428379493],
-    ],
-]
-```
-
 - `#cost>200`(单位是`ms`) 表示只有当耗时大于 200ms 时才会输出，过滤掉执行时间小于 200ms 的调用
 
 #### 观察当前对象中的属性
@@ -280,28 +127,9 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
 
-如果想查看方法运行前后，当前对象中的属性，可以使用`target`关键字，代表当前对象
-
-```bash
-$ watch demo.MathGame primeFactors 'target'
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 52 ms.
-ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
-    random=@Random[java.util.Random@522b408a],
-    illegalArgumentCount=@Integer[13355],
-]
-```
-
+如果想查看方法运行前后，当前对象中的属性，可以使用`target`关键字，代表当前对象  
 然后使用`target.field_name`访问当前对象的某个属性
 
 `watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
 按`Q`{{execute T2}}或者`Ctrl+c`退出
-
-```bash
-$ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
-ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
-ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
-```

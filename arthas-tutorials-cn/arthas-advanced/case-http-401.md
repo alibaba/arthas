@@ -18,13 +18,7 @@ Something went wrong: 401 Unauthorized
 
 访问： [/admin]({{TRAFFIC_HOST1_80}}/admin)
 
-可以在调用树的最深层，找到`AdminFilterConfig$AdminFilter`返回了`401`：
-
-```
-+---[3.806273ms] javax.servlet.FilterChain:doFilter()
-|   `---[3.447472ms] com.example.demo.arthas.AdminFilterConfig$AdminFilter:doFilter()
-|       `---[0.17259ms] javax.servlet.http.HttpServletResponse:sendError()
-```
+可以在调用树的最深层，找到`AdminFilterConfig$AdminFilter`返回了`401`
 
 ### 通过 stack 获取调用栈
 
@@ -35,16 +29,3 @@ Something went wrong: 401 Unauthorized
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
 访问： [/admin]({{TRAFFIC_HOST1_80}}/admin)
-
-```bash
-$ stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'
-Press Q or Ctrl+C to abort.
-Affect(class-cnt:2 , method-cnt:4) cost in 87 ms.
-ts=2019-02-15 16:44:06;thread_name=http-nio-8080-exec-6;id=16;is_daemon=true;priority=5;TCCL=org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedWebappClassLoader@8546cd5
-    @org.apache.catalina.connector.ResponseFacade.sendError()
-        at com.example.demo.arthas.AdminFilterConfig$AdminFilter.doFilter(AdminFilterConfig.java:38)
-        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
-        at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
-        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
-```

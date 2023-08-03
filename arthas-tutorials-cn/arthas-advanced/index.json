@@ -31,6 +31,10 @@
         "text": "ognl.md"
       },
       {
+        "title": "Options",
+        "text": "options.md"
+      },
+      {
         "title": "案例：排查函数调用异常",
         "text": "case-watch-method-exception.md"
       },

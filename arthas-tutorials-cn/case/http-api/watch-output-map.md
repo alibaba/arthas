@@ -8,73 +8,12 @@ watch 的结果值由计算`watch-express` ognl 表达式产生，可以通过�
 
 下面的命令生成 map 格式的值：
 
-```bash
-watch *MathGame prime* '#{ "params" : params, "returnObj" : returnObj, "throwExp": throwExp}' -x 2 -n 5
-```
-
-在 Telnet shell/WebConsole 中执行上面的命令，输出的结果：
-
-```bash
-ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
-    @String[params]:@Object[][
-        @Integer[1],
-    ],
-    @String[returnObj]:@ArrayList[
-        @Integer[2],
-        @Integer[241],
-        @Integer[379],
-    ],
-    @String[throwExp]:null,
-]
-```
+`watch *MathGame prime* '#{ "params" : params, "returnObj" : returnObj, "throwExp": throwExp}' -x 2 -n 5`{{exec}}  
+在 Telnet shell/WebConsole 中执行上面的命令，会输出 `demo.MathGame.primeFactors` 的相关信息。
+使用 `Q`{{exec}} 或 `Ctrl+C` 退出 `watch`
 
 用 Http api 执行上面的命令，注意对 JSON 双引号转义：
 
-`curl -Ss -XPOST http://localhost:8563/api -d '{"action":"exec","execTimeout":30000,"command":"watch *MathGame prime* #{\"params\":params,\"returnObj\":returnObj,\"throwExp\":throwExp} -n 3 "}' | json_pp`{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d '{"action":"exec","execTimeout":30000,"command":"watch *MathGame prime* #{\"params\":params,\"returnObj\":returnObj,\"throwExp\":throwExp} -n 3 "}' | json_pp`{{exec}}
 
-Http api 执行结果：
-
-```json
-{
-    "body": {
-         ...
-        "results": [
-            ...
-            {
-                ...
-                "type": "watch",
-                "value": {
-                    "params": [
-                        1
-                    ],
-                    "returnObj": [
-                        2,
-                        5,
-                        17,
-                        23,
-                        23
-                    ]
-                }
-            },
-            {
-                ...
-                "type": "watch",
-                "value": {
-                    "params": [
-                        -98278
-                    ],
-                    "throwExp": {
-                        "@type": "java.lang.IllegalArgumentException",
-                        "localizedMessage": "number is: -98278, need >= 2",
-                        "message": "number is: -98278, need >= 2",
-                        "stackTrace": [
-                            ...
-                        ]
-                    }
-                }
-            },
-            ...
-}
-```
-
-可以看到 watch 结果的 value 变成 map 对象，程序可以通过 key 读取结果。
+Http api 执行，可以看到 watch 结果的 value 变成 map 对象，程序可以通过 key 读取结果。

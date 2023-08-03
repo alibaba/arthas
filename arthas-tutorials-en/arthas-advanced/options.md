@@ -12,20 +12,7 @@ To enhance the classes in the JVM, execute `options unsafe true`{{execute T2}} t
 
 ## Print objects in JSON format
 
-When `json-format` is false, the output is:
+`options json-format`{{exec}} command returned the current json-format value as false.  
+When you execute the following command, `ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'`{{exec}}, the result is not in JSON format.
 
-```bash
-$ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'
-@ArrayList[
-    @String[/usr/lib/jvm/java-8-oracle/jre],
-    @String[Java(TM) SE Runtime Environment],
-]
-```
-
-`options json-format true`{{execute T2}}
-
-When `json-format` is true, the output is:
-
-```bash
-$ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#v["/usr/lib/jvm/java-8-oracle/jre","Java(TM) SE Runtime Environment"]
-```
+To output the result in JSON format, you can use `options json-format true`{{exec}} to enable it. After enabling it, if you run `ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'`{{exec}} again, you will notice that the output format has been changed to JSON format.

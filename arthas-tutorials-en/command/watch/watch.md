@@ -39,38 +39,6 @@ Advanced:
 
 > The expression to watch, default value `{params, target, returnObj}`
 
-```bash
-$ watch demo.MathGame primeFactors -x 2
-Press Q or Ctrl+C to abort.
-Affect(class count: 1 , method count: 1) cost in 32 ms, listenerId: 5
-method=demo.MathGame.primeFactors location=AtExceptionExit
-ts=2021-08-31 15:22:57; [cost=0.220625ms] result=@ArrayList[
-    @Object[][
-        @Integer[-179173],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@31cefde0],
-        illegalArgumentCount=@Integer[44],
-    ],
-    null,
-]
-method=demo.MathGame.primeFactors location=AtExit
-ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@31cefde0],
-        illegalArgumentCount=@Integer[44],
-    ],
-    @ArrayList[
-        @Integer[2],
-        @Integer[2],
-        @Integer[26947],
-    ],
-]
-```
-
 - In the above result, the method is executed twice, the first result is `location=AtExceptionExit`, indicating that the method throws an exception, so `returnObj` is null
 - In the second result is `location=AtExit`, indicating that the method returns normally, so you can see that the result of `returnObj` is an ArrayList
 
@@ -79,18 +47,6 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
 Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
-
-```bash
-$ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
-ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
-    @Object[][
-        @Integer[-1077465243],
-    ],
-    null,
-]
-```
 
 Compared to the previous _check_:
 
@@ -101,41 +57,6 @@ Compared to the previous _check_:
 `watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
-
-```bash
-$ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
-ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@522b408a],
-        illegalArgumentCount=@Integer[13038],
-    ],
-    null,
-]
-ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[java.util.Random@522b408a],
-        illegalArgumentCount=@Integer[13038],
-    ],
-    @ArrayList[
-        @Integer[2],
-        @Integer[2],
-        @Integer[2],
-        @Integer[5],
-        @Integer[5],
-        @Integer[73],
-        @Integer[241],
-        @Integer[439],
-    ],
-]
-```
 
 F.Y.I
 
@@ -149,37 +70,6 @@ F.Y.I
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
-```bash
-$ watch demo.MathGame primeFactors "{params,target}" -x 3
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
-ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @MathGame[
-        random=@Random[
-            serialVersionUID=@Long[3905348978240129619],
-            seed=@AtomicLong[3133719055989],
-            multiplier=@Long[25214903917],
-            addend=@Long[11],
-            mask=@Long[281474976710655],
-            DOUBLE_UNIT=@Double[1.1102230246251565E-16],
-            BadBound=@String[bound must be positive],
-            BadRange=@String[bound must be greater than origin],
-            BadSize=@String[size must be non-negative],
-            seedUniquifier=@AtomicLong[-3282039941672302964],
-            nextNextGaussian=@Double[0.0],
-            haveNextNextGaussian=@Boolean[false],
-            serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
-            unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
-            seedOffset=@Long[24],
-        ],
-        illegalArgumentCount=@Integer[13159],
-    ],
-]
-```
-
 - `-x`: Expand level of object (1 by default)
 
 #### Use condition expressions to locate specific call
@@ -187,16 +77,6 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 `watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
-
-```bash
-$ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
-ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
-    @Integer[-18178089],
-    @MathGame[demo.MathGame@41cf53f9],
-]
-```
 
 - Only calls that meet the conditions will respond.
 
@@ -224,20 +104,6 @@ Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
-```bash
-$ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
-ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
-    @Integer[-1120397038],
-    java.lang.IllegalArgumentException: number is: -1120397038, need >= 2
-	at demo.MathGame.primeFactors(MathGame.java:46)
-	at demo.MathGame.run(MathGame.java:24)
-	at demo.MathGame.main(MathGame.java:16)
-,
-]
-```
-
 - `-e`: Trigger when an exception is thrown
 - `throwExp`: the exception object
 
@@ -253,21 +119,6 @@ Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
-```bash
-$ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
-ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
-    @Object[][
-        @Integer[1],
-    ],
-    @ArrayList[
-        @Integer[5],
-        @Integer[428379493],
-    ],
-]
-```
-
 - `#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
 
 #### Check the field of the target object
@@ -278,26 +129,8 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
-```bash
-$ watch demo.MathGame primeFactors 'target'
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 52 ms.
-ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
-    random=@Random[java.util.Random@522b408a],
-    illegalArgumentCount=@Integer[13355],
-]
-```
-
 - `target.field_name`: the field of the current object.
 
 `watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
 Press `Q`{{execute T2}} or `Ctrl+C` to abort
-
-```bash
-$ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
-ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
-ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
-```

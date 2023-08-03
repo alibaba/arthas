@@ -31,6 +31,10 @@
         "text": "ognl.md"
       },
       {
+        "title": "Options",
+        "text": "options.md"
+      },
+      {
         "title": "Case: Troubleshooting method invoke exception",
         "text": "case-watch-method-exception.md"
       },

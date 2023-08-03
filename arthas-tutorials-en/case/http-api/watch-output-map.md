@@ -11,74 +11,14 @@ generate the desired value, please refer to
 
 The following command generates values ​​in map format:
 
-```bash
-watch *MathGame prime* '#{ "params" : params, "returnObj" : returnObj, "throwExp": throwExp}' -x 2 -n 5
-```
+`watch *MathGame prime* '#{ "params" : params, "returnObj" : returnObj, "throwExp": throwExp}' -x 2 -n 5`{{exec}}
+When executing the above command in a Telnet shell/WebConsole, it will output the relevant information for `demo.MathGame.primeFactors`.
 
-Execute the above command in Telnet shell/WebConsole, the output result:
-
-```bash
-ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
-    @String[params]:@Object[][
-        @Integer[1],
-    ],
-    @String[returnObj]:@ArrayList[
-        @Integer[2],
-        @Integer[241],
-        @Integer[379],
-    ],
-    @String[throwExp]:null,
-]
-```
+You can use `Q`{{exec}} or `Ctrl+C` to exit the watch command.
 
 Execute the above command with Http api, pay attention to escaping the JSON double quotes:
 
 `curl -Ss -XPOST http://localhost:8563/api -d '{"action":"exec","execTimeout":30000,"command":"watch *MathGame prime* #{\"params\":params,\"returnObj\":returnObj,\"throwExp\":throwExp} -n 3 "}' | json_pp`{{execute T3}}
-
-Http api execution result:
-
-```json
-{
-    "body": {
-         ...
-        "results": [
-            ...
-            {
-                ...
-                "type": "watch",
-                "value": {
-                    "params": [
-                        1
-                    ],
-                    "returnObj": [
-                        2,
-                        5,
-                        17,
-                        23,
-                        23
-                    ]
-                }
-            },
-            {
-                ...
-                "type": "watch",
-                "value": {
-                    "params": [
-                        -98278
-                    ],
-                    "throwExp": {
-                        "@type": "java.lang.IllegalArgumentException",
-                        "localizedMessage": "number is: -98278, need >= 2",
-                        "message": "number is: -98278, need >= 2",
-                        "stackTrace": [
-                            ...
-                        ]
-                    }
-                }
-            },
-            ...
-}
-```
 
 You can see that the value of the watch result becomes a map object, and
 the program can read value through a key .

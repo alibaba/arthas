@@ -4,30 +4,9 @@
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
 
-```bash
-$ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
- classLoaderHash   1be6f5c3
-```
-
 ### 用 ognl 获取 logger
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
-
-```bash
-$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
-@Logger[
-    serialVersionUID=@Long[5454405123156820674],
-    FQCN=@String[ch.qos.logback.classic.Logger],
-    name=@String[com.example.demo.arthas.user.UserController],
-    level=null,
-    effectiveLevelInt=@Integer[20000],
-    parent=@Logger[Logger[com.example.demo.arthas.user]],
-    childrenList=null,
-    aai=null,
-    additive=@Boolean[true],
-    loggerContext=@LoggerContext[ch.qos.logback.classic.LoggerContext[default]],
-]
-```
 
 可以知道`UserController@logger`实际使用的是 logback。可以看到`level=null`，则说明实际最终的 level 是从`root` logger 里来的。
 
@@ -38,22 +17,6 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 再次获取`UserController@logger`，可以发现已经是`DEBUG`了：
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
-
-```bash
-$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
-@Logger[
-    serialVersionUID=@Long[5454405123156820674],
-    FQCN=@String[ch.qos.logback.classic.Logger],
-    name=@String[com.example.demo.arthas.user.UserController],
-    level=@Level[DEBUG],
-    effectiveLevelInt=@Integer[10000],
-    parent=@Logger[Logger[com.example.demo.arthas.user]],
-    childrenList=null,
-    aai=null,
-    additive=@Boolean[true],
-    loggerContext=@LoggerContext[ch.qos.logback.classic.LoggerContext[default]],
-]
-```
 
 ### 修改 logback 的全局 logger level
 

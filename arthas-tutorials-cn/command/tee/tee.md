@@ -2,27 +2,7 @@
 
 tee 指令会从标准输入设备读取数据，将其内容输出到标准输出设备，同时保存成文件。
 
-`tee -h`{{execute T2}}
-
-```bash
-  USAGE:
-   tee [-a] [-h] [file]
-
- SUMMARY:
-   tee command for pipes.
-
- EXAMPLES:
-  sysprop | tee /path/to/logfile | grep java
-  sysprop | tee -a /path/to/logfile | grep java
-
- WIKI:
-   https://arthas.aliyun.com/doc/tee
-
- OPTIONS:
- -a, --append                              Append to file
- -h, --help                                this help
- <file>                                    File path
-```
+使用 `tee -h`{{execute T2}} 查看帮助信息
 
 ## 命令示范
 

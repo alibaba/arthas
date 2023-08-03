@@ -4,44 +4,17 @@
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
-### 参数说明
-
-|    参数名称 | 参数说明                                                        |
-| ----------: | :-------------------------------------------------------------- |
-|    _action_ | 要执行的操作                                                    |
-| _actionArg_ | 属性名模式                                                      |
-|        [i:] | 采样间隔（单位：ns）（默认值：10'000'000，即 10 ms）            |
-|        [f:] | 将输出转储到指定路径                                            |
-|        [d:] | 运行评测指定秒                                                  |
-|        [e:] | 要跟踪哪个事件（cpu, alloc, lock, cache-misses 等），默认是 cpu |
-
 ### 查看所有支持的 action
 
 `profiler actions`{{execute T2}}
-
-```bash
-$ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
-```
 
 ### 查看版本
 
 `profiler version`{{execute T2}}
 
-```bash
-$ profiler version
-Async-profiler 1.6 built on Sep  9 2019
-Copyright 2019 Andrei Pangin
-```
-
 ### 启动 profiler
 
 `profiler start -e cpu`{{execute T2}}
-
-```
-$ profiler start -e cpu
-Profiling started
-```
 
 > 默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`。可以用`--e`参数来指定。
 
@@ -49,19 +22,9 @@ Profiling started
 
 `profiler getSamples`{{execute T2}}
 
-```
-$ profiler getSamples
-23
-```
-
 ### 查看 profiler 状态
 
 `profiler status`{{execute T2}}
-
-```bash
-$ profiler status
-Profiling is running for 11 seconds
-```
 
 ### 停止 profiler
 
@@ -70,12 +33,6 @@ Profiling is running for 11 seconds
 默认情况下，结果文件是`html`格式。也可以用`--format`参数指定：
 
 `profiler stop --format html`{{execute T2}}
-
-```bash
-$ profiler stop --format html
-profiler output file: /root/arthas-output/20230729-090342.html
-ok
-```
 
 或者在`--file`参数里用文件名指名格式。比如`--file /root/arthas-output/result.html` 。
 
@@ -139,19 +96,9 @@ Perf events:
 可以用`--event`参数指定要采样的事件，比如对`alloc`事件进入采样：
 
 `profiler start --event alloc`{{execute T2}}
-
-```bash
-$ profiler start --event alloc
-```
-
 ### 恢复采样
 
 `profiler resume`{{execute T2}}
-
-```bash
-$ profiler resume
-Profiling started
-```
 
 `start`和`resume`的区别是：`start`是新开始采样，`resume`会保留上次`stop`时的数据。
 
@@ -163,16 +110,8 @@ Profiling started
 
 `profiler execute 'start,framebuf=5000000'`{{execute T2}}
 
-```bash
-profiler execute 'start,framebuf=5000000'
-```
-
 停止采样，并保存到指定文件里：
 
 `profiler execute 'stop,file=/root/arthas-output/result.html'`{{execute T2}}
-
-```bash
-profiler execute 'stop,file=/root/arthas-output/result.html'
-```
 
 具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)

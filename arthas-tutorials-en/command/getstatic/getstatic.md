@@ -4,39 +4,10 @@ Use [getstatic command](https://arthas.aliyun.com/en/doc/getstatic.html) to Chec
 
 `getstatic demo.MathGame random`{{execute T2}}
 
-```bash
-$ getstatic demo.MathGame random
-field: random
-@Random[
-    serialVersionUID=@Long[3905348978240129619],
-    seed=@AtomicLong[120955813885284],
-    multiplier=@Long[25214903917],
-    addend=@Long[11],
-    mask=@Long[281474976710655],
-    DOUBLE_UNIT=@Double[1.1102230246251565E-16],
-    BadBound=@String[bound must be positive],
-    BadRange=@String[bound must be greater than origin],
-    BadSize=@String[size must be non-negative],
-    seedUniquifier=@AtomicLong[-3282039941672302964],
-    nextNextGaussian=@Double[0.0],
-    haveNextNextGaussian=@Boolean[false],
-    serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
-    unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
-    seedOffset=@Long[24],
-]
-```
-
 - Specify classLoader
-
-Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader using `sc -d <ClassName>`.
-
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
-
-```bash
-$ getstatic -c 3d4eac69 demo.MathGame random
-```
-
-For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader using `sc -d <ClassName>`.  
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.  
 
 `getstatic --classLoaderClass demo.MathGame random`{{execute T2}}
 

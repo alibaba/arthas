@@ -12,17 +12,6 @@ Execute in Arthas:
 2. The second argument is the function name, which supports wildcards.
 
 Visiting [/user/0]({{TRAFFIC_HOST1_80}}/user/0) , the `watch` command will print the parameters and exception
-
-```bash
-$ watch com.example.demo.arthas.user.UserController * '{params, throwExp}'
-Press Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:2) cost in 53 ms.
-ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
-    @Object[][isEmpty=false;size=1],
-    @IllegalArgumentException[java.lang.IllegalArgumentException: id < 1],
-]
-```
-
 The user can see that the actual thrown exception is `IllegalArgumentException`.
 
 The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
@@ -30,24 +19,6 @@ The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{
 If the user want to expand the result, can use the `-x` option:
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2`{{execute T2}}
-
-```bash
-$ watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2
-Press Q or Ctrl+C to abort.
-Affect(class count: 1 , method count: 2) cost in 190 ms, listenerId: 1
-ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
-    @Object[][
-        @Integer[0],
-    ],
-    java.lang.IllegalArgumentException: id < 1
-        at com.example.demo.arthas.user.UserController.findUserById(UserController.java:19)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-    ...
-,
-]
-```
 
 ### The return value expression
 
@@ -78,17 +49,7 @@ The `watch` command supports conditional expressions in the fourth argument, suc
 
 When visit [/user/1]({{TRAFFIC_HOST1_80}}/user/1) , the `watch` command print nothing.
 
-When visit [/user/101]({{TRAFFIC_HOST1_80}}/user/101) , the `watch` command will print:
-
-```bash
-$ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'
-Press Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:2) cost in 47 ms.
-ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[
-    id=@Integer[101],
-    name=@String[name101],
-]
-```
+When visit [/user/101]({{TRAFFIC_HOST1_80}}/user/101) , the `watch` command will print the result.
 
 ### Capture when an exception occurs
 

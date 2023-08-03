@@ -2,8 +2,6 @@
 
 “Search-Class”的简写，这个命令能搜索出所有已经加载到 JVM 中的 Class 信息，这个命令支持的参数有 `[d]`、`[E]`、`[f]` 和 `[x:]`。
 
-## 参数说明
-
 ### 参数说明
 
 |              参数名称 | 参数说明                                                                                                                                              |
@@ -26,57 +24,13 @@
 
 ### 使用参考
 
-- 模糊搜索
+- 模糊搜索 `sc demo.*`{{execute T2}}
+- 打印类的详细信息 `sc -d demo.MathGame`{{execute T2}}
 
-  `sc demo.*`{{execute T2}}
-
-  ```bash
-  $ sc demo.*
-  demo.MathGame
-  Affect(row-cnt:1) cost in 55 ms.
-  ```
-
-- 打印类的详细信息
-
-  `sc -d demo.MathGame`{{execute T2}}
-
-  ```bash
-  $ sc -d demo.MathGame
-  class-info        demo.MathGame
-  code-source       /private/tmp/math-game.jar
-  name              demo.MathGame
-  isInterface       false
-  isAnnotation      false
-  isEnum            false
-  isAnonymousClass  false
-  isArray           false
-  isLocalClass      false
-  isMemberClass     false
-  isPrimitive       false
-  isSynthetic       false
-  simple-name       MathGame
-  modifier          public
-  annotation
-  interfaces
-  super-class       +-java.lang.Object
-  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
-                      +-sun.misc.Launcher$ExtClassLoader@66350f69
-  classLoaderHash   3d4eac69
-
-  Affect(row-cnt:1) cost in 875 ms.
-  ```
-
-- 指定 classLoader
-
-注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，提取对应 ClassLoader 的 hashcode。
-
-如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`
-
-```bash
-$ sc -c 3d4eac69 -d demo*
-```
-
-对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
+#### 指定 classLoader
+注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，提取对应 ClassLoader 的 hashcode。  
+如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`  
+对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：  
 
 `sc --classLoaderClass sun.misc.Launcher$AppClassLoader -d demo*`{{execute T2}}
 
@@ -84,42 +38,4 @@ $ sc -c 3d4eac69 -d demo*
 
 `--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
-- 打印出类的 Field 信息
-
-  `sc -d -f demo.MathGame`{{execute T2}}
-
-  ```bash
-  $ sc -d -f demo.MathGame
-  class-info        demo.MathGame
-  code-source       /private/tmp/math-game.jar
-  name              demo.MathGame
-  isInterface       false
-  isAnnotation      false
-  isEnum            false
-  isAnonymousClass  false
-  isArray           false
-  isLocalClass      false
-  isMemberClass     false
-  isPrimitive       false
-  isSynthetic       false
-  simple-name       MathGame
-  modifier          public
-  annotation
-  interfaces
-  super-class       +-java.lang.Object
-  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
-                      +-sun.misc.Launcher$ExtClassLoader@66350f69
-  classLoaderHash   3d4eac69
-  fields            modifierprivate,static
-                    type    java.util.Random
-                    name    random
-                    value   java.util.Random@522b4
-                            08a
-
-                    modifierprivate
-                    type    int
-                    name    illegalArgumentCount
-
-
-  Affect(row-cnt:1) cost in 19 ms.
-  ```
+- 打印出类的 Field 信息 `sc -d -f demo.MathGame`{{execute T2}}

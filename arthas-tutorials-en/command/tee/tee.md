@@ -2,27 +2,7 @@ Similar to the traditional [tee command](https://arthas.aliyun.com/en/doc/tee.ht
 
 `tee` will read data from standard input device, output its content to standard output device, and save it as a file.
 
-`tee -h`{{execute T2}}
-
-```bash
- USAGE:
-   tee [-a] [-h] [file]
-
- SUMMARY:
-   tee command for pipes.
-
- EXAMPLES:
-  sysprop | tee /path/to/logfile | grep java
-  sysprop | tee -a /path/to/logfile | grep java
-
- WIKI:
-   https://arthas.aliyun.com/doc/tee
-
- OPTIONS:
- -a, --append                              Append to file
- -h, --help                                this help
- <file>                                    File path
-```
+Use `tee -h`{{execute T2}} to view the tee documentation.
 
 ## Examples
 
