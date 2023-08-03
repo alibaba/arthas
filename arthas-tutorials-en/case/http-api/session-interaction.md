@@ -94,13 +94,13 @@ Please enter the sessionID from your Terminal 3 in Terminal 4, an example is her
 
 `b09f1353-202c-407b-af24-701b744f971e`
 
-`echo -n "Enter your sessionId in T3:"; read  session_id`{{execute T4}}
+`echo -n "Enter your sessionId in T3:"; read session_id`{{execute T4}}
 
 Also, Please enter the consumerID, an example is here：
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2`
 
-`echo -n "Enter your consumerId in T3:"; read  consumer_id`{{execute T4}}
+`echo -n "Enter your consumerId in T3:"; read consumer_id`{{execute T4}}
 
 `while true; do curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp; sleep 2; done`{{execute T4}}
 

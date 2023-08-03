@@ -1,10 +1,10 @@
-> dump java heap, 类似jmap命令的heap dump功能。
+> dump java heap, 类似 jmap 命令的 heap dump 功能。
 
 [heapdump 命令文档](https://arthas.aliyun.com/doc/heapdump.html)
 
 ### 使用参考
 
-#### dump到指定文件
+#### dump 到指定文件
 
 `heapdump /tmp/dump.hprof`{{execute T2}}
 
@@ -14,7 +14,7 @@ Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
 
-#### 只dump live对象
+#### 只 dump live 对象
 
 `heapdump --live /tmp/dump.hprof`{{execute T2}}
 
@@ -24,7 +24,7 @@ Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
 
-### dump到临时文件
+### dump 到临时文件
 
 `heapdump`{{execute T2}}
 

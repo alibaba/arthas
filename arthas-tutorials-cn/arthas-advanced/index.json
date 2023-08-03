@@ -31,7 +31,7 @@
         "text": "ognl.md"
       },
       {
-        "title": "案例: 排查函数调用异常",
+        "title": "案例：排查函数调用异常",
         "text": "case-watch-method-exception.md"
       },
       {
@@ -39,27 +39,27 @@
         "text": "async-jobs.md"
       },
       {
-        "title": "案例: 热更新代码",
+        "title": "案例：热更新代码",
         "text": "case-jad-mc-redefine.md"
       },
       {
-        "title": "案例: 动态更新应用 Logger Level",
+        "title": "案例：动态更新应用 Logger Level",
         "text": "case-ognl-update-logger-level.md"
       },
       {
-        "title": "案例: 排查 logger 冲突问题",
+        "title": "案例：排查 logger 冲突问题",
         "text": "case-logger-config-problem.md"
       },
       {
-        "title": "案例: 获取 Spring Context",
+        "title": "案例：获取 Spring Context",
         "text": "case-get-spring-context.md"
       },
       {
-        "title": "案例: 排查 HTTP 请求返回 401",
+        "title": "案例：排查 HTTP 请求返回 401",
         "text": "case-http-401.md"
       },
       {
-        "title": "案例: 理解 Spring Boot 应用的 ClassLoader 结构",
+        "title": "案例：理解 Spring Boot 应用的 ClassLoader 结构",
         "text": "case-classloader.md"
       },
       {

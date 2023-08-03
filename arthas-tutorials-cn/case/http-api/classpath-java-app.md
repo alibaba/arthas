@@ -1,4 +1,4 @@
-通过Http api查询Java应用的System properties，提取`java.class.path`的值。
+通过 Http api 查询 Java 应用的 System properties，提取`java.class.path`的值。
 
 `json_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"exec", "command":"sysprop" }')`{{execute T3}}
 
@@ -18,5 +18,5 @@ classpath: math-game.jar
 
 注意：
 
-- `echo $json_data | tr -d '\n'` : 删除换行符(`line.separator`的值)，避免影响`sed`/`json_pp`命令处理。
+- `echo $json_data | tr -d '\n'` : 删除换行符 (`line.separator`的值)，避免影响`sed`/`json_pp`命令处理。
 - `awk -F'"' '{ print $4 }'` : 使用双引号作为分隔符号

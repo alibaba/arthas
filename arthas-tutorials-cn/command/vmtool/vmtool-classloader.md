@@ -4,7 +4,7 @@
 
 ### 指定 classloader hash
 
-可以通过`sc`命令查找到加载class的 classloader。
+可以通过`sc`命令查找到加载 class 的 classloader。
 
 ```bash
 $ sc -d org.springframework.context.ApplicationContext

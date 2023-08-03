@@ -1,4 +1,4 @@
-Arthas支持在pipeline之后，执行一些简单的命令，比如：
+Arthas 支持在 pipeline 之后，执行一些简单的命令，比如：
 
 `sysprop | grep java`{{execute T2}}
 

@@ -42,17 +42,17 @@ $ dump -d /tmp/output java.lang.String
 Affect(row-cnt:1) cost in 138 ms.
 ```
 
-- 指定classLoader
+- 指定 classLoader
 
-注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，提取对应 ClassLoader 的 hashcode。
 
-如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
+如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`
 
 ```bash
 $ dump -c 3d4eac69 demo.*
 ```
 
-对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
 
 `dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*`{{execute T2}}
 
@@ -64,6 +64,6 @@ $ dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*
 Affect(row-cnt:1) cost in 39 ms.
 ```
 
-- 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+- 注：这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而 java 11 的 classloader 是 jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda 目前环境是 java8。
 
-`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+`--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。

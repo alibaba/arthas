@@ -1,6 +1,6 @@
-下面使用 [vmtool 命令](https://arthas.aliyun.com/doc/vmtool.html) 查找jvm对象。
+下面使用 [vmtool 命令](https://arthas.aliyun.com/doc/vmtool.html) 查找 jvm 对象。
 
-### 查找jvm里的字符串对象
+### 查找 jvm 里的字符串对象
 
 `vmtool --action getInstances --className java.lang.String`{{execute T2}}
 
@@ -20,9 +20,9 @@ $ vmtool --action getInstances --className java.lang.String
 ]
 ```
 
-### limit参数
+### limit 参数
 
-> 通过 `--limit`参数，可以限制返回值数量，避免获取超大数据时对JVM造成压力。默认值是10。
+> 通过 `--limit`参数，可以限制返回值数量，避免获取超大数据时对 JVM 造成压力。默认值是 10。
 
 所以上面的命令实际上等值于：
 

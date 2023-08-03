@@ -50,9 +50,9 @@ Similar to the traditional [grep command](https://arthas.aliyun.com/en/doc/grep.
 
 ### `-e` to enable regular expression to match，`-m` stop after the specified number of selected lines
 
-`sysenv | grep -e "(?i)(JAVA|sun)" -m 3  -C 2`{{execute T2}}
+`sysenv | grep -e "(?i)(JAVA|sun)" -m 3 -C 2`{{execute T2}}
 
-`thread | grep -m 10 -e  "TIMED_WAITING|WAITING"`{{execute T2}}
+`thread | grep -m 10 -e "TIMED_WAITING|WAITING"`{{execute T2}}
 
 ### `-A` to print specified line number of trailing context，`-B` to print specified line number of leading context
 

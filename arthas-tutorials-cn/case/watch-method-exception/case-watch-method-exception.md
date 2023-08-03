@@ -1,12 +1,12 @@
 ### 现象
 
-目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
+目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回 500 异常：
 
 但请求的具体参数，异常栈是什么呢？
 
-### 查看UserController的 参数/异常
+### 查看 UserController 的 参数/异常
 
-在Arthas里执行：
+在 Arthas 里执行：
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}'`{{execute T2}}
 
@@ -27,7 +27,7 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 
 可以看到实际抛出的异常是`IllegalArgumentException`。
 
-可以输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出watch命令。
+可以输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
 
 如果想把获取到的结果展开，可以用`-x`参数：
 
@@ -70,11 +70,11 @@ ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
 
 `watch com.example.demo.arthas.user.UserController * '{params[0], target, returnObj}'`{{execute T2}}
 
-更多参考： https://arthas.aliyun.com/doc/advice-class.html
+更多参考：https://arthas.aliyun.com/doc/advice-class.html
 
 ### 条件表达式
 
-`watch`命令支持在第4个参数里写条件表达式，比如：
+`watch`命令支持在第 4 个参数里写条件表达式，比如：
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
@@ -100,6 +100,6 @@ ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[
 
 ### 按照耗时进行过滤
 
-watch命令支持按请求耗时进行过滤，比如：
+watch 命令支持按请求耗时进行过滤，比如：
 
 `watch com.example.demo.arthas.user.UserController * '{params, returnObj}' '#cost>200'`{{execute T2}}

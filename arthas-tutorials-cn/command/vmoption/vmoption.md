@@ -1,4 +1,4 @@
-查看，更新VM诊断相关的参数
+查看，更新 VM 诊断相关的参数
 
 `vmoption -h`{{execute T2}}
 
@@ -28,7 +28,7 @@
 
 ## 使用参考
 
-### 查看所有的option：
+### 查看所有的 option：
 
 `vmoption`{{execute T2}}
 
@@ -60,7 +60,7 @@
  PrintConcurrentLocks   false                   DEFAULT                true
 ```
 
-### 查看指定的option
+### 查看指定的 option
 
 `vmoption PrintGC`{{execute T2}}
 
@@ -71,7 +71,7 @@ $ vmoption PrintGC
  PrintGC             false                MANAGEMENT          true
 ```
 
-### 更新指定的option
+### 更新指定的 option
 
 `vmoption PrintGC true`{{execute T2}}
 
@@ -83,7 +83,7 @@ Successfully updated the vm option.
  PrintGC  false         true
 ```
 
-再使用`vmtool`命令执行强制GC，则可以在`Terminal 1`看到打印出GC日志：
+再使用`vmtool`命令执行强制 GC，则可以在`Terminal 1`看到打印出 GC 日志：
 
 `vmtool --action forceGc`{{execute T2}}
 
@@ -92,7 +92,7 @@ Successfully updated the vm option.
 [Full GC (JvmtiEnv ForceGarbageCollection)  19564K->17091K(166912K), 0.0271085 secs]
 ```
 
-### 配置打印GC详情
+### 配置打印 GC 详情
 
 `vmoption PrintGCDetails true`{{execute T2}}
 
@@ -104,7 +104,7 @@ Successfully updated the vm option.
  PrintGCDetails  false         true
 ```
 
-再使用`vmtool`命令执行强制GC，则可以在`Terminal 1`看到打印出GC详情：
+再使用`vmtool`命令执行强制 GC，则可以在`Terminal 1`看到打印出 GC 详情：
 
 `vmtool --action forceGc`{{execute T2}}
 

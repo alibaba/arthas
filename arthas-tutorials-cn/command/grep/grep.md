@@ -50,9 +50,9 @@
 
 ### `-e`使用正则表达式匹配，`-m`设定最大展示条数，
 
-`sysenv | grep -e "(?i)(JAVA|sun)" -m 3  -C 2`{{execute T2}}
+`sysenv | grep -e "(?i)(JAVA|sun)" -m 3 -C 2`{{execute T2}}
 
-`thread | grep -m 10 -e  "TIMED_WAITING|WAITING"`{{execute T2}}
+`thread | grep -m 10 -e "TIMED_WAITING|WAITING"`{{execute T2}}
 
 ### 除了显示符合范本样式的那一行之外，`-A`指定显示该行之后的内容，`-B`指定显示该行之前的内容。
 

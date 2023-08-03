@@ -1,7 +1,7 @@
-由用户创建及管理Arthas会话，适用于复杂的交互过程。访问流程如下：
+由用户创建及管理 Arthas 会话，适用于复杂的交互过程。访问流程如下：
 
 - 创建会话
-- 加入会话(可选）
+- 加入会话（可选）
 - 拉取命令结果
 - 执行一系列命令
 - 中断命令执行
@@ -9,11 +9,11 @@
 
 #### 创建会话
 
-创建会话, 保存输出到bash环境变量
+创建会话，保存输出到 bash 环境变量
 
 `session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"init_session" }'); echo $session_data | json_pp`{{execute T3}}
 
-注： `json_pp` 工具将输出内容格式化为pretty json。
+注： `json_pp` 工具将输出内容格式化为 pretty json。
 
 响应结果：
 
@@ -25,17 +25,17 @@
 }
 ```
 
-提取会话ID和消费者ID。
+提取会话 ID 和消费者 ID。
 
-当前会话ID为：
+当前会话 ID 为：
 
 `session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
 `b09f1353-202c-407b-af24-701b744f971e`;
 
-请记下这里的会话ID，在Terminal 4中需要手动输入。
+请记下这里的会话 ID，在 Terminal 4 中需要手动输入。
 
-当前消费者ID为：
+当前消费者 ID 为：
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
@@ -43,9 +43,9 @@
 
 #### 加入会话
 
-指定要加入的会话ID，服务端将分配一个新的消费者ID。多个消费者可以接收到同一个会话的命令结果。本接口用于支持多人共享同一个会话或刷新页面后重新拉取会话历史记录。
+指定要加入的会话 ID，服务端将分配一个新的消费者 ID。多个消费者可以接收到同一个会话的命令结果。本接口用于支持多人共享同一个会话或刷新页面后重新拉取会话历史记录。
 
-加入会话，保存输出到bash环境变量
+加入会话，保存输出到 bash 环境变量
 
 `session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"join_session", "sessionId" : "'"$session_id"'" }'); echo $session_data | json_pp`{{execute T3}}
 
@@ -59,38 +59,38 @@
 }
 ```
 
-提取消费者ID。
+提取消费者 ID。
 
-新的消费者ID为
+新的消费者 ID 为
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` 。
 
-请记下这里的消费者ID，在Terminal 4中需要手动输入。
+请记下这里的消费者 ID，在 Terminal 4 中需要手动输入。
 
 #### 拉取命令结果
 
-拉取命令结果消息的action为`pull_results`。请使用Http long-polling方式，定时循环拉取结果消息。
-消费者的超时时间为5分钟，超时后需要调用`join_session`分配新的消费者。每个消费者单独分配一个缓存队列，按顺序拉取命令结果，不会影响到其它消费者。
+拉取命令结果消息的 action 为`pull_results`。请使用 Http long-polling 方式，定时循环拉取结果消息。
+消费者的超时时间为 5 分钟，超时后需要调用`join_session`分配新的消费者。每个消费者单独分配一个缓存队列，按顺序拉取命令结果，不会影响到其它消费者。
 
-请求参数需要指定会话ID及消费者ID:
+请求参数需要指定会话 ID 及消费者 ID:
 
 `curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp`{{execute T3}}
 
-用Bash脚本定时拉取结果消息:
+用 Bash 脚本定时拉取结果消息：
 
-请在Terminal 4中输入Terminal 3中的会话ID，这里的例子如下：
+请在 Terminal 4 中输入 Terminal 3 中的会话 ID，这里的例子如下：
 
 `b09f1353-202c-407b-af24-701b744f971e`
 
-`echo -n "Enter your sessionId in T3:"; read  session_id`{{execute T4}}
+`echo -n "Enter your sessionId in T3:"; read session_id`{{execute T4}}
 
-同样，接着输入Terminal 3中的消费者ID，这里的例子如下：
+同样，接着输入 Terminal 3 中的消费者 ID，这里的例子如下：
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `
 
-`echo -n "Enter your consumerId in T3:"; read  consumer_id`{{execute T4}}
+`echo -n "Enter your consumerId in T3:"; read consumer_id`{{execute T4}}
 
 `while true; do curl -Ss -XPOST http://localhost:8563/api -d '{"action":"pull_results", "sessionId" : "'"$session_id"'", "consumerId" : "'"$consumer_id"'" }' | json_pp; sleep 2; done`{{execute T4}}
 
@@ -152,10 +152,10 @@
 
 - `state` : `SCHEDULED` 状态表示已经解析命令生成任务，但未开始执行。
 - `body.jobId` :
-  异步执行命令的任务ID，可以根据此任务ID来过滤在`pull_results`输出的命令结果。
+  异步执行命令的任务 ID，可以根据此任务 ID 来过滤在`pull_results`输出的命令结果。
 - `body.jobStatus` : 任务状态`READY`表示未开始执行。
 
-切换到上面自动拉取结果消息脚本的shell（Terminal 4），查看输出：
+切换到上面自动拉取结果消息脚本的 shell（Terminal 4），查看输出：
 
 ```json
 {
@@ -243,20 +243,14 @@
 }
 ```
 
-watch命令结果的`value`为watch-experss的值，上面命令中为`{params, returnObj,
-throwExp}`，所以watch结果的value为一个长度为3的数组，每个元素分别对应相应顺序的表达式。
-请参考"watch命令输出map对象"小节。
+watch 命令结果的`value`为 watch-experss 的值，上面命令中为`{params, returnObj, throwExp}`，所以 watch 结果的 value 为一个长度为 3 的数组，每个元素分别对应相应顺序的表达式。
+请参考"watch 命令输出 map 对象"小节。
 
 #### 中断命令执行
 
-中断会话正在运行的前台Job（前台任务）：
+中断会话正在运行的前台 Job（前台任务）：
 
-`curl -Ss -XPOST http://localhost:8563/api -d '''
-{
-  "action":"interrupt_job",
-  "sessionId" : "'"$session_id"'"
-}
-''' | json_pp`{{execute T3}}
+`curl -Ss -XPOST http://localhost:8563/api -d ''' { "action":"interrupt_job", "sessionId" : "'"$session_id"'" } ''' | json_pp`{{execute T3}}
 
 ```json
 {
@@ -270,7 +264,7 @@ throwExp}`，所以watch结果的value为一个长度为3的数组，每个元�
 
 #### 关闭会话
 
-指定会话ID，关闭会话。
+指定会话 ID，关闭会话。
 
 `curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"close_session", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 

@@ -1,8 +1,8 @@
-为了更好使用Arthas，下面先介绍Arthas里的一些使用技巧。
+为了更好使用 Arthas，下面先介绍 Arthas 里的一些使用技巧。
 
 ### help
 
-Arthas里每一个命令都有详细的帮助信息。可以用`-h`来查看。帮助信息里有`EXAMPLES`和`WIKI`链接。
+Arthas 里每一个命令都有详细的帮助信息。可以用`-h`来查看。帮助信息里有`EXAMPLES`和`WIKI`链接。
 
 比如：
 
@@ -10,20 +10,13 @@ Arthas里每一个命令都有详细的帮助信息。可以用`-h`来查看。�
 
 ### 自动补全
 
-Arthas支持丰富的自动补全功能，在使用有疑惑时，可以输入`Tab`来获取更多信息。
+Arthas 支持丰富的自动补全功能，在使用有疑惑时，可以输入`Tab`来获取更多信息。
 
-比如输入 `sysprop java.` 之后，再输入`Tab`，会补全出对应的key：
+比如输入 `sysprop java.` 之后，再输入`Tab`，会补全出对应的 key。
 
-```
-$ sysprop java.
-java.runtime.name             java.protocol.handler.pkgs    java.vm.version
-java.vm.vendor                java.vendor.url               java.vm.name
-...
-```
+### readline 的快捷键支持
 
-### readline的快捷键支持
-
-Arthas支持常见的命令行快捷键，比如`Ctrl + A`跳转行首，`Ctrl + E`跳转行尾。
+Arthas 支持常见的命令行快捷键，比如`Ctrl + A`跳转行首，`Ctrl + E`跳转行尾。
 
 更多的快捷键可以用 `keymap`{{execute T2}} 命令查看。
 
@@ -37,7 +30,7 @@ Arthas支持常见的命令行快捷键，比如`Ctrl + A`跳转行首，`Ctrl +
 
 ### pipeline
 
-Arthas支持在pipeline之后，执行一些简单的命令，比如：
+Arthas 支持在 pipeline 之后，执行一些简单的命令，比如：
 
 `sysprop | grep java`{{execute T2}}
 

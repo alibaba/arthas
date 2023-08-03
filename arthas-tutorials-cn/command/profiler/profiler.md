@@ -1,21 +1,21 @@
 > 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图
 
-[profiler命令](https://arthas.aliyun.com/doc/profiler.html) 支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
+[profiler 命令](https://arthas.aliyun.com/doc/profiler.html) 支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
 ### 参数说明
 
-|    参数名称 | 参数说明                                                      |
-| ----------: | :------------------------------------------------------------ |
-|    _action_ | 要执行的操作                                                  |
-| _actionArg_ | 属性名模式                                                    |
-|        [i:] | 采样间隔（单位：ns）（默认值：10'000'000，即10 ms）           |
-|        [f:] | 将输出转储到指定路径                                          |
-|        [d:] | 运行评测指定秒                                                |
-|        [e:] | 要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu |
+|    参数名称 | 参数说明                                                        |
+| ----------: | :-------------------------------------------------------------- |
+|    _action_ | 要执行的操作                                                    |
+| _actionArg_ | 属性名模式                                                      |
+|        [i:] | 采样间隔（单位：ns）（默认值：10'000'000，即 10 ms）            |
+|        [f:] | 将输出转储到指定路径                                            |
+|        [d:] | 运行评测指定秒                                                  |
+|        [e:] | 要跟踪哪个事件（cpu, alloc, lock, cache-misses 等），默认是 cpu |
 
-### 查看所有支持的action
+### 查看所有支持的 action
 
 `profiler actions`{{execute T2}}
 
@@ -34,7 +34,7 @@ Async-profiler 1.6 built on Sep  9 2019
 Copyright 2019 Andrei Pangin
 ```
 
-### 启动profiler
+### 启动 profiler
 
 `profiler start -e cpu`{{execute T2}}
 
@@ -43,9 +43,9 @@ $ profiler start -e cpu
 Profiling started
 ```
 
-> 默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--e`参数来指定。
+> 默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`。可以用`--e`参数来指定。
 
-### 获取已采集的sample的数量
+### 获取已采集的 sample 的数量
 
 `profiler getSamples`{{execute T2}}
 
@@ -54,7 +54,7 @@ $ profiler getSamples
 23
 ```
 
-### 查看profiler状态
+### 查看 profiler 状态
 
 `profiler status`{{execute T2}}
 
@@ -63,9 +63,9 @@ $ profiler status
 Profiling is running for 11 seconds
 ```
 
-### 停止profiler
+### 停止 profiler
 
-#### 生成html格式结果
+#### 生成 html 格式结果
 
 默认情况下，结果文件是`html`格式。也可以用`--format`参数指定：
 
@@ -81,9 +81,9 @@ ok
 
 `profiler stop --file /root/arthas-output/result.html`{{execute T2}}
 
-### 通过浏览器查看arthas-output下面的profiler结果
+### 通过浏览器查看 arthas-output 下面的 profiler 结果
 
-默认情况下，arthas使用8563http端口，[点击打开]({{TRAFFIC_HOST1_8563}}/arthas-output/) arthas-output/ 目录下面的profiler结果：
+默认情况下，arthas 使用 8563http 端口，[点击打开]({{TRAFFIC_HOST1_8563}}/arthas-output/) arthas-output/ 目录下面的 profiler 结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
@@ -91,11 +91,11 @@ ok
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-svg.jpg)
 
-### profiler支持的events
+### profiler 支持的 events
 
 `profiler list`{{execute T2}}
 
-在不同的平台，不同的OS下面，支持的events各有不同。比如在macos下面：
+在不同的平台，不同的 OS 下面，支持的 events 各有不同。比如在 macos 下面：
 
 ```bash
 $ profiler list
@@ -107,7 +107,7 @@ Basic events:
   itimer
 ```
 
-在linux下面
+在 linux 下面
 
 ```bash
 $ profiler list
@@ -134,7 +134,7 @@ Perf events:
   trace:tracepoint
 ```
 
-如果遇到OS本身的权限/配置问题，然后缺少部分event，可以参考`async-profiler`本身文档：[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
+如果遇到 OS 本身的权限/配置问题，然后缺少部分 event，可以参考`async-profiler`本身文档：[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
 可以用`--event`参数指定要采样的事件，比如对`alloc`事件进入采样：
 
@@ -155,7 +155,7 @@ Profiling started
 
 `start`和`resume`的区别是：`start`是新开始采样，`resume`会保留上次`stop`时的数据。
 
-通过执行`profiler getSamples`可以查看samples的数量来验证。
+通过执行`profiler getSamples`可以查看 samples 的数量来验证。
 
 ### 使用`execute`来执行复杂的命令
 

@@ -1,18 +1,18 @@
-在Arthas里有一些开关，可以通过 `options`{{execute T2}} 命令来查看 - [options 命令文档](https://arthas.aliyun.com/doc/options.html)。
+在 Arthas 里有一些开关，可以通过 `options`{{execute T2}} 命令来查看 - [options 命令文档](https://arthas.aliyun.com/doc/options.html)。
 
-查看单个option的值，比如
+查看单个 option 的值，比如
 
 `options unsafe`{{execute T2}}
 
-## 允许增强JDK的类
+## 允许增强 JDK 的类
 
-默认情况下`unsafe`为false，即watch/trace等命令不会增强JVM的类，即`java.*`下面的类。
+默认情况下`unsafe`为 false，即 watch/trace 等命令不会增强 JVM 的类，即`java.*`下面的类。
 
-如果想增强JVM里的类，可以执行 `options unsafe true`{{execute T2}} ，设置`unsafe`为true。
+如果想增强 JVM 里的类，可以执行 `options unsafe true`{{execute T2}} ，设置`unsafe`为 true。
 
-## 以JSON格式打印对象
+## 以 JSON 格式打印对象
 
-当 `json-format` 为false时，输出结果是：
+当 `json-format` 为 false 时，输出结果是：
 
 ```bash
 $ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'
@@ -24,7 +24,7 @@ $ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("j
 
 `options json-format true`{{execute T2}}
 
-当 `json-format` 为true时，输出结果是：
+当 `json-format` 为 true 时，输出结果是：
 
 ```bash
 $ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#v["/usr/lib/jvm/java-8-oracle/jre","Java(TM) SE Runtime Environment"]

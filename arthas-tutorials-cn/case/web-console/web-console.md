@@ -6,8 +6,8 @@ Arthas 支持通过 Web Socket 来连接。
 
 ## 本地体验
 
-当在本地启动时，可以访问 http://127.0.0.1:8563/ ，通过浏览器来使用Arthas。
+当在本地启动时，可以访问 http://127.0.0.1:8563/ ，通过浏览器来使用 Arthas。
 
 ![Arthas WebConsole](../../assets/web-console.png)
 
-推荐通过“快速入门”来体验： https://arthas.aliyun.com/doc/quick-start.html
+推荐通过“快速入门”来体验：https://arthas.aliyun.com/doc/quick-start.html

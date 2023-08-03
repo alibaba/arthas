@@ -1,4 +1,4 @@
-在这个案例里，展示获取spring context，再获取bean，然后调用函数。
+在这个案例里，展示获取 spring context，再获取 bean，然后调用函数。
 
 ### 使用 tt 命令获取到 spring context
 

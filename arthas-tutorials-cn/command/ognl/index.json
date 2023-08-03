@@ -9,7 +9,7 @@
         "text": "start-demo.md"
       },
       {
-        "title": "启动 arthas-boot，help命令",
+        "title": "启动 arthas-boot，help 命令",
         "text": "arthas-boot.md"
       },
       {
@@ -17,11 +17,11 @@
         "text": "ognl.md"
       },
       {
-        "title": "案例: 动态更新应用 Logger Level",
+        "title": "案例：动态更新应用 Logger Level",
         "text": "case-ognl-update-logger-level.md"
       },
       {
-        "title": "案例: 排查 logger 冲突问题",
+        "title": "案例：排查 logger 冲突问题",
         "text": "case-logger-config-problem.md"
       }
     ],

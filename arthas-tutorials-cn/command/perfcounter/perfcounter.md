@@ -1,4 +1,4 @@
-查看当前JVM的 Perf Counter信息
+查看当前 JVM 的 Perf Counter 信息
 
 `perfcounter -h`{{execute T2}}
 
@@ -39,7 +39,7 @@ $ perfcounter
  java.property.java.vm.name                   OpenJDK 64-Bit Server VM
 ```
 
-可以用-d参数打印更多信息：
+可以用-d 参数打印更多信息：
 
 `perfcounter -d`{{execute T2}}
 
@@ -54,7 +54,7 @@ $ perfcounter -d
  java.cls.unloadedClasses               Monotonic     Events       0
 ```
 
-## 备注: 对于jdk9以上的应用
+## 备注：对于 jdk9 以上的应用
 
 如果没有打印出信息，应用在启动时，加下面的参数：
 

@@ -16,4 +16,4 @@
 
 使用 `cat a.log`{{exec}} 可以看到运行命令的输出已经重定向到了 `a.log` 文件中。
 
-- 参考： https://arthas.aliyun.com/doc/async.html
+- 参考：https://arthas.aliyun.com/doc/async.html

@@ -1,8 +1,8 @@
-下面介绍Arthas里查找已加载类的命令。
+下面介绍 Arthas 里查找已加载类的命令。
 
 ### sc
 
-[sc 命令](https://arthas.aliyun.com/doc/sc.html)可以查找到所有JVM已经加载到的类。
+[sc 命令](https://arthas.aliyun.com/doc/sc.html)可以查找到所有 JVM 已经加载到的类。
 
 如果搜索的是接口，还会搜索所有的实现类。比如查看所有的`Filter`实现类：
 

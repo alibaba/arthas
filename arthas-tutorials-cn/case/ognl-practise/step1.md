@@ -1,6 +1,6 @@
-演示Arthas里`watch`命令中`ognl`表达式的工作流程。用户可以自己修改`Demo.java`里的表达式，再执行验证。
+演示 Arthas 里`watch`命令中`ognl`表达式的工作流程。用户可以自己修改`Demo.java`里的表达式，再执行验证。
 
-项目地址： https://github.com/hengyunabc/ognl-demo
+项目地址：https://github.com/hengyunabc/ognl-demo
 
 # 打开 Demo.java 文件
 
@@ -35,7 +35,7 @@ String watchExpress = "{target, params, returnObj, #cost}";
 String conditionExpress = "params[0] > 1 && #cost > 0.1";
 ```
 
-类似在arthas里执行下面的`watch`命令：
+类似在 arthas 里执行下面的`watch`命令：
 
 ```bash
 watch com.example.ognl.TestService test "{target, params, returnObj, #cost}" "params[0] > 1 && #cost > 0.1" -x 3
@@ -74,7 +74,7 @@ String watchExpress = "{target, params, throwExp}";
 String conditionExpress = "params[0] > 1";
 ```
 
-类似在arthas里执行下面的`watch`命令：
+类似在 arthas 里执行下面的`watch`命令：
 
 ```bash
 watch com.example.ognl.TestService test "{target, params, throwExp}" "params[0] > 1" -e -x 2

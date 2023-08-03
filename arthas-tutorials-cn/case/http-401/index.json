@@ -1,7 +1,7 @@
 {
   "title": "Arthas 排查 HTTP 请求返回 401 案例",
   "difficulty": "高级使用者",
-  "time": "10分钟",
+  "time": "10 分钟",
   "details": {
     "steps": [
       {

@@ -1,14 +1,14 @@
 下面介绍通过`jad`/`mc`/`redefine` 命令实现动态更新代码的功能。
 
-目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
+目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回 500 异常：
 
 下面通过热更新代码，修改这个逻辑。
 
-### jad反编译UserController
+### jad 反编译 UserController
 
 `jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java`{{execute T2}}
 
-jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
+jad 反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
 再打开一个终端于 `Tab 3`，然后在 `Tab3` 里用 `sed` 来编辑`/tmp/UserController.java`：
 
@@ -18,7 +18,7 @@ jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
 `cat /tmp/UserController.java`{{exec}}
 
-比如当 user id 小于1时，也正常返回，不抛出异常：
+比如当 user id 小于 1 时，也正常返回，不抛出异常：
 
 ```java
     @GetMapping(value={"/user/{id}"})
@@ -34,22 +34,22 @@ jad反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
 ### [mc](https://arthas.aliyun.com/doc/mc.html)
 
-(Memory Compiler)命令来编译加载 UserController
+(Memory Compiler) 命令来编译加载 UserController
 可以通过 -c 指定 classLoaderHash 或者 --classLoaderClass 参数指定 ClassLoader，这里为了操作连贯性使用 classLoaderClass
 
-### 查询UserController类加载器
+### 查询 UserController 类加载器
 
-#### sc查找加载UserController的ClassLoader
+#### sc 查找加载 UserController 的 ClassLoader
 
 回到 `Tab 2` 里运行 `sc -d *UserController | grep classLoaderHash`{{exec}}
 
 #### classloader 查询类加载器名称
 
-`classloader  -l`{{exec}} 查询所有的类加载器列表, `UserController classLoaderHash` 值对应的类加载器为 `org.springframework.boot.loader.LaunchedURLClassLoader`
+`classloader -l`{{exec}} 查询所有的类加载器列表，`UserController classLoaderHash` 值对应的类加载器为 `org.springframework.boot.loader.LaunchedURLClassLoader`
 
 ### mc 编译加载 UserController
 
-保存到 `/tmp/UserController.java` 之后可以使用mc (Memory Compiler)命令来编译
+保存到 `/tmp/UserController.java` 之后可以使用 mc (Memory Compiler) 命令来编译
 
 ### mc 指定 classloader 编译 UserController
 

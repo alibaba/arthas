@@ -1,4 +1,4 @@
-> 加载外部的`.class`文件，retransform jvm已加载的类。
+> 加载外部的`.class`文件，retransform jvm 已加载的类。
 
 参考：[Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
@@ -14,7 +14,7 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
                 serController
 ```
 
-- TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry对应的 .class文件的次数，但并不表明transform一定成功。
+- TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry 对应的 .class 文件的次数，但并不表明 transform 一定成功。
 
 ### 删除指定 retransform entry
 
@@ -44,7 +44,7 @@ retransform success, size: 1, classes:
 com.example.demo.arthas.user.UserController
 ```
 
-> 注意：对于同一个类，当存在多个 retransform entry时，如果显式触发 retransform ，则最后添加的entry生效(id最大的)。
+> 注意：对于同一个类，当存在多个 retransform entry 时，如果显式触发 retransform，则最后添加的 entry 生效 (id 最大的)。
 
 ### 消除 retransform 的影响
 
@@ -53,8 +53,8 @@ com.example.demo.arthas.user.UserController
 - 删除这个类对应的 retransform entry
 - 重新触发 retransform
 
-> 如果不清除掉所有的 retransform entry，并重新触发 retransform ，则arthas stop时，retransform过的类仍然生效。
+> 如果不清除掉所有的 retransform entry，并重新触发 retransform，则 arthas stop 时，retransform 过的类仍然生效。
 
-在上面删掉 retransform entry，再显式触发 retransform之后，可以用 `jad`命令来确认之前retransform的结果已经被消除了。
+在上面删掉 retransform entry，再显式触发 retransform 之后，可以用 `jad`命令来确认之前 retransform 的结果已经被消除了。
 
-再次访问 https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/0 ，会抛出异常。
+再次访问 https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/user/0，会抛出异常。

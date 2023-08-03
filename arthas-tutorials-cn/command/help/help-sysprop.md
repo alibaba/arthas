@@ -24,4 +24,4 @@
  <property-value>                                                     property value
 ```
 
-可以看到具体的命令的参数，示例和WKI地址。
+可以看到具体的命令的参数，示例和 WKI 地址。

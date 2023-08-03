@@ -1,12 +1,12 @@
 ### 现象
 
-目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回500异常：
+目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回 500 异常：
 
 但请求的具体参数，异常栈是什么呢？
 
-### 查看UserController的 参数/异常
+### 查看 UserController 的 参数/异常
 
-在Arthas里执行：
+在 Arthas 里执行：
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}'`{{execute T2}}
 
@@ -15,41 +15,13 @@
 
 访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ,`watch`命令会打印调用的参数和异常
 
-```bash
-$ watch com.example.demo.arthas.user.UserController * '{params, throwExp}'
-Press Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:2) cost in 53 ms.
-ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
-    @Object[][isEmpty=false;size=1],
-    @IllegalArgumentException[java.lang.IllegalArgumentException: id < 1],
-]
-```
-
 可以看到实际抛出的异常是`IllegalArgumentException`。
 
-可以输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出watch命令。
+可以输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
 
 如果想把获取到的结果展开，可以用`-x`参数：
 
 `watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2`{{execute T2}}
-
-```bash
-$ watch com.example.demo.arthas.user.UserController * '{params, throwExp}' -x 2
-Press Q or Ctrl+C to abort.
-Affect(class count: 1 , method count: 2) cost in 190 ms, listenerId: 1
-ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
-    @Object[][
-        @Integer[0],
-    ],
-    java.lang.IllegalArgumentException: id < 1
-        at com.example.demo.arthas.user.UserController.findUserById(UserController.java:19)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-    ...
-,
-]
-```
 
 ### 返回值表达式
 
@@ -70,27 +42,17 @@ ts=2020-08-13 05:22:45; [cost=4.805432ms] result=@ArrayList[
 
 `watch com.example.demo.arthas.user.UserController * '{params[0], target, returnObj}'`{{execute T2}}
 
-更多参考： https://arthas.aliyun.com/doc/advice-class.html
+更多参考：https://arthas.aliyun.com/doc/advice-class.html
 
 ### 条件表达式
 
-`watch`命令支持在第4个参数里写条件表达式，比如：
+`watch`命令支持在第 4 个参数里写条件表达式，比如：
 
 `watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'`{{execute T2}}
 
 当访问 [/user/1]({{TRAFFIC_HOST1_80}}/user/1) 时，`watch`命令没有输出
 
 当访问 [/user/101]({{TRAFFIC_HOST1_80}}/user/101) 时，`watch`会打印出结果。
-
-```bash
-$ watch com.example.demo.arthas.user.UserController * returnObj 'params[0] > 100'
-Press Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:2) cost in 47 ms.
-ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[
-    id=@Integer[101],
-    name=@String[name101],
-]
-```
 
 ### 当异常时捕获
 
@@ -100,6 +62,6 @@ ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[
 
 ### 按照耗时进行过滤
 
-watch命令支持按请求耗时进行过滤，比如：
+watch 命令支持按请求耗时进行过滤，比如：
 
 `watch com.example.demo.arthas.user.UserController * '{params, returnObj}' '#cost>200'`{{execute T2}}

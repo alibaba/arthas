@@ -1,4 +1,4 @@
-`sysprop`{{execute T2}} 命令可以查看当前JVM的系统属性(`System Property`)
+`sysprop`{{execute T2}} 命令可以查看当前 JVM 的系统属性 (`System Property`)
 
 ## 使用参考
 

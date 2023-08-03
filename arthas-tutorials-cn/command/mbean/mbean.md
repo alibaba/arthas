@@ -23,11 +23,11 @@
 
 `mbean -m java.lang:type=Threading`{{execute T2}}
 
-### 查看mbean属性信息
+### 查看 mbean 属性信息
 
 `mbean java.lang:type=Threading `{{execute T2}}
 
-### mbean的name支持通配符匹配
+### mbean 的 name 支持通配符匹配
 
 `mbean java.lang:type=Th*`{{execute T2}}
 

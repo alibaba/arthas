@@ -15,7 +15,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 |                 [b] | 在**方法调用之前**观察                            |
 |                 [e] | 在**方法异常之后**观察                            |
 |                 [s] | 在**方法返回之后**观察                            |
-|                 [f] | 在**方法结束之后**(正常返回和异常返回)观察        |
+|                 [f] | 在**方法结束之后**(正常返回和异常返回) 观察        |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配              |
 |                [x:] | 指定输出结果的属性遍历深度，默认为 1              |
 
@@ -26,18 +26,18 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 观察的维度也比较多，主要体现在参数 `advice` 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
 - 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-- OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- OGNL 表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 **特别说明**：
 
-- watch 命令定义了4个观察事件点，即 `-b` 方法调用前，`-e` 方法异常后，`-s` 方法返回后，`-f` 方法结束后
-- 4个观察事件点 `-b`、`-e`、`-s` 默认关闭，`-f` 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出
+- watch 命令定义了 4 个观察事件点，即 `-b` 方法调用前，`-e` 方法异常后，`-s` 方法返回后，`-f` 方法结束后
+- 4 个观察事件点 `-b`、`-e`、`-s` 默认关闭，`-f` 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出
 - 这里要注意`方法入参`和`方法出参`的区别，有可能在中间被修改导致前后不一致，除了 `-b` 事件点 `params` 代表方法入参外，其余事件都代表方法出参
 - 当使用 `-b` 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在
 
 ### 使用参考
 
-#### 观察方法出参、this对象和返回值
+#### 观察方法出参、this 对象和返回值
 
 > 观察表达式，默认值是`{params, target, returnObj}`。
 
@@ -77,8 +77,8 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 ]
 ```
 
-- 上面的结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是null
-- 在第二次结果里是`location=AtExit`，说明函数正常返回，因此可以看到`returnObj`结果是一个ArrayList
+- 上面的结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是 null
+- 在第二次结果里是`location=AtExit`，说明函数正常返回，因此可以看到`returnObj`结果是一个 ArrayList
 
 #### 观察方法入参
 
@@ -184,7 +184,7 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ]
 ```
 
-- `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。
+- `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是 1。
 
 #### 条件表达式的例子
 
@@ -208,7 +208,7 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 
 - `condition-express` 不能加'{}'，可以使用逗号分隔子表达式，取表达式最后一个值来判断。
 
-如果watch的方法存在同名的其它重载方法，可以通过下面的办法进行过滤：
+如果 watch 的方法存在同名的其它重载方法，可以通过下面的办法进行过滤：
 
 - 根据参数类型进行过滤
 
@@ -243,9 +243,9 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 ```
 
 - `-e`表示抛出异常时才触发
-- express中，表示异常信息的变量是`throwExp`
+- express 中，表示异常信息的变量是`throwExp`
 
-根据异常类型或者message进行过滤：
+根据异常类型或者 message 进行过滤：
 
 `watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
@@ -272,7 +272,7 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 ]
 ```
 
-- `#cost>200`(单位是`ms`)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用
+- `#cost>200`(单位是`ms`) 表示只有当耗时大于 200ms 时才会输出，过滤掉执行时间小于 200ms 的调用
 
 #### 观察当前对象中的属性
 

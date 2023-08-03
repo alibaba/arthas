@@ -1,11 +1,11 @@
 ![](https://arthas.aliyun.com/doc/_images/arthas-web-ui.png "arthas web ui")
 
-一个基于Http API接口实现的Web UI，[访问 Web UI]({{TRAFFIC_HOST1_8563}}/ui)。
+一个基于 Http API 接口实现的 Web UI，[访问 Web UI]({{TRAFFIC_HOST1_8563}}/ui)。
 
 已实现功能：
 
 - 创建会话
-- 复制并打开url加入会话，多人共享会话
+- 复制并打开 url 加入会话，多人共享会话
 - 周期性拉取会话命令结果消息
 - 刷新页面或者加入会话拉取会话历史命令消息
 - 输入命令/中断命令状态控制
