@@ -14,7 +14,6 @@ With the help of `tt` (_TimeTunnel_), you can check the contexts of the methods 
 
 Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
-
 - `-t` record the calling context of the method `demo.MathGame primeFactors`
 
 - `-n 3` limit the number of the records (avoid overflow for too many records; with `-n` option, Arthas can automatically stop recording once the records reach the specified limit)

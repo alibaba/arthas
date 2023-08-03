@@ -11,4 +11,3 @@ The [vmtool command](https://arthas.aliyun.com/en/doc/vmtool.html) can search ob
 ### Calling an instance method
 
 `vmtool --action getInstances --className demo.MathGame --express 'instances[0].primeFactors(3)' -x 3`{{exec}}
-

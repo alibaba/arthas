@@ -5,9 +5,9 @@ Use [getstatic command](https://arthas.aliyun.com/en/doc/getstatic.html) to Chec
 `getstatic demo.MathGame random`{{execute T2}}
 
 - Specify classLoader
-Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader using `sc -d <ClassName>`.  
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
-For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.  
+  Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader using `sc -d <ClassName>`.  
+  if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
+  For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
 `getstatic --classLoaderClass demo.MathGame random`{{execute T2}}
 

@@ -96,6 +96,7 @@ Perf events:
 可以用`--event`参数指定要采样的事件，比如对`alloc`事件进入采样：
 
 `profiler start --event alloc`{{execute T2}}
+
 ### 恢复采样
 
 `profiler resume`{{execute T2}}

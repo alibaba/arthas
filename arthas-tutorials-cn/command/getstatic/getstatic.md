@@ -5,9 +5,9 @@
 `getstatic demo.MathGame random`{{execute T2}}
 
 - 指定 classLoader  
-注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，使用`sc -d <ClassName>`提取对应 ClassLoader 的 hashcode。  
-如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`  
-对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
+  注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，使用`sc -d <ClassName>`提取对应 ClassLoader 的 hashcode。  
+  如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`  
+  对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
 
 `getstatic --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame random`{{execute T2}}
 

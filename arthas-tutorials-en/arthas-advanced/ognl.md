@@ -10,7 +10,7 @@ The [ognl command](https://arthas.aliyun.com/en/doc/ognl.html) can execute code 
 
 if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.  
-The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.  
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 ### Get static fields of static classes
 

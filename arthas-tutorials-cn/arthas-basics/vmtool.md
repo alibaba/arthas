@@ -5,6 +5,7 @@
 `vmtool --action getInstances --className demo.MathGame --limit 10`{{exec}}
 
 ## 调用实例方法
+
 ### 查看 class 源码
 
 `jad demo.MathGame`{{exec}}
