@@ -49,4 +49,4 @@
 
 ### 修改 logback 的全局 logger level
 
-`logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`
+`logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`{{exec}}

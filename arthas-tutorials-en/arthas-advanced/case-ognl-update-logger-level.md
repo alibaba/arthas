@@ -48,4 +48,4 @@ Get the information of logger again, the user can see that it is already `WARN`:
 
 ### Change the global logger level of the logback
 
-`logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`
+`logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`{{exec}}
