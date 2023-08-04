@@ -1,0 +1,104 @@
+{
+  "title": "Arthas 进阶",
+  "details": {
+    "steps": [
+      {
+        "title": "启动 start-demo",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "查看 JVM 信息",
+        "text": "jvm-info.md"
+      },
+      {
+        "title": "Tips",
+        "text": "tips.md"
+      },
+      {
+        "title": "sc/sm 查看已加载的类",
+        "text": "sc-sm.md"
+      },
+      {
+        "title": "Jad",
+        "text": "jad.md"
+      },
+      {
+        "title": "Ognl",
+        "text": "ognl.md"
+      },
+      {
+        "title": "Options",
+        "text": "options.md"
+      },
+      {
+        "title": "案例：排查函数调用异常",
+        "text": "case-watch-method-exception.md"
+      },
+      {
+        "title": "案例：Arthas 后台异步任务",
+        "text": "async-jobs.md"
+      },
+      {
+        "title": "案例：热更新代码",
+        "text": "case-jad-mc-redefine.md"
+      },
+      {
+        "title": "案例：动态更新应用 Logger Level",
+        "text": "case-ognl-update-logger-level.md"
+      },
+      {
+        "title": "案例：排查 logger 冲突问题",
+        "text": "case-logger-config-problem.md"
+      },
+      {
+        "title": "案例：获取 Spring Context",
+        "text": "case-get-spring-context.md"
+      },
+      {
+        "title": "案例：排查 HTTP 请求返回 401",
+        "text": "case-http-401.md"
+      },
+      {
+        "title": "案例：理解 Spring Boot 应用的 ClassLoader 结构",
+        "text": "case-classloader.md"
+      },
+      {
+        "title": "案例：查找 Top N 线程",
+        "text": "case-thread.md"
+      },
+      {
+        "title": "Exit/Stop",
+        "text": "exit.md"
+      },
+      {
+        "title": "arthas-boot 支持的参数",
+        "text": "arthas-boot-details.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "title": "Arthas thread 命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Thread 命令",
+        "text": "thread.md"
+      },
+      {
+        "title": "cpu 占比是如何统计出来的？",
+        "text": "CPU-ratios-calculate.md"
+      },
+      {
+        "title": "Thread 用法",
+        "text": "thread-usage.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

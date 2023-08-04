@@ -1,0 +1,53 @@
+{
+  "title": "Arthas ognl 命令",
+  "difficulty": "入门者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "启动 math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot，help 命令",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Ognl 详解",
+        "text": "ognl.md"
+      },
+      {
+        "title": "案例：动态更新应用 Logger Level",
+        "text": "case-ognl-update-logger-level.md"
+      },
+      {
+        "title": "案例：排查 logger 冲突问题",
+        "text": "case-logger-config-problem.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

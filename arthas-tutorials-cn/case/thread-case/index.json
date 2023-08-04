@@ -1,0 +1,35 @@
+{
+  "title": "Arthas 查找 Top N 线程案例",
+  "difficulty": "高级使用者",
+  "time": "10 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "查找 Top N 线程",
+        "text": "case-thread.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "title": "Arthas sysenv 命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "启动 arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "sysenv 命令",
+        "text": "sysenv.md"
+      },
+      {
+        "title": "查看所有环境变量",
+        "text": "check-all-properties.md"
+      },
+      {
+        "title": "查看单个环境变量",
+        "text": "check-one-single-property.md"
+      },
+      {
+        "title": "自动补全",
+        "text": "auto-completion.md"
+      },
+      {
+        "title": "历史命令的补全",
+        "text": "completion-of-history-commands.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

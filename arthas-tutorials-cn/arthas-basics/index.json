@@ -1,0 +1,62 @@
+{
+  "title": "Arthas 基础教程",
+  "details": {
+    "steps": [
+      {
+        "title": "启动 math-game",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Dashboard",
+        "text": "dashboard.md"
+      },
+      {
+        "title": "Help",
+        "text": "help.md"
+      },
+      {
+        "title": "Thread",
+        "text": "thread.md"
+      },
+      {
+        "title": "Sc",
+        "text": "sc.md"
+      },
+      {
+        "title": "Jad",
+        "text": "jad.md"
+      },
+      {
+        "title": "Watch",
+        "text": "watch.md"
+      },
+      {
+        "title": "Vmtool",
+        "text": "vmtool.md"
+      },
+      {
+        "title": "Exit/Stop",
+        "text": "exit.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "verify": "verify.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}
