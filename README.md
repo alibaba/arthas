@@ -26,7 +26,7 @@ Visit https://killercoda.com/creators to learn more about creating Katacoda scen
 
 For examples of the scenarios folder, visit https://github.com/killercoda/scenario-examples
 
-After that, if you have finished doing writing jobs, You just need to put your scenarios folder here in this folder, and add links in the related pages, that's all.
+Afterwards, if you have finished writing, you just need to place your tutorial folder in the corresponding folder in this [branch](https://github.com/alibaba/arthas/tree/killercoda).
 
 ## About
 

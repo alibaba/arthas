@@ -1,4 +1,4 @@
-# Arthas交互式Katacoda在线教程
+# Arthas 交互式 Katacoda 在线教程
 
 [![](http://shields.katacoda.com/katacoda/arthas/count.svg)](https://www.katacoda.com/arthas "Get your profile on Katacoda.com")
 
@@ -6,7 +6,7 @@ English version goes [here](README.md).
 
 ## 在线教程使用方法
 
-1. 首先访问在线教程：https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn ，从菜单中选择你想要学习的课程：
+1. 首先访问在线教程：https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn，从菜单中选择你想要学习的课程：
    ![](https://images.gitee.com/uploads/images/2020/0814/211330_e71ef0ca_7637131.png)
 
 2. 课程介绍页面会标明课程的难度和需要的时间，帮助你了解该课程的基本信息。点击`START SCENARIO`开始学习。
@@ -26,10 +26,10 @@ English version goes [here](README.md).
 
 Killercoda 教程文件夹的示例：https://github.com/killercoda/scenario-examples
 
-之后，如果你已经完成了编写，你只需要把你的教程文件夹放在此文件夹即可。
+之后，如果你已经完成了编写，你只需要把你的教程文件夹放在此[分支](https://github.com/alibaba/arthas/tree/killercoda)中的对应文件夹即可。
 
 ## 关于
 
-此项目为[阿里巴巴编程之夏2020](https://developer.aliyun.com/topic/summerofcode2020)的一部分，由[@HollowMan6](https://github.com/HollowMan6)完成，更多信息请参见https://github.com/HollowMan6/My-Alibaba-Summer-of-Code
+此项目为[阿里巴巴编程之夏 2020](https://developer.aliyun.com/topic/summerofcode2020)的一部分，由[@HollowMan6](https://github.com/HollowMan6)完成，更多信息请参见 https://github.com/HollowMan6/My-Alibaba-Summer-of-Code
 
 Issue: [#847](https://github.com/alibaba/arthas/issues/847)
