@@ -281,14 +281,16 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     /**
-     * https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50
-     *
+     * https://github.com/async-profiler/async-profiler/blob/v2.9/profiler.sh#L154
      */
     public enum ProfilerAction {
-        execute, start, stop, resume, list, version, status, load,
+        // start, resume, stop, dump, check, status, meminfo, list, collect,
+        start, resume, stop, dump, status, list,
+        version,
 
+        load,
+        execute,
         dumpCollapsed, dumpFlat, dumpTraces, getSamples,
-
         actions
     }
 
