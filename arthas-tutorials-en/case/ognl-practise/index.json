@@ -3,11 +3,28 @@
   "details": {
     "steps": [
       {
-        "text": "step1.md"
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Fundamental Fields in Expressions",
+        "text": "advice.md"
+      },
+      {
+        "title": "Common Syntax in OGNL",
+        "text": "ognl-syntax.md"
+      },
+      {
+        "title": "OGNL Expressions Practise",
+        "text": "practise.md"
       }
     ],
     "intro": {
-      "foreground": "foreground-ognl.sh",
+      "foreground": "foreground.sh",
       "text": "intro.md"
     },
     "finish": {

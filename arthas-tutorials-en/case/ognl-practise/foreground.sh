@@ -8,9 +8,6 @@ echo 'export JAVA_HOME=/home/local/java/jdk-11.0.1
 export PATH=$JAVA_HOME/bin:$PATH
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> ~/.bashrc
 source ~/.bashrc
-mkdir -p example
-cd example/
-git clone https://github.com/hengyunabc/ognl-demo.git
-cd ognl-demo
+cd ~
 
 clear
