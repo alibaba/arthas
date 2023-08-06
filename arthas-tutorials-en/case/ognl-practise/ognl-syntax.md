@@ -36,7 +36,7 @@ Note:
 
 `ognl "{1,2,3,4}.size()"`{{exec}}
 
-The command above can use the `size()` method of `ArrayList` to retrieve the size of the ArrayList.
+The command above can use the `size()` method of ArrayList to retrieve the size of the ArrayList.
 
 ## Chained Subexpressions
 

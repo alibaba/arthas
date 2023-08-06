@@ -36,7 +36,7 @@ Note:
 
 `ognl "{1,2,3,4}.size()"`{{exec}}
 
-The command above can use the `size()` method of `ArrayList` to retrieve the size of the ArrayList.
+The command above can use the `size()` method of ArrayList to retrieve the size of the ArrayList.
 
 ## Chained Subexpressions
 
@@ -46,7 +46,7 @@ is equivalent to
 
 `headline.parent.ensureLoaded(), headline.parent.name`
 
-`ognl "@java.lang.System@out.(print("Hello "), print("world\n"))"`{{exec}}
+`ognl "@java.lang.System@out.(print('Hello '), print('world\n'))"`{{exec}}
 
  you can see the output "Hello world" in the terminal of `Tab1` after running the provided command.
 
@@ -60,11 +60,11 @@ This tests whether the number `1` is in the list or not.
 
 ### Native Arrays
 
-`ognl "new int[] {1, 2, 3}`{{exec}}
+`ognl "new int[] {1, 2, 3}"`{{exec}}
 
 To create an array with all null or 0 elements, use the alternative size constructor
 
-`ognl "new int[9]`{{exec}}
+`ognl "new int[9]"`{{exec}}
 
 ### Maps
 
@@ -84,11 +84,13 @@ OGNL provides a simple way to call the same method or extract the same property 
 
 ### Selecting From Collections
 
-- Selecting all match
+- Selecting all match  
   `ognl "{1024, 'Hello world!', true, 2048}.{? #this instanceof Number}"`{{exec}}  
-- Selecting first match
+
+- Selecting first match  
   `ognl "{1024, 'Hello world!', true, 2048}.{^ #this instanceof Number}"`{{exec}}  
-- Selecting last match
+
+- Selecting last match  
   `ognl "{1024, 'Hello world!', true, 2048}.{$ #this instanceof Number}"`{{exec}} 
 
 ### Pseudo-Properties for Collections

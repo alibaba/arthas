@@ -2,7 +2,8 @@
 
 `watch com.example.demo.arthas.user.UserController  * "{params[0]}" "params[0] > 10"`{{exec}}
 
-After running the above command, accessing [/user/12]({{TRAFFIC_HOST1_80}}/user/12) will print the user’s ID on the terminal. If you access [/user/9]({{TRAFFIC_HOST1_80}}/user/9), there will be no output.
+After running the above command, accessing [/user/12]({{TRAFFIC_HOST1_80}}/user/12) will print the user’s ID on the terminal.  
+If you access [/user/9]({{TRAFFIC_HOST1_80}}/user/9), there will be no output.
 
 The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
 

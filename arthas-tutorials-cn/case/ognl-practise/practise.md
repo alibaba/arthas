@@ -2,7 +2,8 @@
 
 `watch com.example.demo.arthas.user.UserController  * "{params[0]}" "params[0] > 10"`{{exec}}
 
-运行上面命令后访问 [/user/12]({{TRAFFIC_HOST1_80}}/user/12) 可以看到终端上打印出了访问用户的 ID，如果访问的是 [/user/9]({{TRAFFIC_HOST1_80}}/user/9) 则不会有输出。
+运行上面命令后访问 [/user/12]({{TRAFFIC_HOST1_80}}/user/12) 可以看到终端上打印出了访问用户的 ID  
+如果访问的是 [/user/9]({{TRAFFIC_HOST1_80}}/user/9) 则不会有输出。
 
 输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
 
