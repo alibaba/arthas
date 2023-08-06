@@ -27,6 +27,10 @@
         "text": "jad.md"
       },
       {
+        "title": "OGNL 一般语法",
+        "text": "ognl-syntax.md"
+      },
+      {
         "title": "Ognl",
         "text": "ognl.md"
       },
