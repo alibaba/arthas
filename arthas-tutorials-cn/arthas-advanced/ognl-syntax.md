@@ -3,13 +3,13 @@
 - 数组和列表的索引  
   可以使用 `array["length"]` 或 `array["len" + "gth"]`
 - JavaBeans 索引属性  
-  如一个 JavaBeans 有以下四个重载方法：  
+  如一个 JavaBeans 有以下四个重载方法：
   ```java
   public PropertyType[] getPropertyName();
   public void setPropertyName(PropertyType[] anArray);
   public PropertyType getPropertyName(int index);
   public void setPropertyName(int index, PropertyType value);
-  ```  
+  ```
   则 `someProperty[2]` 等价于 Java 代码的 `getPropertyName(2)`
 
 `ognl "{1,2,3,4}[0]"`{{exec}}
@@ -29,12 +29,13 @@
 `method( ensureLoaded(), name )`
 
 注意：
+
 - OGNL 是运行时调用，因此没有任何静态类型的信息可以参考，所以如果解析到有多个匹配的方法，则任选其中一个方法调用
 - 常量 null 可以匹配所有的非原始类型的对象
 
 `ognl "{1,2,3,4}.size()"`{{exec}}
 
-通过上面命令可以调用 `ArrayList` 的 `size()` 方法获取到 ArrayList 的大小  
+通过上面命令可以调用 `ArrayList` 的 `size()` 方法获取到 ArrayList 的大小
 
 ## 复杂链式表达式
 
@@ -83,13 +84,13 @@ OGNL 把对针对集合上的每个元素调用同一个方法并返回新的集
 ### 查找集合元素
 
 - 查找所有匹配的元素  
-  `ognl "{1024, 'Hello world!', true, 2048}.{? #this instanceof Number}"`{{exec}}  
+  `ognl "{1024, 'Hello world!', true, 2048}.{? #this instanceof Number}"`{{exec}}
 
 - 查找第一个匹配的元素  
-  `ognl "{1024, 'Hello world!', true, 2048}.{^ #this instanceof Number}"`{{exec}}  
+  `ognl "{1024, 'Hello world!', true, 2048}.{^ #this instanceof Number}"`{{exec}}
 
 - 查找最后一个匹配的元素  
-  `ognl "{1024, 'Hello world!', true, 2048}.{$ #this instanceof Number}"`{{exec}} 
+  `ognl "{1024, 'Hello world!', true, 2048}.{$ #this instanceof Number}"`{{exec}}
 
 ### 集合的虚拟属性
 

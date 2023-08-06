@@ -4,6 +4,6 @@ Download `demo-arthas-spring-boot.jar` - [[Source]](https://github.com/hengyunab
 
 `demo-arthas-spring-boot` is a simple Spring Boot demo.
 
-After booting, access port 80: {{TRAFFIC_HOST1_80}}
+After booting, access [port 80]({{TRAFFIC_HOST1_80}})
 
 ![Demo Web](../../assets/demo-web.png)

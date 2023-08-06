@@ -1,17 +1,15 @@
-# 
-
 ## Indexing
 
 - Array and List Indexing
-  You can use array["length"] or array["len" + "gth"].
+  You can use `array["length"]` or `array["len" + "gth"]`.
 - JavaBeans Indexed Properties  
-  An object has a set of methods that follow the following pattern:  
+  An object has a set of methods that follow the following pattern:
   ```java
   public PropertyType[] getPropertyName();
   public void setPropertyName(PropertyType[] anArray);
   public PropertyType getPropertyName(int index);
   public void setPropertyName(int index, PropertyType value);
-  ```  
+  ```
   So `someProperty[2]` is equivalent to the Java code `getPropertyName(2)`.
 
 `ognl "{1,2,3,4}[0]"`{{exec}}
@@ -31,6 +29,7 @@ The command above retrieves the first element of the list and checks whether it 
 `method( ensureLoaded(), name )`
 
 Note:
+
 - OGNL calls methods a little differently from the way Java does, because OGNL is interpreted and must choose the right method at run time, with no extra type information aside from the actual arguments supplied.
 - In particular, a null argument matches all non-primitive types, and so is most likely to result in an unexpected method being called.
 
@@ -48,7 +47,7 @@ is equivalent to
 
 `ognl "@java.lang.System@out.(print('Hello '), print('world\n'))"`{{exec}}
 
- you can see the output "Hello world" in the terminal of `Tab1` after running the provided command.
+you can see the output "Hello world" in the terminal of `Tab1` after running the provided command.
 
 ## Collection Construction
 
@@ -85,13 +84,13 @@ OGNL provides a simple way to call the same method or extract the same property 
 ### Selecting From Collections
 
 - Selecting all match  
-  `ognl "{1024, 'Hello world!', true, 2048}.{? #this instanceof Number}"`{{exec}}  
+  `ognl "{1024, 'Hello world!', true, 2048}.{? #this instanceof Number}"`{{exec}}
 
 - Selecting first match  
-  `ognl "{1024, 'Hello world!', true, 2048}.{^ #this instanceof Number}"`{{exec}}  
+  `ognl "{1024, 'Hello world!', true, 2048}.{^ #this instanceof Number}"`{{exec}}
 
 - Selecting last match  
-  `ognl "{1024, 'Hello world!', true, 2048}.{$ #this instanceof Number}"`{{exec}} 
+  `ognl "{1024, 'Hello world!', true, 2048}.{$ #this instanceof Number}"`{{exec}}
 
 ### Pseudo-Properties for Collections
 
@@ -114,7 +113,7 @@ The constructor of any class outside the `java.lang` package must be prefixed wi
 
 `ognl "new java.util.ArrayList()"`{{exec}}
 
-## Calling Static Methods 
+## Calling Static Methods
 
 `@class@method(args)`
 
@@ -131,4 +130,3 @@ The command implements a lambda function that recursively calculates a factorial
 ## Note
 
 For more detailed syntax, please refer to the [official documentation](https://commons.apache.org/proper/commons-ognl/language-guide.html)。
-

@@ -16,11 +16,15 @@
 
 运行上面命令后，再次访问 [/hello]({{TRAFFIC_HOST1_80}}/hello) 可以看到页面显示内容已变为 `Hello World - HTML`。
 
+输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
+
 ### 当访问出现错误时输出入参，调用类的实例，返回值以及抛出的错误
 
 `watch com.example.demo.arthas.user.UserController  * "{params, target, returnObj, throwExp}" "throwExp != null"`{{exec}}
 
 运行上面命令后访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) 可以看到输出了入参，调用类的实例，返回值以及抛出的错误。
+
+输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
 
 ## 补充
 
