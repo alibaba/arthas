@@ -276,14 +276,21 @@
           </div>
         </form>
       </nav>
+      <div
+        class="alert alert-danger alert-dismissible fade show"
+        v-if="isSafari()"
+        role="alert"
+      >
+        <span v-html="alertChangeBrowser[language]"></span>
+      </div>
 
       <div
         class="alert alert-warning alert-dismissible fade show position-fixed w-25"
-        v-if="!getCookie('alert')"
+        v-if="!getCookie('alert') && !isSafari()"
         style="bottom: 2rem; right: 1rem"
         role="alert"
       >
-        <span v-html="alertContent[language]"></span>
+        <span v-html="alertLoginContent[language]"></span>
         <button
           type="button"
           class="close"
@@ -298,6 +305,7 @@
         <iframe
           style="width: 100vw"
           v-bind:style="{height: `${iframeHeight}px` }"
+          v-if="!isSafari()"
           frameborder="0"
           scrolling="no"
           sandbox="allow-scripts allow-same-origin allow-popups"
@@ -352,9 +360,13 @@
           { text: "English", value: "en" },
           { text: "中文", value: "cn" },
         ],
-        alertContent: {
-          en: "If you haven’t logged in to killercoda, please click the link to navigate to <a href='https://killercoda.com'>killercoda.com</a> and log in before continuing with the tutorial.",
+        alertLoginContent: {
+          en: "If you haven’t logged in to killercoda, please click the link to navigate to <a href='https://killercoda.com'>killercoda.com</a> and log in before continuing with the tutorial",
           cn: "如果没有登陆 killercoda 请先点击链接跳转到 <a href='https://killercoda.com'>killercoda.com</a> 登录后继续使用教程",
+        },
+        alertChangeBrowser: {
+          en: "Please use Firefox or Chrome to open the tutorial or visit <a href='https://killercoda.com/arthas'>killercoda.com/arthas</a>",
+          cn: "请使用 Firefox 或 Chrome 打开教程或访问 <a href='https://killercoda.com/arthas'>killercoda.com/arthas</a>",
         },
         tutorialId: "arthas-basics",
         tutorials: [
@@ -938,6 +950,9 @@
             height: e[a + "Height"] - terminalDivRect.top,
           };
         },
+        isSafari: function () {
+          return /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+        }
       },
       beforeMount() {
         let l = getUrlParam("language");
@@ -953,7 +968,7 @@
         let _this = this;
 
         // set an alert cookie when the alert is closed
-        $("div.alert").on("closed.bs.alert", () => {
+        $("div.alert.alert-warning").on("closed.bs.alert", () => {
           setCookie("alert", "closed", 60);
         });
 
