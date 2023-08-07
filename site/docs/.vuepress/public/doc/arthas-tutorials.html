@@ -277,6 +277,13 @@
         </form>
       </nav>
 
+      <div class="alert alert-warning alert-dismissible fade show position-fixed w-25" v-if="!getCookie('alert')" style="bottom: 2rem; right: 1rem;" role="alert">
+        <span v-html="alertContent[language]"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
       <div id="kata-container" class="container-fluid px-0">
         <iframe
           style="width: 100vw"
@@ -302,6 +309,29 @@
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
+    function getCookie(cname) {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      let expires = "expires="+d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
     var app = new Vue({
       el: "#app",
       data: {
@@ -311,6 +341,10 @@
           { text: "English", value: "en" },
           { text: "中文", value: "cn" },
         ],
+        alertContent: {
+            en: "If you haven’t logged in to killercoda, please click the link to navigate to <a href='https://killercoda.com'>killercoda.com</a> and log in before continuing with the tutorial.",
+            cn: "如果没有登陆 killercoda 请先点击链接跳转到 <a href='https://killercoda.com'>killercoda.com</a> 登陆后继续使用教程",
+        },
         tutorialId: "arthas-basics",
         tutorials: [
           {
@@ -895,14 +929,20 @@
         },
       },
       beforeMount() {
-        var l = getUrlParam("language");
+        let l = getUrlParam("language");
         if (l != null) {
           this.language = l;
         }
-        var id = getUrlParam("id");
+        let id = getUrlParam("id");
         if (id != null) {
           this.tutorialId = id;
         }
+      },
+      mounted() {
+        // set an alert cookie when the alert is closed
+        $('div.alert').on('closed.bs.alert', () => {
+          setCookie('alert', 'closed', 60)
+        })
       },
     });
   </script>
