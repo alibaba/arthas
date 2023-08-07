@@ -277,9 +277,19 @@
         </form>
       </nav>
 
-      <div class="alert alert-warning alert-dismissible fade show position-fixed w-25" v-if="!getCookie('alert')" style="bottom: 2rem; right: 1rem;" role="alert">
+      <div
+        class="alert alert-warning alert-dismissible fade show position-fixed w-25"
+        v-if="!getCookie('alert')"
+        style="bottom: 2rem; right: 1rem"
+        role="alert"
+      >
         <span v-html="alertContent[language]"></span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -312,10 +322,10 @@
     function getCookie(cname) {
       let name = cname + "=";
       let decodedCookie = decodeURIComponent(document.cookie);
-      let ca = decodedCookie.split(';');
-      for(let i = 0; i <ca.length; i++) {
+      let ca = decodedCookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) == ' ') {
+        while (c.charAt(0) == " ") {
           c = c.substring(1);
         }
         if (c.indexOf(name) == 0) {
@@ -327,8 +337,8 @@
 
     function setCookie(cname, cvalue, exdays) {
       const d = new Date();
-      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-      let expires = "expires="+d.toUTCString();
+      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+      let expires = "expires=" + d.toUTCString();
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
@@ -343,8 +353,8 @@
           { text: "中文", value: "cn" },
         ],
         alertContent: {
-            en: "If you haven’t logged in to killercoda, please click the link to navigate to <a href='https://killercoda.com'>killercoda.com</a> and log in before continuing with the tutorial.",
-            cn: "如果没有登陆 killercoda 请先点击链接跳转到 <a href='https://killercoda.com'>killercoda.com</a> 登陆后继续使用教程",
+          en: "If you haven’t logged in to killercoda, please click the link to navigate to <a href='https://killercoda.com'>killercoda.com</a> and log in before continuing with the tutorial.",
+          cn: "如果没有登陆 killercoda 请先点击链接跳转到 <a href='https://killercoda.com'>killercoda.com</a> 登录后继续使用教程",
         },
         tutorialId: "arthas-basics",
         tutorials: [
@@ -940,18 +950,17 @@
         }
       },
       mounted() {
-        let _this = this
+        let _this = this;
 
         // set an alert cookie when the alert is closed
-        $('div.alert').on('closed.bs.alert', () => {
-          setCookie('alert', 'closed', 60)
-        })
+        $("div.alert").on("closed.bs.alert", () => {
+          setCookie("alert", "closed", 60);
+        });
 
-        this.iframeHeight = this.calculateKataSize().height
+        this.iframeHeight = this.calculateKataSize().height;
         window.onresize = () => {
-          _this.iframeHeight = _this.calculateKataSize().height
-        }
-        
+          _this.iframeHeight = _this.calculateKataSize().height;
+        };
       },
     });
   </script>
