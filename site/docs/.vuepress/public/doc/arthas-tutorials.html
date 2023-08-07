@@ -284,10 +284,10 @@
         </button>
       </div>
 
-      <div id="kata-container" class="container-fluid px-0">
+      <div id="kata-container" class="container-fluid px-0 py-0">
         <iframe
           style="width: 100vw"
-          v-bind:style="{height: (calculateKataSize().height + 30) + 'px'  }"
+          v-bind:style="{height: `${iframeHeight}px` }"
           frameborder="0"
           scrolling="no"
           sandbox="allow-scripts allow-same-origin allow-popups"
@@ -337,6 +337,7 @@
       data: {
         message: "Hello Vue!",
         language: "en",
+        iframeHeight: 0,
         languages: [
           { text: "English", value: "en" },
           { text: "中文", value: "cn" },
@@ -939,10 +940,18 @@
         }
       },
       mounted() {
+        let _this = this
+
         // set an alert cookie when the alert is closed
         $('div.alert').on('closed.bs.alert', () => {
           setCookie('alert', 'closed', 60)
         })
+
+        this.iframeHeight = this.calculateKataSize().height
+        window.onresize = () => {
+          _this.iframeHeight = _this.calculateKataSize().height
+        }
+        
       },
     });
   </script>
