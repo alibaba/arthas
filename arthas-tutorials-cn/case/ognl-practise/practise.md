@@ -26,6 +26,12 @@
 
 输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
 
+### 内部类案例
+
+先通过 ` sc  '*＄*'  | grep java.lang.Integer`{{exec}} 查找内部类
+
+之后使用 `ognl -x 3 '@java.lang.Integer$IntegerCache@low'`{{exec}} 查看
+
 ## 补充
 
 还有更多有用的有趣的例子请查看相关 Issues[#71](https://github.com/alibaba/arthas/issues/71)。

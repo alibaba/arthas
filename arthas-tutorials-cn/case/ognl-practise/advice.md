@@ -1,4 +1,5 @@
-无论是匹配表达式也好、观察表达式也罢，他们核心判断变量都是围绕着一个 Arthas 中的通用通知对象 Advice 进行。
+无论是匹配表达式也好、观察表达式也罢，他们核心判断变量都是围绕着一个 Arthas 中的通用通知对象 [Advice](https://arthas.aliyun.com/doc/advice-class.html) 进行。  
+比如常见的（增加一下命令link） `watch`、`trace`、`tt`、`ognl`、`vmtool` 等命令都是居于 OGNL 表达式
 
 ## 核心变量列表
 

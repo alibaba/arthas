@@ -115,11 +115,11 @@ The constructor of any class outside the `java.lang` package must be prefixed wi
 
 ## Calling Static Methods
 
-`@class@method(args)`
+`ognl -x 3 '@java.lang.Math@sqrt(9.0D)'`{{exec}}
 
 ## Getting Static Fields
 
-`@class@field`
+`ognl -x 3 '@java.io.File@separator'`{{exec}}
 
 ## Pseudo-Lambda Expressions
 

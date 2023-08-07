@@ -16,6 +16,14 @@
 
 通过上面命令可以获取到列表的第一个元素
 
+## 变量引用
+
+使用 `#` 在 OGNL 中定义临时变量，他们全局可见，此外表达式计算的每一步结果都保存在变量 `this` 中：
+
+`ognl "{10,20,30}[0].(#this > 5 ? #this*2 : #this+10)"`{{exec}}
+
+上面命令通过获取列表的第一个元素进行判断如果大于 `5` 则乘以 `2` 反之则加 `10`。
+
 ## 方法调用
 
 `method( ensureLoaded(), name )`
@@ -40,14 +48,6 @@
 `ognl "@java.lang.System@out.(print('Hello '), print('world\n'))"`{{exec}}
 
 运行上面这个命令后，你可以在 Tab1 的终端看到 `Hello world` 的输出。
-
-## 变量引用
-
-使用 `#` 在 OGNL 中定义临时变量，他们全局可见，此外表达式计算的每一步结果都保存在变量 `this` 中：
-
-`ognl "{10,20,30}[0].(#this > 5 ? #this*2 : #this+10)"`{{exec}}
-
-上面命令通过获取列表的第一个元素进行判断如果大于 `5` 则乘以 `2` 反之则加 `10`。
 
 ## 集合操作
 
@@ -115,11 +115,11 @@ OGNL 定义了一些特定的集合属性，含义与相应的 Java 集合方法
 
 ## 静态方法
 
-`@class@method(args)`
+`ognl -x 3 '@java.lang.Math@sqrt(9.0D)'`{{exec}}
 
 ## 静态属性
 
-`@class@field`
+`ognl -x 3 '@java.io.File@separator'`{{exec}}
 
 ## 伪 lambda 表达式
 

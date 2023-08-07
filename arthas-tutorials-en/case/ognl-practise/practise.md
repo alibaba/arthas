@@ -26,6 +26,12 @@ After running the above command, accessing [/user/0]({{TRAFFIC_HOST1_80}}/user/0
 
 The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
 
+### Inner class case
+
+First use the command ` sc  '*＄*'  | grep java.lang.Integer`{{exec}} to find the inner class
+
+then use the command `ognl -x 3 '@java.lang.Integer$IntegerCache@low'`{{exec}} to see a specific inner class.
+
 ### Note
 
 Please refer to related issues[#71](https://github.com/alibaba/arthas/issues/71) for more useful and interesting examples.

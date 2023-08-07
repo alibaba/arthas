@@ -1,4 +1,5 @@
-There is a very fundamental class `Advice` for the expressions used in filtering, tracing or monitoring and other aspects in commands.
+There is a very fundamental class [Advice](https://arthas.aliyun.com/doc/advice-class.html)  for the expressions used in filtering, tracing or monitoring and other aspects in commands.
+For example, common commands like `watch`, `trace`, `tt`, `ognl`, and `vmtool` are all based on OGNL expressions.
 
 ## Fundamental Fields Table
 

@@ -115,11 +115,11 @@ OGNL 定义了一些特定的集合属性，含义与相应的 Java 集合方法
 
 ## 静态方法
 
-`@class@method(args)`
+`ognl -x 3 '@java.lang.Math@sqrt(9.0D)'`{{exec}}
 
 ## 静态属性
 
-`@class@field`
+`ognl -x 3 '@java.io.File@separator'`{{exec}}
 
 ## 伪 lambda 表达式
 
