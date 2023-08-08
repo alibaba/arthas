@@ -30,6 +30,10 @@ By getting the `root` logger, the user can modify the global logger level:
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
+To see that the `level` of `ROOT` h as been changed to `DEBUG`, run the following command.
+
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root")'`{{exec}}
+
 ### Use [logger](https://arthas.aliyun.com/en/doc/logger.html)
 
 The `logger ` command provides a more convenient way to dynamically set the logger level compared to using `ognl`.
@@ -49,3 +53,8 @@ Get the information of logger again, the user can see that it is already `WARN`:
 ### Change the global logger level of the logback
 
 `logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`{{exec}}
+
+To see that the `level` of `ROOT` h as been changed to `WARN`, run the following command.
+
+`logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{exec}}
+

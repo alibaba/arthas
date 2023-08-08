@@ -31,6 +31,10 @@
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
+运行下面命令可以看到 `ROOT` 的 level 已经修改为了 `DEBUG`
+
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root")'`{{exec}}
+
 ## 使用 [logger](https://arthas.aliyun.com/doc/logger.html)
 
 使用 `logger` 命令可以相较于 `ognl` 更加便捷的实现 logger level 的动态设置。
@@ -50,3 +54,8 @@
 ### 修改 logback 的全局 logger level
 
 `logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`{{exec}}
+
+运行下面命令可以看到 `ROOT` 的 level 已经修改为了 `WARN`
+
+`logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{exec}}
+
