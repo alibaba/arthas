@@ -1,4 +1,4 @@
-> dump java heap in hprof binary format, like `jmap`.
+> dump java heap in hprof binary format, like `jmap`{{}} .
 
 [heapdump command Docs](https://arthas.aliyun.com/en/doc/heapdump.html)
 

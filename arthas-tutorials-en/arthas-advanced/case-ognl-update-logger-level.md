@@ -4,9 +4,9 @@ In this case, show how to dynamically modify the Logger Level.
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
 
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
-For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.  
-The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+if you use`-c`{{}} , you have to manually type hashcode by `-c <hashcode>`{{}} .  
+For classloader with only one instance, it can be specified by `--classLoaderClass`{{}} using class name, which is more convenient to use.  
+The value of `--classloaderclass`{{}} is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>`{{}} is dynamic.
 
 ## Use [ognl](https://arthas.aliyun.com/en/doc/ognl.html)
 
@@ -14,29 +14,29 @@ The value of `--classloaderclass` is the class name of classloader. It can only 
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
-The user can know that `UserController@logger` actually uses logback. Because `level=null`, the actual final level is from the `root` logger.
+The user can know that `UserController@logger`{{}} actually uses logback. Because `level=null`{{}} , the actual final level is from the `root`{{}} logger.
 
 ### Change the logger level of UserController
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
-Get `UserController@logger` again, the user can see that it is already `DEBUG`:
+Get `UserController@logger`{{}} again, the user can see that it is already `DEBUG`{{}} :
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ### Change the global logger level of the logback
 
-By getting the `root` logger, the user can modify the global logger level:
+By getting the `root`{{}} logger, the user can modify the global logger level:
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
-To see that the `level` of `ROOT` h as been changed to `DEBUG`, run the following command.
+To see that the `level`{{}} of `ROOT`{{}} h as been changed to `DEBUG`{{}} , run the following command.
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root")'`{{exec}}
 
 ### Use [logger](https://arthas.aliyun.com/en/doc/logger.html)
 
-The `logger ` command provides a more convenient way to dynamically set the logger level compared to using `ognl`.
+The `logger `{{}} command provides a more convenient way to dynamically set the logger level compared to using `ognl`{{}} .
 
 ### Use logger command to get the logger
 
@@ -46,7 +46,7 @@ The `logger ` command provides a more convenient way to dynamically set the logg
 
 `logger --name com.example.demo.arthas.user.UserController --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`{{exec}}
 
-Get the information of logger again, the user can see that it is already `WARN`:
+Get the information of logger again, the user can see that it is already `WARN`{{}} :
 
 `logger --name com.example.demo.arthas.user.UserController`{{exec}}
 
@@ -54,7 +54,6 @@ Get the information of logger again, the user can see that it is already `WARN`:
 
 `logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --level WARN`{{exec}}
 
-To see that the `level` of `ROOT` h as been changed to `WARN`, run the following command.
+To see that the `level`{{}} of `ROOT`{{}} h as been changed to `WARN`{{}} , run the following command.
 
 `logger --name ROOT --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{exec}}
-

@@ -9,12 +9,12 @@ The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{
 
 ### Calling a method of an object in the method parameter of a class
 
-To modify the value of `name` by calling the `addAttribute` method on the `model` parameter in the `helloWorld` method of the `com.example.demo.arthas.WelcomeController` class:
-First, access [/hello]({{TRAFFIC_HOST1_80}}/hello) and you will see that the page displays `Hello World - jsp`.
+To modify the value of `name`{{}} by calling the `addAttribute`{{}} method on the `model`{{}} parameter in the `helloWorld`{{}} method of the `com.example.demo.arthas.WelcomeController`{{}} class:
+First, access [/hello]({{TRAFFIC_HOST1_80}}/hello) and you will see that the page displays `Hello World - jsp`{{}} .
 
 `watch com.example.demo.arthas.WelcomeController helloWorld "{params[0].addAttribute('name', 'HTML')}"`{{exec}}
 
-After running the above command, access [/hello]({{TRAFFIC_HOST1_80}}/hello) again, and you will see that the page content has changed to `Hello World - HTML`.
+After running the above command, access [/hello]({{TRAFFIC_HOST1_80}}/hello) again, and you will see that the page content has changed to `Hello World - HTML`{{}} .
 
 The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
 

@@ -1,4 +1,4 @@
-首先向`/tmp/a.txt`文件中写入`hello, world`：
+首先向`/tmp/a.txt`{{}} 文件中写入`hello, world`{{}} ：
 
 `echo "hello, world" > /tmp/a.txt`{{execute T2}}
 
@@ -6,4 +6,4 @@
 
 `cat /tmp/a.txt`{{execute T2}}
 
-你可以看到`hello, world`被打印了出来。
+你可以看到`hello, world`{{}} 被打印了出来。

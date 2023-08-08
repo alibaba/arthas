@@ -2,7 +2,7 @@
 
 [profiler command](https://arthas.aliyun.com/en/doc/profiler.html) supports generate flame graph for application hotspots.
 
-The basic usage of the `profiler` command is `profiler action [actionArg]`
+The basic usage of the `profiler`{{}} command is `profiler action [actionArg]`{{}}
 
 ### View all supported actions
 
@@ -16,7 +16,7 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 
 `profiler start -e cpu`{{execute T2}}
 
-> By default, the sample event is `cpu`. Can be specified with the `--e` parameter.
+> By default, the sample event is `cpu`{{}} . Can be specified with the `--e`{{}} parameter.
 
 ### Get the number of samples collected
 
@@ -30,17 +30,17 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 
 #### Generating html format results
 
-By default, the result file is `html` format. You can also specify it with the `--format` parameter:
+By default, the result file is `html`{{}} format. You can also specify it with the `--format`{{}} parameter:
 
 `profiler stop --format html`{{execute T2}}
 
-Or use the file name name format in the `--file` parameter. For example, `--file /tmp/result.html`.
+Or use the file name name format in the `--file`{{}} parameter. For example, `--file /tmp/result.html`{{}} .
 
 `profiler stop --file /root/arthas-output/result.html`{{execute T2}}
 
 ### View profiler results under arthas-output via browser
 
-By default, arthas uses http port 8563, [click to open]({{TRAFFIC_HOST1_8563}}/arthas-output/) View the `arthas-output` directory below Profiler results:
+By default, arthas uses http port 8563, [click to open]({{TRAFFIC_HOST1_8563}}/arthas-output/) View the `arthas-output`{{}} directory below Profiler results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
@@ -93,7 +93,7 @@ Perf events:
 
 If you encounter the permissions/configuration issues of the OS itself and then missing some events, you can refer to the [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) documentation.
 
-You can use the `--event` parameter to specify the event to sample, such as sampling the `alloc` event:
+You can use the `--event`{{}} parameter to specify the event to sample, such as sampling the `alloc`{{}} event:
 
 `profiler start --event alloc`{{execute T2}}
 
@@ -101,11 +101,11 @@ You can use the `--event` parameter to specify the event to sample, such as samp
 
 `profiler resume`{{execute T2}}
 
-The difference between `start` and `resume` is: `start` is the new start sampling, `resume` will retain the data of the last `stop`.
+The difference between `start`{{}} and `resume`{{}} is: `start`{{}} is the new start sampling, `resume`{{}} will retain the data of the last `stop`{{}} .
 
-You can verify the number of samples by executing `profiler getSamples`.
+You can verify the number of samples by executing `profiler getSamples`{{}} .
 
-### Use `execute` action to execute complex commands
+### Use `execute`{{}} action to execute complex commands
 
 `profiler execute 'start,framebuf=5000000'`{{execute T2}}
 

@@ -10,6 +10,6 @@ Arthas 在 watch/trace 等命令时，实际上是修改了应用的字节码，
 
 ## 彻底退出 Arthas
 
-`exit/quit`命令只是退出当前 session，arthas server 还在目标进程中运行。
+`exit/quit`{{}} 命令只是退出当前 session，arthas server 还在目标进程中运行。
 
 想完全退出 Arthas，可以执行 `stop`{{execute interrupt}} 命令。

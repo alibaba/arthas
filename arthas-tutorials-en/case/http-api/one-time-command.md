@@ -1,6 +1,6 @@
 Similar to executing batch commands, the one-time commands are executed
 synchronously. No need to create a session, no need to set the
-`sessionId` option.
+`sessionId`{{}} option.
 
 ```json
 {
@@ -42,15 +42,15 @@ The response is as follows:
 
 Response data format description:
 
-- `state`: Request processing status, refer to the description of
+- `state`{{}} : Request processing status, refer to the description of
   "Response Status".
-- `sessionId `: Arthas session ID, one-time command to automatically
+- `sessionId `{{}} : Arthas session ID, one-time command to automatically
   create and destroy temporary sessions.
-- `body.jobId`: The job ID of the command, all output results of the
+- `body.jobId`{{}} : The job ID of the command, all output results of the
   same job are the same jobId.
-- `body.jobStatus`: The job status of the command.
-- `body.timeExpired`: Whether the job execution timed out.
-- `body/results`: Command execution results.
+- `body.jobStatus`{{}} : The job status of the command.
+- `body.timeExpired`{{}} : Whether the job execution timed out.
+- `body/results`{{}} : Command execution results.
 
 **Command result format description**
 
@@ -69,11 +69,11 @@ Response data format description:
 ]
 ```
 
-- `type` : The command result type, except for the special ones such as
-  `status`, the others remain the same as the Arthas command name.
+- `type`{{}} : The command result type, except for the special ones such as
+  `status`{{}} , the others remain the same as the Arthas command name.
   Please refer to the section
   "Special command results".
-- `jobId` : The job ID of the command.
+- `jobId`{{}} : The job ID of the command.
 - Other fields are the data of each different command.
 
 Note: You can also use a one-time command to execute continuous output
@@ -85,10 +85,10 @@ section.
 
 Please try to deal with it in the following way:
 
-- Set a reasonable `execTimeout` to forcibly interrupt the command
+- Set a reasonable `execTimeout`{{}} to forcibly interrupt the command
   execution after the timeout period is reached to avoid a long hang.
-- Use the `-n` parameter to specify a smaller number of executions.
+- Use the `-n`{{}} parameter to specify a smaller number of executions.
 - Ensure the methods of the command matched can be successfully hit and
-  the `condition-express` is written correctly. If the `watch/trace` does
-  not hit, even if `-n 1` is specified, it will hang and wait until the
+  the `condition-express`{{}} is written correctly. If the `watch/trace`{{}} does
+  not hit, even if `-n 1`{{}} is specified, it will hang and wait until the
   execution timeout.

@@ -1,4 +1,4 @@
-`sysprop`{{execute T2}} 命令可以查看当前 JVM 的系统属性 (`System Property`)
+`sysprop`{{execute T2}} 命令可以查看当前 JVM 的系统属性 (`System Property`{{}} )
 
 ## 使用参考
 
@@ -6,23 +6,23 @@
 
 ```
 USAGE:
-   sysprop [-h] [property-name] [property-value]
+sysprop [-h] [property-name] [property-value]
 
- SUMMARY:
-   Display, and change all the system properties.
+SUMMARY:
+Display, and change all the system properties.
 
- EXAMPLES:
- sysprop
- sysprop file.encoding
- sysprop production.mode true
+EXAMPLES:
+sysprop
+sysprop file.encoding
+sysprop production.mode true
 
- WIKI:
-   https://arthas.aliyun.com/doc/sysprop
+WIKI:
+https://arthas.aliyun.com/doc/sysprop
 
- OPTIONS:
- -h, --help                                  this help
- <property-name>                             property name
- <property-value>                            property value
+OPTIONS:
+-h, --help this help
+<property-name> property name
+<property-value> property value
 ```
 
 [sysprop 命令文档](https://arthas.aliyun.com/doc/sysprop.html)

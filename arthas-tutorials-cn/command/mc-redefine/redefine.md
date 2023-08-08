@@ -1,4 +1,4 @@
-> 加载外部的`.class`文件，redefine jvm 已加载的类。
+> 加载外部的`.class`{{}} 文件，redefine jvm 已加载的类。
 
 [redefine 命令文档](https://arthas.aliyun.com/doc/redefine.html)
 
@@ -14,18 +14,18 @@
 
 > 注意，redefine 后的原来的类不能恢复，redefine 有可能失败（比如增加了新的 field），参考 jdk 本身的文档。
 
-> `reset`命令对`redefine`的类无效。如果想重置，需要`redefine`原始的字节码。
+> `reset`{{}} 命令对`redefine`{{}} 的类无效。如果想重置，需要`redefine`{{}} 原始的字节码。
 
-> `redefine`命令和`jad`/`watch`/`trace`/`monitor`/`tt`等命令会冲突。执行完`redefine`之后，如果再执行上面提到的命令，则会把`redefine`的字节码重置。
+> `redefine`{{}} 命令和`jad`{{}} /`watch`{{}} /`trace`{{}} /`monitor`{{}} /`tt`{{}} 等命令会冲突。执行完`redefine`{{}} 之后，如果再执行上面提到的命令，则会把`redefine`{{}} 的字节码重置。
 > 原因是 jdk 本身 redefine 和 Retransform 是不同的机制，同时使用两种机制来更新字节码，只有最后修改的会生效。
 
 ### 参数说明
 
-|              参数名称 | 参数说明                                   |
-| --------------------: | :----------------------------------------- |
-|                  [c:] | ClassLoader 的 hashcode                    |
-| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
-|                  [p:] | 外部的`.class`文件的完整路径，支持多个     |
+|                  参数名称 | 参数说明                                   |
+| ------------------------: | :----------------------------------------- |
+|                      [c:] | ClassLoader 的 hashcode                    |
+| `[classLoaderClass:]`{{}} | 指定执行表达式的 ClassLoader 的 class name |
+|                      [p:] | 外部的`.class`{{}} 文件的完整路径，支持多个 |
 
 ### redefine 的限制
 

@@ -10,7 +10,7 @@
 
 - _CPU%_: the ratio of CPU usage for the thread, sampled every 100ms
 
-- _TIME_: total running time in minute:`second format`
+- _TIME_: total running time in minute:`second format`{{}}
 
 - _INTERRUPTED_: the thread interruption state
 

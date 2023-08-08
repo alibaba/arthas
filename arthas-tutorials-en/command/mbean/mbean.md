@@ -43,7 +43,7 @@ Check memory pool:
 
 `mbean java.lang:type=Threading *Count`{{execute T2}}
 
-### Switch to regular matching using the `-E` command
+### Switch to regular matching using the `-E`{{}} command
 
 `mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount`{{execute T2}}
 
@@ -51,6 +51,6 @@ Check memory pool:
 
 `mbean -E java.lang:name=*,type=MemoryPool Name|Usage|Type | grep " HEAP" -A3 -B1`{{execute T2}}
 
-### Real-time monitoring using `-i` command
+### Real-time monitoring using `-i`{{}} command
 
 `mbean -i 1000 java.lang:type=Threading *Count`{{execute T2}}

@@ -8,12 +8,12 @@
 
 访问：[/user/1]({{TRAFFIC_HOST1_80}}/user/1)
 
-可以看到`tt`命令捕获到了请求
+可以看到`tt`{{}} 命令捕获到了请求
 
 ### 使用 tt 命令从调用记录里获取到 spring context
 
-输入 `Q`{{exec interrupt}} 或者 `Ctrl + C`{{exec interrupt}} 退出上面的 `tt -t`命令。  
-使用 `tt -l`{{exec}} 命令可以查看之前 `tt` 命令捕获到的请求信息。
+输入 `Q`{{exec interrupt}} 或者 `Ctrl + C`{{exec interrupt}} 退出上面的 `tt -t`{{}} 命令。  
+使用 `tt -l`{{exec}} 命令可以查看之前 `tt`{{}} 命令捕获到的请求信息。
 
 `tt -i 1000 -w 'target.getApplicationContext()'`{{execute T2}}
 

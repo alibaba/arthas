@@ -1,8 +1,8 @@
-`arthas-boot.jar` 支持很多参数，可以执行 `java -jar arthas-boot.jar -h`{{execute T2}} 来查看。
+`arthas-boot.jar`{{}} 支持很多参数，可以执行 `java -jar arthas-boot.jar -h`{{execute T2}} 来查看。
 
 ## 允许外部访问
 
-默认情况下，arthas server 侦听的是 `127.0.0.1` 这个 IP，如果希望远程可以访问，可以使用`--target-ip`的参数。
+默认情况下，arthas server 侦听的是 `127.0.0.1`{{}} 这个 IP，如果希望远程可以访问，可以使用`--target-ip`{{}} 的参数。
 
 `java -jar arthas-boot.jar --target-ip`{{execute T2}}
 

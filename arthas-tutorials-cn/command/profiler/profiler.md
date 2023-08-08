@@ -2,7 +2,7 @@
 
 [profiler 命令](https://arthas.aliyun.com/doc/profiler.html) 支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
 
-`profiler` 命令基本运行结构是 `profiler action [actionArg]`
+`profiler`{{}} 命令基本运行结构是 `profiler action [actionArg]`{{}}
 
 ### 查看所有支持的 action
 
@@ -16,7 +16,7 @@
 
 `profiler start -e cpu`{{execute T2}}
 
-> 默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`。可以用`--e`参数来指定。
+> 默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`{{}} 。可以用`--e`{{}} 参数来指定。
 
 ### 获取已采集的 sample 的数量
 
@@ -30,11 +30,11 @@
 
 #### 生成 html 格式结果
 
-默认情况下，结果文件是`html`格式。也可以用`--format`参数指定：
+默认情况下，结果文件是`html`{{}} 格式。也可以用`--format`{{}} 参数指定：
 
 `profiler stop --format html`{{execute T2}}
 
-或者在`--file`参数里用文件名指名格式。比如`--file /root/arthas-output/result.html` 。
+或者在`--file`{{}} 参数里用文件名指名格式。比如`--file /root/arthas-output/result.html`{{}} 。
 
 `profiler stop --file /root/arthas-output/result.html`{{execute T2}}
 
@@ -91,9 +91,9 @@ Perf events:
   trace:tracepoint
 ```
 
-如果遇到 OS 本身的权限/配置问题，然后缺少部分 event，可以参考`async-profiler`本身文档：[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
+如果遇到 OS 本身的权限/配置问题，然后缺少部分 event，可以参考`async-profiler`{{}} 本身文档：[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
-可以用`--event`参数指定要采样的事件，比如对`alloc`事件进入采样：
+可以用`--event`{{}} 参数指定要采样的事件，比如对`alloc`{{}} 事件进入采样：
 
 `profiler start --event alloc`{{execute T2}}
 
@@ -101,11 +101,11 @@ Perf events:
 
 `profiler resume`{{execute T2}}
 
-`start`和`resume`的区别是：`start`是新开始采样，`resume`会保留上次`stop`时的数据。
+`start`{{}} 和`resume`{{}} 的区别是：`start`{{}} 是新开始采样，`resume`{{}} 会保留上次`stop`{{}} 时的数据。
 
-通过执行`profiler getSamples`可以查看 samples 的数量来验证。
+通过执行`profiler getSamples`{{}} 可以查看 samples 的数量来验证。
 
-### 使用`execute`来执行复杂的命令
+### 使用`execute`{{}} 来执行复杂的命令
 
 比如开始采样：
 

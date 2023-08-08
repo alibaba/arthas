@@ -8,7 +8,7 @@ Check the current JVM Perf Counter information.
 
 `perfcounter`{{execute T2}}
 
-Print more information with the `-d` option:
+Print more information with the `-d`{{}} option:
 
 `perfcounter -d`{{execute T2}}
 
@@ -16,4 +16,4 @@ Print more information with the `-d` option:
 
 If the information is not printed, when the application starts, add the following parameters:
 
-`--add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED --add-opens java.management/sun.management.counter.perf=ALL-UNNAMED --add-opens java.management/sun.management.counter=ALL-UNNAMED`
+`--add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED --add-opens java.management/sun.management.counter.perf=ALL-UNNAMED --add-opens java.management/sun.management.counter=ALL-UNNAMED`{{}}

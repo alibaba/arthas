@@ -9,12 +9,12 @@
 
 ### 调用类中入参的对象的方法
 
-对 `com.example.demo.arthas.WelcomeController` 类当中的 `helloWorld` 的 `model` 入参调用 `addAttribute` 方法修改 `name` 的值  
-先访问 [/hello]({{TRAFFIC_HOST1_80}}/hello) 可以看到页面显示的是 `Hello World - jsp`。
+对 `com.example.demo.arthas.WelcomeController`{{}} 类当中的 `helloWorld`{{}} 的 `model`{{}} 入参调用 `addAttribute`{{}} 方法修改 `name`{{}} 的值  
+先访问 [/hello]({{TRAFFIC_HOST1_80}}/hello) 可以看到页面显示的是 `Hello World - jsp`{{}} 。
 
 `watch com.example.demo.arthas.WelcomeController helloWorld "{params[0].addAttribute('name', 'HTML')}"`{{exec}}
 
-运行上面命令后，再次访问 [/hello]({{TRAFFIC_HOST1_80}}/hello) 可以看到页面显示内容已变为 `Hello World - HTML`。
+运行上面命令后，再次访问 [/hello]({{TRAFFIC_HOST1_80}}/hello) 可以看到页面显示内容已变为 `Hello World - HTML`{{}} 。
 
 输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
 

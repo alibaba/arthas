@@ -4,6 +4,6 @@ Arthas supports some simple commands after the pipeline, such as:
 
 `sysprop | wc -l`{{execute T2}}
 
-## filtered by `grep`
+## filtered by `grep`{{}}
 
 `sysprop | grep user`{{execute T2}}

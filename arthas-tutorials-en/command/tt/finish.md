@@ -1,4 +1,4 @@
-The `tt Tutorial` demonstrates the usage of tt. If you have more tips or questions, please feel free to tell or ask in Issue.
+The `tt Tutorial`{{}} demonstrates the usage of tt. If you have more tips or questions, please feel free to tell or ask in Issue.
 
 - Issues: https://github.com/alibaba/arthas/issues
 - Documentation: https://arthas.aliyun.com/doc/en

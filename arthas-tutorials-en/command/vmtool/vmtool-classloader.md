@@ -4,9 +4,9 @@
 
 ### Specify classloader hash
 
-The classloader that loads the class can be found through the `sc` command.
+The classloader that loads the class can be found through the `sc`{{}} command.
 
-Then use the `-c`/`--classloader` parameter to specify:
+Then use the `-c`{{}} /`--classloader`{{}} parameter to specify:
 
 ```bash
 vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext

@@ -13,7 +13,7 @@
 
 `session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"init_session" }'); echo $session_data | json_pp`{{execute T3}}
 
-注： `json_pp` 工具将输出内容格式化为 pretty json。
+注： `json_pp`{{}} 工具将输出内容格式化为 pretty json。
 
 响应结果：
 
@@ -31,7 +31,7 @@
 
 `session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
-`b09f1353-202c-407b-af24-701b744f971e`;
+`b09f1353-202c-407b-af24-701b744f971e`{{}} ;
 
 请记下这里的会话 ID，在 Terminal 4 中需要手动输入。
 
@@ -39,7 +39,7 @@
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
-`5ae4e5fbab8b4e529ac404f260d4e2d1_1 `。
+`5ae4e5fbab8b4e529ac404f260d4e2d1_1 `{{}} 。
 
 #### 加入会话
 
@@ -65,14 +65,14 @@
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
-`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` 。
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `{{}} 。
 
 请记下这里的消费者 ID，在 Terminal 4 中需要手动输入。
 
 #### 拉取命令结果
 
-拉取命令结果消息的 action 为`pull_results`。请使用 Http long-polling 方式，定时循环拉取结果消息。
-消费者的超时时间为 5 分钟，超时后需要调用`join_session`分配新的消费者。每个消费者单独分配一个缓存队列，按顺序拉取命令结果，不会影响到其它消费者。
+拉取命令结果消息的 action 为`pull_results`{{}} 。请使用 Http long-polling 方式，定时循环拉取结果消息。
+消费者的超时时间为 5 分钟，超时后需要调用`join_session`{{}} 分配新的消费者。每个消费者单独分配一个缓存队列，按顺序拉取命令结果，不会影响到其它消费者。
 
 请求参数需要指定会话 ID 及消费者 ID:
 
@@ -82,13 +82,13 @@
 
 请在 Terminal 4 中输入 Terminal 3 中的会话 ID，这里的例子如下：
 
-`b09f1353-202c-407b-af24-701b744f971e`
+`b09f1353-202c-407b-af24-701b744f971e`{{}}
 
 `echo -n "Enter your sessionId in T3:"; read session_id`{{execute T4}}
 
 同样，接着输入 Terminal 3 中的消费者 ID，这里的例子如下：
 
-`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `{{}}
 
 `echo -n "Enter your consumerId in T3:"; read consumer_id`{{execute T4}}
 
@@ -136,7 +136,7 @@
 
 `curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"async_exec", "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
-`async_exec` 的结果：
+`async_exec`{{}} 的结果：
 
 ```json
 {
@@ -150,10 +150,10 @@
 }
 ```
 
-- `state` : `SCHEDULED` 状态表示已经解析命令生成任务，但未开始执行。
-- `body.jobId` :
-  异步执行命令的任务 ID，可以根据此任务 ID 来过滤在`pull_results`输出的命令结果。
-- `body.jobStatus` : 任务状态`READY`表示未开始执行。
+- `state`{{}} : `SCHEDULED`{{}} 状态表示已经解析命令生成任务，但未开始执行。
+- `body.jobId`{{}} :
+  异步执行命令的任务 ID，可以根据此任务 ID 来过滤在`pull_results`{{}} 输出的命令结果。
+- `body.jobStatus`{{}} : 任务状态`READY`{{}} 表示未开始执行。
 
 切换到上面自动拉取结果消息脚本的 shell（Terminal 4），查看输出：
 
@@ -243,7 +243,7 @@
 }
 ```
 
-watch 命令结果的`value`为 watch-experss 的值，上面命令中为`{params, returnObj, throwExp}`，所以 watch 结果的 value 为一个长度为 3 的数组，每个元素分别对应相应顺序的表达式。
+watch 命令结果的`value`{{}} 为 watch-experss 的值，上面命令中为`{params, returnObj, throwExp}`{{}} ，所以 watch 结果的 value 为一个长度为 3 的数组，每个元素分别对应相应顺序的表达式。
 请参考"watch 命令输出 map 对象"小节。
 
 #### 中断命令执行

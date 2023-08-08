@@ -4,7 +4,7 @@ Java Flight Recorder (JFR) is a tool for collecting diagnostic and profiling dat
 
 The [jfr command](https://arthas.aliyun.com/en/doc/jfr.html) supports starting and stopping JFR recordings during dynamic program running. Recording collects data about _events_. Events occur in the JVM or the Java application at a specific point in time. Each event has a name, a time stamp, and an optional _payload_. The payload is the data associated with an event, for example, the CPU usage, the Java heap size before and after the event, the thread ID of the lock holder, and so on.
 
-The basic usage of the `jfr` command is`jfr cmd [actionArg]`
+The basic usage of the `jfr`{{}} command is`jfr cmd [actionArg]`{{}}
 
 > Note: jfr is supported only after the 8u262 version of jdk8
 
@@ -45,13 +45,13 @@ Specifies the record output path.
 
 `$ jfr dump -r 1 -f /tmp/myRecording1.jfr`{{execute T2}}
 
-The file output path is not specified. By default, it is saved to the `arthas-output` directory
+The file output path is not specified. By default, it is saved to the `arthas-output`{{}} directory
 
 `jfr dump -r 1`{{execute T2}}
 
 ## Stop jfr recording
 
-No recording output path is specified, default is saved to `arthas-output` directory.
+No recording output path is specified, default is saved to `arthas-output`{{}} directory.
 
 `jfr stop -r 1`{{execute T2}}
 
@@ -61,7 +61,7 @@ You can also specify the record output path.
 
 ## View JFR recording results under arthas-output via browser
 
-By default, arthas uses http port 8563 , which can be opened:[http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) View the `arthas-output` directory below JFR recording results:
+By default, arthas uses http port 8563 , which can be opened:[http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) View the `arthas-output`{{}} directory below JFR recording results:
 
 ![](/images/arthas-output-recording.png)
 

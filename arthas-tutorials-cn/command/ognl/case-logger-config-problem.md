@@ -2,7 +2,7 @@
 
 ### 确认应用使用的 logger 系统
 
-以`UserController`为例，它使用的是 slf4j api，但实际使用到的 logger 系统是 logback。
+以`UserController`{{}} 为例，它使用的是 slf4j api，但实际使用到的 logger 系统是 logback。
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 

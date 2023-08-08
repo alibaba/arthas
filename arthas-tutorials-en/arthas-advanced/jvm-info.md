@@ -1,4 +1,4 @@
-The following describes the commands for viewing `JVM` information in Arthas.
+The following describes the commands for viewing `JVM`{{}} information in Arthas.
 
 ### [sysprop](https://arthas.aliyun.com/en/doc/sysprop.html)
 
@@ -6,17 +6,17 @@ The following describes the commands for viewing `JVM` information in Arthas.
 
 Specify a single key: `sysprop java.version`{{execute T2}}
 
-It can also be filtered by `grep`: `sysprop | grep user`{{execute T2}}
+It can also be filtered by `grep`{{}} : `sysprop | grep user`{{execute T2}}
 
 Set a new value: `sysprop testKey testValue`{{execute T2}}
 
 ### [sysenv](https://arthas.aliyun.com/en/doc/sysenv.html)
 
-The `sysenv`{{execute T2}} command gets the environment variable. Similar to the `sysprop` command.
+The `sysenv`{{execute T2}} command gets the environment variable. Similar to the `sysprop`{{}} command.
 
 ### [jvm](https://arthas.aliyun.com/en/doc/jvm.html)
 
-The `jvm`{{execute T2}} command prints out various details of the `JVM`.
+The `jvm`{{execute T2}} command prints out various details of the `JVM`{{}} .
 
 ### [dashboard](https://arthas.aliyun.com/en/doc/dashboard.html)
 

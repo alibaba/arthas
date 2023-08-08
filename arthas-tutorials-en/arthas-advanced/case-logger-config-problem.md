@@ -4,14 +4,14 @@ In this case, show how to troubleshoot logger conflicts.
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
 
-Please write down your classLoaderHash here since it's dynamic. In the case here, it's `1be6f5c3`.  
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
-For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.  
-The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+Please write down your classLoaderHash here since it's dynamic. In the case here, it's `1be6f5c3`{{}} .  
+if you use`-c`{{}} , you have to manually type hashcode by `-c <hashcode>`{{}} .  
+For classloader with only one instance, it can be specified by `--classLoaderClass`{{}} using class name, which is more convenient to use.  
+The value of `--classloaderclass`{{}} is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>`{{}} is dynamic.
 
 ### View the logger system used by the app
 
-Take `UserController` as an example, it uses slf4j api, but the actual logger system used is logback.
+Take `UserController`{{}} as an example, it uses slf4j api, but the actual logger system used is logback.
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 

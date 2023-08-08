@@ -43,7 +43,7 @@
 
 `mbean java.lang:type=Threading *Count`{{execute T2}}
 
-### 使用`-E`命令切换为正则匹配
+### 使用`-E`{{}} 命令切换为正则匹配
 
 `mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount`{{execute T2}}
 
@@ -51,6 +51,6 @@
 
 `mbean -E java.lang:name=*,type=MemoryPool Name|Usage|Type | grep " HEAP" -A3 -B1`{{execute T2}}
 
-### 使用`-i`命令实时监控
+### 使用`-i`{{}} 命令实时监控
 
 `mbean -i 1000 java.lang:type=Threading *Count`{{execute T2}}

@@ -1,4 +1,4 @@
-比如查看`sysprop`命令的帮助信息：
+比如查看`sysprop`{{}} 命令的帮助信息：
 
 `help sysprop`{{execute T2}}
 

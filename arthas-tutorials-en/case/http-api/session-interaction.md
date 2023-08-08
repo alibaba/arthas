@@ -14,7 +14,7 @@ Create session and save output into bash environment.
 
 `session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '{ "action":"init_session" }'); echo $session_data | json_pp`{{execute T3}}
 
-Note: The `json_pp` tool formats the output content as pretty json.
+Note: The `json_pp`{{}} tool formats the output content as pretty json.
 
 Response result:
 
@@ -32,7 +32,7 @@ The new session ID is:
 
 `session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g'); echo $session_id`{{execute T3}}
 
-`b09f1353-202c-407b-af24-701b744f971e`;
+`b09f1353-202c-407b-af24-701b744f971e`{{}} ;
 
 Please take a note of your session ID here, it will be entered in Terminal 4 in the following steps.
 
@@ -40,7 +40,7 @@ consumer ID is:
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
-`5ae4e5fbab8b4e529ac404f260d4e2d1_1`.
+`5ae4e5fbab8b4e529ac404f260d4e2d1_1`{{}} .
 
 Please take a note of your consumer ID here, it will be entered in Terminal 4 in the following steps.
 
@@ -72,14 +72,14 @@ The new consumer ID is
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g'); echo $consumer_id`{{execute T3}}
 
-`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` .
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `{{}} .
 
 #### Pull command results
 
-The action of pulling the command result message is `pull_results`.
+The action of pulling the command result message is `pull_results`{{}} .
 Please use the Http long-polling method to periodically pull the result
 messages. The consumer's timeout period is 5 minutes. After the timeout,
-you need to call `join_session` to allocate a new consumer.
+you need to call `join_session`{{}} to allocate a new consumer.
 
 Each consumer is allocated a cache queue separately, and the pull order
 does not affect the content received by the consumer.
@@ -92,13 +92,13 @@ Use Bash scripts to regularly pull results messages:
 
 Please enter the sessionID from your Terminal 3 in Terminal 4, an example is here：
 
-`b09f1353-202c-407b-af24-701b744f971e`
+`b09f1353-202c-407b-af24-701b744f971e`{{}}
 
 `echo -n "Enter your sessionId in T3:"; read session_id`{{execute T4}}
 
 Also, Please enter the consumerID, an example is here：
 
-`8f7f6ad7bc2d4cb5aa57a530927a95cc_2`
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2`{{}}
 
 `echo -n "Enter your consumerId in T3:"; read consumer_id`{{execute T4}}
 
@@ -146,7 +146,7 @@ The response content is as follows:
 
 `curl -Ss -XPOST http://localhost:8563/api -d '''{ "action":"async_exec", "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ", "sessionId" : "'"$session_id"'" }''' | json_pp`{{execute T3}}
 
-Response of `async_exec`:
+Response of `async_exec`{{}} :
 
 ```json
 {
@@ -160,11 +160,11 @@ Response of `async_exec`:
 }
 ```
 
-- `state` : The status of `SCHEDULED` means that the command has been
+- `state`{{}} : The status of `SCHEDULED`{{}} means that the command has been
   parsed and generated the job, but the execution has not started.
-- `body.jobId` : The job id of command execution, filter the command
-  results output in `pull_results` according to this job ID.
-- `body.jobStatus` : The job status `READY` means that execution has not started.
+- `body.jobId`{{}} : The job id of command execution, filter the command
+  results output in `pull_results`{{}} according to this job ID.
+- `body.jobStatus`{{}} : The job status `READY`{{}} means that execution has not started.
 
 Switch to the shell output of the script that continuously pulls the result message (Terminal 4):
 
@@ -254,8 +254,8 @@ Switch to the shell output of the script that continuously pulls the result mess
 }
 ```
 
-The `value` of the watch command result is the value of watch-experss,
-and the above command is `{params, returnObj, throwExp}`, so the value
+The `value`{{}} of the watch command result is the value of watch-experss,
+and the above command is `{params, returnObj, throwExp}`{{}} , so the value
 of the watch result is an array of length 3, and each element
 corresponds to the expression in the corresponding order.
 

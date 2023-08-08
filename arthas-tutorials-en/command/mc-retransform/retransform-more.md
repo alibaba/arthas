@@ -1,4 +1,4 @@
-> Load the external `*.class` files to retransform the loaded classes in JVM.
+> Load the external `*.class`{{}} files to retransform the loaded classes in JVM.
 
 Reference: [Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
@@ -33,6 +33,6 @@ If you want to eliminate the impact after performing retransform on a class, you
 
 > If you do not clear all retransform entries and trigger retransform again, the retransformed classes will still take effect when arthas stop.
 
-After deleting the retransform entry above and explicitly triggering the retransform, you can use the `jad` command to confirm that the result of the previous retransform has been eliminated.
+After deleting the retransform entry above and explicitly triggering the retransform, you can use the `jad`{{}} command to confirm that the result of the previous retransform has been eliminated.
 
 Visit [/user/0]({{TRAFFIC_HOST1_80}}/user/0) again, an exception will be thrown.

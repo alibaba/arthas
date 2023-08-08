@@ -1,4 +1,4 @@
-下面介绍`classloader`命令的功能。
+下面介绍`classloader`{{}} 命令的功能。
 
 先访问一个 jsp 网页，触发 jsp 的加载： [访问 hello 页面]({{TRAFFIC_HOST1_80}}/hello)
 
@@ -14,7 +14,7 @@
 
 ### 列出 ClassLoader 里加载的所有类
 
-列出上面的`org.apache.jasper.servlet.JasperLoader`加载的类：
+列出上面的`org.apache.jasper.servlet.JasperLoader`{{}} 加载的类：
 
 `classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader | grep hello`{{exec}}
 
@@ -28,7 +28,7 @@
 
 ### 查看 URLClassLoader 实际的 urls
 
-比如上面查看到的 spring LaunchedURLClassLoader 为 `org.springframework.boot.loader.LaunchedURLClassLoader`，可以通过 `-c <hashcode>` 参数来指定 classloader，还有一种方法可以通过使用 `--classLoaderClass` 指定类名，从而查看 URLClassLoader 实际的 urls：
+比如上面查看到的 spring LaunchedURLClassLoader 为 `org.springframework.boot.loader.LaunchedURLClassLoader`{{}} ，可以通过 `-c <hashcode>`{{}} 参数来指定 classloader，还有一种方法可以通过使用 `--classLoaderClass`{{}} 指定类名，从而查看 URLClassLoader 实际的 urls：
 
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{exec}}
 

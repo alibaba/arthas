@@ -50,8 +50,8 @@ Enter `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to exit the dashboard 
 - STATE: thread state
 - CPU%: the ratio of CPU usage for the thread. For example, the sampling interval is 1000ms, and the incremental cpu time
   of a thread is 100ms, then the cpu usage rate=100/1000=10%
-- DELTA_TIME: incremental CPU time of thread running after the last sampling in `second` format
-- TIME: total CPU time of the thread in `minute:second` format
+- DELTA_TIME: incremental CPU time of thread running after the last sampling in `second`{{}} format
+- TIME: total CPU time of the thread in `minute:second`{{}} format
 - INTERRUPTED: the thread interruption state
 - DAEMON: daemon thread or not
 
@@ -64,11 +64,11 @@ JVM activities can be observed through internal threads, such as GC, JIT compila
 
 - When the JVM heap/metaspace space is insufficient or OOM, it can be seen that the CPU usage of the GC threads is
   significantly higher than other threads.
-- After executing commands such as `trace/watch/tt/redefine`, you can see that JIT threads activities become more frequent.
+- After executing commands such as `trace/watch/tt/redefine`{{}} , you can see that JIT threads activities become more frequent.
   Because the JIT compilation data related to this class is cleared when the JVM hot update the class bytecode, it needs to be recompiled.
 
 JVM internal threads include the following:
 
-- JIT compilation thread: such as `C1 CompilerThread0`, `C2 CompilerThread0`
-- GC thread: such as `GC Thread0`, `G1 Young RemSet Sampling`
-- Other internal threads: such as`VM Periodic Task Thread`, `VM Thread`, `Service Thread`
+- JIT compilation thread: such as `C1 CompilerThread0`{{}} , `C2 CompilerThread0`{{}}
+- GC thread: such as `GC Thread0`{{}} , `G1 Young RemSet Sampling`{{}}
+- Other internal threads: such as`VM Periodic Task Thread`{{}} , `VM Thread`{{}} , `Service Thread`{{}}

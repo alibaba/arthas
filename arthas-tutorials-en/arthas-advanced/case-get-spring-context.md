@@ -8,11 +8,11 @@ In this case, the user can get the spring context, get the bean, and invoke the 
 
 Visit: [/user/1]({{TRAFFIC_HOST1_80}}/user/1)
 
-You can see the `tt` command record an invocation
+You can see the `tt`{{}} command record an invocation
 
 ### Use the tt command to get the spring context from the invocation record.
 
-Type `Q`{{exec interrupt}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t` command above.
+Type `Q`{{exec interrupt}} or `Ctrl + C`{{exec interrupt}} to exit the `tt -t`{{}} command above.
 
 `tt -i 1000 -w 'target.getApplicationContext()'`{{execute T2}}
 

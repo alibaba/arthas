@@ -1,4 +1,4 @@
-Specify customization in `$USER_HOME/.arthas/conf/inputrc` file in the current user home directory.
+Specify customization in `$USER_HOME/.arthas/conf/inputrc`{{}} file in the current user home directory.
 
 `exit`{{execute interrupt}}
 
@@ -28,7 +28,7 @@ The default configuration is as follows:
 "\e\C-?": backward-kill-word
 ```
 
-Vim user may want to map `ctrl+h` to moving the cursor forward one character. To achieve this, replace `"\C-h": backward-delete-char` with `"\C-h": backward-char` in the default configuration. The modified configuration is as follows:
+Vim user may want to map `ctrl+h`{{}} to moving the cursor forward one character. To achieve this, replace `"\C-h": backward-delete-char`{{}} with `"\C-h": backward-char`{{}} in the default configuration. The modified configuration is as follows:
 
 `echo '\C-a": beginning-of-line\n"\C-e": end-of-line\n"\C-f": forward-word\n"\C-b": backward-word\n"\e[D": backward-char\n"\e[C": forward-char\n"\e[B": next-history\n"\e[A": previous-history\n"\C-h": backward-char\n"\C-?": backward-delete-char\n"\C-u": undo\n"\C-d": delete-char\n"\C-k": kill-line\n"\C-i": complete\n"\C-j": accept-line"\C-m": accept-line\n"\C-w": backward-delete-word\n"\C-x\e[3~": backward-kill-line\n"\e\C-?": backward-kill-word'`{{execute T2}}
 

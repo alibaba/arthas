@@ -2,7 +2,7 @@ Asynchronous jobs in arthas. The idea is borrowed from [linux jobs](http://man7.
 
 ### Use & to run the command in the background, redirect the output
 
-The job output can be redirect to the specified file by `>` or `>>`, and can be used together with `&`. By doing this, you can achieve running commands asynchronously.
+The job output can be redirect to the specified file by `>`{{}} or `>>`{{}} , and can be used together with `&`{{}} . By doing this, you can achieve running commands asynchronously.
 
 To troubleshoot an issue that may occur at an uncertain time, we can run a monitoring command in the background and save the output to a log file. Use the following command:
 
@@ -22,7 +22,7 @@ If you want to list all background jobs, you can execute the jobs command and th
 
 You can see that there is currently a background job executing:
 
-job id is 10, `*` indicates that this job is created by the current session.
+job id is 10, `*`{{}} indicates that this job is created by the current session.
 
 status is Stopped.
 
@@ -32,11 +32,11 @@ timeout date: timeout timestamp, when the time exceeds this timestamp, the job w
 
 ### Stop job
 
-If you want to stop background job, just `kill <job-id>`.
-If you wish to bring the command to the foreground or background for continued execution, you can use the `fg` and `bg` commands.
+If you want to stop background job, just `kill <job-id>`{{}} .
+If you wish to bring the command to the foreground or background for continued execution, you can use the `fg`{{}} and `bg`{{}} commands.
 
 ### Note
 
 - Support up to 8 commands at the same time to redirect the output to the log files.
 - Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.
-- If you do not want to stop the Arthas service and continue to perform background tasks, you can exit the Arthas console by executing `quit` command (`stop` command will stop the Arthas service)
+- If you do not want to stop the Arthas service and continue to perform background tasks, you can exit the Arthas console by executing `quit`{{}} command (`stop`{{}} command will stop the Arthas service)

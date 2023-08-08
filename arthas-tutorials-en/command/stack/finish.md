@@ -1,4 +1,4 @@
-The `stack Tutorial` demonstrates the usage of stack. If you have more tips or questions, please feel free to tell or ask in Issue.
+The `stack Tutorial`{{}} demonstrates the usage of stack. If you have more tips or questions, please feel free to tell or ask in Issue.
 
 - Issues: https://github.com/alibaba/arthas/issues
 - Documentation: https://arthas.aliyun.com/doc/en

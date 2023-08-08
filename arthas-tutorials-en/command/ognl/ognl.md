@@ -6,23 +6,23 @@ Check the usage: `ognl --help`{{execute T2}}
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
-You can check the output of the process in `Terminal 1`, and find that it displays `hello ognl`.
+You can check the output of the process in `Terminal 1`{{}} , and find that it displays `hello ognl`{{}} .
 
 ### Find the ClassLoader of the UserController
 
 `sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
 
-if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.  
-For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.  
-The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+if you use`-c`{{}} , you have to manually type hashcode by `-c <hashcode>`{{}} .  
+For classloader with only one instance, it can be specified by `--classLoaderClass`{{}} using class name, which is more convenient to use.  
+The value of `--classloaderclass`{{}} is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>`{{}} is dynamic.
 
 ### Get static fields of static classes
 
-Get the `logger` field of the `UserController` class:
+Get the `logger`{{}} field of the `UserController`{{}} class:
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
-Control the number of expansion layers of the return value with the `-x` parameter. such as:
+Control the number of expansion layers of the return value with the `-x`{{}} parameter. such as:
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
@@ -34,7 +34,7 @@ Return a list:
 
 ### More
 
-The `ognl` expression in Arthas is an important feature, and the `ognl` expression can be used in many commands.
+The `ognl`{{}} expression in Arthas is an important feature, and the `ognl`{{}} expression can be used in many commands.
 
 For some more complicated usages, refer to:
 

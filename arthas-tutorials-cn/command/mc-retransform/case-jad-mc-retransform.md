@@ -1,4 +1,4 @@
-下面介绍通过`jad`/`mc`/`redefine` 命令实现动态更新代码的功能。
+下面介绍通过`jad`{{}} /`mc`{{}} /`redefine`{{}} 命令实现动态更新代码的功能。
 
 目前，访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，会返回 500 异常：
 
@@ -8,13 +8,13 @@
 
 `jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java`{{execute T2}}
 
-jad 反编译的结果保存在 `/tmp/UserController.java`文件里了。
+jad 反编译的结果保存在 `/tmp/UserController.java`{{}} 文件里了。
 
-再打开一个终端于 `Tab 3`，然后在 `Tab3` 里用 `sed` 来编辑`/tmp/UserController.java`：
+再打开一个终端于 `Tab 3`{{}} ，然后在 `Tab3`{{}} 里用 `sed`{{}} 来编辑`/tmp/UserController.java`{{}} ：
 
 `sed -i 's/throw new IllegalArgumentException("id < 1")/return new User(id, "name" + id)/g' /tmp/UserController.java`{{execute T3}}
 
-使用 `cat` 命令查看修改后的内容：
+使用 `cat`{{}} 命令查看修改后的内容：
 
 `cat /tmp/UserController.java`{{exec}}
 
@@ -41,15 +41,15 @@ jad 反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
 #### sc 查找加载 UserController 的 ClassLoader
 
-回到 `Tab 2` 里运行 `sc -d *UserController | grep classLoaderHash`{{exec}}
+回到 `Tab 2`{{}} 里运行 `sc -d *UserController | grep classLoaderHash`{{exec}}
 
 #### classloader 查询类加载器名称
 
-`classloader -l`{{exec}} 查询所有的类加载器列表，`UserController classLoaderHash` 值对应的类加载器为 `org.springframework.boot.loader.LaunchedURLClassLoader`
+`classloader -l`{{exec}} 查询所有的类加载器列表，`UserController classLoaderHash`{{}} 值对应的类加载器为 `org.springframework.boot.loader.LaunchedURLClassLoader`{{}}
 
 ### mc 编译加载 UserController
 
-保存到 `/tmp/UserController.java` 之后可以使用 mc (Memory Compiler) 命令来编译
+保存到 `/tmp/UserController.java`{{}} 之后可以使用 mc (Memory Compiler) 命令来编译
 
 ### mc 指定 classloader 编译 UserController
 
@@ -57,13 +57,13 @@ jad 反编译的结果保存在 `/tmp/UserController.java`文件里了。
 
 ### [retransform](https://arthas.aliyun.com/doc/retransform.html)
 
-再使用`retransform`命令重新加载新编译好的`UserController.class`：
+再使用`retransform`{{}} 命令重新加载新编译好的`UserController.class`{{}} ：
 
 `retransform /tmp/com/example/demo/arthas/user/UserController.class`{{execute T2}}
 
 ### 热修改代码结果
 
-`retransform`成功之后，再次访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
+`retransform`{{}} 成功之后，再次访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0) ，结果是：
 
 ```
 {

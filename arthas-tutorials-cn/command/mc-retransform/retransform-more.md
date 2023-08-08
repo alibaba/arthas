@@ -1,4 +1,4 @@
-> 加载外部的`.class`文件，retransform jvm 已加载的类。
+> 加载外部的`.class`{{}} 文件，retransform jvm 已加载的类。
 
 参考：[Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
@@ -33,6 +33,6 @@
 
 > 如果不清除掉所有的 retransform entry，并重新触发 retransform，则 arthas stop 时，retransform 过的类仍然生效。
 
-在上面删掉 retransform entry，再显式触发 retransform 之后，可以用 `jad`命令来确认之前 retransform 的结果已经被消除了。
+在上面删掉 retransform entry，再显式触发 retransform 之后，可以用 `jad`{{}} 命令来确认之前 retransform 的结果已经被消除了。
 
 再次访问 [/user/0]({{TRAFFIC_HOST1_80}}/user/0)，会抛出异常。

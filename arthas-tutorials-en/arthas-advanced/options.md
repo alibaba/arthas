@@ -6,9 +6,9 @@ View the value of a single option, such as
 
 ## Allow to enhance the classes of JDK
 
-By default, `unsafe` is false, ie commands such as `watch`/`trace` do not enhance the JVM class, which is the class starting with `java.*`.
+By default, `unsafe`{{}} is false, ie commands such as `watch`{{}} /`trace`{{}} do not enhance the JVM class, which is the class starting with `java.*`{{}} .
 
-To enhance the classes in the JVM, execute `options unsafe true`{{execute T2}} to set `unsafe` to true.
+To enhance the classes in the JVM, execute `options unsafe true`{{execute T2}} to set `unsafe`{{}} to true.
 
 ## Print objects in JSON format
 
