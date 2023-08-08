@@ -14,7 +14,7 @@ Something went wrong: 401 Unauthorized
 
 开始 trace：
 
-`trace javax.servlet.Filter *`{{execute T2}}
+`trace com.example.demo.arthas.AdminFilterConfig$AdminFilter doFilter`{{execute T2}}
 
 访问： [/admin]({{TRAFFIC_HOST1_80}}/admin)
 

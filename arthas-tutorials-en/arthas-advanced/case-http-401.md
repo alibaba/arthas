@@ -14,7 +14,7 @@ We know that `401` is usually intercepted by the permission-managed `Filter`, so
 
 Start trace:
 
-`trace javax.servlet.Filter *`{{execute T2}}
+`trace com.example.demo.arthas.AdminFilterConfig$AdminFilter doFilter`{{execute T2}}
 
 Visit: [/admin]({{TRAFFIC_HOST1_80}}/admin)
 
