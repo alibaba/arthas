@@ -10,7 +10,7 @@ Take `UserController` as an example, it uses slf4j api, but the actual logger sy
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
 
-### Use the classloader command to find possible logger configuration files
+### Use the [classloader](https://arthas.aliyun.com/doc/classloader.html) command to find possible logger configuration files
 
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 

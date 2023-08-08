@@ -19,7 +19,7 @@
 
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
 
-### 使用 classloader 命令查找可能存在的 logger 配置文件
+### 使用 [classloader](https://arthas.aliyun.com/doc/classloader.html) 命令查找可能存在的 logger 配置文件
 
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
