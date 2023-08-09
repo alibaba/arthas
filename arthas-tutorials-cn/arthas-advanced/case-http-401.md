@@ -26,7 +26,9 @@ Something went wrong: 401 Unauthorized
 |       `---[0.17259ms] javax.servlet.http.HttpServletResponse:sendError()
 ```
 
-### 通过 stack 获取调用栈
+输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。
+
+### 通过 [stack](https://arthas.aliyun.com/doc/stack.html) 获取调用栈
 
 上面是通过`trace`{{}} 命令来获取信息，从结果里，我们可以知道通过`stack`{{}} 跟踪`HttpServletResponse:sendError()`{{}} ，同样可以知道是哪个`Filter`{{}} 返回了`401`{{}}
 
@@ -35,3 +37,5 @@ Something went wrong: 401 Unauthorized
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
 访问： [/admin]({{TRAFFIC_HOST1_80}}/admin)
+
+输入 `Q`{{exec interrupt}} 或者 `Ctrl+C`{{exec interrupt}} 退出 watch 命令。

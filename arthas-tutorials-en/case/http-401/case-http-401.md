@@ -26,7 +26,9 @@ At the deepest level of the call tree, you can find `AdminFilterConfig$AdminFilt
 |       `---[0.17259ms] javax.servlet.http.HttpServletResponse:sendError()
 ```
 
-### Get the call stack through stack command
+The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
+
+### Get the call [stack](https://arthas.aliyun.com/en/doc/stack.html) through stack command
 
 From the above result, we can find the method: `HttpServletResponse:sendError()`{{}} . So we can use `stack`{{}} command to resolved the HTTP `401`{{}} issue.
 
@@ -35,3 +37,5 @@ Run:
 `stack javax.servlet.http.HttpServletResponse sendError 'params[0]==401'`{{execute T2}}
 
 Visit: [/admin]({{TRAFFIC_HOST1_80}}/admin)
+
+The user can exit the watch command by typing `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}}.
