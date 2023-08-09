@@ -18,7 +18,7 @@ SRC: https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/vdoing/compone
           >
             <a
               :href="'#' + item.slug"
-              v-if="item.title.replace(/[^\x00-\xff]/g, '01').length >= 27"
+              v-if="item.title.replace(/[^\x00-\xff]/g, '01').length >= 36"
               :title="item.title"
               >{{ item.title }}</a
             >
@@ -35,7 +35,7 @@ SRC: https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/vdoing/compone
           >
             <a
               :href="'#' + subItem.slug"
-              v-if="subItem.title.replace(/[^\x00-\xff]/g, '01').length >= 27"
+              v-if="subItem.title.replace(/[^\x00-\xff]/g, '01').length >= 35"
               :title="subItem.title"
               >{{ subItem.title }}</a
             >
@@ -82,7 +82,7 @@ watch(useRoute(), () => {
 </script>
 
 <style lang="scss" scoped>
-$rightMenuWidth: 230px;
+$rightMenuWidth: 280px;
 
 .theme-default-content {
   .right-menu-wrapper {
