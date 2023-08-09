@@ -18,3 +18,5 @@
 
 - Github: https://github.com/alibaba/arthas
 - 文档：https://arthas.aliyun.com/doc
+
+> 注意：请等待环境配置结束后再进入下一步

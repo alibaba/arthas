@@ -21,10 +21,10 @@
 
 ### 参数说明
 
-|                  参数名称 | 参数说明                                   |
-| ------------------------: | :----------------------------------------- |
-|                      [c:] | ClassLoader 的 hashcode                    |
-| `[classLoaderClass:]`{{}} | 指定执行表达式的 ClassLoader 的 class name |
+|                  参数名称 | 参数说明                                    |
+| ------------------------: | :------------------------------------------ |
+|                      [c:] | ClassLoader 的 hashcode                     |
+| `[classLoaderClass:]`{{}} | 指定执行表达式的 ClassLoader 的 class name  |
 |                      [p:] | 外部的`.class`{{}} 文件的完整路径，支持多个 |
 
 ### redefine 的限制

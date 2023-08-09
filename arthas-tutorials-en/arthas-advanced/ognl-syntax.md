@@ -5,11 +5,12 @@
 - JavaBeans Indexed Properties  
    An object has a set of methods that follow the following pattern:
   ```java
-public PropertyType[] getPropertyName();
-public void setPropertyName(PropertyType[] anArray);
-public PropertyType getPropertyName(int index);
-public void setPropertyName(int index, PropertyType value);
-```So`someProperty[2]`{{}} is equivalent to the Java code `getPropertyName(2)`{{}} .
+  public PropertyType[] getPropertyName();
+  public void setPropertyName(PropertyType[] anArray);
+  public PropertyType getPropertyName(int index);
+  public void setPropertyName(int index, PropertyType value);
+  ```
+  So`someProperty[2]`{{}} is equivalent to the Java code `getPropertyName(2)`{{}} .
 
 `ognl "{1,2,3,4}[0]"`{{exec}}
 

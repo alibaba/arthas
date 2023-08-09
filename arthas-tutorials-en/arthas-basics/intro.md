@@ -34,3 +34,5 @@ This is an basics Arthas tutorial, which includes basics commands.
 
 - Github: https://github.com/alibaba/arthas
 - Docs: https://arthas.aliyun.com/doc/en
+
+> Note: Please wait for the environment configuration to finish before proceeding to the next step

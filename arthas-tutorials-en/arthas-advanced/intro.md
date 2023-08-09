@@ -34,3 +34,5 @@ This is an advanced Arthas tutorial, which includes some examples and advanced c
 
 - Github: https://github.com/alibaba/arthas
 - Docs: https://arthas.aliyun.com/doc/en
+
+> Note: Please wait for the environment configuration to finish before proceeding to the next step

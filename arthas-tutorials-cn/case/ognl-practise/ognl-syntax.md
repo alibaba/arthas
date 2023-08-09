@@ -5,11 +5,12 @@
 - JavaBeans 索引属性  
    如一个 JavaBeans 有以下四个重载方法：
   ```java
-public PropertyType[] getPropertyName();
-public void setPropertyName(PropertyType[] anArray);
-public PropertyType getPropertyName(int index);
-public void setPropertyName(int index, PropertyType value);
-```则`someProperty[2]`{{}} 等价于 Java 代码的 `getPropertyName(2)`{{}}
+  public PropertyType[] getPropertyName();
+  public void setPropertyName(PropertyType[] anArray);
+  public PropertyType getPropertyName(int index);
+  public void setPropertyName(int index, PropertyType value);
+  ```
+  则`someProperty[2]`{{}} 等价于 Java 代码的 `getPropertyName(2)`{{}}
 
 `ognl "{1,2,3,4}[0]"`{{exec}}
 
