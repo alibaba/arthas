@@ -14,11 +14,17 @@ Something went wrong: 401 Unauthorized
 
 开始 trace：
 
-`trace com.example.demo.arthas.AdminFilterConfig$AdminFilter doFilter`{{execute T2}}
+`trace javax.servlet.Filter *`{{execute T2}}
 
 访问： [/admin]({{TRAFFIC_HOST1_80}}/admin)
 
 可以在调用树的最深层，找到`AdminFilterConfig$AdminFilter`{{}} 返回了`401`{{}} ：
+
+```
++---[3.806273ms] javax.servlet.FilterChain:doFilter()
+|   `---[3.447472ms] com.example.demo.arthas.AdminFilterConfig$AdminFilter:doFilter()
+|       `---[0.17259ms] javax.servlet.http.HttpServletResponse:sendError()
+```
 
 ### 通过 stack 获取调用栈
 

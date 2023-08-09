@@ -14,11 +14,17 @@ We know that `401`{{}} is usually intercepted by the permission-managed `Filter`
 
 Start trace:
 
-`trace com.example.demo.arthas.AdminFilterConfig$AdminFilter doFilter`{{execute T2}}
+`trace javax.servlet.Filter *`{{execute T2}}
 
 Visit: [/admin]({{TRAFFIC_HOST1_80}}/admin)
 
-At the deepest level of the call tree, you can find `AdminFilterConfig$AdminFilter`{{}} which returns `401`{{}} :
+At the deepest level of the call tree, you can find `AdminFilterConfig$AdminFilter`{{}} which returns `401`{{}}
+
+```
++---[3.806273ms] javax.servlet.FilterChain:doFilter()
+|   `---[3.447472ms] com.example.demo.arthas.AdminFilterConfig$AdminFilter:doFilter()
+|       `---[0.17259ms] javax.servlet.http.HttpServletResponse:sendError()
+```
 
 ### Get the call stack through stack command
 
