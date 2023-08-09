@@ -138,7 +138,7 @@ $rightMenuWidth: 230px;
       padding-right: 0;
     }
     .right-menu-item {
-      padding: 4px 15px;
+      padding: 4px 0px 0px 15px;
 
       overflow: hidden;
       white-space: nowrap;
