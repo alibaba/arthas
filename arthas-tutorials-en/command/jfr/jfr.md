@@ -1,6 +1,5 @@
-::: tip
-Java Flight Recorder (JFR) is a tool for collecting diagnostic and profiling data about a running Java application. It is integrated into the Java Virtual Machine (JVM) and causes almost no performance overhead, so it can be used even in heavily loaded production environments.
-:::
+> tip
+> Java Flight Recorder (JFR) is a tool for collecting diagnostic and profiling data about a running Java application. It is integrated into the Java Virtual Machine (JVM) and causes almost no performance overhead, so it can be used even in heavily loaded production environments.
 
 The [jfr command](https://arthas.aliyun.com/en/doc/jfr.html) supports starting and stopping JFR recordings during dynamic program running. Recording collects data about _events_. Events occur in the JVM or the Java application at a specific point in time. Each event has a name, a time stamp, and an optional _payload_. The payload is the data associated with an event, for example, the CPU usage, the Java heap size before and after the event, the thread ID of the lock holder, and so on.
 
@@ -17,9 +16,8 @@ $ jfr start
 Started recording 1. No limit specified, using maxsize=250MB as default.
 ```
 
-::: tip
-The default JFR record is started.
-:::
+> tip
+> The default JFR record is started.
 
 Start the JFR recording, specify the recording name, duration, file saving path.
 
@@ -59,11 +57,15 @@ No recording output path is specified, default is saved to `arthas-output`{{}} d
 
 You can also specify the record output path.
 
+## Timer expired
+
+`jfr start --duration 60s`{{exec}}
+
 ## View JFR recording results under arthas-output via browser
 
-By default, arthas uses http port 8563 , which can be opened:[http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) View the `arthas-output`{{}} directory below JFR recording results:
+By default, arthas uses http port 8563 , which can be opened: [/arthas-output]({{TRAFFIC_HOST1_8563}}/arthas-output) View the `arthas-output`{{}} directory below JFR recording results:
 
-![](/images/arthas-output-recording.png)
+![](../../assets/arthas-output-recording.png)
 
 The resulting results can be viewed with tools that support the JFR format. Such as:
 
