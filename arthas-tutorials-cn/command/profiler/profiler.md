@@ -14,9 +14,9 @@
 
 ### 启动 profiler
 
-`profiler start -e cpu`{{execute T2}}
+`profiler start --event cpu`{{execute T2}}
 
-> 默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`{{}} 。可以用`--e`{{}} 参数来指定。
+> 默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`{{}} 。可以用`--event`{{}} 参数来指定。
 
 ### 获取已采集的 sample 的数量
 
@@ -103,7 +103,7 @@ Perf events:
 
 `start`{{}} 和`resume`{{}} 的区别是：`start`{{}} 是新开始采样，`resume`{{}} 会保留上次`stop`{{}} 时的数据。
 
-通过执行`profiler getSamples`{{}} 可以查看 samples 的数量来验证。
+可执行`profiler getSamples`{{}} 可以查看 samples 的数量来验证。
 
 ### 使用`execute`{{}} 来执行复杂的命令
 

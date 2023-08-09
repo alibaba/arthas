@@ -14,9 +14,9 @@ The basic usage of the `profiler`{{}} command is `profiler action [actionArg]`{{
 
 ### Start profiler
 
-`profiler start -e cpu`{{execute T2}}
+`profiler start --event cpu`{{execute T2}}
 
-> By default, the sample event is `cpu`{{}} . Can be specified with the `--e`{{}} parameter.
+> By default, the sample event is `cpu`{{}} . Can be specified with the `--event`{{}} parameter.
 
 ### Get the number of samples collected
 
