@@ -7,30 +7,6 @@ export const sidebarEN = {
         "/en/doc/quick-start.md",
         "/en/doc/install-detail.md",
         "/en/doc/download.md",
-        "/en/doc/advanced-use.md",
-        {
-          text: "Other features",
-          collapsible: true,
-          children: [
-            "/en/doc/async.md",
-            "/en/doc/save-log.md",
-            "/en/doc/batch-support.md",
-            {
-              text: "How to use ognl",
-              link: "",
-              children: [
-                {
-                  text: "Basic ognl example",
-                  link: "https://github.com/alibaba/arthas/issues/11",
-                },
-                {
-                  text: "Ognl special uses",
-                  link: "https://github.com/alibaba/arthas/issues/71",
-                },
-              ],
-            },
-          ],
-        },
         "/en/doc/advice-class.html",
         {
           text: "All Commands",
@@ -85,12 +61,24 @@ export const sidebarEN = {
             "/en/doc/watch.md",
           ],
         },
-        "/en/doc/web-console.md",
-        "/en/doc/tunnel.md",
-        "/en/doc/http-api.md",
-        "/en/doc/docker.md",
-        "/en/doc/spring-boot-starter.md",
-        "/en/doc/idea-plugin.md",
+        {
+          text: "Other features",
+          link: "/en/doc/advanced-use.md",
+          collapsible: true,
+          children: [
+            "/en/doc/async.md",
+            "/en/doc/batch-support.md",
+            "/en/doc/docker.md",
+            "/en/doc/web-console.md",
+            "/en/doc/tunnel.md",
+            "/en/doc/idea-plugin.md",
+            "/en/doc/arthas-properties.html",
+            "/en/doc/agent.html",
+            "/en/doc/save-log.md",
+            "/en/doc/spring-boot-starter.md",
+            "/en/doc/http-api.md",
+          ],
+        },
         "/en/doc/faq.md",
         {
           text: "User cases",

@@ -7,30 +7,6 @@ export const sidebarZH = {
         "/doc/quick-start.md",
         "/doc/install-detail.md",
         "/doc/download.md",
-        "/doc/advanced-use.md",
-        {
-          text: "其他特性",
-          collapsible: true,
-          children: [
-            "/doc/async.md",
-            "/doc/save-log.md",
-            "/doc/batch-support.md",
-            {
-              text: "ognl 表达式用法",
-              link: "",
-              children: [
-                {
-                  text: "活用ognl表达式",
-                  link: "https://github.com/alibaba/arthas/issues/11",
-                },
-                {
-                  text: "一些ognl特殊用法",
-                  link: "https://github.com/alibaba/arthas/issues/71",
-                },
-              ],
-            },
-          ],
-        },
         "/doc/advice-class.html",
         {
           text: "命令列表",
@@ -85,12 +61,24 @@ export const sidebarZH = {
             "/doc/watch.md",
           ],
         },
-        "/doc/web-console.md",
-        "/doc/tunnel.md",
-        "/doc/http-api.md",
-        "/doc/docker.md",
-        "/doc/spring-boot-starter.md",
-        "/doc/idea-plugin.md",
+        {
+          text: "其他特性",
+          link: "/doc/advanced-use.md",
+          collapsible: true,
+          children: [
+            "/doc/async.md",
+            "/doc/batch-support.md",
+            "/doc/docker.md",
+            "/doc/web-console.md",
+            "/doc/tunnel.md",
+            "/doc/idea-plugin.md",
+            "/doc/arthas-properties.html",
+            "/doc/agent.html",
+            "/doc/save-log.md",
+            "/doc/spring-boot-starter.md",
+            "/doc/http-api.md",
+          ],
+        },
         "/doc/faq.md",
         {
           text: "用户案例",
@@ -109,7 +97,7 @@ export const sidebarZH = {
           link: "https://github.com/alibaba/arthas/releases",
         },
         {
-          text: "QQ群/钉钉群",
+          text: "QQ 群/钉钉群",
           link: "/doc/contact-us.md",
         },
       ],

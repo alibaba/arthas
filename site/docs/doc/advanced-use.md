@@ -1,10 +1,35 @@
-# 进阶使用
+# 其他特性
+
+## Arthas 后台异步任务
+
+- [Arthas 后台异步任务](async.md)
+
+## 批处理功能
+
+- [批处理功能](batch-support.md)
+
+## Docker
+
+- [Docker](docker.md)
 
 ## Web Console
 
 通过 websocket 连接 Arthas。
 
 - [Web Console](web-console.md)
+
+## Arthas Tunnel
+
+- [Arthas Tunnel](tunnel.md)
+
+## ognl 表达式用法
+
+- [ognl 表达式的用法说明](https://github.com/alibaba/arthas/issues/11)
+- [一些 ognl 特殊用法](https://github.com/alibaba/arthas/issues/71)
+
+## IDEA Plugin
+
+- [IDEA Plugin](idea-plugin.md)
 
 ## Arthas Properties
 
@@ -13,6 +38,18 @@
 ## 以 java agent 方式启动
 
 - [以 java agent 方式启动](agent.md)
+
+## 执行结果存日志
+
+- [执行结果存日志](save-log.md)
+
+## Arthas Spring Boot Starter
+
+- [Arthas Spring Boot Starter](spring-boot-starter.md)
+
+## HTTP API
+
+- [HTTP API](http-api.md)
 
 ## as.sh 和 arthas-boot 技巧
 
@@ -68,10 +105,3 @@ pid       58883
 在 tunnel server 里有一个示例的回报代码，用户可以自己在服务器上实现。
 
 [StatController.java](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java)
-
-## 其他特性
-
-- [异步命令支持](async.md)
-- [执行结果存日志](save-log.md)
-- [批处理的支持](batch-support.md)
-- [ognl 表达式的用法说明](https://github.com/alibaba/arthas/issues/11)

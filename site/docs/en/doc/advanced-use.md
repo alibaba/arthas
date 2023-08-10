@@ -1,4 +1,16 @@
-# Advanced Usage
+# Other features
+
+## Arthas Async Jobs
+
+- [Arthas Async Jobs](async.md)
+
+## Batch Processing
+
+- [Batch Processing](batch-support.md)
+
+## Docker
+
+- [Docker](docker.md)
 
 ## Web Console
 
@@ -6,6 +18,18 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 - [Web Console](web-console.md)
 
+## Arthas Tunnel
+
+- [Arthas Tunnel](tunnel.md)
+
+## How to use ognl 
+
+- [Basic ognl example](https://github.com/alibaba/arthas/issues/11)
+- [Ognl special uses](https://github.com/alibaba/arthas/issues/71)
+
+## IDEA Plugin
+
+- [IDEA Plugin](idea-plugin.md)
 ## Arthas Properties
 
 - [Arthas Properties](arthas-properties.md)
@@ -13,6 +37,18 @@ Arthas supports living inside a browser. The communication between arthas and br
 ## Start as a Java Agent
 
 - [Start as a Java Agent](agent.md)
+
+## Log the output
+
+- [log the output](save-log.md)
+
+## Arthas Spring Boot Starter
+
+- [Arthas Spring Boot Starter](spring-boot-starter.md)
+
+## HTTP API
+
+- [HTTP API](http-api.md)
 
 ## as.sh and arthas-boot tips
 
@@ -68,10 +104,3 @@ At startup, use the `stat-url` option, such as: `./as.sh --stat-url 'http://192.
 There is a sample data report in the tunnel server that users can implement on their own.
 
 [StatController.java](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java)
-
-## Other features
-
-- [Async support](async.md)
-- [log the output](logger.md)
-- [batch](batch-support.md)
-- [how to use ognl](https://github.com/alibaba/arthas/issues/11)
