@@ -184,15 +184,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "f", longName = "file")
-    @Description("dump output to <filename>")
+    @Description("dump output to <filename>, if ends with html or jfr, content format can be infered")
     public void setFile(String file) {
         this.file = file;
     }
 
-    @Option(longName = "format")
-    @Description("dump output file format(html, jfr), default valut is html")
-    @DefaultValue("html")
+    @Option(shortName = "o", longName = "format")
+    @Description("dump output content format(flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr)")
     public void setFormat(String format) {
+        // only for backward compatibility
+        if ("html".equals(format)) {
+            format = "flamegraph";
+        }
         this.format = format;
     }
 
@@ -307,6 +310,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.file != null) {
             sb.append("file=").append(this.file).append(',');
+        }
+        if (this.format != null) {
+            sb.append(this.format).append(',');
         }
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(',');
@@ -462,16 +468,38 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String outputFile() throws IOException {
         if (this.file == null) {
+            String fileExt = outputFileExt();
             File outputPath = ArthasBootstrap.getInstance().getOutputPath();
             if (outputPath != null) {
                 this.file = new File(outputPath,
-                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format)
+                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + fileExt)
                                 .getAbsolutePath();
             } else {
-                this.file = File.createTempFile("arthas-output", "." + this.format).getAbsolutePath();
+                this.file = File.createTempFile("arthas-output", "." + fileExt).getAbsolutePath();
             }
         }
         return file;
+    }
+
+    /**
+     * This method should only be called when {@code this.file == null} is true.
+     */
+    private String outputFileExt() {
+        String fileExt = "";
+        if (this.format == null) {
+            fileExt = "html";
+        } else if (this.format.startsWith("flat") || this.format.startsWith("traces") 
+                || this.format.equals("collapsed")) {
+            fileExt = "txt";
+        } else if (this.format.equals("flamegraph") || this.format.equals("tree")) {
+            fileExt = "html";
+        } else if (this.format.equals("jfr")) {
+            fileExt = "jfr";
+        } else {
+            // illegal -o option makes async-profiler use flat
+            fileExt = "txt";
+        }
+        return fileExt;
     }
 
     private void appendExecuteResult(CommandProcess process, String result) {
