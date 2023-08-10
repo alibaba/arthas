@@ -1,4 +1,4 @@
-> tip
+> tip  
 > Java Flight Recorder (JFR) 是一种用于收集有关正在运行的 Java 应用程序的诊断和分析数据的工具。它集成到 Java 虚拟机 (JVM) 中，几乎不会造成性能开销，因此即使在负载较重的生产环境中也可以使用。
 
 [jfr 命令](https://arthas.aliyun.com/doc/jfr.html)支持在程序动态运行过程中开启和关闭 JFR 记录。记录收集有关 event 的数据。事件在特定时间点发生在 JVM 或 Java 应用程序中。每个事件都有一个名称、一个时间戳和一个可选的有效负载。负载是与事件相关的数据，例如 CPU 使用率、事件前后的 Java 堆大小、锁持有者的线程 ID 等。
@@ -16,12 +16,8 @@ $ jfr start
 Started recording 1. No limit specified, using maxsize=250MB as default.
 ```
 
-> tip
+> tip  
 > 开启的是默认参数的 jfr 记录
-
-启动 jfr 记录，指定记录名，记录持续时间，记录文件保存路径。
-
-`jfr start -n myRecording --duration 60s -f /tmp/myRecording.jfr`{{execute T2}}
 
 ## 查看 JFR 记录状态
 
@@ -39,9 +35,11 @@ Started recording 1. No limit specified, using maxsize=250MB as default.
 
 ## dump jfr 记录
 
+`jfr dump`{{}} 会输出从开始到运行该命令这段时间内的记录到 JFR 文件，且不会停止记录。
+
 指定记录输出路径
 
-`$ jfr dump -r 1 -f /tmp/myRecording1.jfr`{{execute T2}}
+`jfr dump -r 1 -f /tmp/myRecording1.jfr`{{execute T2}}
 
 不指定文件输出路径，默认是保存到`arthas-output`{{}} 目录下
 
@@ -69,4 +67,4 @@ Started recording 1. No limit specified, using maxsize=250MB as default.
 
 生成的结果可以用支持 jfr 格式的工具来查看。比如：
 
-- JDK Mission Control : https://github.com/openjdk/jmc
+- JDK Mission Control: [jmc](https://github.com/openjdk/jmc)

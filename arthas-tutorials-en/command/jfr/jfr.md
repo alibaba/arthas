@@ -1,4 +1,4 @@
-> tip
+> tip  
 > Java Flight Recorder (JFR) is a tool for collecting diagnostic and profiling data about a running Java application. It is integrated into the Java Virtual Machine (JVM) and causes almost no performance overhead, so it can be used even in heavily loaded production environments.
 
 The [jfr command](https://arthas.aliyun.com/en/doc/jfr.html) supports starting and stopping JFR recordings during dynamic program running. Recording collects data about _events_. Events occur in the JVM or the Java application at a specific point in time. Each event has a name, a time stamp, and an optional _payload_. The payload is the data associated with an event, for example, the CPU usage, the Java heap size before and after the event, the thread ID of the lock holder, and so on.
@@ -16,12 +16,8 @@ $ jfr start
 Started recording 1. No limit specified, using maxsize=250MB as default.
 ```
 
-> tip
+> tip  
 > The default JFR record is started.
-
-Start the JFR recording, specify the recording name, duration, file saving path.
-
-`jfr start -n myRecording --duration 60s -f /tmp/myRecording.jfr`{{execute T2}}
 
 ## View jfr recordings status
 
@@ -38,6 +34,8 @@ View recordings in a specified state.
 `jfr status --state closed`{{execute T2}}
 
 ## dump jfr recording
+
+The `jfr dump` command will output the recordings from the start until the execution of the command to a JFR file, without stopping the recording.
 
 Specifies the record output path.
 
@@ -69,4 +67,4 @@ By default, arthas uses http port 8563 , which can be opened: [/arthas-output]({
 
 The resulting results can be viewed with tools that support the JFR format. Such as:
 
-- JDK Mission Control: https://github.com/openjdk/jmc
+- JDK Mission Control: [jmc](https://github.com/openjdk/jmc)
