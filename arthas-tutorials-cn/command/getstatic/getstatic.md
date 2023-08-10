@@ -9,7 +9,7 @@
   如果你使用`-c`{{}} ，你需要手动输入 hashcode：`-c <hashcode>`{{}}  
   对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`{{}} 指定 class name，使用起来更加方便：
 
-`getstatic --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame random`{{execute T2}}
+`getstatic --classLoaderClass jdk.internal.loader.ClassLoaders$AppClassLoader demo.MathGame random`{{execute T2}}
 
 - 注：这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而 java 11 的 classloader 是 jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda 目前环境是 java8。
 

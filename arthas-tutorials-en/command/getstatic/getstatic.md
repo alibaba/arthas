@@ -9,7 +9,7 @@ Use [getstatic command](https://arthas.aliyun.com/en/doc/getstatic.html) to Chec
   if you use`-c`{{}} , you have to manually type hashcode by `-c <hashcode>`{{}} .  
   For classloader with only one instance, it can be specified by `--classLoaderClass`{{}} using class name, which is more convenient to use.
 
-`getstatic --classLoaderClass demo.MathGame random`{{execute T2}}
+`getstatic --classLoaderClass jdk.internal.loader.ClassLoaders$AppClassLoader random`{{execute T2}}
 
 - PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.
 
