@@ -110,6 +110,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean ann;
 
     /**
+     * prepend library names
+     */
+    private boolean lib;
+
+    /**
      * include only kernel-mode events
      */
     private boolean allkernel;
@@ -245,6 +250,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.ann = ann;
     }
 
+    @Option(shortName = "l", flag = true)
+    @Description("prepend library names")
+    public void setLib(boolean lib) {
+        this.lib = lib;
+    }
+
     @Option(longName = "allkernel", flag = true)
     @Description("include only kernel-mode events")
     public void setAllkernel(boolean allkernel) {
@@ -364,6 +375,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.ann) {
             sb.append("ann").append(",");
+        }
+        if (this.lib) {
+            sb.append("lib").append(",");
         }
         if (this.allkernel) {
             sb.append("allkernel").append(',');
