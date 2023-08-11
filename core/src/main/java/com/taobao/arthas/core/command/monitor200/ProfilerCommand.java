@@ -274,13 +274,13 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.duration = duration;
     }
 
-    @Option(longName = "include")
+    @Option(shortName = "I", longName = "include")
     @Description("include stack traces containing PATTERN, for example: 'java/*'")
     public void setInclude(List<String> includes) {
         this.includes = includes;
     }
 
-    @Option(longName = "exclude")
+    @Option(shortName = "X", longName = "exclude")
     @Description("exclude stack traces containing PATTERN, for example: '*Unsafe.park*'")
     public void setExclude(List<String> excludes) {
         this.excludes = excludes;
