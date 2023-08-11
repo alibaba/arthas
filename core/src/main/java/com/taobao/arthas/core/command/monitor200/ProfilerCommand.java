@@ -155,6 +155,11 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private boolean reverse;
 
+    /**
+     * count the total value (time, bytes, etc.) instead of samples
+     */
+    private boolean total;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -328,6 +333,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.reverse = reverse;
     }
 
+    @Option(longName = "total", flag = true)
+    @Description("count the total value (time, bytes, etc.) instead of samples")
+    public void setTotal(boolean total) {
+        this.total = total;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -444,6 +455,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.reverse) {
             sb.append("reverse").append(',');
+        }
+        if (this.total) {
+            sb.append("total").append(',');
         }
 
         return sb.toString();
