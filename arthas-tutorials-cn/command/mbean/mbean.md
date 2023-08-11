@@ -54,3 +54,6 @@
 ### 使用`-i`{{}} 命令实时监控
 
 `mbean -i 1000 java.lang:type=Threading *Count`{{execute T2}}
+
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
+

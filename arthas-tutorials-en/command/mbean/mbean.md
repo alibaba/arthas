@@ -54,3 +54,6 @@ Check memory pool:
 ### Real-time monitoring using `-i`{{}} command
 
 `mbean -i 1000 java.lang:type=Threading *Count`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+
