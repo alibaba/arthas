@@ -139,6 +139,12 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private List<String> excludes;
 
+
+    /**
+     * FlameGraph title
+     */
+    private String title;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -286,6 +292,20 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.excludes = excludes;
     }
 
+    @Option(longName = "title")
+    @Description("FlameGraph title")
+    public void setTitle(String title) {
+        // escape HTML special characters
+        // and escape comma to avoid conflicts with JVM TI
+        title = title.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;")
+                .replace(",", "&#44;");
+        this.title = title;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -394,6 +414,10 @@ public class ProfilerCommand extends AnnotatedCommand {
             for (String exclude : excludes) {
                 sb.append("exclude=").append(exclude).append(',');
             }
+        }
+
+        if (this.title != null) {
+            sb.append("title=").append(this.title).append(',');
         }
 
         return sb.toString();
