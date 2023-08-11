@@ -17,6 +17,10 @@
         "text": "ognl.md"
       },
       {
+        "title": "Common Syntax in OGNL",
+        "text": "ognl-syntax.md"
+      },
+      {
         "title": "Case: Change Logger Level",
         "text": "case-ognl-update-logger-level.md"
       },

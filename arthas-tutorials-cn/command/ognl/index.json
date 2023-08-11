@@ -17,6 +17,10 @@
         "text": "ognl.md"
       },
       {
+        "title": "OGNL 一般语法",
+        "text": "ognl-syntax.md"
+      },
+      {
         "title": "案例：动态更新应用 Logger Level",
         "text": "case-ognl-update-logger-level.md"
       },
