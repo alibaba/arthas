@@ -95,6 +95,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean threads;
 
     /**
+     * use simple class names instead of FQN
+     */
+    private boolean simple;
+
+    /**
      * include only kernel-mode events
      */
     private boolean allkernel;
@@ -212,6 +217,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.threads = threads;
     }
 
+    @Option(shortName = "s", flag = true)
+    @Description("use simple class names instead of FQN")
+    public void setSimple(boolean simple) {
+        this.simple = simple;
+    }
+
     @Option(longName = "allkernel", flag = true)
     @Description("include only kernel-mode events")
     public void setAllkernel(boolean allkernel) {
@@ -320,6 +331,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.threads) {
             sb.append("threads").append(',');
+        }
+        if (this.simple) {
+            sb.append("simple").append(",");
         }
         if (this.allkernel) {
             sb.append("allkernel").append(',');
