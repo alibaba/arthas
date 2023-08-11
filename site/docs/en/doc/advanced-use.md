@@ -22,7 +22,7 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 - [Arthas Tunnel](tunnel.md)
 
-## How to use ognl 
+## How to use ognl
 
 - [Basic ognl example](https://github.com/alibaba/arthas/issues/11)
 - [Ognl special uses](https://github.com/alibaba/arthas/issues/71)
@@ -30,6 +30,7 @@ Arthas supports living inside a browser. The communication between arthas and br
 ## IDEA Plugin
 
 - [IDEA Plugin](idea-plugin.md)
+
 ## Arthas Properties
 
 - [Arthas Properties](arthas-properties.md)
