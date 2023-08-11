@@ -105,6 +105,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean sig;
 
     /**
+     * annotate Java methods
+     */
+    private boolean ann;
+
+    /**
      * include only kernel-mode events
      */
     private boolean allkernel;
@@ -234,6 +239,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.sig = sig;
     }
 
+    @Option(shortName = "a", flag = true)
+    @Description("annotate Java methods")
+    public void setAnn(boolean ann) {
+        this.ann = ann;
+    }
+
     @Option(longName = "allkernel", flag = true)
     @Description("include only kernel-mode events")
     public void setAllkernel(boolean allkernel) {
@@ -348,6 +359,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.sig) {
             sb.append("sig").append(",");
+        }
+        if (this.ann) {
+            sb.append("ann").append(",");
         }
         if (this.allkernel) {
             sb.append("allkernel").append(',');
