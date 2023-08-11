@@ -515,7 +515,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                             //在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
                                 logger.info("stopping profiler ...");
-                                ProfilerModel model = processStop(asyncProfiler);
+                                ProfilerModel model = processStop(asyncProfiler, ProfilerAction.stop);
                                 logger.info("profiler output file: " + model.getOutputFile());
                                 logger.info("stop profiler successfully.");
                             } catch (Throwable e) {
@@ -526,7 +526,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                 }
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.stop.equals(profilerAction)) {
-                ProfilerModel profilerModel = processStop(asyncProfiler);
+                ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
@@ -578,9 +578,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
     }
 
-    private ProfilerModel processStop(AsyncProfiler asyncProfiler) throws IOException {
+    private ProfilerModel processStop(AsyncProfiler asyncProfiler, ProfilerAction profilerAction) throws IOException {
         String outputFile = outputFile();
-        String executeArgs = executeArgs(ProfilerAction.stop);
+        String executeArgs = executeArgs(profilerAction);
         String result = execute(asyncProfiler, executeArgs);
 
         ProfilerModel profilerModel = createProfilerModel(result);
