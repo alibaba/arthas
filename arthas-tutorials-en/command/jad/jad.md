@@ -27,11 +27,10 @@ ClassLoader:
 
 Location:
 
-/\*
-
-- Decompiled with CFR 0_132.
-  \*/
-  package java.lang;
+/*
+ * Decompiled with CFR.
+ */
+package java.lang;
 
 import java.io.ObjectStreamField;
 ...
