@@ -1,13 +1,13 @@
 name: build vmtool
 
-on: [push]
+on:
+  workflow_dispatch:
 
 jobs:
-  linux:
-    runs-on: ubuntu-18.04
-
+  build-linux-x64:
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
@@ -15,16 +15,15 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: ./mvnw package
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
-          path: arthas-vmtool/target/lib*
-
-  mac:
+          path: arthas-vmtool/target/libArthasJniLibrary-x64.so
+  build-mac:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
@@ -32,16 +31,15 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: ./mvnw package
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
-          path: arthas-vmtool/target/lib*
-
-  windows:
+          path: arthas-vmtool/target/libArthas*
+  build-windows:
     runs-on: windows-2019
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
@@ -49,7 +47,62 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: ./mvnw package
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: arthas-vmtool/target/*.dll
+
+  build-linux-aarch64:
+    # The host should always be Linux
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+
+          # Not required, but speeds up builds by storing container images in
+          # a GitHub package registry.
+          githubToken: ${{ github.token }}
+
+          run: |
+            apt update && apt install openjdk-8-jdk g++ -y
+            ./mvnw package -pl common,arthas-vmtool
+            cp arthas-vmtool/target/libArthas* lib/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: lib
+          path: arthas-vmtool/target/libArthas*
+
+  commit_vmtool_files:
+    runs-on: ubuntu-20.04
+    needs: [build-linux-x64, build-linux-aarch64, build-mac, build-windows]
+    steps:
+      - name: Checkout Upstream Repo
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: lib
+          path: tmplib
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: tmplib
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          mv tmplib/* lib/
+          git add lib/
+          git commit -m "update arthas vmtool lib"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}

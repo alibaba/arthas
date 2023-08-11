@@ -17,6 +17,8 @@ import com.taobao.arthas.core.util.LogUtil;
 public class RedirectHandler extends PlainTextHandler implements CloseFunction {
     private PrintWriter out;
 
+    private File file;
+
     public RedirectHandler() {
 
     }
@@ -34,6 +36,7 @@ public class RedirectHandler extends PlainTextHandler implements CloseFunction {
                 parentFile.mkdirs();
             }
         }
+        this.file = file;
         out = new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
     }
 
@@ -54,5 +57,9 @@ public class RedirectHandler extends PlainTextHandler implements CloseFunction {
         if (out != null) {
             out.close();
         }
+    }
+
+    public String getFilePath() {
+        return file.getAbsolutePath();
     }
 }

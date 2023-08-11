@@ -54,7 +54,7 @@ import one.profiler.Counter;
         + "  profiler stop --format html   # output file format, support html,jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
-        + "  profiler start --include 'java/*' --include 'demo/*' --exclude '*Unsafe.park*'\n"
+        + "  profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
         + "  profiler status\n"
         + "  profiler resume              # Start or resume profiling without resetting collected data.\n"
         + "  profiler getSamples          # Get the number of samples collected during the profiling session\n"
@@ -129,8 +129,13 @@ public class ProfilerCommand extends AnnotatedCommand {
             profierSoPath = "async-profiler/libasyncProfiler-mac.so";
         }
         if (OSUtils.isLinux()) {
-            profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
-            if (OSUtils.isArm64()) {
+            if (OSUtils.isX86_64() && OSUtils.isMuslLibc()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-musl-x64.so";
+            } else if(OSUtils.isX86_64()){
+                profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
+            } else if (OSUtils.isArm64() && OSUtils.isMuslLibc()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-musl-arm64.so";
+            } else if (OSUtils.isArm64()) {
                 profierSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
             }
         }

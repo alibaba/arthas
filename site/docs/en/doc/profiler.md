@@ -179,13 +179,13 @@ profiler start --framebuf 5000000
 
 ## Configure include/exclude to filter data
 
-If the application is complex and generates a lot of content, and you want to focus on only part of the data, you can filter by include/exclude. such as
+If the application is complex and generates a lot of content, and you want to focus on only part of stack traces, you can filter stack traces by `--include/--exclude`. `--include` defines the name pattern that must be present in the stack traces, while `--exclude` is the pattern that must not occur in any of stack traces in the output.A pattern may begin or end with a star `*` that denotes any (possibly empty) sequence of characters. such as
 
 ```bash
-profiler start --include'java/*' --include'demo/*' --exclude'*Unsafe.park*'
+profiler start --include'java/*' --include 'com/demo/*' --exclude'*Unsafe.park*'
 ```
 
-> Both include/exclude support setting multiple values, but need to be configured at the end of the command line.
+> Both `--include/--exclude` support setting multiple values, but need to be configured at the end of the command line.
 
 ## Specify execution time
 
