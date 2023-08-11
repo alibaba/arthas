@@ -52,15 +52,13 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 - 对比前一个例子，返回值为空（事件点为方法执行前，因此获取不到返回值）
 
 #### 同时观察方法调用前和方法返回后
 
 `watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
-
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
 
 - 参数里`-n 2`{{}} ，表示只执行两次
 - 这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果
@@ -70,7 +68,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 - `-x`{{}} 表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是 1。
 
@@ -78,7 +76,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 - 只有满足条件的调用，才会有响应。
 - `watch-express`{{}} 单个值可以不加'{}'，多个值需要加'{a,b,c}'。
@@ -89,19 +87,19 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 - 根据参数个数进行过滤
 
 `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 #### 观察异常信息的例子
 
 `watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 - `-e`{{}} 表示抛出异常时才触发
 - express 中，表示异常信息的变量是`throwExp`{{}}
@@ -110,13 +108,13 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 #### 按照耗时进行过滤
 
 `watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 - `#cost>200`{{}} (单位是`ms`{{}} ) 表示只有当耗时大于 200ms 时才会输出，过滤掉执行时间小于 200ms 的调用
 
@@ -124,11 +122,11 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors 'target'`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出
 
 如果想查看方法运行前后，当前对象中的属性，可以使用`target`{{}} 关键字，代表当前对象  
 然后使用`target.field_name`{{}} 访问当前对象的某个属性
 
 `watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
+按 `Q`{{exec interrupt}} 或者 `Ctrl+c`{{exec interrupt}} 退出

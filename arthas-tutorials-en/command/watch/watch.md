@@ -56,8 +56,6 @@ Compared to the previous _check_:
 
 `watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
-
 F.Y.I
 
 - `-n 2`{{}} : threshold of execution times is 2.
@@ -68,7 +66,7 @@ F.Y.I
 
 `watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 - `-x`{{}} : Expand level of object (1 by default)
 
@@ -76,7 +74,7 @@ Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
 
 `watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 - Only calls that meet the conditions will respond.
 
@@ -90,19 +88,19 @@ If there are other overloaded methods with the same name in the watch method, yo
 
 `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 - Filter according to the number of parameters
 
 `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 #### Check `exceptions`{{}}
 
 `watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 - `-e`{{}} : Trigger when an exception is thrown
 - `throwExp`{{}} : the exception object
@@ -111,13 +109,13 @@ Filter according to exception type or message:
 
 `watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 #### Filter by time cost
 
 `watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 - `#cost>200`{{}} (`ms`{{}} ) filter out all invokings that take less than `200ms`{{}} .
 
@@ -127,10 +125,10 @@ Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
 
 `watch demo.MathGame primeFactors 'target'`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
 
 - `target.field_name`{{}} : the field of the current object.
 
 `watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
+Press `Q`{{exec interrupt}} or `Ctrl+C`{{exec interrupt}} to abort
