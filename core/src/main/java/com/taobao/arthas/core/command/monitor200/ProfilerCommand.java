@@ -539,7 +539,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                 String result = asyncProfiler.execute("list");
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
-                String result = asyncProfiler.execute("version");
+                String result = asyncProfiler.execute("version=full");
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.status.equals(profilerAction)) {
                 String result = asyncProfiler.execute("status");
