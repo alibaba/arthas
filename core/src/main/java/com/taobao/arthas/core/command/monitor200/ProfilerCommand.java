@@ -528,6 +528,9 @@ public class ProfilerCommand extends AnnotatedCommand {
             } else if (ProfilerAction.stop.equals(profilerAction)) {
                 ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
                 process.appendResult(profilerModel);
+            } else if (ProfilerAction.dump.equals(profilerAction)) {
+                ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
+                process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
                 String result = execute(asyncProfiler, executeArgs);
