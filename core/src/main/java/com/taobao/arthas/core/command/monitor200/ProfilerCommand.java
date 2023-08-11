@@ -100,6 +100,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean simple;
 
     /**
+     * print method signatures
+     */
+    private boolean sig;
+
+    /**
      * include only kernel-mode events
      */
     private boolean allkernel;
@@ -223,6 +228,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.simple = simple;
     }
 
+    @Option(shortName = "g", flag = true)
+    @Description("print method signatures")
+    public void setSig(boolean sig) {
+        this.sig = sig;
+    }
+
     @Option(longName = "allkernel", flag = true)
     @Description("include only kernel-mode events")
     public void setAllkernel(boolean allkernel) {
@@ -336,6 +347,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.simple) {
             sb.append("simple").append(",");
+        }
+        if (this.sig) {
+            sb.append("sig").append(",");
         }
         if (this.allkernel) {
             sb.append("allkernel").append(',');
