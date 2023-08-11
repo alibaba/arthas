@@ -50,8 +50,6 @@
 
 `trace demo.MathGame run -n 1`{{execute T2}}
 
-按`Q`{{execute T2}}或者`Ctrl+c`{{}} 退出
-
 #### 包含 jdk 的函数
 
 - `--skipJDKMethod <value> `{{}} skip jdk method trace, default value true.

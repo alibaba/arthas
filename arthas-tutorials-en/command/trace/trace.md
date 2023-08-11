@@ -48,8 +48,6 @@ If the method invoked many times, use `-n`{{}} options to specify trace times. F
 
 `trace demo.MathGame run -n 1`{{execute T2}}
 
-Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
-
 #### Include jdk method
 
 - `--skipJDKMethod <value> `{{}} skip jdk method trace, default value true.
