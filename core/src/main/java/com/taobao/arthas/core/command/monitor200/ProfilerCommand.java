@@ -145,6 +145,11 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String title;
 
+    /**
+     * FlameGraph minimum frame width in percent
+     */
+    private String minwidth;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -306,6 +311,13 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.title = title;
     }
 
+
+    @Option(longName = "minwidth")
+    @Description("FlameGraph minimum frame width in percent")
+    public void setMinwidth(String minwidth) {
+        this.minwidth = minwidth;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -416,6 +428,9 @@ public class ProfilerCommand extends AnnotatedCommand {
 
         if (this.title != null) {
             sb.append("title=").append(this.title).append(',');
+        }
+        if (this.minwidth != null) {
+            sb.append("minwidth=").append(this.minwidth).append(',');
         }
 
         return sb.toString();
