@@ -5,11 +5,13 @@
 ### Usage
 
 Loading class bytecode without specifying a directory
+
 `dump java.lang.String`{{execute T2}}
 
 `dump demo.*`{{execute T2}}
 
 Loading class bytecode with specifying a directory
+
 `dump -d /tmp/output java.lang.String`{{execute T2}}
 
 - Specify classLoader
@@ -17,7 +19,7 @@ Loading class bytecode with specifying a directory
   if you use`-c`{{}} , you have to manually type hashcode by `-c <hashcode>`{{}} .  
   For classloader with only one instance, it can be specified by `--classLoaderClass`{{}} using class name, which is more convenient to use.
 
-`dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*`{{execute T2}}
+`dump --classLoaderClass jdk.internal.loader.ClassLoaders$AppClassLoader demo.*`{{execute T2}}
 
 - PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.
 
