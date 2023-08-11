@@ -16,7 +16,10 @@
 
 package one.profiler;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Java API for in-process profiling. Serves as a wrapper around
@@ -39,20 +42,85 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
             return instance;
         }
 
-        if (libPath == null) {
-            System.loadLibrary("asyncProfiler");
-        } else {
+        AsyncProfiler profiler = new AsyncProfiler();
+        if (libPath != null) {
             System.load(libPath);
+        } else {
+            try {
+                // No need to load library, if it has been preloaded with -agentpath
+                profiler.getVersion();
+            } catch (UnsatisfiedLinkError e) {
+                File file = extractEmbeddedLib();
+                if (file != null) {
+                    try {
+                        System.load(file.getPath());
+                    } finally {
+                        file.delete();
+                    }
+                } else {
+                    System.loadLibrary("asyncProfiler");
+                }
+            }
         }
 
-        instance = new AsyncProfiler();
-        return instance;
+        instance = profiler;
+        return profiler;
+    }
+
+    private static File extractEmbeddedLib() {
+        String resourceName = "/" + getPlatformTag() + "/libasyncProfiler.so";
+        InputStream in = AsyncProfiler.class.getResourceAsStream(resourceName);
+        if (in == null) {
+            return null;
+        }
+
+        try {
+            String extractPath = System.getProperty("one.profiler.extractPath");
+            File file = File.createTempFile("libasyncProfiler-", ".so",
+                    extractPath == null || extractPath.isEmpty() ? null : new File(extractPath));
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                byte[] buf = new byte[32000];
+                for (int bytes; (bytes = in.read(buf)) >= 0; ) {
+                    out.write(buf, 0, bytes);
+                }
+            }
+            return file;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+    }
+
+    private static String getPlatformTag() {
+        String os = System.getProperty("os.name").toLowerCase();
+        String arch = System.getProperty("os.arch").toLowerCase();
+        if (os.contains("linux")) {
+            if (arch.equals("amd64") || arch.equals("x86_64") || arch.contains("x64")) {
+                return "linux-x64";
+            } else if (arch.equals("aarch64") || arch.contains("arm64")) {
+                return "linux-arm64";
+            } else if (arch.equals("aarch32") || arch.contains("arm")) {
+                return "linux-arm32";
+            } else if (arch.contains("86")) {
+                return "linux-x86";
+            } else if (arch.contains("ppc64")) {
+                return "linux-ppc64le";
+            }
+        } else if (os.contains("mac")) {
+            return "macos";
+        }
+        throw new UnsupportedOperationException("Unsupported platform: " + os + "-" + arch);
     }
 
     /**
      * Start profiling
      *
-     * @param event Profiling event, see {@link Events}
+     * @param event    Profiling event, see {@link Events}
      * @param interval Sampling interval, e.g. nanoseconds for Events.CPU
      * @throws IllegalStateException If profiler is already running
      */
@@ -68,7 +136,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      * Start or resume profiling without resetting collected data.
      * Note that event and interval may change since the previous profiling session.
      *
-     * @param event Profiling event, see {@link Events}
+     * @param event    Profiling event, see {@link Events}
      * @param interval Sampling interval, e.g. nanoseconds for Events.CPU
      * @throws IllegalStateException If profiler is already running
      */
@@ -119,7 +187,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      * @param command Profiling command
      * @return The command result
      * @throws IllegalArgumentException If failed to parse the command
-     * @throws IOException If failed to create output file
+     * @throws IOException              If failed to create output file
      */
     @Override
     public String execute(String command) throws IllegalArgumentException, IllegalStateException, IOException {
@@ -209,7 +277,10 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     }
 
     private native void start0(String event, long interval, boolean reset) throws IllegalStateException;
+
     private native void stop0() throws IllegalStateException;
+
     private native String execute0(String command) throws IllegalArgumentException, IllegalStateException, IOException;
+
     private native void filterThread0(Thread thread, boolean enable);
 }
