@@ -150,6 +150,11 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String minwidth;
 
+    /**
+     * generate stack-reversed FlameGraph / Call tree
+     */
+    private boolean reverse;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -311,11 +316,16 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.title = title;
     }
 
-
     @Option(longName = "minwidth")
     @Description("FlameGraph minimum frame width in percent")
     public void setMinwidth(String minwidth) {
         this.minwidth = minwidth;
+    }
+
+    @Option(longName = "reverse", flag = true)
+    @Description("generate stack-reversed FlameGraph / Call tree")
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
     }
 
     private AsyncProfiler profilerInstance() {
@@ -431,6 +441,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.minwidth != null) {
             sb.append("minwidth=").append(this.minwidth).append(',');
+        }
+        if (this.reverse) {
+            sb.append("reverse").append(',');
         }
 
         return sb.toString();
