@@ -57,6 +57,7 @@ $ help
  pwd          Return working directory name
  mbean        Display the mbean information
  grep         grep command for pipes.
+ wc           wc command for pipes.
  tee          tee command for pipes.
  profiler     Async Profiler. https://github.com/jvm-profiling-tools/async-profiler
  stop         Stop/Shutdown Arthas server and exit the console.

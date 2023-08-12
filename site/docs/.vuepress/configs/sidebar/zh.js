@@ -72,6 +72,7 @@ export const sidebarZH = {
             "/doc/cls.md",
             "/doc/echo.md",
             "/doc/grep.md",
+            "/doc/wc.md",
             "/doc/help.md",
             "/doc/history.md",
             "/doc/keymap.md",
