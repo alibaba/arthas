@@ -14,7 +14,7 @@ Welcome to use [issue tracker](https://github.com/alibaba/arthas/issues) to give
 
 ## Online Tutorials
 
-Please refer to [README.MD at tutorials/katacoda](tutorials/katacoda/README.md#contribution-guide)
+Please refer to [README.MD at killercoda branch](https://github.com/alibaba/arthas/tree/killercoda/README.md#contribution-guide)
 
 ## Developer
 
@@ -79,7 +79,7 @@ Tip: you can use `--versions` to list all available versions.
 
 ## 改进在线教程
 
-请参考[tutorials/katacoda下的说明](tutorials/katacoda/README_CN.md#贡献指南)
+请参考[killercoda 分支下的说明](https://github.com/alibaba/arthas/tree/killercoda/README_CN.md#贡献指南)
 
 ## 开发者相关
 
