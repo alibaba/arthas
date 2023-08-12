@@ -1,13 +1,9 @@
-### Specify classloader name
-
-`vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext`{{execute T2}}
-
-### Specify classloader hash
+### Specify classloader
 
 The classloader that loads the class can be found through the `sc`{{}} command.
 
-Then use the `-c`{{}} /`--classloader`{{}} parameter to specify:
+`sc -d org.springframework.context.ApplicationContext`{{exec}}
 
-```bash
-vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext
-```
+After obtaining the hashcode of `org.springframework.boot.loader.LaunchedURLClassLoader` using the above command, you can use the `-c` or `--classloader` parameter to specify it. Here, we use `--classLoaderClass` to specify the classloader:
+
+`vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext`{{execute T2}}

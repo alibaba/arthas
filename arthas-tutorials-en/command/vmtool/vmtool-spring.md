@@ -24,6 +24,6 @@ Call the `userController.findUserById(1)`{{}} method:
 
 `vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBean("userController").findUserById(1)'`{{execute T2}}
 
-### Find all spring mapping objects
+### Get userController directly and invoke the method
 
-`vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping`{{execute T2}}
+`vmtool --action getInstances --className com.example.demo.arthas.user.UserController --express 'instances[0].findUserById(1)'`{{exec}}

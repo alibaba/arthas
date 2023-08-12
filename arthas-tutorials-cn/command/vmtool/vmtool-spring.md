@@ -24,6 +24,7 @@
 
 `vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBean("userController").findUserById(1)'`{{execute T2}}
 
-### 查找所有的 spring mapping 对象
+### 直接获取 UserController 并调用方法
 
-`vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping`{{execute T2}}
+`vmtool --action getInstances --className com.example.demo.arthas.user.UserController --express 'instances[0].findUserById(1)'`{{exec}}
+
