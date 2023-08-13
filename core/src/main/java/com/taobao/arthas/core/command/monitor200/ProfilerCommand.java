@@ -184,6 +184,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String end;
 
     /**
+     * time-to-safepoint profiling.
+     * An alias for --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
+     */
+    private boolean ttsp;
+
+    /**
      * FlameGraph title
      */
     private String title;
@@ -401,6 +407,13 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.end = end;
     }
 
+    @Option(longName = "ttsp", flag = true)
+    @Description("time-to-safepoint profiling. "
+        + "An alias for --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized")
+    public void setTtsp(boolean ttsp) {
+        this.ttsp = ttsp;
+    }
+
     @Option(longName = "title")
     @Description("FlameGraph title")
     public void setTitle(String title) {
@@ -569,6 +582,10 @@ public class ProfilerCommand extends AnnotatedCommand {
             for (String exclude : excludes) {
                 sb.append("exclude=").append(exclude).append(COMMA);
             }
+        }
+        if (this.ttsp) {
+            this.begin = "SafepointSynchronize::begin";
+            this.end = "RuntimeService::record_safepoint_synchronized";
         }
         if (this.begin != null) {
             sb.append("begin=").append(this.begin).append(COMMA);
