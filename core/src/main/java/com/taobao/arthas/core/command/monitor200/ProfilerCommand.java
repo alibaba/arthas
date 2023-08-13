@@ -76,6 +76,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String event;
 
     /**
+     * profile allocations with BYTES interval
+     * according to async-profiler README, alloc may contains non-numeric charactors
+     */
+    private String alloc;
+
+    /**
      * output file name for dumping
      */
     private String file;
@@ -252,6 +258,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.event = event;
     }
 
+    @Option(longName = "alloc")
+    @Description("allocation profiling interval in bytes")
+    public void setAlloc(String alloc) {
+        this.alloc = alloc;
+    }
+
     @Option(shortName = "t", longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
@@ -410,6 +422,9 @@ public class ProfilerCommand extends AnnotatedCommand {
 
         if (this.event != null) {
             sb.append("event=").append(this.event).append(COMMA);
+        }
+        if (this.alloc!= null) {
+            sb.append("alloc=").append(this.alloc).append(COMMA);
         }
         if (this.file != null) {
             sb.append("file=").append(this.file).append(COMMA);
