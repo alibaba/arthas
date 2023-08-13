@@ -82,6 +82,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String alloc;
 
     /**
+     * profile contended locks longer than DURATION ns
+     * according to async-profiler README, alloc may contains non-numeric charactors
+     */
+    private String lock;
+
+    /**
      * output file name for dumping
      */
     private String file;
@@ -264,6 +270,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.alloc = alloc;
     }
 
+    @Option(longName = "lock")
+    @Description("lock profiling threshold in nanoseconds")
+    public void setLock(String lock) {
+        this.lock = lock;
+    }
+
     @Option(shortName = "t", longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
@@ -425,6 +437,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.alloc!= null) {
             sb.append("alloc=").append(this.alloc).append(COMMA);
+        }
+        if (this.lock!= null) {
+            sb.append("lock=").append(this.lock).append(COMMA);
         }
         if (this.file != null) {
             sb.append("file=").append(this.file).append(COMMA);
