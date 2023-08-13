@@ -71,9 +71,16 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String action;
     private String actionArg;
 
+    /**
+     * which event to trace (cpu, wall, cache-misses, etc.)
+     */
     private String event;
 
+    /**
+     * output file name for dumping
+     */
     private String file;
+
     /**
      * output file format, default value is html.
      */
