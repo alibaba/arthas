@@ -85,6 +85,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Long interval;
 
     /**
+     * maximum Java stack depth (default: 2048)
+     */
+    private Integer jstackdepth;
+
+    /**
      * size of the buffer for stack frames (default: 1'000'000)
      */
     private Long framebuf;
@@ -215,6 +220,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @DefaultValue("10000000")
     public void setInterval(long interval) {
         this.interval = interval;
+    }
+
+    @Option(shortName = "j")
+    @Description("maximum Java stack depth (default: 2048)")
+    public void setJstackdepth(int jstackdepth) {
+        this.jstackdepth = jstackdepth;
     }
 
     @Option(shortName = "b", longName = "framebuf")
@@ -413,6 +424,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(',');
+        }
+        if (this.jstackdepth != null) {
+            sb.append("jstackdepth=").append(this.jstackdepth).append(',');
         }
         if (this.framebuf != null) {
             sb.append("framebuf=").append(this.framebuf).append(',');
