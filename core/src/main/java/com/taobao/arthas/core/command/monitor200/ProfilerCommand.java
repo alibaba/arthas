@@ -178,6 +178,16 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private boolean total;
 
+    /**
+     * approximate size of JFR chunk in bytes (default: 100 MB)
+     */
+    private String chunksize;
+
+    /**
+     * duration of JFR chunk in seconds (default: 1 hour)
+     */
+    private String chunktime;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -368,6 +378,18 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.total = total;
     }
 
+    @Option(longName = "chunksize")
+    @Description("approximate size limits for a single JFR chunk in bytes (default: 100 MB) or other units")
+    public void setChunksize(String chunksize) {
+        this.chunksize = chunksize;
+    }
+
+    @Option(longName = "chunktime")
+    @Description("approximate time limits for a single JFR chunk in second (default: 1 hour) or other units")
+    public void setChunktime(String chunktime) {
+        this.chunktime = chunktime;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -496,6 +518,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.total) {
             sb.append("total").append(COMMA);
+        }
+        if (this.chunksize != null) {
+            sb.append("chunksize=").append(this.chunksize).append(COMMA);
+        }
+        if (this.chunktime!= null) {
+            sb.append("chunktime=").append(this.chunktime).append(COMMA);
         }
 
         return sb.toString();
