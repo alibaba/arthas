@@ -173,6 +173,15 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private List<String> excludes;
 
+    /**
+     * automatically start profiling when the specified native function is executed.
+     */
+    private String begin;
+
+    /**
+     * automatically stop profiling when the specified native function is executed.
+     */
+    private String end;
 
     /**
      * FlameGraph title
@@ -380,6 +389,18 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.excludes = excludes;
     }
 
+    @Option(longName = "begin")
+    @Description("automatically start profiling when the specified native function is executed")
+    public void setBegin(String begin) {
+        this.begin = begin;
+    }
+
+    @Option(longName = "end")
+    @Description("automatically stop profiling when the specified native function is executed")
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
     @Option(longName = "title")
     @Description("FlameGraph title")
     public void setTitle(String title) {
@@ -548,6 +569,12 @@ public class ProfilerCommand extends AnnotatedCommand {
             for (String exclude : excludes) {
                 sb.append("exclude=").append(exclude).append(COMMA);
             }
+        }
+        if (this.begin != null) {
+            sb.append("begin=").append(this.begin).append(COMMA);
+        }
+        if (this.end != null) {
+            sb.append("end=").append(this.end).append(COMMA);
         }
 
         if (this.title != null) {
