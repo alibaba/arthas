@@ -123,6 +123,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean sched;
 
     /**
+     * how to collect C stack frames in addition to Java stack
+     * MODE is 'fp' (Frame Pointer), 'dwarf', 'lbr' (Last Branch Record) or 'no'
+     */
+    private String cstack;
+
+    /**
      * use simple class names instead of FQN
      */
     private boolean simple;
@@ -312,6 +318,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("group threads by scheduling policy")
     public void setSched(boolean sched) {
         this.sched = sched;
+    }
+
+    @Option(longName = "cstack")
+    @Description("how to traverse C stack: fp|dwarf|lbr|no")
+    public void setCstack(String cstack) {
+        this.cstack = cstack;
     }
 
     @Option(shortName = "s", flag = true)
@@ -505,6 +517,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.sched) {
             sb.append("sched").append(COMMA);
+        }
+        if (this.cstack != null) {
+            sb.append("cstack=").append(this.cstack).append(COMMA);
         }
         if (this.simple) {
             sb.append("simple").append(COMMA);
