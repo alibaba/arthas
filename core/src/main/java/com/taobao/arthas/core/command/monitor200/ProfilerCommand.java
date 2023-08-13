@@ -82,6 +82,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String alloc;
 
     /**
+     * build allocation profile from live objects only
+     */
+    private boolean live;
+
+    /**
      * profile contended locks longer than DURATION ns
      * according to async-profiler README, alloc may contains non-numeric charactors
      */
@@ -285,6 +290,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.alloc = alloc;
     }
 
+    @Option(longName = "live", flag = true)
+    @Description("build allocation profile from live objects only")
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
     @Option(longName = "lock")
     @Description("lock profiling threshold in nanoseconds")
     public void setLock(String lock) {
@@ -470,6 +481,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.alloc!= null) {
             sb.append("alloc=").append(this.alloc).append(COMMA);
+        }
+        if (this.live) {
+            sb.append(this.live).append(COMMA);
         }
         if (this.lock!= null) {
             sb.append("lock=").append(this.lock).append(COMMA);
