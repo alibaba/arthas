@@ -113,6 +113,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean threads;
 
     /**
+     * group threads by scheduling policy
+     */
+    private boolean sched;
+
+    /**
      * use simple class names instead of FQN
      */
     private boolean simple;
@@ -290,6 +295,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(longName = "sched", flag = true)
+    @Description("group threads by scheduling policy")
+    public void setSched(boolean sched) {
+        this.sched = sched;
     }
 
     @Option(shortName = "s", flag = true)
@@ -477,6 +488,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.threads) {
             sb.append("threads").append(COMMA);
+        }
+        if (this.sched) {
+            sb.append("sched").append(COMMA);
         }
         if (this.simple) {
             sb.append("simple").append(COMMA);
