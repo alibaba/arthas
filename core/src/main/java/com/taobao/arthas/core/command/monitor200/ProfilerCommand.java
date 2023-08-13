@@ -407,73 +407,74 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String executeArgs(ProfilerAction action) {
         StringBuilder sb = new StringBuilder();
+        final char COMMA = ',';
 
         // start - start profiling
         // resume - start or resume profiling without resetting collected data
         // stop - stop profiling
-        sb.append(action).append(',');
+        sb.append(action).append(COMMA);
 
         if (this.event != null) {
-            sb.append("event=").append(this.event).append(',');
+            sb.append("event=").append(this.event).append(COMMA);
         }
         if (this.file != null) {
-            sb.append("file=").append(this.file).append(',');
+            sb.append("file=").append(this.file).append(COMMA);
         }
         if (this.format != null) {
-            sb.append(this.format).append(',');
+            sb.append(this.format).append(COMMA);
         }
         if (this.interval != null) {
-            sb.append("interval=").append(this.interval).append(',');
+            sb.append("interval=").append(this.interval).append(COMMA);
         }
         if (this.jstackdepth != null) {
-            sb.append("jstackdepth=").append(this.jstackdepth).append(',');
+            sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
         }
         if (this.framebuf != null) {
-            sb.append("framebuf=").append(this.framebuf).append(',');
+            sb.append("framebuf=").append(this.framebuf).append(COMMA);
         }
         if (this.threads) {
-            sb.append("threads").append(',');
+            sb.append("threads").append(COMMA);
         }
         if (this.simple) {
-            sb.append("simple").append(",");
+            sb.append("simple").append(COMMA);
         }
         if (this.sig) {
-            sb.append("sig").append(",");
+            sb.append("sig").append(COMMA);
         }
         if (this.ann) {
-            sb.append("ann").append(",");
+            sb.append("ann").append(COMMA);
         }
         if (this.lib) {
-            sb.append("lib").append(",");
+            sb.append("lib").append(COMMA);
         }
         if (this.allkernel) {
-            sb.append("allkernel").append(',');
+            sb.append("allkernel").append(COMMA);
         }
         if (this.alluser) {
-            sb.append("alluser").append(',');
+            sb.append("alluser").append(COMMA);
         }
         if (this.includes != null) {
             for (String include : includes) {
-                sb.append("include=").append(include).append(',');
+                sb.append("include=").append(include).append(COMMA);
             }
         }
         if (this.excludes != null) {
             for (String exclude : excludes) {
-                sb.append("exclude=").append(exclude).append(',');
+                sb.append("exclude=").append(exclude).append(COMMA);
             }
         }
 
         if (this.title != null) {
-            sb.append("title=").append(this.title).append(',');
+            sb.append("title=").append(this.title).append(COMMA);
         }
         if (this.minwidth != null) {
-            sb.append("minwidth=").append(this.minwidth).append(',');
+            sb.append("minwidth=").append(this.minwidth).append(COMMA);
         }
         if (this.reverse) {
-            sb.append("reverse").append(',');
+            sb.append("reverse").append(COMMA);
         }
         if (this.total) {
-            sb.append("total").append(',');
+            sb.append("total").append(COMMA);
         }
 
         return sb.toString();
