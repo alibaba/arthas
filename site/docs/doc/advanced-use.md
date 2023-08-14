@@ -6,13 +6,15 @@
 
 - [Arthas 后台异步任务](async.md)
 
-## 批处理功能
+## 执行结果存日志
 
-- [批处理功能](batch-support.md)
+所有执行记录的结果完整保存在日志文件中，便于后续进行分析。
+
+- [执行结果存日志](save-log.md)
 
 ## Docker
 
-Docker arthas 在 docker 容器中使用配置参考。
+Arthas 在 docker 容器中使用配置参考。
 
 - [Docker](docker.md)
 
@@ -48,14 +50,11 @@ Arthas 支持配置项参考。
 ## 以 java agent 方式启动
 
 - [以 java agent 方式启动](agent.md)
-
-## 执行结果存日志
-
-所有执行记录的结果完整保存在日志文件中，便于后续进行分析。
-
-- [执行结果存日志](save-log.md)
+-
 
 ## Arthas Spring Boot Starter
+
+随应用一起启动。
 
 - [Arthas Spring Boot Starter](spring-boot-starter.md)
 
@@ -64,6 +63,12 @@ Arthas 支持配置项参考。
 Http API 提供结构化的数据，支持更复杂的交互功能，方便自定义界面集成 arthas。
 
 - [HTTP API](http-api.md)
+
+## 批处理功能
+
+方便自定义脚本一次性批量运行多个命令，可结合 `--select` 参数可以指定进程名字一起使用。
+
+- [批处理功能](batch-support.md)
 
 ## as.sh 和 arthas-boot 技巧
 

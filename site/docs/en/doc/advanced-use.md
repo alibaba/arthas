@@ -6,13 +6,15 @@ If you need to investigate an issue, but you are unsure about the exact time it 
 
 - [Arthas Async Jobs](async.md)
 
-## Batch Processing
+## Log the output
 
-- [Batch Processing](batch-support.md)
+All execution records are fully saved in the log file for subsequent analysis.
+
+- [log the output](save-log.md)
 
 ## Docker
 
-Docker arthas configuration reference for using in Docker containers.
+Arthas configuration reference for using in Docker containers.
 
 - [Docker](docker.md)
 
@@ -49,13 +51,9 @@ Arthas supports configuration options reference.
 
 - [Start as a Java Agent](agent.md)
 
-## Log the output
-
-All execution records are fully saved in the log file for subsequent analysis.
-
-- [log the output](save-log.md)
-
 ## Arthas Spring Boot Starter
+
+Starting with the application.
 
 - [Arthas Spring Boot Starter](spring-boot-starter.md)
 
@@ -64,6 +62,12 @@ All execution records are fully saved in the log file for subsequent analysis.
 The Http API provides structured data and supports more complex interactive functions, making it easier to integrate Arthas into custom interfaces.
 
 - [HTTP API](http-api.md)
+
+## Batch Processing
+
+It is convenient for running multiple commands in bulk with custom scripts. It can be used in conjunction with the `--select` parameter to specify the process name.
+
+- [Batch Processing](batch-support.md)
 
 ## as.sh and arthas-boot tips
 
