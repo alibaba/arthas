@@ -51,7 +51,7 @@ import one.profiler.Counter;
         + "  profiler list                # list all supported events\n"
         + "  profiler actions             # list all supported actions\n"
         + "  profiler start --event alloc\n"
-        + "  profiler stop --format html   # output file format, support html,jfr\n"
+        + "  profiler stop --format html   # output file format, support flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
         + "  profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
