@@ -2,6 +2,8 @@
 
 ## Arthas 后台异步任务
 
+当需要排查一个问题，但是这个问题的出现时间不能确定，那我们就可以把检测命令挂在后台运行，并将保存到输出日志。
+
 - [Arthas 后台异步任务](async.md)
 
 ## 批处理功能
@@ -9,6 +11,8 @@
 - [批处理功能](batch-support.md)
 
 ## Docker
+
+Docker arthas 在 docker 容器中使用配置参考。
 
 - [Docker](docker.md)
 
@@ -20,6 +24,8 @@
 
 ## Arthas Tunnel
 
+通过 Arthas Tunnel Server/Client 来远程管理/连接多个服务器下的Java服务。
+
 - [Arthas Tunnel](tunnel.md)
 
 ## ognl 表达式用法
@@ -29,9 +35,13 @@
 
 ## IDEA Plugin
 
+IntelliJ IDEA 编译器中更加快捷构建 arhtas 命令。
+
 - [IDEA Plugin](idea-plugin.md)
 
 ## Arthas Properties
+
+Arthas 支持配置项参考。
 
 - [Arthas Properties](arthas-properties.md)
 
@@ -41,6 +51,8 @@
 
 ## 执行结果存日志
 
+所有执行记录的结果完整保存在日志文件中，便于后续进行分析。
+
 - [执行结果存日志](save-log.md)
 
 ## Arthas Spring Boot Starter
@@ -48,6 +60,8 @@
 - [Arthas Spring Boot Starter](spring-boot-starter.md)
 
 ## HTTP API
+
+Http API 提供结构化的数据，支持更复杂的交互功能，方便自定义界面集成 arthas。
 
 - [HTTP API](http-api.md)
 

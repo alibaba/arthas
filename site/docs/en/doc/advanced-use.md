@@ -2,6 +2,8 @@
 
 ## Arthas Async Jobs
 
+If you need to investigate an issue, but you are unsure about the exact time it occurs, you can run the monitoring command in the background and save the output to a log file.
+
 - [Arthas Async Jobs](async.md)
 
 ## Batch Processing
@@ -9,6 +11,8 @@
 - [Batch Processing](batch-support.md)
 
 ## Docker
+
+Docker arthas configuration reference for using in Docker containers.
 
 - [Docker](docker.md)
 
@@ -20,6 +24,8 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 ## Arthas Tunnel
 
+Arthas Tunnel Server/Client enables remote management/connection to Java services across multiple servers.
+
 - [Arthas Tunnel](tunnel.md)
 
 ## How to use ognl
@@ -29,9 +35,13 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 ## IDEA Plugin
 
+Build arthas commands more efficiently in the IntelliJ IDEA compiler.
+
 - [IDEA Plugin](idea-plugin.md)
 
 ## Arthas Properties
+
+Arthas supports configuration options reference.
 
 - [Arthas Properties](arthas-properties.md)
 
@@ -41,6 +51,8 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 ## Log the output
 
+All execution records are fully saved in the log file for subsequent analysis.
+
 - [log the output](save-log.md)
 
 ## Arthas Spring Boot Starter
@@ -48,6 +60,8 @@ Arthas supports living inside a browser. The communication between arthas and br
 - [Arthas Spring Boot Starter](spring-boot-starter.md)
 
 ## HTTP API
+
+The Http API provides structured data and supports more complex interactive functions, making it easier to integrate Arthas into custom interfaces.
 
 - [HTTP API](http-api.md)
 
