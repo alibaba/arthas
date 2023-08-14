@@ -18,7 +18,7 @@
 
 `vmoption PrintGC true`{{execute T2}}
 
-再使用`vmtool`{{}} 命令执行强制 GC，则可以在`Terminal 1`{{}} 看到打印出 GC 日志：
+再使用`vmtool`{{}} 命令执行强制 GC，则可以在`Tab 1`{{}} 看到打印出 GC 日志：
 
 `vmtool --action forceGc`{{execute T2}}
 
@@ -26,6 +26,6 @@
 
 `vmoption PrintGCDetails true`{{execute T2}}
 
-再使用`vmtool`{{}} 命令执行强制 GC，则可以在`Terminal 1`{{}} 看到打印出 GC 详情：
+再使用`vmtool`{{}} 命令执行强制 GC，则可以在`Tab 1`{{}} 看到打印出 GC 详情：
 
 `vmtool --action forceGc`{{execute T2}}

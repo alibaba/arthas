@@ -6,7 +6,7 @@ Check the usage: `ognl --help`{{execute T2}}
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
-You can check the output of the process in `Terminal 1`{{}} , and find that it displays `hello ognl`{{}} .
+You can check the output of the process in `Tab 1`{{}} , and find that it displays `hello ognl`{{}} .
 
 ### Find the ClassLoader of the UserController
 

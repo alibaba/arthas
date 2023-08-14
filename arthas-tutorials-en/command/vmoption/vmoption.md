@@ -18,7 +18,7 @@ Display, and update the vm diagnostic options.
 
 `vmoption PrintGC true`{{execute T2}}
 
-Then use the `vmtool`{{}} command to force GC, you can see the GC log printed in `Terminal 1`{{}} :
+Then use the `vmtool`{{}} command to force GC, you can see the GC log printed in `Tab 1`{{}} :
 
 `vmtool --action forceGc`{{execute T2}}
 
@@ -26,6 +26,6 @@ Then use the `vmtool`{{}} command to force GC, you can see the GC log printed in
 
 `vmoption PrintGCDetails true`{{execute T2}}
 
-Then use the `vmtool`{{}} command to force GC, you can see the GC details printed in `Terminal 1`{{}} :
+Then use the `vmtool`{{}} command to force GC, you can see the GC details printed in `Tab 1`{{}} :
 
 `vmtool --action forceGc`{{execute T2}}

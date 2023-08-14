@@ -1,4 +1,4 @@
-> Trace method calling path, and output the time cost for each node in the path.
+> Trace method calling path, and output the time cost for each node in the path.trace
 
 `trace`{{}} can track the calling path specified by `class-pattern`{{}} / `method-pattern`{{}} , and calculate the time cost on the whole path.
 
@@ -95,7 +95,7 @@ Now to drill down into the sub method `primeFactors`{{}} , you can open a new te
 
 Press `Q`{{execute T2}} or `Ctrl+C`{{}} to abort
 
-At Terminal 2 prints the results, indicating that a method has been enhanced: `Affect(class count: 1 , method count: 1)`{{}} , but no more results are printed.
+At terminal 2 prints the results, indicating that a method has been enhanced: `Affect(class count: 1 , method count: 1)`{{}} , but no more results are printed.
 
 At terminal 1, you can see that the trace result has increased by one layer:
 
