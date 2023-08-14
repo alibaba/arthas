@@ -1,0 +1,49 @@
+{
+  "title": "Arthas arthas-boot 支持的参数案例",
+  "difficulty": "高级使用者",
+  "time": "10 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "arthas-boot 支持的参数",
+        "text": "arthas-boot-details.md"
+      },
+      {
+        "title": "参数详解",
+        "text": "boot-examples.md"
+      },
+      {
+        "title": "使用 as.sh",
+        "text": "use-as-sh.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

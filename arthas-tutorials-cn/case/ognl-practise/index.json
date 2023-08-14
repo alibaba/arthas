@@ -1,0 +1,43 @@
+{
+  "title": "调试 Arthas 的 ognl 表达式",
+  "details": {
+    "steps": [
+      {
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "arthas-tutorials-en/case/ognl-practise/ognl-syntax.md",
+        "text": "advice.md"
+      },
+      {
+        "title": "OGNL 一般语法",
+        "text": "ognl-syntax.md"
+      },
+      {
+        "title": "OGNL 表达式实践",
+        "text": "practise.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "hideHiddenFiles": true,
+    "uilayout": "editor-terminal",
+    "uisettings": "java",
+    "uieditorpath": "/root/example/ognl-demo"
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}

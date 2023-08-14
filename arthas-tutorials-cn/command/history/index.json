@@ -1,0 +1,33 @@
+{
+  "title": "Arthas history 命令",
+  "details": {
+    "steps": [
+      {
+        "title": "启动 math-game",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "history 命令",
+        "text": "history.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

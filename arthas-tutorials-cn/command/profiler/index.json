@@ -1,0 +1,42 @@
+{
+  "title": "Arthas profiler 命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "启动 arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动 arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "profiler 命令",
+        "text": "profiler.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 8563",
+        "port": 8563
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "ubuntu",
+    "environmentsprotocol": "http"
+  }
+}

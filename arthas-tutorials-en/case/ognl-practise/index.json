@@ -1,0 +1,44 @@
+{
+  "title": "Debug ognl express in Arthas",
+  "details": {
+    "steps": [
+      {
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Fundamental Fields in Expressions",
+        "text": "advice.md"
+      },
+      {
+        "title": "Common Syntax in OGNL",
+        "text": "ognl-syntax.md"
+      },
+      {
+        "title": "OGNL Expressions Practise",
+        "text": "practise.md"
+      }
+    ],
+    "intro": {
+      "foreground": "foreground.sh",
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "files": [],
+  "environment": {
+    "hideHiddenFiles": true,
+    "uilayout": "editor-terminal",
+    "uisettings": "java",
+    "uieditorpath": "/root/example/ognl-demo"
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
