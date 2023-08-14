@@ -1,4 +1,22 @@
-# 进阶使用
+# 其他特性
+
+## Arthas 后台异步任务
+
+当需要排查一个问题，但是这个问题的出现时间不能确定，那我们就可以把检测命令挂在后台运行，并将保存到输出日志。
+
+- [Arthas 后台异步任务](async.md)
+
+## 执行结果存日志
+
+所有执行记录的结果完整保存在日志文件中，便于后续进行分析。
+
+- [执行结果存日志](save-log.md)
+
+## Docker
+
+Arthas 在 docker 容器中使用配置参考。
+
+- [Docker](docker.md)
 
 ## Web Console
 
@@ -6,13 +24,51 @@
 
 - [Web Console](web-console.md)
 
+## Arthas Tunnel
+
+通过 Arthas Tunnel Server/Client 来远程管理/连接多个服务器下的Java服务。
+
+- [Arthas Tunnel](tunnel.md)
+
+## ognl 表达式用法
+
+- [ognl 表达式的用法说明](https://github.com/alibaba/arthas/issues/11)
+- [一些 ognl 特殊用法](https://github.com/alibaba/arthas/issues/71)
+
+## IDEA Plugin
+
+IntelliJ IDEA 编译器中更加快捷构建 arhtas 命令。
+
+- [IDEA Plugin](idea-plugin.md)
+
 ## Arthas Properties
+
+Arthas 支持配置项参考。
 
 - [Arthas Properties](arthas-properties.md)
 
 ## 以 java agent 方式启动
 
 - [以 java agent 方式启动](agent.md)
+-
+
+## Arthas Spring Boot Starter
+
+随应用一起启动。
+
+- [Arthas Spring Boot Starter](spring-boot-starter.md)
+
+## HTTP API
+
+Http API 提供结构化的数据，支持更复杂的交互功能，方便自定义界面集成 arthas。
+
+- [HTTP API](http-api.md)
+
+## 批处理功能
+
+方便自定义脚本一次性批量运行多个命令，可结合 `--select` 参数可以指定进程名字一起使用。
+
+- [批处理功能](batch-support.md)
 
 ## as.sh 和 arthas-boot 技巧
 
@@ -68,10 +124,3 @@ pid       58883
 在 tunnel server 里有一个示例的回报代码，用户可以自己在服务器上实现。
 
 [StatController.java](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java)
-
-## 其他特性
-
-- [异步命令支持](async.md)
-- [执行结果存日志](save-log.md)
-- [批处理的支持](batch-support.md)
-- [ognl 表达式的用法说明](https://github.com/alibaba/arthas/issues/11)

@@ -1,4 +1,22 @@
-# Advanced Usage
+# Other features
+
+## Arthas Async Jobs
+
+If you need to investigate an issue, but you are unsure about the exact time it occurs, you can run the monitoring command in the background and save the output to a log file.
+
+- [Arthas Async Jobs](async.md)
+
+## Log the output
+
+All execution records are fully saved in the log file for subsequent analysis.
+
+- [log the output](save-log.md)
+
+## Docker
+
+Arthas configuration reference for using in Docker containers.
+
+- [Docker](docker.md)
 
 ## Web Console
 
@@ -6,13 +24,50 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 - [Web Console](web-console.md)
 
+## Arthas Tunnel
+
+Arthas Tunnel Server/Client enables remote management/connection to Java services across multiple servers.
+
+- [Arthas Tunnel](tunnel.md)
+
+## How to use ognl
+
+- [Basic ognl example](https://github.com/alibaba/arthas/issues/11)
+- [Ognl special uses](https://github.com/alibaba/arthas/issues/71)
+
+## IDEA Plugin
+
+Build arthas commands more efficiently in the IntelliJ IDEA compiler.
+
+- [IDEA Plugin](idea-plugin.md)
+
 ## Arthas Properties
+
+Arthas supports configuration options reference.
 
 - [Arthas Properties](arthas-properties.md)
 
 ## Start as a Java Agent
 
 - [Start as a Java Agent](agent.md)
+
+## Arthas Spring Boot Starter
+
+Starting with the application.
+
+- [Arthas Spring Boot Starter](spring-boot-starter.md)
+
+## HTTP API
+
+The Http API provides structured data and supports more complex interactive functions, making it easier to integrate Arthas into custom interfaces.
+
+- [HTTP API](http-api.md)
+
+## Batch Processing
+
+It is convenient for running multiple commands in bulk with custom scripts. It can be used in conjunction with the `--select` parameter to specify the process name.
+
+- [Batch Processing](batch-support.md)
 
 ## as.sh and arthas-boot tips
 
@@ -68,10 +123,3 @@ At startup, use the `stat-url` option, such as: `./as.sh --stat-url 'http://192.
 There is a sample data report in the tunnel server that users can implement on their own.
 
 [StatController.java](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java)
-
-## Other features
-
-- [Async support](async.md)
-- [log the output](logger.md)
-- [batch](batch-support.md)
-- [how to use ognl](https://github.com/alibaba/arthas/issues/11)
