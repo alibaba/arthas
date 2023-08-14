@@ -6,7 +6,7 @@
 反编译指定已加载类的源码
 :::
 
-`jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；
+`jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；如需批量下载指定包的目录的 class 字节码可以参考 [dump](/doc/dump.md)。
 
 - 在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便
 - 当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解

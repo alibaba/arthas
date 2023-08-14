@@ -67,7 +67,7 @@
 
     <script src="https://katacoda.com/embed.js"></script>
 
-    <div id="app">
+    <div id="app" style="height: 100vh; overflow: hidden">
       <nav
         class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row bd-navbar"
       >
@@ -276,14 +276,41 @@
           </div>
         </form>
       </nav>
+      <div
+        class="alert alert-danger alert-dismissible fade show"
+        v-if="isSafari()"
+        role="alert"
+      >
+        <span v-html="alertChangeBrowser[language]"></span>
+      </div>
 
-      <div id="kata-container" class="container-fluid px-0">
-        <div
-          id="katacoda-scenario-1"
-          v-bind:data-katacoda-id="currentKatacodaId()"
-          data-katacoda-color="004d7f"
-          v-bind:style="{height: (calculateKataSize().height - 5) + 'px'  }"
-        ></div>
+      <div
+        class="alert alert-warning alert-dismissible fade show position-fixed w-25"
+        v-if="!getCookie('alert') && !isSafari()"
+        style="bottom: 2rem; right: 1rem"
+        role="alert"
+      >
+        <span v-html="alertLoginContent[language]"></span>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div id="kata-container" class="container-fluid px-0 py-0">
+        <iframe
+          style="width: 100vw"
+          v-bind:style="{height: `${iframeHeight}px` }"
+          v-if="!isSafari()"
+          frameborder="0"
+          scrolling="no"
+          sandbox="allow-scripts allow-same-origin allow-popups"
+          :src="`https://killercoda.com/arthas/course/arthas-tutorials-${language}/${currentKatacodaId().replace('case-', '').replace('command-', '').replace('-en', '').replace('-cn', '')}`"
+        ></iframe>
       </div>
     </div>
   </body>
@@ -300,15 +327,47 @@
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
+    function getCookie(cname) {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == " ") {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+      let expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
     var app = new Vue({
       el: "#app",
       data: {
         message: "Hello Vue!",
         language: "en",
+        iframeHeight: 0,
         languages: [
           { text: "English", value: "en" },
           { text: "中文", value: "cn" },
         ],
+        alertLoginContent: {
+          en: "If you haven’t logged in to killercoda, please click the link to navigate to <a href='https://killercoda.com'>killercoda.com</a> and log in before continuing with the tutorial",
+          cn: "如果没有登陆 killercoda 请先点击链接跳转到 <a href='https://killercoda.com'>killercoda.com</a> 登录后继续使用教程",
+        },
+        alertChangeBrowser: {
+          en: "Please use Firefox or Chrome to open the tutorial or visit <a href='https://killercoda.com/arthas'>killercoda.com/arthas</a>",
+          cn: "请使用 Firefox 或 Chrome 打开教程或访问 <a href='https://killercoda.com/arthas'>killercoda.com/arthas</a>",
+        },
         tutorialId: "arthas-basics",
         tutorials: [
           {
@@ -316,7 +375,7 @@
             type: "TUTORIAL",
             names: {
               en: "Arthas Basics",
-              cn: "Arthas基础教程",
+              cn: "Arthas 基础教程",
             },
             ids: {
               en: "arthas-basics-en",
@@ -328,7 +387,7 @@
             type: "TUTORIAL",
             names: {
               en: "Arthas Advanced",
-              cn: "Arthas进阶教程",
+              cn: "Arthas 进阶教程",
             },
             ids: {
               en: "arthas-advanced-en",
@@ -904,7 +963,7 @@
             type: "USERCASE",
             names: {
               en: "Debug ognl express",
-              cn: "调试ognl表达式",
+              cn: "调试 ognl 表达式",
             },
             ids: {
               en: "case-ognl-practise-en",
@@ -916,7 +975,7 @@
             type: "USERCASE",
             names: {
               en: "Find CPU usage Top N threads",
-              cn: "查找Top N线程",
+              cn: "查找 Top N 线程",
             },
             ids: {
               en: "case-thread-en",
@@ -928,7 +987,7 @@
             type: "USERCASE",
             names: {
               en: "Change Logger Level",
-              cn: "动态更新应用Logger Level",
+              cn: "动态更新应用 Logger Level",
             },
             ids: {
               en: "case-ognl-update-logger-level-en",
@@ -940,7 +999,7 @@
             type: "USERCASE",
             names: {
               en: "Troubleshoot logger conflicts",
-              cn: "排查logger冲突问题",
+              cn: "排查 logger 冲突问题",
             },
             ids: {
               en: "case-logger-config-problem-en",
@@ -960,23 +1019,11 @@
             },
           },
           {
-            id: "case-http-404",
-            type: "USERCASE",
-            names: {
-              en: "Troubleshooting HTTP request returns 404",
-              cn: "排查HTTP请求返回404",
-            },
-            ids: {
-              en: "case-http-404-en",
-              cn: "case-http-404-cn",
-            },
-          },
-          {
             id: "case-http-401",
             type: "USERCASE",
             names: {
               en: "Troubleshooting HTTP request returns 401",
-              cn: "排查HTTP请求返回401",
+              cn: "排查 HTTP 请求返回 401",
             },
             ids: {
               en: "case-http-401-en",
@@ -988,7 +1035,7 @@
             type: "USERCASE",
             names: {
               en: "Get the Spring Context",
-              cn: "获取Spring Context",
+              cn: "获取 Spring Context",
             },
             ids: {
               en: "case-get-spring-context-en",
@@ -1000,7 +1047,7 @@
             type: "USERCASE",
             names: {
               en: "The ClassLoaders in Spring Boot application",
-              cn: "理解Spring Boot应用的ClassLoader结构",
+              cn: "理解 Spring Boot 应用的 ClassLoader 结构",
             },
             ids: {
               en: "case-classloader-en",
@@ -1012,7 +1059,7 @@
             type: "USERCASE",
             names: {
               en: "Arthas boot supported options",
-              cn: " arthas-boot支持的参数",
+              cn: " arthas-boot 支持的参数",
             },
             ids: {
               en: "case-boot-details-en",
@@ -1035,7 +1082,9 @@
       },
       methods: {
         getTutorials: function (type) {
-          return this.tutorials.filter((v) => v.type === type);
+          return this.tutorials
+            .filter((v) => v.type === type)
+            .sort((a, b) => a.id.charCodeAt(0) - b.id.charCodeAt(0));
         },
         languageChange: function (event) {
           // alert(event.target.value)
@@ -1107,7 +1156,7 @@
           // https://katacoda.com/embed/arthas/arthas-advanced-cn/?embed=true
           for (index in this.tutorials) {
             if (this.tutorials[index].id == this.tutorialId) {
-              return "arthas/" + this.tutorials[index].ids[this.language];
+              return this.tutorials[index].id;
             }
           }
         },
@@ -1125,16 +1174,32 @@
             height: e[a + "Height"] - terminalDivRect.top,
           };
         },
+        isSafari: function () {
+          return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        },
       },
       beforeMount() {
-        var l = getUrlParam("language");
+        let l = getUrlParam("language");
         if (l != null) {
           this.language = l;
         }
-        var id = getUrlParam("id");
+        let id = getUrlParam("id");
         if (id != null) {
           this.tutorialId = id;
         }
+      },
+      mounted() {
+        let _this = this;
+
+        // set an alert cookie when the alert is closed
+        $("div.alert.alert-warning").on("closed.bs.alert", () => {
+          setCookie("alert", "closed", 60);
+        });
+
+        this.iframeHeight = this.calculateKataSize().height;
+        window.onresize = () => {
+          _this.iframeHeight = _this.calculateKataSize().height;
+        };
       },
     });
   </script>
