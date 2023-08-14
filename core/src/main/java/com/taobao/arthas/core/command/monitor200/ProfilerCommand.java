@@ -504,7 +504,7 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     public enum ProfilerAction {
         // start, resume, stop, dump, check, status, meminfo, list, collect,
-        start, resume, stop, dump, status, meminfo, list,
+        start, resume, stop, dump, check, status, meminfo, list,
         version,
 
         load,
@@ -685,6 +685,10 @@ public class ProfilerCommand extends AnnotatedCommand {
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
+                String result = execute(asyncProfiler, executeArgs);
+                appendExecuteResult(process, result);
+            } else if (ProfilerAction.check.equals(profilerAction)) {
+                String executeArgs = executeArgs(ProfilerAction.check);
                 String result = execute(asyncProfiler, executeArgs);
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
