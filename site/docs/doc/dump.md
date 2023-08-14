@@ -6,6 +6,8 @@
 dump 已加载类的 bytecode 到特定目录
 :::
 
+dump 命令将 JVM 中实际运行的 class 的 byte code dump 到指定目录，适用场景批量下载指定包目录的 class 字节码；如需反编译单一类、实时查看类信息，可参考 [jad](/doc/jad.md)。
+
 ## 参数说明
 
 |              参数名称 | 参数说明                                   |
@@ -60,6 +62,6 @@ $ dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*
 Affect(row-cnt:1) cost in 39 ms.
 ```
 
-- 注: 这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda 目前环境是 java8。
+- 注：这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而 java 11 的 classloader 是 jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda 目前环境是 java8。
 
 `--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
