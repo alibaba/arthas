@@ -224,6 +224,12 @@ profiler start -o jfr
 
 使用 `-s` 选项将结果中的 Fully qualified name 替换为简单名称，如 `demo.MathGame.main` 替换为 `MathGame.main`。使用 `-g` 选项指定输出方法签名，如 `demo.MathGame.main` 替换为 `demo.MathGame.main([Ljava/lang/String;)V`。此外还有许多可调整分析结果格式的选项，可参考 [async-profiler 的 README 文档](https://github.com/async-profiler/async-profiler#readme) 以及 [async-profiler 的 Github Discussions](https://github.com/async-profiler/async-profiler/discussions) 等材料。
 
+例如，以下命令中，`-s` 将输出中的类名称指定为简短格式，`-g` 显示方法的完整签名，`-a` 标注出 Java 方法，`-l` 为原生方法增加库名称，`--title` 为生成火焰图页面指定标题，`--minwidth` 将过滤火焰图中宽度为 15% 以下的帧，`--reverse` 将火焰图倒置。
+
+```
+profiler stop -s -g -a -l --title <flametitle> --minwidth 15 --reverse
+```
+
 ## 生成的火焰图里的 unknown
 
 - https://github.com/jvm-profiling-tools/async-profiler/discussions/409
