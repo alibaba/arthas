@@ -226,6 +226,12 @@ The generated results can be viewed with tools that support the jfr format. such
 
 The `-s` parameter will use simple name instead of Fully qualified name, e.g. `MathGame.main` instead of `demo.MathGame.main`. The `-g` parameter will use method signatures instead of method names, e.g. `demo.MathGame.main([Ljava/lang/String;)V` instead of `demo.MathGame.main`. There are many parameters related to result format details, you can refer to [async-profiler README](https://github.com/async-profiler/async-profiler#readme) and [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions) and other information.
 
+For example, in command below, `-s` use simple name for Java class, `-g` show method signatures, `-a` will annotate Java methods, `-l` will prepend library names for native method, `--title` specify a title for flame graph page, `--minwidth` will skip frames smaller than 15% in flame graph, `--reverse` will generate stack-reversed FlameGraph / Call tree.
+
+```
+profiler stop -s -g -a -l --title <flametitle> --minwidth 15 --reverse
+```
+
 ## The 'unknown' in profiler result
 
 - https://github.com/jvm-profiling-tools/async-profiler/discussions/409
