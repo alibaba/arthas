@@ -6,9 +6,11 @@
 Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 :::
 
-The `profiler` command supports generate flame graph for application hotspots.
+The `profiler` command supports generating flame graph for application hotspots.
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
+
+The arguments of `profiler` command basically keeps consistent with upstream project [async-profiler](https://github.com/async-profiler/async-profiler), you can refer to its README, Github Discussions and other documentations for further information of usage.
 
 ## Supported Options
 
@@ -29,7 +31,7 @@ Started [cpu] profiling
 ```
 
 ::: tip
-By default, the sample event is `cpu`. Can be specified with the `--event` parameter.
+By default, the sample event is `cpu`. Other valid profiling modes can be specified with the `--event` parameter, see relevant contents below.
 :::
 
 ## Get the number of samples collected
@@ -50,17 +52,17 @@ Can view which `event` and sampling time.
 
 ## Stop profiler
 
-### Generating html format results
+### Generating flame graph results
 
-By default, the result file is `html` format. You can also specify it with the `--format` parameter:
+By default, the result file is `html` file in [Flame Graph](https://github.com/BrendanGregg/FlameGraph) format. You can also specify other format with the `-o` or `--format` parameter, including flat, traces, collapsed, flamegraph, tree, jfr:
 
 ```bash
-$ profiler stop --format html
+$ profiler stop --format flamegraph
 profiler output file: /tmp/test/arthas-output/20211207-111550.html
 OK
 ```
 
-Or use the file name name format in the `--file` parameter. For example, `--file /tmp/result.html`.
+When extension of filename in `--file` parameter is `html` or `jfr`, the output format can be infered. For example, `--file /tmp/result.html` will generate flamegraph automatically.
 
 ## View profiler results under arthas-output via browser
 
@@ -100,6 +102,8 @@ Basic events:
   lock
   wall
   itimer
+Java method calls:
+  ClassName.methodName
 Perf events:
   page-faults
   context-switches
@@ -107,19 +111,23 @@ Perf events:
   instructions
   cache-references
   cache-misses
-  branches
+  branch-instructions
   branch-misses
   bus-cycles
   L1-dcache-load-misses
   LLC-load-misses
   dTLB-load-misses
+  rNNN
+  pmu/event-descriptor/
   mem:breakpoint
   trace:tracepoint
+  kprobe:func
+  uprobe:path
 ```
 
 If you encounter the permissions/configuration issues of the OS itself and then missing some events, you can refer to the [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) documentation.
 
-You can use the `--event` parameter to specify the event to sample, such as sampling the `alloc` event:
+You can use the `--event` parameter to specify the event to sample, for example, `alloc` event means heap memory allocation profiling:
 
 ```bash
 $ profiler start --event alloc
@@ -132,7 +140,7 @@ $ profiler resume
 Started [cpu] profiling
 ```
 
-The difference between `start` and `resume` is: `start` is the new start sampling, `resume` will retain the data of the last `stop`.
+The difference between `start` and `resume` is: `start` will clean existing result of last profiling before starting, `resume` will retain the existing result and add result of this time to it.
 
 You can verify the number of samples by executing `profiler getSamples`.
 
@@ -185,7 +193,7 @@ If the application is complex and generates a lot of content, and you want to fo
 profiler start --include'java/*' --include 'com/demo/*' --exclude'*Unsafe.park*'
 ```
 
-> Both `--include/--exclude` support setting multiple values, but need to be configured at the end of the command line.
+> Both `--include/--exclude` support being set multiple times, but need to be configured at the end of the command line. You can also use short parameter format `-I/-X`.
 
 ## Specify execution time
 
@@ -201,6 +209,7 @@ profiler start --duration 300
 
 ```
 profiler start --file /tmp/test.jfr
+profiler start -o jfr
 ```
 
 The `file` parameter supports some variables:
@@ -212,6 +221,16 @@ The generated results can be viewed with tools that support the jfr format. such
 
 - JDK Mission Control: https://github.com/openjdk/jmc
 - JProfiler: https://github.com/alibaba/arthas/issues/1416
+
+## Control details in result
+
+The `-s` parameter will use simple name instead of Fully qualified name, e.g. `MathGame.main` instead of `demo.MathGame.main`. The `-g` parameter will use method signatures instead of method names, e.g. `demo.MathGame.main([Ljava/lang/String;)V` instead of `demo.MathGame.main`. There are many parameters related to result format details, you can refer to [async-profiler README](https://github.com/async-profiler/async-profiler#readme) and [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions) and other information.
+
+For example, in command below, `-s` use simple name for Java class, `-g` show method signatures, `-a` will annotate Java methods, `-l` will prepend library names for native method, `--title` specify a title for flame graph page, `--minwidth` will skip frames smaller than 15% in flame graph, `--reverse` will generate stack-reversed FlameGraph / Call tree.
+
+```
+profiler stop -s -g -a -l --title <flametitle> --minwidth 15 --reverse
+```
 
 ## The 'unknown' in profiler result
 

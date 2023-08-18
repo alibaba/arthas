@@ -10,6 +10,8 @@
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
+`profiler` 命令的格式基本与上游项目 [async-profiler](https://github.com/async-profiler/async-profiler) 保持一致，详细的使用方式可参考上游项目的 README、Github Disscussions 以及其他文档资料。
+
 ## 参数说明
 
 |    参数名称 | 参数说明                                                        |
@@ -29,7 +31,7 @@ Started [cpu] profiling
 ```
 
 ::: tip
-默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`。可以用`--event`参数来指定。
+默认情况下，生成的是 cpu 的火焰图，即 event 为`cpu`。可以用`--event`参数指定其他性能分析模式，见下文。
 :::
 
 ## 获取已采集的 sample 的数量
@@ -50,17 +52,17 @@ $ profiler status
 
 ## 停止 profiler
 
-### 生成 html 格式结果
+### 生成火焰图格式结果
 
-默认情况下，结果文件是`html`格式，也可以用`--format`参数指定：
+默认情况下，结果是 [Flame Graph](https://github.com/BrendanGregg/FlameGraph) 格式的 `html` 文件，也可以用 `-o` 或 `--format` 参数指定其他内容格式，包括 flat、traces、collapsed、flamegraph、tree、jfr。
 
 ```bash
-$ profiler stop --format html
+$ profiler stop --format flamegraph
 profiler output file: /tmp/test/arthas-output/20211207-111550.html
 OK
 ```
 
-或者在`--file`参数里用文件名指名格式。比如`--file /tmp/result.html` 。
+在`--file`参数指定的文件名后缀为 `html` 或 `jfr` 时，文件格式可以被推断出来。比如`--file /tmp/result.html` 将自动生成火焰图。
 
 ## 通过浏览器查看 arthas-output 下面的 profiler 结果
 
@@ -100,6 +102,8 @@ Basic events:
   lock
   wall
   itimer
+Java method calls:
+  ClassName.methodName
 Perf events:
   page-faults
   context-switches
@@ -107,19 +111,23 @@ Perf events:
   instructions
   cache-references
   cache-misses
-  branches
+  branch-instructions
   branch-misses
   bus-cycles
   L1-dcache-load-misses
   LLC-load-misses
   dTLB-load-misses
+  rNNN
+  pmu/event-descriptor/
   mem:breakpoint
   trace:tracepoint
+  kprobe:func
+  uprobe:path
 ```
 
-如果遇到 OS 本身的权限/配置问题，然后  缺少部分 event，可以参考`async-profiler`本身文档：[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
+如果遇到 OS 本身的权限/配置问题，然后缺少部分 event，可以参考 [async-profiler 的文档](https://github.com/jvm-profiling-tools/async-profiler)。
 
-可以用`--event`参数指定要采样的事件，比如对`alloc`事件进入采样：
+可以用`--event`参数指定要采样的事件，比如 `alloc` 表示分析内存分配情况：
 
 ```bash
 $ profiler start --event alloc
@@ -132,7 +140,7 @@ $ profiler resume
 Started [cpu] profiling
 ```
 
-`start`和`resume`的区别是：`start`是新开始采样，`resume`会保留上次`stop`时的数据。
+`start`和`resume`的区别是：`start`会清除已有的分析结果重新开始，`resume`则会保留已有的结果，将新的分析结果附加到已有结果中。
 
 通过执行`profiler getSamples`可以查看 samples 的数量来验证。
 
@@ -183,7 +191,7 @@ profiler start --framebuf 5000000
 profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'
 ```
 
-> `--include/--exclude` 都支持设置多个值 ，但是需要配置在命令行的最后。
+> `--include/--exclude` 都支持多次设置，但是需要配置在命令行的最后。也可使用短参数格式 `-I/-X`。
 
 ## 指定执行时间
 
@@ -199,6 +207,7 @@ profiler start --duration 300
 
 ```
 profiler start --file /tmp/test.jfr
+profiler start -o jfr
 ```
 
 `file`参数支持一些变量：
@@ -210,6 +219,16 @@ profiler start --file /tmp/test.jfr
 
 - JDK Mission Control ： https://github.com/openjdk/jmc
 - JProfiler ： https://github.com/alibaba/arthas/issues/1416
+
+## 控制分析结果的格式
+
+使用 `-s` 选项将结果中的 Fully qualified name 替换为简单名称，如 `demo.MathGame.main` 替换为 `MathGame.main`。使用 `-g` 选项指定输出方法签名，如 `demo.MathGame.main` 替换为 `demo.MathGame.main([Ljava/lang/String;)V`。此外还有许多可调整分析结果格式的选项，可参考 [async-profiler 的 README 文档](https://github.com/async-profiler/async-profiler#readme) 以及 [async-profiler 的 Github Discussions](https://github.com/async-profiler/async-profiler/discussions) 等材料。
+
+例如，以下命令中，`-s` 将输出中的类名称指定为简短格式，`-g` 显示方法的完整签名，`-a` 标注出 Java 方法，`-l` 为原生方法增加库名称，`--title` 为生成火焰图页面指定标题，`--minwidth` 将过滤火焰图中宽度为 15% 以下的帧，`--reverse` 将火焰图倒置。
+
+```
+profiler stop -s -g -a -l --title <flametitle> --minwidth 15 --reverse
+```
 
 ## 生成的火焰图里的 unknown
 

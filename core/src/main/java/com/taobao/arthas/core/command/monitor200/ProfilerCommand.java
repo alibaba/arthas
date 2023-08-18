@@ -51,7 +51,7 @@ import one.profiler.Counter;
         + "  profiler list                # list all supported events\n"
         + "  profiler actions             # list all supported actions\n"
         + "  profiler start --event alloc\n"
-        + "  profiler stop --format html   # output file format, support html,jfr\n"
+        + "  profiler stop --format html   # output file format, support flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
         + "  profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
@@ -95,6 +95,26 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean threads;
 
     /**
+     * use simple class names instead of FQN
+     */
+    private boolean simple;
+
+    /**
+     * print method signatures
+     */
+    private boolean sig;
+
+    /**
+     * annotate Java methods
+     */
+    private boolean ann;
+
+    /**
+     * prepend library names
+     */
+    private boolean lib;
+
+    /**
      * include only kernel-mode events
      */
     private boolean allkernel;
@@ -118,6 +138,27 @@ public class ProfilerCommand extends AnnotatedCommand {
      * exclude stack traces containing PATTERN
      */
     private List<String> excludes;
+
+
+    /**
+     * FlameGraph title
+     */
+    private String title;
+
+    /**
+     * FlameGraph minimum frame width in percent
+     */
+    private String minwidth;
+
+    /**
+     * generate stack-reversed FlameGraph / Call tree
+     */
+    private boolean reverse;
+
+    /**
+     * count the total value (time, bytes, etc.) instead of samples
+     */
+    private boolean total;
 
     private static String libPath;
     private static AsyncProfiler profiler = null;
@@ -184,15 +225,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "f", longName = "file")
-    @Description("dump output to <filename>")
+    @Description("dump output to <filename>, if ends with html or jfr, content format can be infered")
     public void setFile(String file) {
         this.file = file;
     }
 
-    @Option(longName = "format")
-    @Description("dump output file format(html, jfr), default valut is html")
-    @DefaultValue("html")
+    @Option(shortName = "o", longName = "format")
+    @Description("dump output content format(flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr)")
     public void setFormat(String format) {
+        // only for backward compatibility
+        if ("html".equals(format)) {
+            format = "flamegraph";
+        }
         this.format = format;
     }
 
@@ -207,6 +251,30 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(shortName = "s", flag = true)
+    @Description("use simple class names instead of FQN")
+    public void setSimple(boolean simple) {
+        this.simple = simple;
+    }
+
+    @Option(shortName = "g", flag = true)
+    @Description("print method signatures")
+    public void setSig(boolean sig) {
+        this.sig = sig;
+    }
+
+    @Option(shortName = "a", flag = true)
+    @Description("annotate Java methods")
+    public void setAnn(boolean ann) {
+        this.ann = ann;
+    }
+
+    @Option(shortName = "l", flag = true)
+    @Description("prepend library names")
+    public void setLib(boolean lib) {
+        this.lib = lib;
     }
 
     @Option(longName = "allkernel", flag = true)
@@ -227,16 +295,48 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.duration = duration;
     }
 
-    @Option(longName = "include")
+    @Option(shortName = "I", longName = "include")
     @Description("include stack traces containing PATTERN, for example: 'java/*'")
     public void setInclude(List<String> includes) {
         this.includes = includes;
     }
 
-    @Option(longName = "exclude")
+    @Option(shortName = "X", longName = "exclude")
     @Description("exclude stack traces containing PATTERN, for example: '*Unsafe.park*'")
     public void setExclude(List<String> excludes) {
         this.excludes = excludes;
+    }
+
+    @Option(longName = "title")
+    @Description("FlameGraph title")
+    public void setTitle(String title) {
+        // escape HTML special characters
+        // and escape comma to avoid conflicts with JVM TI
+        title = title.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;")
+                .replace(",", "&#44;");
+        this.title = title;
+    }
+
+    @Option(longName = "minwidth")
+    @Description("FlameGraph minimum frame width in percent")
+    public void setMinwidth(String minwidth) {
+        this.minwidth = minwidth;
+    }
+
+    @Option(longName = "reverse", flag = true)
+    @Description("generate stack-reversed FlameGraph / Call tree")
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
+    }
+
+    @Option(longName = "total", flag = true)
+    @Description("count the total value (time, bytes, etc.) instead of samples")
+    public void setTotal(boolean total) {
+        this.total = total;
     }
 
     private AsyncProfiler profilerInstance() {
@@ -306,6 +406,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.file != null) {
             sb.append("file=").append(this.file).append(',');
         }
+        if (this.format != null) {
+            sb.append(this.format).append(',');
+        }
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(',');
         }
@@ -314,6 +417,18 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.threads) {
             sb.append("threads").append(',');
+        }
+        if (this.simple) {
+            sb.append("simple").append(",");
+        }
+        if (this.sig) {
+            sb.append("sig").append(",");
+        }
+        if (this.ann) {
+            sb.append("ann").append(",");
+        }
+        if (this.lib) {
+            sb.append("lib").append(",");
         }
         if (this.allkernel) {
             sb.append("allkernel").append(',');
@@ -330,6 +445,19 @@ public class ProfilerCommand extends AnnotatedCommand {
             for (String exclude : excludes) {
                 sb.append("exclude=").append(exclude).append(',');
             }
+        }
+
+        if (this.title != null) {
+            sb.append("title=").append(this.title).append(',');
+        }
+        if (this.minwidth != null) {
+            sb.append("minwidth=").append(this.minwidth).append(',');
+        }
+        if (this.reverse) {
+            sb.append("reverse").append(',');
+        }
+        if (this.total) {
+            sb.append("total").append(',');
         }
 
         return sb.toString();
@@ -460,16 +588,38 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String outputFile() throws IOException {
         if (this.file == null) {
+            String fileExt = outputFileExt();
             File outputPath = ArthasBootstrap.getInstance().getOutputPath();
             if (outputPath != null) {
                 this.file = new File(outputPath,
-                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format)
+                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + fileExt)
                                 .getAbsolutePath();
             } else {
-                this.file = File.createTempFile("arthas-output", "." + this.format).getAbsolutePath();
+                this.file = File.createTempFile("arthas-output", "." + fileExt).getAbsolutePath();
             }
         }
         return file;
+    }
+
+    /**
+     * This method should only be called when {@code this.file == null} is true.
+     */
+    private String outputFileExt() {
+        String fileExt = "";
+        if (this.format == null) {
+            fileExt = "html";
+        } else if (this.format.startsWith("flat") || this.format.startsWith("traces") 
+                || this.format.equals("collapsed")) {
+            fileExt = "txt";
+        } else if (this.format.equals("flamegraph") || this.format.equals("tree")) {
+            fileExt = "html";
+        } else if (this.format.equals("jfr")) {
+            fileExt = "jfr";
+        } else {
+            // illegal -o option makes async-profiler use flat
+            fileExt = "txt";
+        }
+        return fileExt;
     }
 
     private void appendExecuteResult(CommandProcess process, String result) {
