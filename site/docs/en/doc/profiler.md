@@ -144,6 +144,15 @@ The difference between `start` and `resume` is: `start` will clean existing resu
 
 You can verify the number of samples by executing `profiler getSamples`.
 
+## Dump action
+
+```bash
+$ profiler dump
+OK
+```
+
+The `dump` action saves profiling result to default file or specified file, but profiling will continue. That means if you start profiling and dump after 5 seconds, then dump after 2 seconds again, you will get 2 result files, the first one contains profiling result of 0\~5 seconds and the second one contains that of 0\~7 seconds.
+
 ## Use `execute` action to execute complex commands
 
 For example, start sampling:
