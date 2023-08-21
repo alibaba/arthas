@@ -144,6 +144,15 @@ Started [cpu] profiling
 
 通过执行`profiler getSamples`可以查看 samples 的数量来验证。
 
+## Dump 分析结果
+
+```bash
+$ profiler dump
+OK
+```
+
+`dump` action 将性能分析的结果保存到默认文件或指定的文件中，但 profiling 过程不会停止。例如，如果使用 `start` action 启动 profiling，5 秒后执行 `dump` action，2 秒后再次执行 `dump` action，将会得到 2 个结果文件，第一个文件包括 0\~5 秒的分析结果，第二个文件包括 0\~7 秒的分析结果。
+
 ## 使用`execute`来执行复杂的命令
 
 比如开始采样：
