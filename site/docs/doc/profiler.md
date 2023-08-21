@@ -41,7 +41,7 @@ $ profiler getSamples
 23
 ```
 
-## 查看 profiler 状态
+## 查看 profiling 状态
 
 ```bash
 $ profiler status
@@ -49,6 +49,17 @@ $ profiler status
 ```
 
 可以查看当前 profiler 在采样哪种`event`和采样时间。
+
+## 查看 profiler 自身的内存占用
+
+```
+$ profiler meminfo
+Call trace storage:   10244 KB
+      Dictionaries:      72 KB
+        Code cache:   12890 KB
+------------------------------
+             Total:   23206 KB
+```
 
 ## 停止 profiler
 
@@ -173,15 +184,15 @@ profiler execute 'stop,file=/tmp/result.html'
 
 ```bash
 $ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status]
 ```
 
 ## 查看版本
 
 ```bash
 $ profiler version
-Async-profiler 1.6 built on Sep  9 2019
-Copyright 2019 Andrei Pangin
+Async-profiler 2.9 built on May  8 2023
+Copyright 2016-2021 Andrei Pangin
 ```
 
 ## 配置 framebuf 参数
