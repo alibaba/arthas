@@ -1,12 +1,11 @@
 echo "Setup environment..."
 
-mkdir -p /home/local/java
-cd /home/local/java
-wget https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz
-tar -zxvf openjdk-11.0.1_linux-x64_bin.tar.gz
-echo 'export JAVA_HOME=/home/local/java/jdk-11.0.1
-export PATH=$JAVA_HOME/bin:$PATH
-export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> ~/.bashrc
+mkdir -p /home/local/java/lite-jdk-linux-x86_64
+cd /home/local/java/lite-jdk-linux-x86_64
+wget https://github.com/hengyunabc/lite-jdk/releases/download/0.0.5/lite-jdk-11-linux-x86_64.tgz
+tar -zxvf lite-jdk-11-linux-x86_64.tgz > /dev/null 2>&1
+echo 'export JAVA_HOME=/home/local/java/lite-jdk-linux-x86_64
+export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 cd ~
 
