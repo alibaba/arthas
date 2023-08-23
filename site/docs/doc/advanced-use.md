@@ -50,7 +50,6 @@ Arthas 支持配置项参考。
 ## 以 java agent 方式启动
 
 - [以 java agent 方式启动](agent.md)
--
 
 ## Arthas Spring Boot Starter
 
