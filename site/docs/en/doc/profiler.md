@@ -41,7 +41,7 @@ $ profiler getSamples
 23
 ```
 
-## View profiler status
+## View profiling status
 
 ```bash
 $ profiler status
@@ -49,6 +49,17 @@ $ profiler status
 ```
 
 Can view which `event` and sampling time.
+
+## View profiler memory usage
+
+```
+$ profiler meminfo
+Call trace storage:   10244 KB
+      Dictionaries:      72 KB
+        Code cache:   12890 KB
+------------------------------
+             Total:   23206 KB
+```
 
 ## Stop profiler
 
@@ -173,15 +184,15 @@ Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tool
 
 ```bash
 $ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status]
 ```
 
 ## View version
 
 ```bash
 $ profiler version
-Async-profiler 1.6 built on Sep  9 2019
-Copyright 2019 Andrei Pangin
+Async-profiler 2.9 built on May  8 2023
+Copyright 2016-2021 Andrei Pangin
 ```
 
 ## Configure framebuf option
