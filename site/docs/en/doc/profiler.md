@@ -195,14 +195,20 @@ Async-profiler 2.9 built on May  8 2023
 Copyright 2016-2021 Andrei Pangin
 ```
 
-## Configure framebuf option
+## Configure Java stack depth
 
-::: tip
-you encounter `[frame_buffer_overflow]` in the generated result, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
-:::
+You can use `-j` option to configure maximum Java stack depth. This option will be ignored if value is greater than default 2048. This option is useful when you don't want to see stacks that are too deep. Below is usage example:
 
 ```bash
-profiler start --framebuf 5000000
+profiler start -j 256
+```
+
+## Profiling different threads separately
+
+You can use `-t` or `--threads` flag option to profile different threads separately, each stack trace will end with a frame that denotes a single thread.
+
+```bash
+profiler start -t
 ```
 
 ## Configure include/exclude to filter data
