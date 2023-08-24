@@ -467,7 +467,6 @@ Options and Arguments:
 
 EXAMPLES:
   ./as.sh <pid>
-  ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh --username admin --password <password>
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
