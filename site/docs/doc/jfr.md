@@ -74,6 +74,7 @@ Recording: recording=2 name=myRecording duration=PT1M (closed)
 
 ## dump jfr 记录
 
+`jfr dump`{{}} 会输出从开始到运行该命令这段时间内的记录到 JFR 文件，且不会停止 `jfr`{{}} 的记录  
 指定记录输出路径
 
 ```bash

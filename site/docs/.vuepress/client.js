@@ -14,7 +14,7 @@ const addOldDocsContributors = () => {
     return contributors.find(
       (contributor) =>
         contributor.name === oldContributor.name &&
-        contributor.email === oldContributor.email
+        contributor.email === oldContributor.email,
     );
   };
 

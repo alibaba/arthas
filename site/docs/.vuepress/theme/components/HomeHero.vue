@@ -31,7 +31,7 @@ const heroText = computed(() => {
 });
 
 const heroAlt = computed(
-  () => frontmatter.value.heroAlt || heroText.value || "hero"
+  () => frontmatter.value.heroAlt || heroText.value || "hero",
 );
 
 const tagline = computed(() => {

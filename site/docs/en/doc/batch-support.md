@@ -1,6 +1,7 @@
 # Batch Processing
 
 With the help of Batch Processing, you can run multiple commands in batch and get the final result at the end.
+The process name can be specified using the “–select” parameter.
 
 ## Usage
 

@@ -6,6 +6,8 @@
 Dump the bytecode for the particular classes to the specified directory.
 :::
 
+The dump command is used to dump the bytecode of classes actually running in the JVM to a specified directory. It is suitable for bulk downloading the bytecode of classes in a specific package directory. If you need to decompile a single class or view class information in real-time, you can refer to [jad](/en/doc/jad.md).
+
 ## Options
 
 |                  Name | Specification                                                               |

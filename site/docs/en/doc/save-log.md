@@ -1,6 +1,6 @@
 # Log command outputs
 
-[`Log command outputs` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=case-save-log)
+[`Log command outputs` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=save-log)
 
 ::: tip
 Log command outputs for later analysis
@@ -24,4 +24,4 @@ Log command outputs for later analysis
 
 ## Use asynchronous job to log
 
-Reference: [async] (async.md)
+Reference: [async](async.md)
