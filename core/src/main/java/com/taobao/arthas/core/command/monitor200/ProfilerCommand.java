@@ -61,7 +61,6 @@ import one.profiler.Counter;
         + "  profiler dumpFlat            # Dump flat profile, i.e. the histogram of the hottest methods\n"
         + "  profiler dumpCollapsed       # Dump profile in 'collapsed stacktraces' format\n"
         + "  profiler dumpTraces          # Dump collected stack traces\n"
-        + "  profiler execute 'start,framebuf=5000000'      # Execute an agent-compatible profiling command\n"
         + "  profiler execute 'stop,file=/tmp/result.html'   # Execute an agent-compatible profiling command\n"
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
@@ -95,11 +94,6 @@ public class ProfilerCommand extends AnnotatedCommand {
      * maximum Java stack depth (default: 2048)
      */
     private Integer jstackdepth;
-
-    /**
-     * size of the buffer for stack frames (default: 1'000'000)
-     */
-    private Long framebuf;
 
     /**
      * profile different threads separately
@@ -233,13 +227,6 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("maximum Java stack depth (default: 2048)")
     public void setJstackdepth(int jstackdepth) {
         this.jstackdepth = jstackdepth;
-    }
-
-    @Option(shortName = "b", longName = "framebuf")
-    @Description("size of the buffer for stack frames (default: 1'000'000)")
-    @DefaultValue("1000000")
-    public void setFramebuf(long framebuf) {
-        this.framebuf = framebuf;
     }
 
     @Option(shortName = "f", longName = "file")
@@ -435,9 +422,6 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.jstackdepth != null) {
             sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
-        }
-        if (this.framebuf != null) {
-            sb.append("framebuf=").append(this.framebuf).append(COMMA);
         }
         if (this.threads) {
             sb.append("threads").append(COMMA);
