@@ -23,7 +23,8 @@ public class IPUtils {
     }
 
     /**
-     * get IP address, automatically distinguish the operating system.（windows or linux）
+     * get IP address, automatically distinguish the operating system.（windows or
+     * linux）
      *
      * @return String
      */
@@ -33,7 +34,7 @@ public class IPUtils {
             if (isWindowsOS()) {
                 ip = InetAddress.getLocalHost();
             } else {
-                //scan all NetWorkInterfaces if it's loopback address
+                // scan all NetWorkInterfaces if it's loopback address
                 if (!InetAddress.getLocalHost().isLoopbackAddress()) {
                     ip = InetAddress.getLocalHost();
                 } else {
@@ -50,7 +51,8 @@ public class IPUtils {
                         while (ips.hasMoreElements()) {
                             ip = ips.nextElement();
                             // IP starts with 127. is loopback address
-                            if (ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && !ip.getHostAddress().contains(":")) {
+                            if (ip.isSiteLocalAddress() && !ip.isLoopbackAddress()
+                                    && !ip.getHostAddress().contains(":")) {
                                 bFindIP = true;
                                 break;
                             }
@@ -65,4 +67,19 @@ public class IPUtils {
         return ip == null ? null : ip.getHostAddress();
     }
 
+
+    public static boolean isAllZeroIP(String ipStr) {
+        if (ipStr == null || ipStr.isEmpty()) {
+            return false;
+        }
+        char[] charArray = ipStr.toCharArray();
+
+        for (char c : charArray) {
+            if (c != '0' && c != '.' && c != ':') {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
