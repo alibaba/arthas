@@ -19,5 +19,5 @@ export const navbarEN = [
   {
     text: "DOWNLOAD",
     link: "/en/doc/download.md",
-  }
+  },
 ];
