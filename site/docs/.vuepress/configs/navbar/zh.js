@@ -19,5 +19,5 @@ export const navbarZH = [
   {
     text: "下载",
     link: "/doc/download.md",
-  }
+  },
 ];
