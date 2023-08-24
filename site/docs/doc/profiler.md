@@ -195,12 +195,20 @@ Async-profiler 2.9 built on May  8 2023
 Copyright 2016-2021 Andrei Pangin
 ```
 
-## 配置 framebuf 参数
+## 配置 Java 栈深度
 
-> 如果遇到生成的火焰图有 `[frame_buffer_overflow]`，则需要增大 framebuf（默认值是 1'000'000），可以显式配置，比如：
+可以使用 `-j` 选项指定最大 Java 栈深度。如果指定值大于默认值 2048，该选项会被忽略。当你不希望看到特别深的栈轨迹的时候，这个选项会很有用，以下是一个使用样例：
 
 ```bash
-profiler start --framebuf 5000000
+profiler start -j 256
+```
+
+## 各线程分别进行 profiling
+
+可以使用 `-t` 或 `--threads` 标志选项令 profiling 对各线程分别进行，每个栈轨迹都会以指示单个线程的帧结束。
+
+```bash
+profiler start -t
 ```
 
 ## 配置 include/exclude 来过滤数据
