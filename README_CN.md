@@ -1,6 +1,4 @@
-# Arthas 交互式 Katacoda 在线教程
-
-[![](http://shields.katacoda.com/katacoda/arthas/count.svg)](https://www.katacoda.com/arthas "Get your profile on Katacoda.com")
+# Arthas 交互式 Killercoda 在线教程
 
 English version goes [here](README.md).
 
