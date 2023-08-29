@@ -197,7 +197,7 @@ Copyright 2016-2021 Andrei Pangin
 
 ## Configure Java stack depth
 
-You can use `-j` option to configure maximum Java stack depth. This option will be ignored if value is greater than default 2048. This option is useful when you don't want to see stacks that are too deep. Below is usage example:
+You can use `-j` or `--jstackdepth` option to configure maximum Java stack depth. This option will be ignored if value is greater than default 2048. This option is useful when you don't want to see stacks that are too deep. Below is usage example:
 
 ```bash
 profiler start -j 256

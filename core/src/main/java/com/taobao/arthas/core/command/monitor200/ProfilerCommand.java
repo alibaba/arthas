@@ -223,7 +223,7 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.interval = interval;
     }
 
-    @Option(shortName = "j")
+    @Option(shortName = "j", longName = "jstackdepth")
     @Description("maximum Java stack depth (default: 2048)")
     public void setJstackdepth(int jstackdepth) {
         this.jstackdepth = jstackdepth;
