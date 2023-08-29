@@ -61,9 +61,7 @@ Started recording 1. No limit specified, using maxsize=250MB as default.
 
 ## 通过浏览器查看 arthas-output 下面 JFR 记录的结果
 
-默认情况下，arthas 使用 8563 端口，则可以打开： [/arthas-output]({{TRAFFIC_HOST1_8563}}/arthas-output) 查看到`arthas-output`{{}} 目录下面的 JFR 记录结果：
-
-![](../../assets/arthas-output-recording.png)
+默认情况下，arthas 使用 8563 端口，则可以打开： [/arthas-output]({{TRAFFIC_HOST1_8563}}/arthas-output) 输入账号 `arthas` 和密码 `arthas` 查看到 `arthas-output`{{}} 目录下面的 JFR 记录结果：
 
 生成的结果可以用支持 jfr 格式的工具来查看。比如：
 
