@@ -208,10 +208,11 @@ profiler start --framebuf 5000000
 如果应用比较复杂，生成的内容很多，想只关注部分 stack traces，可以通过 `--include/--exclude` 过滤 stack traces，`--include` 表示定义的匹配表达式必须出现在 stack traces，相反 `--exclude` 表示定义的匹配表达式一定不会出现在 stack traces。 匹配表达式可以以`*`开始或者结束,`*` 表示任何（可能为空）字符序列。 比如
 
 ```bash
-profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'
+profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'
 ```
 
 > `--include/--exclude` 都支持多次设置，但是需要配置在命令行的最后。也可使用短参数格式 `-I/-X`。
+> 注意`--include/--exclude`只支持在`stop`action或者带有`-d`/`--duration`参数的`start`action中指定，否则不生效。
 
 ## 指定执行时间
 
