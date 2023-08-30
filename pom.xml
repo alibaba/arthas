@@ -154,7 +154,7 @@
             <dependency>
                 <groupId>ognl</groupId>
                 <artifactId>ognl</artifactId>
-                <version>3.1.19</version>
+                <version>3.4.2</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.express;
 
 import ognl.ClassResolver;
+import ognl.OgnlContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,8 @@ public class CustomClassResolver implements ClassResolver {
 
     }
 
-    public Class<?> classForName(String className, Map context) throws ClassNotFoundException {
+    @Override
+    public <T> Class<T> classForName(String className, OgnlContext ognlContext) throws ClassNotFoundException {
         Class<?> result = null;
 
         if ((result = classes.get(className)) == null) {
@@ -38,6 +40,6 @@ public class CustomClassResolver implements ClassResolver {
             }
             classes.put(className, result);
         }
-        return result;
+        return (Class<T>) result;
     }
 }
