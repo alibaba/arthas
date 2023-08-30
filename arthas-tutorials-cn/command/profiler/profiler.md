@@ -40,7 +40,7 @@
 
 ### 通过浏览器查看 arthas-output 下面的 profiler 结果
 
-默认情况下，arthas 使用 8563http 端口，[点击打开]({{TRAFFIC_HOST1_8563}}/arthas-output/) arthas-output/ 目录下面的 profiler 结果：
+默认情况下，arthas 使用 8563 http 端口，[点击打开]({{TRAFFIC_HOST1_8563}}/arthas-output/) 输入账号 `arthas` 和密码 `arthas` 查看 arthas-output/ 目录下面的 profiler 结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 

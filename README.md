@@ -1,6 +1,4 @@
-# Interactive Katacoda Online Tutorials for Arthas
-
-[![](http://shields.katacoda.com/katacoda/arthas/count.svg)](https://www.katacoda.com/arthas "Get your profile on Katacoda.com")
+# Interactive Killercoda Online Tutorials for Arthas
 
 [中文说明/Chinese Documentation](README_CN.md)
 
@@ -22,7 +20,7 @@
 
 If you want to contribute to the Arthas online tutorials, you are welcome to submit pull requests for the Arthas online tutorials.
 
-Visit https://killercoda.com/creators to learn more about creating Katacoda scenarios.
+Visit https://killercoda.com/creators to learn more about creating Killercoda scenarios.
 
 For examples of the scenarios folder, visit https://github.com/killercoda/scenario-examples
 

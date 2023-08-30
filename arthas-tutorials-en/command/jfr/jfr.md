@@ -61,7 +61,7 @@ You can also specify the record output path.
 
 ## View JFR recording results under arthas-output via browser
 
-By default, arthas uses http port 8563 , which can be opened: [/arthas-output]({{TRAFFIC_HOST1_8563}}/arthas-output) View the `arthas-output`{{}} directory below JFR recording results:
+By default, arthas uses http port 8563 , which can be opened: [/arthas-output]({{TRAFFIC_HOST1_8563}}/arthas-output) and enter the username `arthas` and password `arthas` to view the `arthas-output`{{}} directory below JFR recording results:
 
 ![](../../assets/arthas-output-recording.png)
 

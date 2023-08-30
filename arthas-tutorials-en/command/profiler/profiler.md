@@ -40,7 +40,7 @@ Or use the file name name format in the `--file`{{}} parameter. For example, `--
 
 ### View profiler results under arthas-output via browser
 
-By default, arthas uses http port 8563, [click to open]({{TRAFFIC_HOST1_8563}}/arthas-output/) View the `arthas-output`{{}} directory below Profiler results:
+By default, arthas uses http port 8563, [click to open]({{TRAFFIC_HOST1_8563}}/arthas-output/) and enter username `arthas` and password `arthas` to view the `arthas-output`{{}} directory below Profiler results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
