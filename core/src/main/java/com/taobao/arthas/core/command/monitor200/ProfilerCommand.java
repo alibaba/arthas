@@ -61,7 +61,6 @@ import one.profiler.Counter;
         + "  profiler dumpFlat            # Dump flat profile, i.e. the histogram of the hottest methods\n"
         + "  profiler dumpCollapsed       # Dump profile in 'collapsed stacktraces' format\n"
         + "  profiler dumpTraces          # Dump collected stack traces\n"
-        + "  profiler execute 'start,framebuf=5000000'      # Execute an agent-compatible profiling command\n"
         + "  profiler execute 'stop,file=/tmp/result.html'   # Execute an agent-compatible profiling command\n"
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
@@ -71,9 +70,16 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String action;
     private String actionArg;
 
+    /**
+     * which event to trace (cpu, wall, cache-misses, etc.)
+     */
     private String event;
 
+    /**
+     * output file name for dumping
+     */
     private String file;
+
     /**
      * output file format, default value is html.
      */
@@ -85,9 +91,9 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Long interval;
 
     /**
-     * size of the buffer for stack frames (default: 1'000'000)
+     * maximum Java stack depth (default: 2048)
      */
-    private Long framebuf;
+    private Integer jstackdepth;
 
     /**
      * profile different threads separately
@@ -217,11 +223,10 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.interval = interval;
     }
 
-    @Option(shortName = "b", longName = "framebuf")
-    @Description("size of the buffer for stack frames (default: 1'000'000)")
-    @DefaultValue("1000000")
-    public void setFramebuf(long framebuf) {
-        this.framebuf = framebuf;
+    @Option(shortName = "j", longName = "jstackdepth")
+    @Description("maximum Java stack depth (default: 2048)")
+    public void setJstackdepth(int jstackdepth) {
+        this.jstackdepth = jstackdepth;
     }
 
     @Option(shortName = "f", longName = "file")
@@ -247,7 +252,7 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.event = event;
     }
 
-    @Option(longName = "threads", flag = true)
+    @Option(shortName = "t", longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
@@ -396,70 +401,71 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String executeArgs(ProfilerAction action) {
         StringBuilder sb = new StringBuilder();
+        final char COMMA = ',';
 
         // start - start profiling
         // resume - start or resume profiling without resetting collected data
         // stop - stop profiling
-        sb.append(action).append(',');
+        sb.append(action).append(COMMA);
 
         if (this.event != null) {
-            sb.append("event=").append(this.event).append(',');
+            sb.append("event=").append(this.event).append(COMMA);
         }
         if (this.file != null) {
-            sb.append("file=").append(this.file).append(',');
+            sb.append("file=").append(this.file).append(COMMA);
         }
         if (this.format != null) {
-            sb.append(this.format).append(',');
+            sb.append(this.format).append(COMMA);
         }
         if (this.interval != null) {
-            sb.append("interval=").append(this.interval).append(',');
+            sb.append("interval=").append(this.interval).append(COMMA);
         }
-        if (this.framebuf != null) {
-            sb.append("framebuf=").append(this.framebuf).append(',');
+        if (this.jstackdepth != null) {
+            sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
         }
         if (this.threads) {
-            sb.append("threads").append(',');
+            sb.append("threads").append(COMMA);
         }
         if (this.simple) {
-            sb.append("simple").append(",");
+            sb.append("simple").append(COMMA);
         }
         if (this.sig) {
-            sb.append("sig").append(",");
+            sb.append("sig").append(COMMA);
         }
         if (this.ann) {
-            sb.append("ann").append(",");
+            sb.append("ann").append(COMMA);
         }
         if (this.lib) {
-            sb.append("lib").append(",");
+            sb.append("lib").append(COMMA);
         }
         if (this.allkernel) {
-            sb.append("allkernel").append(',');
+            sb.append("allkernel").append(COMMA);
         }
         if (this.alluser) {
-            sb.append("alluser").append(',');
+            sb.append("alluser").append(COMMA);
         }
         if (this.includes != null) {
             for (String include : includes) {
-                sb.append("include=").append(include).append(',');
+                sb.append("include=").append(include).append(COMMA);
             }
         }
         if (this.excludes != null) {
             for (String exclude : excludes) {
-                sb.append("exclude=").append(exclude).append(',');
+                sb.append("exclude=").append(exclude).append(COMMA);
             }
         }
 
         if (this.title != null) {
-            sb.append("title=").append(this.title).append(',');
+            sb.append("title=").append(this.title).append(COMMA);
         }
         if (this.minwidth != null) {
-            sb.append("minwidth=").append(this.minwidth).append(',');
+            sb.append("minwidth=").append(this.minwidth).append(COMMA);
         }
         if (this.reverse) {
-            sb.append("reverse").append(',');
+            sb.append("reverse").append(COMMA);
         }
         if (this.total) {
-            sb.append("total").append(',');
+            sb.append("total").append(COMMA);
         }
 
         return sb.toString();
