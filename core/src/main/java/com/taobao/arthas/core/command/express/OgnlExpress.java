@@ -4,7 +4,6 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 
 import ognl.ClassResolver;
-import ognl.DefaultMemberAccess;
 import ognl.MemberAccess;
 import ognl.Ognl;
 import ognl.OgnlContext;
@@ -28,10 +27,7 @@ public class OgnlExpress implements Express {
 
     public OgnlExpress(ClassResolver classResolver) {
         OgnlRuntime.setPropertyAccessor(Object.class, OBJECT_PROPERTY_ACCESSOR);
-        context = new OgnlContext();
-        context.setClassResolver(classResolver);
-        // allow private field access
-        context.setMemberAccess(MEMBER_ACCESS);
+        context = new OgnlContext(MEMBER_ACCESS, classResolver, null, null);
     }
 
     @Override
@@ -65,9 +61,6 @@ public class OgnlExpress implements Express {
     @Override
     public Express reset() {
         context.clear();
-        context.setClassResolver(CustomClassResolver.customClassResolver);
-        // allow private field access
-        context.setMemberAccess(MEMBER_ACCESS);
         return this;
     }
 }
