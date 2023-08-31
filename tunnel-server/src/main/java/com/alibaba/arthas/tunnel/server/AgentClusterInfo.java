@@ -13,19 +13,21 @@ public class AgentClusterInfo {
     private String arthasVersion;
 
     /**
-     * agent 连接到的 tunnel server 的ip
+     * agent 连接到的 tunnel server 的ip 和 port
      */
     private String clientConnectHost;
+    private int clientConnectTunnelPort;
 
     public AgentClusterInfo() {
 
     }
 
-    public AgentClusterInfo(AgentInfo agentInfo, String clientConnectHost) {
+    public AgentClusterInfo(AgentInfo agentInfo, String clientConnectHost, int clientConnectTunnelPort) {
         this.host = agentInfo.getHost();
         this.port = agentInfo.getPort();
         this.arthasVersion = agentInfo.getArthasVersion();
         this.clientConnectHost = clientConnectHost;
+        this.clientConnectTunnelPort = clientConnectTunnelPort;
     }
 
     public String getHost() {
@@ -58,6 +60,14 @@ public class AgentClusterInfo {
 
     public void setClientConnectHost(String clientConnectHost) {
         this.clientConnectHost = clientConnectHost;
+    }
+
+    public int getClientConnectTunnelPort() {
+        return clientConnectTunnelPort;
+    }
+
+    public void setClientConnectTunnelPort(int clientConnectTunnelPort) {
+        this.clientConnectTunnelPort = clientConnectTunnelPort;
     }
 
 }

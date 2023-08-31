@@ -74,6 +74,7 @@ Recording: recording=2 name=myRecording duration=PT1M (closed)
 
 ## dump jfr recording
 
+The `jfr dump`{{}} command will output the recordings from the start until the execution of the command to a JFR file, without stopping the recording.  
 Specifies the record output path.
 
 ```bash

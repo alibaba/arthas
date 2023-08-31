@@ -6,7 +6,7 @@
 Decompile the specified classes.
 :::
 
-`jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
+`jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better. If you need to download the bytecode of classes in a specific package directory in bulk, you can refer to the [dump](/en/doc/dump.md) tool for assistance.
 
 - The decompiled code is syntax highlighted for better readability in Arthas console.
 - It is possible that there's grammar error in the decompiled code, but it should not affect your interpretation.

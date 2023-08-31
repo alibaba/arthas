@@ -32,7 +32,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name(ArthasConstants.AUTH)
 @Summary("Authenticates the current session")
 @Description(Constants.EXAMPLE +
-        "  auth" +
+        "  auth\n" +
         "  auth <password>\n" +
         "  auth --username <username> <password>\n"
         + Constants.WIKI + Constants.WIKI_HOME + ArthasConstants.AUTH)

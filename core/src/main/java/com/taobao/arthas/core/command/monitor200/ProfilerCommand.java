@@ -51,17 +51,16 @@ import one.profiler.Counter;
         + "  profiler list                # list all supported events\n"
         + "  profiler actions             # list all supported actions\n"
         + "  profiler start --event alloc\n"
-        + "  profiler stop --format html   # output file format, support html,jfr\n"
+        + "  profiler stop --format html   # output file format, support flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
-        + "  profiler start --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
+        + "  profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
         + "  profiler status\n"
         + "  profiler resume              # Start or resume profiling without resetting collected data.\n"
         + "  profiler getSamples          # Get the number of samples collected during the profiling session\n"
         + "  profiler dumpFlat            # Dump flat profile, i.e. the histogram of the hottest methods\n"
         + "  profiler dumpCollapsed       # Dump profile in 'collapsed stacktraces' format\n"
         + "  profiler dumpTraces          # Dump collected stack traces\n"
-        + "  profiler execute 'start,framebuf=5000000'      # Execute an agent-compatible profiling command\n"
         + "  profiler execute 'stop,file=/tmp/result.html'   # Execute an agent-compatible profiling command\n"
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
@@ -71,9 +70,16 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String action;
     private String actionArg;
 
+    /**
+     * which event to trace (cpu, wall, cache-misses, etc.)
+     */
     private String event;
 
+    /**
+     * output file name for dumping
+     */
     private String file;
+
     /**
      * output file format, default value is html.
      */
@@ -85,14 +91,34 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Long interval;
 
     /**
-     * size of the buffer for stack frames (default: 1'000'000)
+     * maximum Java stack depth (default: 2048)
      */
-    private Long framebuf;
+    private Integer jstackdepth;
 
     /**
      * profile different threads separately
      */
     private boolean threads;
+
+    /**
+     * use simple class names instead of FQN
+     */
+    private boolean simple;
+
+    /**
+     * print method signatures
+     */
+    private boolean sig;
+
+    /**
+     * annotate Java methods
+     */
+    private boolean ann;
+
+    /**
+     * prepend library names
+     */
+    private boolean lib;
 
     /**
      * include only kernel-mode events
@@ -118,6 +144,27 @@ public class ProfilerCommand extends AnnotatedCommand {
      * exclude stack traces containing PATTERN
      */
     private List<String> excludes;
+
+
+    /**
+     * FlameGraph title
+     */
+    private String title;
+
+    /**
+     * FlameGraph minimum frame width in percent
+     */
+    private String minwidth;
+
+    /**
+     * generate stack-reversed FlameGraph / Call tree
+     */
+    private boolean reverse;
+
+    /**
+     * count the total value (time, bytes, etc.) instead of samples
+     */
+    private boolean total;
 
     private static String libPath;
     private static AsyncProfiler profiler = null;
@@ -176,23 +223,25 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.interval = interval;
     }
 
-    @Option(shortName = "b", longName = "framebuf")
-    @Description("size of the buffer for stack frames (default: 1'000'000)")
-    @DefaultValue("1000000")
-    public void setFramebuf(long framebuf) {
-        this.framebuf = framebuf;
+    @Option(shortName = "j", longName = "jstackdepth")
+    @Description("maximum Java stack depth (default: 2048)")
+    public void setJstackdepth(int jstackdepth) {
+        this.jstackdepth = jstackdepth;
     }
 
     @Option(shortName = "f", longName = "file")
-    @Description("dump output to <filename>")
+    @Description("dump output to <filename>, if ends with html or jfr, content format can be infered")
     public void setFile(String file) {
         this.file = file;
     }
 
-    @Option(longName = "format")
-    @Description("dump output file format(html, jfr), default valut is html")
-    @DefaultValue("html")
+    @Option(shortName = "o", longName = "format")
+    @Description("dump output content format(flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr)")
     public void setFormat(String format) {
+        // only for backward compatibility
+        if ("html".equals(format)) {
+            format = "flamegraph";
+        }
         this.format = format;
     }
 
@@ -203,10 +252,34 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.event = event;
     }
 
-    @Option(longName = "threads", flag = true)
+    @Option(shortName = "t", longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(shortName = "s", flag = true)
+    @Description("use simple class names instead of FQN")
+    public void setSimple(boolean simple) {
+        this.simple = simple;
+    }
+
+    @Option(shortName = "g", flag = true)
+    @Description("print method signatures")
+    public void setSig(boolean sig) {
+        this.sig = sig;
+    }
+
+    @Option(shortName = "a", flag = true)
+    @Description("annotate Java methods")
+    public void setAnn(boolean ann) {
+        this.ann = ann;
+    }
+
+    @Option(shortName = "l", flag = true)
+    @Description("prepend library names")
+    public void setLib(boolean lib) {
+        this.lib = lib;
     }
 
     @Option(longName = "allkernel", flag = true)
@@ -227,16 +300,48 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.duration = duration;
     }
 
-    @Option(longName = "include")
+    @Option(shortName = "I", longName = "include")
     @Description("include stack traces containing PATTERN, for example: 'java/*'")
     public void setInclude(List<String> includes) {
         this.includes = includes;
     }
 
-    @Option(longName = "exclude")
+    @Option(shortName = "X", longName = "exclude")
     @Description("exclude stack traces containing PATTERN, for example: '*Unsafe.park*'")
     public void setExclude(List<String> excludes) {
         this.excludes = excludes;
+    }
+
+    @Option(longName = "title")
+    @Description("FlameGraph title")
+    public void setTitle(String title) {
+        // escape HTML special characters
+        // and escape comma to avoid conflicts with JVM TI
+        title = title.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;")
+                .replace(",", "&#44;");
+        this.title = title;
+    }
+
+    @Option(longName = "minwidth")
+    @Description("FlameGraph minimum frame width in percent")
+    public void setMinwidth(String minwidth) {
+        this.minwidth = minwidth;
+    }
+
+    @Option(longName = "reverse", flag = true)
+    @Description("generate stack-reversed FlameGraph / Call tree")
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
+    }
+
+    @Option(longName = "total", flag = true)
+    @Description("count the total value (time, bytes, etc.) instead of samples")
+    public void setTotal(boolean total) {
+        this.total = total;
     }
 
     private AsyncProfiler profilerInstance() {
@@ -281,55 +386,86 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     /**
-     * https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50
-     *
+     * https://github.com/async-profiler/async-profiler/blob/v2.9/profiler.sh#L154
      */
     public enum ProfilerAction {
-        execute, start, stop, resume, list, version, status, load,
+        // start, resume, stop, dump, check, status, meminfo, list, collect,
+        start, resume, stop, dump, status, meminfo, list,
+        version,
 
+        load,
+        execute,
         dumpCollapsed, dumpFlat, dumpTraces, getSamples,
-
         actions
     }
 
     private String executeArgs(ProfilerAction action) {
         StringBuilder sb = new StringBuilder();
+        final char COMMA = ',';
 
         // start - start profiling
         // resume - start or resume profiling without resetting collected data
         // stop - stop profiling
-        sb.append(action).append(',');
+        sb.append(action).append(COMMA);
 
         if (this.event != null) {
-            sb.append("event=").append(this.event).append(',');
+            sb.append("event=").append(this.event).append(COMMA);
         }
         if (this.file != null) {
-            sb.append("file=").append(this.file).append(',');
+            sb.append("file=").append(this.file).append(COMMA);
+        }
+        if (this.format != null) {
+            sb.append(this.format).append(COMMA);
         }
         if (this.interval != null) {
-            sb.append("interval=").append(this.interval).append(',');
+            sb.append("interval=").append(this.interval).append(COMMA);
         }
-        if (this.framebuf != null) {
-            sb.append("framebuf=").append(this.framebuf).append(',');
+        if (this.jstackdepth != null) {
+            sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
         }
         if (this.threads) {
-            sb.append("threads").append(',');
+            sb.append("threads").append(COMMA);
+        }
+        if (this.simple) {
+            sb.append("simple").append(COMMA);
+        }
+        if (this.sig) {
+            sb.append("sig").append(COMMA);
+        }
+        if (this.ann) {
+            sb.append("ann").append(COMMA);
+        }
+        if (this.lib) {
+            sb.append("lib").append(COMMA);
         }
         if (this.allkernel) {
-            sb.append("allkernel").append(',');
+            sb.append("allkernel").append(COMMA);
         }
         if (this.alluser) {
-            sb.append("alluser").append(',');
+            sb.append("alluser").append(COMMA);
         }
         if (this.includes != null) {
             for (String include : includes) {
-                sb.append("include=").append(include).append(',');
+                sb.append("include=").append(include).append(COMMA);
             }
         }
         if (this.excludes != null) {
             for (String exclude : excludes) {
-                sb.append("exclude=").append(exclude).append(',');
+                sb.append("exclude=").append(exclude).append(COMMA);
             }
+        }
+
+        if (this.title != null) {
+            sb.append("title=").append(this.title).append(COMMA);
+        }
+        if (this.minwidth != null) {
+            sb.append("minwidth=").append(this.minwidth).append(COMMA);
+        }
+        if (this.reverse) {
+            sb.append("reverse").append(COMMA);
+        }
+        if (this.total) {
+            sb.append("total").append(COMMA);
         }
 
         return sb.toString();
@@ -385,7 +521,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                             //在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
                                 logger.info("stopping profiler ...");
-                                ProfilerModel model = processStop(asyncProfiler);
+                                ProfilerModel model = processStop(asyncProfiler, ProfilerAction.stop);
                                 logger.info("profiler output file: " + model.getOutputFile());
                                 logger.info("stop profiler successfully.");
                             } catch (Throwable e) {
@@ -396,20 +532,22 @@ public class ProfilerCommand extends AnnotatedCommand {
                 }
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.stop.equals(profilerAction)) {
-                ProfilerModel profilerModel = processStop(asyncProfiler);
+                ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
+                process.appendResult(profilerModel);
+            } else if (ProfilerAction.dump.equals(profilerAction)) {
+                ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
                 String result = execute(asyncProfiler, executeArgs);
                 appendExecuteResult(process, result);
-            } else if (ProfilerAction.list.equals(profilerAction)) {
-                String result = asyncProfiler.execute("list");
-                appendExecuteResult(process, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
-                String result = asyncProfiler.execute("version");
+                String result = asyncProfiler.execute("version=full");
                 appendExecuteResult(process, result);
-            } else if (ProfilerAction.status.equals(profilerAction)) {
-                String result = asyncProfiler.execute("status");
+            } else if (ProfilerAction.status.equals(profilerAction)
+                    || ProfilerAction.meminfo.equals(profilerAction)
+                    || ProfilerAction.list.equals(profilerAction)) {
+                String result = asyncProfiler.execute(profilerAction.toString());
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.dumpCollapsed.equals(profilerAction)) {
                 if (actionArg == null) {
@@ -448,9 +586,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
     }
 
-    private ProfilerModel processStop(AsyncProfiler asyncProfiler) throws IOException {
+    private ProfilerModel processStop(AsyncProfiler asyncProfiler, ProfilerAction profilerAction) throws IOException {
         String outputFile = outputFile();
-        String executeArgs = executeArgs(ProfilerAction.stop);
+        String executeArgs = executeArgs(profilerAction);
         String result = execute(asyncProfiler, executeArgs);
 
         ProfilerModel profilerModel = createProfilerModel(result);
@@ -460,16 +598,38 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String outputFile() throws IOException {
         if (this.file == null) {
+            String fileExt = outputFileExt();
             File outputPath = ArthasBootstrap.getInstance().getOutputPath();
             if (outputPath != null) {
                 this.file = new File(outputPath,
-                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format)
+                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + fileExt)
                                 .getAbsolutePath();
             } else {
-                this.file = File.createTempFile("arthas-output", "." + this.format).getAbsolutePath();
+                this.file = File.createTempFile("arthas-output", "." + fileExt).getAbsolutePath();
             }
         }
         return file;
+    }
+
+    /**
+     * This method should only be called when {@code this.file == null} is true.
+     */
+    private String outputFileExt() {
+        String fileExt = "";
+        if (this.format == null) {
+            fileExt = "html";
+        } else if (this.format.startsWith("flat") || this.format.startsWith("traces") 
+                || this.format.equals("collapsed")) {
+            fileExt = "txt";
+        } else if (this.format.equals("flamegraph") || this.format.equals("tree")) {
+            fileExt = "html";
+        } else if (this.format.equals("jfr")) {
+            fileExt = "jfr";
+        } else {
+            // illegal -o option makes async-profiler use flat
+            fileExt = "txt";
+        }
+        return fileExt;
     }
 
     private void appendExecuteResult(CommandProcess process, String result) {
