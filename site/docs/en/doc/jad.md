@@ -180,3 +180,7 @@ The value of `--classloaderclass` is the class name of classloader. It can only 
 ### Decompile with specified directory for dumpping class
 
 Decompile class with `jad` need to dump corresponding classes into files. The default directory for dumpping classes is the directory of log file specified in logback.xml, we can use `-d/--directory` to specify the directory for dummping class.
+
+```java
+$ jad demo.MathGame -d /tmp/jad/dump
+```
