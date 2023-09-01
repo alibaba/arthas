@@ -52,18 +52,23 @@ class ClassDumpTransformer implements ClassFileTransformer {
         return dumpResult;
     }
 
-    private void dumpClassIfNecessary(Class<?> clazz, byte[] data) {
-        String className = clazz.getName();
-        ClassLoader classLoader = clazz.getClassLoader();
+    public File dumpDir() {
         String classDumpDir = "classdump";
-
-        // 创建类所在的包路径
-        File dumpDir = null;
+        final File dumpDir;
         if (directory != null) {
             dumpDir = directory;
         } else {
             dumpDir = new File(arthasLogHome, classDumpDir);
         }
+        return dumpDir;
+    }
+
+    private void dumpClassIfNecessary(Class<?> clazz, byte[] data) {
+        String className = clazz.getName();
+        ClassLoader classLoader = clazz.getClassLoader();
+
+        // 创建类所在的包路径
+        File dumpDir = dumpDir();
         if (!dumpDir.mkdirs() && !dumpDir.exists()) {
             logger.warn("create dump directory:{} failed.", dumpDir.getAbsolutePath());
             return;
