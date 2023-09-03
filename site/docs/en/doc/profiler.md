@@ -281,3 +281,46 @@ When using JFR as output format, you can use `--chunksize` or `--chunktime` to c
 ```bash
 profiler start -f profile.jfr --chunksize 100m --chunktime 1h
 ```
+
+## Group threads by scheduling policy
+
+You can use `--sched` flag option to group threads in output by Linux-specific scheduling policy: BATCH/IDLE/OTHER, for example:
+
+```bash
+profiler start --sched
+```
+
+The second line from bottom in flamegraph represent the scheduling policy.
+
+## Build allocation profile from live objects only
+
+Use `--live` flag option to retain allocation samples with live objects only (object that have not been collected by the end of profiling session). Useful for finding Java heap memory leaks.
+
+```bash
+profiler start --live
+```
+
+## Config method of collecting C stack frames
+
+Use `--cstack MODE` to config how to walk native frames (C stack). Possible modes are fp (Frame Pointer), dwarf (DWARF unwind info), lbr (Last Branch Record, available on Haswell since Linux 4.1), and no (do not collect C stack).
+
+By default, C stack is shown in cpu, itimer, wall-clock and perf-events profiles. Java-level events like alloc and lock collect only Java stack.
+
+```bash
+profiler --cstack fp
+```
+
+The command above will collection Frame Pointer of C stacks.
+
+## Begin or end profiling when FUNCTION is executed
+
+Use `--begin function` and `--end function` to automatically start/stop profiling when the specified native function is executed. Its main purpose is to profile certain JVM phases like GC and Safepoint pauses. You should use native function name defined in a JVM implement, for example `SafepointSynchronize::begin` and `SafepointSynchronize::end` in HotSpot JVM.
+
+### Time-to-safepoint profiling
+
+The `--ttsp` option is an alias for `--begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized`. It is not a separate event type, but rather a constraint. Whatever event type you choose (e.g. cpu or wall), the profiler will work as usual, except that only events between the safepoint request and the start of the VM operation will be recorded.
+
+```bash
+profiler start --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
+profiler --ttsp
+```
