@@ -262,3 +262,22 @@ profiler stop -s -g -a -l --title <flametitle> --minwidth 15 --reverse
 ## The 'unknown' in profiler result
 
 - https://github.com/jvm-profiling-tools/async-profiler/discussions/409
+
+## Config locks/allocations profiling threshold
+
+When profiling in locks or allocations event, you can use `--lock` or `--alloc` to config thresholds, for example:
+
+```bash
+profiler start -e lock --lock 10ms
+profiler start -e alloc --alloc 2m
+```
+
+will profile contended locks longer than 10ms (default unit is ns if no unit is specified), or profile allocations with 2m BYTES interval.
+
+## Config JFR chunks
+
+When using JFR as output format, you can use `--chunksize` or `--chunktime` to config approximate size (in bytes, default value is 100MB) and time limits (default value is 1 hour) for a single JFR chunk. For example:
+
+```bash
+profiler start -f profile.jfr --chunksize 100m --chunktime 1h
+```
