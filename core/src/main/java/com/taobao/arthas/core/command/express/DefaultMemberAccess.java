@@ -63,7 +63,6 @@ public class DefaultMemberAccess implements MemberAccess {
             AccessibleObject accessible = (AccessibleObject) member;
 
             if (!accessible.isAccessible()) {
-                //TODO: 为什么要设置为true，最后一个有这个类的源码版本里为什么是FALSE
                 result = Boolean.TRUE;
                 accessible.setAccessible(true);
             }

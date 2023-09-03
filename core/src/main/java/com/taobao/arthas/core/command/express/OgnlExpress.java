@@ -27,7 +27,6 @@ public class OgnlExpress implements Express {
 
     public OgnlExpress(ClassResolver classResolver) {
         OgnlRuntime.setPropertyAccessor(Object.class, OBJECT_PROPERTY_ACCESSOR);
-        // allow private field access
         context = new OgnlContext(MEMBER_ACCESS, classResolver, null, null);
     }
 
