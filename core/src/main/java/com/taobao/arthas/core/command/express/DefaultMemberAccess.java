@@ -8,6 +8,8 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 
 /**
+ * ognl.DefaultMemberAccess (ognl:ognl:3.1.19)
+ *
  * This class provides methods for setting up and restoring
  * access in a Field.  Java 2 provides access utilities for setting
  * and getting fields that are non-public.  This object provides
