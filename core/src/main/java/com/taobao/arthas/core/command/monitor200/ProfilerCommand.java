@@ -76,6 +76,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String event;
 
     /**
+     * profile allocations with BYTES interval
+     * according to async-profiler README, alloc may contains non-numeric charactors
+     */
+    private String alloc;
+
+    /**
+     * profile contended locks longer than DURATION ns
+     * according to async-profiler README, alloc may contains non-numeric charactors
+     */
+    private String lock;
+
+    /**
      * output file name for dumping
      */
     private String file;
@@ -166,6 +178,16 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private boolean total;
 
+    /**
+     * approximate size of JFR chunk in bytes (default: 100 MB)
+     */
+    private String chunksize;
+
+    /**
+     * duration of JFR chunk in seconds (default: 1 hour)
+     */
+    private String chunktime;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -250,6 +272,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     @DefaultValue("cpu")
     public void setEvent(String event) {
         this.event = event;
+    }
+
+    @Option(longName = "alloc")
+    @Description("allocation profiling interval in bytes")
+    public void setAlloc(String alloc) {
+        this.alloc = alloc;
+    }
+
+    @Option(longName = "lock")
+    @Description("lock profiling threshold in nanoseconds")
+    public void setLock(String lock) {
+        this.lock = lock;
     }
 
     @Option(shortName = "t", longName = "threads", flag = true)
@@ -344,6 +378,18 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.total = total;
     }
 
+    @Option(longName = "chunksize")
+    @Description("approximate size limits for a single JFR chunk in bytes (default: 100 MB) or other units")
+    public void setChunksize(String chunksize) {
+        this.chunksize = chunksize;
+    }
+
+    @Option(longName = "chunktime")
+    @Description("approximate time limits for a single JFR chunk in second (default: 1 hour) or other units")
+    public void setChunktime(String chunktime) {
+        this.chunktime = chunktime;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -411,6 +457,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.event != null) {
             sb.append("event=").append(this.event).append(COMMA);
         }
+        if (this.alloc!= null) {
+            sb.append("alloc=").append(this.alloc).append(COMMA);
+        }
+        if (this.lock!= null) {
+            sb.append("lock=").append(this.lock).append(COMMA);
+        }
         if (this.file != null) {
             sb.append("file=").append(this.file).append(COMMA);
         }
@@ -466,6 +518,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.total) {
             sb.append("total").append(COMMA);
+        }
+        if (this.chunksize != null) {
+            sb.append("chunksize=").append(this.chunksize).append(COMMA);
+        }
+        if (this.chunktime!= null) {
+            sb.append("chunktime=").append(this.chunktime).append(COMMA);
         }
 
         return sb.toString();

@@ -262,3 +262,22 @@ profiler stop -s -g -a -l --title <flametitle> --minwidth 15 --reverse
 ## 生成的火焰图里的 unknown
 
 - https://github.com/jvm-profiling-tools/async-profiler/discussions/409
+
+## 配置 locks/allocations 模式的阈值
+
+当使用 lock 或 alloc event 进行 profiling 时，可以使用 `--lock` 或 `--alloc` 配置阈值，比如下列命令：
+
+```bash
+profiler start -e lock --lock 10ms
+profiler start -e alloc --alloc 2m
+```
+
+会记录竞争时间超过 10ms 的锁（如果不指定时间单位，则使用 ns 为单位），或者以 2MB 的单位记录对内存的分配。
+
+## 配置 JFR 块
+
+当使用 JFR 作为输出格式时，可以使用 `--chunksize` 或 `--chunktime` 配置单个 JFR 块的大致容量（以 byte 为单位，默认 100 MB）和时间限制（默认值为 1 小时），比如：
+
+```bash
+profiler start -f profile.jfr --chunksize 100m --chunktime 1h
+```
