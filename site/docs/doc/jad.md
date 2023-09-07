@@ -177,7 +177,7 @@ Affect(row-cnt:1) cost in 190 ms.
 
 `--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
-### 反编译时指定dump class文件目录 
+### 反编译时指定dump class文件目录
 
 `jad`反编译需要将class dump到文件，默认会dump到logback.xml中配置的log目录下，使用`-d/--directory`可以将文件dump到指定目录。
 
