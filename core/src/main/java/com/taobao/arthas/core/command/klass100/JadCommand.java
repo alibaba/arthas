@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 @Description(Constants.EXAMPLE +
         "  jad java.lang.String\n" +
         "  jad java.lang.String toString\n" +
+        "  jad java.lang.String -d /tmp/jad/dump\n" +
         "  jad --source-only java.lang.String\n" +
         "  jad -c 39eb305e org/apache/log4j/Logger\n" +
         "  jad -c 39eb305e -E org\\\\.apache\\\\.*\\\\.StringUtils\n" +
@@ -62,6 +63,7 @@ public class JadCommand extends AnnotatedCommand {
     private boolean isRegEx = false;
     private boolean hideUnicode = false;
     private boolean lineNumber;
+    private String directory;
 
     /**
      * jad output source code only
@@ -116,6 +118,12 @@ public class JadCommand extends AnnotatedCommand {
     @Description("Output source code contins line number, default value true")
     public void setLineNumber(boolean lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    @Option(shortName = "d", longName = "directory")
+    @Description("Sets the destination directory for dummped class files required by cfr decompiler")
+    public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
     @Override
@@ -173,10 +181,19 @@ public class JadCommand extends AnnotatedCommand {
         allClasses.add(c);
 
         try {
-            ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses);
+            final ClassDumpTransformer transformer;
+            if (directory == null) {
+                transformer = new ClassDumpTransformer(allClasses);
+            } else {
+                transformer = new ClassDumpTransformer(allClasses, new File(directory));
+            }
             InstrumentationUtils.retransformClasses(inst, transformer, allClasses);
 
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
+            if (classFiles == null || classFiles.isEmpty()) {
+                return ExitStatus.failure(-1, "jad: fail to dump class file for decompiler, make sure you have write permission of the directory \"" + transformer.dumpDir() +
+                "\" or try with \"-d/--directory\" to specify the directory of dump files");
+            }
             File classFile = classFiles.get(c);
 
             Pair<String,NavigableMap<Integer,Integer>> decompileResult = Decompiler.decompileWithMappings(classFile.getAbsolutePath(), methodName, hideUnicode, lineNumber);

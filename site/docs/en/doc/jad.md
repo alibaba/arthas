@@ -176,3 +176,11 @@ Affect(row-cnt:1) cost in 190 ms.
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+
+### Decompile with specified directory for dumpping class
+
+Decompile class with `jad` need to dump corresponding classes into files. The default directory for dumpping classes is the directory of log file specified in logback.xml, we can use `-d/--directory` to specify the directory for dummping class.
+
+```java
+$ jad demo.MathGame -d /tmp/jad/dump
+```
