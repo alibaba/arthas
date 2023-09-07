@@ -78,7 +78,7 @@
     </modules>
 
     <properties>
-        <revision>3.6.8</revision>
+        <revision>4.0.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
