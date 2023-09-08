@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * sysenv KV Result
@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class SystemEnvModel extends ResultModel {
 
-    private Map<String, String> env = new HashMap<String, String>();
+    private Map<String, String> env = new TreeMap<String, String>();
 
     public SystemEnvModel() {
     }
