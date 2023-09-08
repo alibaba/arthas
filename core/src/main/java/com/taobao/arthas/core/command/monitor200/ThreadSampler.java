@@ -124,6 +124,7 @@ public class ThreadSampler {
 
         // Sort by CPU time : should be a rendering hint...
         Collections.sort(threads, new Comparator<ThreadVO>() {
+            @Override
             public int compare(ThreadVO o1, ThreadVO o2) {
                 long l1 = deltas.get(o1);
                 long l2 = deltas.get(o2);
