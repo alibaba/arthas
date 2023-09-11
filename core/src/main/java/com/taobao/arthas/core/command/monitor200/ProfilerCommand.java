@@ -149,11 +149,6 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean lib;
 
     /**
-     * include only kernel-mode events
-     */
-    private boolean allkernel;
-
-    /**
      * include only user-mode events
      */
     private boolean alluser;
@@ -365,13 +360,7 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.lib = lib;
     }
 
-    @Option(longName = "allkernel", flag = true)
-    @Description("include only kernel-mode events")
-    public void setAllkernel(boolean allkernel) {
-        this.allkernel = allkernel;
-    }
-
-    @Option(longName = "alluser", flag = true)
+    @Option(longName = "all-user", flag = true)
     @Description("include only user-mode events")
     public void setAlluser(boolean alluser) {
         this.alluser = alluser;
@@ -566,9 +555,6 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.lib) {
             sb.append("lib").append(COMMA);
-        }
-        if (this.allkernel) {
-            sb.append("allkernel").append(COMMA);
         }
         if (this.alluser) {
             sb.append("alluser").append(COMMA);
