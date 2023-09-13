@@ -35,6 +35,32 @@ public class CliTokenImplTest {
         assertEquals(expectedTextTokenValue, actualTokens);
     }
 
+    @Test
+    public void testSeparateRedirect() {
+        String[] expectedTextTokenValue = new String[]{"jad", "aaa", ">", "bbb"};
+        List<CliToken> actualTokens = CliTokenImpl.tokenize("jad aaa> bbb");
+        assertEquals(expectedTextTokenValue, actualTokens);
+
+        actualTokens = CliTokenImpl.tokenize("jad aaa > bbb");
+        assertEquals(expectedTextTokenValue, actualTokens);
+
+        actualTokens = CliTokenImpl.tokenize("jad aaa >bbb");
+        assertEquals(expectedTextTokenValue, actualTokens);
+    }
+
+    @Test
+    public void testSeparateRedirectAppend() {
+        String[] expectedTextTokenValue = new String[]{"jad", "aaa", ">>", "bbb"};
+        List<CliToken> actualTokens = CliTokenImpl.tokenize("jad aaa>> bbb");
+        assertEquals(expectedTextTokenValue, actualTokens);
+
+        actualTokens = CliTokenImpl.tokenize("jad aaa >> bbb");
+        assertEquals(expectedTextTokenValue, actualTokens);
+
+        actualTokens = CliTokenImpl.tokenize("jad aaa >>bbb");
+        assertEquals(expectedTextTokenValue, actualTokens);
+    }
+
     /**
      * supported:
      * <p>
