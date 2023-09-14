@@ -82,6 +82,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String alloc;
 
     /**
+     * build allocation profile from live objects only
+     */
+    private boolean live;
+
+    /**
      * profile contended locks longer than DURATION ns
      * according to async-profiler README, alloc may contains non-numeric charactors
      */
@@ -113,6 +118,17 @@ public class ProfilerCommand extends AnnotatedCommand {
     private boolean threads;
 
     /**
+     * group threads by scheduling policy
+     */
+    private boolean sched;
+
+    /**
+     * how to collect C stack frames in addition to Java stack
+     * MODE is 'fp' (Frame Pointer), 'dwarf', 'lbr' (Last Branch Record) or 'no'
+     */
+    private String cstack;
+
+    /**
      * use simple class names instead of FQN
      */
     private boolean simple;
@@ -131,11 +147,6 @@ public class ProfilerCommand extends AnnotatedCommand {
      * prepend library names
      */
     private boolean lib;
-
-    /**
-     * include only kernel-mode events
-     */
-    private boolean allkernel;
 
     /**
      * include only user-mode events
@@ -157,6 +168,21 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private List<String> excludes;
 
+    /**
+     * automatically start profiling when the specified native function is executed.
+     */
+    private String begin;
+
+    /**
+     * automatically stop profiling when the specified native function is executed.
+     */
+    private String end;
+
+    /**
+     * time-to-safepoint profiling.
+     * An alias for --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
+     */
+    private boolean ttsp;
 
     /**
      * FlameGraph title
@@ -280,6 +306,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.alloc = alloc;
     }
 
+    @Option(longName = "live", flag = true)
+    @Description("build allocation profile from live objects only")
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
     @Option(longName = "lock")
     @Description("lock profiling threshold in nanoseconds")
     public void setLock(String lock) {
@@ -290,6 +322,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(longName = "sched", flag = true)
+    @Description("group threads by scheduling policy")
+    public void setSched(boolean sched) {
+        this.sched = sched;
+    }
+
+    @Option(longName = "cstack")
+    @Description("how to traverse C stack: fp|dwarf|lbr|no")
+    public void setCstack(String cstack) {
+        this.cstack = cstack;
     }
 
     @Option(shortName = "s", flag = true)
@@ -316,13 +360,7 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.lib = lib;
     }
 
-    @Option(longName = "allkernel", flag = true)
-    @Description("include only kernel-mode events")
-    public void setAllkernel(boolean allkernel) {
-        this.allkernel = allkernel;
-    }
-
-    @Option(longName = "alluser", flag = true)
+    @Option(longName = "all-user", flag = true)
     @Description("include only user-mode events")
     public void setAlluser(boolean alluser) {
         this.alluser = alluser;
@@ -344,6 +382,25 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("exclude stack traces containing PATTERN, for example: '*Unsafe.park*'")
     public void setExclude(List<String> excludes) {
         this.excludes = excludes;
+    }
+
+    @Option(longName = "begin")
+    @Description("automatically start profiling when the specified native function is executed")
+    public void setBegin(String begin) {
+        this.begin = begin;
+    }
+
+    @Option(longName = "end")
+    @Description("automatically stop profiling when the specified native function is executed")
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    @Option(longName = "ttsp", flag = true)
+    @Description("time-to-safepoint profiling. "
+        + "An alias for --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized")
+    public void setTtsp(boolean ttsp) {
+        this.ttsp = ttsp;
     }
 
     @Option(longName = "title")
@@ -460,6 +517,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.alloc!= null) {
             sb.append("alloc=").append(this.alloc).append(COMMA);
         }
+        if (this.live) {
+            sb.append(this.live).append(COMMA);
+        }
         if (this.lock!= null) {
             sb.append("lock=").append(this.lock).append(COMMA);
         }
@@ -478,6 +538,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.threads) {
             sb.append("threads").append(COMMA);
         }
+        if (this.sched) {
+            sb.append("sched").append(COMMA);
+        }
+        if (this.cstack != null) {
+            sb.append("cstack=").append(this.cstack).append(COMMA);
+        }
         if (this.simple) {
             sb.append("simple").append(COMMA);
         }
@@ -489,9 +555,6 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.lib) {
             sb.append("lib").append(COMMA);
-        }
-        if (this.allkernel) {
-            sb.append("allkernel").append(COMMA);
         }
         if (this.alluser) {
             sb.append("alluser").append(COMMA);
@@ -505,6 +568,16 @@ public class ProfilerCommand extends AnnotatedCommand {
             for (String exclude : excludes) {
                 sb.append("exclude=").append(exclude).append(COMMA);
             }
+        }
+        if (this.ttsp) {
+            this.begin = "SafepointSynchronize::begin";
+            this.end = "RuntimeService::record_safepoint_synchronized";
+        }
+        if (this.begin != null) {
+            sb.append("begin=").append(this.begin).append(COMMA);
+        }
+        if (this.end != null) {
+            sb.append("end=").append(this.end).append(COMMA);
         }
 
         if (this.title != null) {

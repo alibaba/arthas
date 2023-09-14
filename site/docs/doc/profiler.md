@@ -281,3 +281,47 @@ profiler start -e alloc --alloc 2m
 ```bash
 profiler start -f profile.jfr --chunksize 100m --chunktime 1h
 ```
+
+## 将线程按照调度策略分组
+
+可以使用 `--sched` 标志选项将输出结果按照 Linux 线程调度策略分组，策略包括 BATCH/IDLE/OTHER。例如：
+
+```bash
+profiler start --sched
+```
+
+火焰图的倒数第二行会标记不同的调度策略。
+
+## 仅用未销毁对象构建内存分析结果
+
+使用 `--live` 标志选项在内存分析结果中仅保留那些在分析过程结束时仍未被 JVM 回收的对象。该选项在排查 Java 堆内存泄露问题时比较有用。
+
+```bash
+profiler start --live
+```
+
+## 配置收集 C 栈帧的方法
+
+使用 `--cstack MODE` 配置收集 native 帧的方法。候选模式有 fp (Frame Pointer), dwarf (DWARF unwind info), lbr (Last Branch Record, 从 Linux 4.1 在 Haswell 可用), and no (不收集 native 栈帧).
+
+默认情况下，C 栈帧会出现在 cpu、itimer、wall-clock、perf-events 模式中，而 Java 级别的 event 比如 alloc 和 lock 只收集 Java stack。
+
+```bash
+profiler --cstack fp
+```
+
+此命令将收集 native 栈帧的 Frame Pointer 信息。
+
+
+## 当指定 native 函数执行时开始/停止 profiling
+
+使用 `--begin function` 和 `--end function` 选项在指定 native 函数被执行时让 profiling 过程启动或终止。主要用途是分析特定的 JVM 阶段，比如 GC 和安全点。需要使用特定 JVM 实现中的 native 函数名，比如 HotSpot JVM 中的 `SafepointSynchronize::begin` 和 `SafepointSynchronize::end`。
+
+### Time-to-safepoint profiling
+
+选项 `--ttsp` 实际上是 `--begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized` 的一个别名。它是一种约束而不是独立的 event 类型。无论选择哪种 event，profiler 都可以正常工作，但只有 VM 操作和 safepoint request 之间的事件会被记录下来。
+
+```bash
+profiler start --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
+profiler --ttsp
+```
