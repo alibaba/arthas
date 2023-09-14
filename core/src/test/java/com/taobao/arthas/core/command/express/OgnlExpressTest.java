@@ -31,11 +31,13 @@ public class OgnlExpressTest {
     @Test
     public void testValidOgnlExpr4() throws ExpressException {
         Express unpooledExpress = ExpressFactory.unpooledExpress(OgnlExpressTest.class.getClassLoader());
-        System.setProperty("java.home", "/Java/jdk-1.8");
-        System.setProperty("java.runtime.name", "OpenJDK Runtime Environment");
-        Assert.assertEquals(unpooledExpress.get("#value1=@System@getProperty(\"java.home\")," +
-                        "#value2=@System@getProperty(\"java.runtime.name\"), {#value1, #value2}").toString(),
-                "[/Java/jdk-1.8, OpenJDK Runtime Environment]");
+        System.setProperty("arthas.test1", "arthas");
+        System.setProperty("arthas.ognl.test2", "test");
+        Assert.assertEquals(unpooledExpress.get("#value1=@System@getProperty(\"arthas.test1\")," +
+                        "#value2=@System@getProperty(\"arthas.ognl.test2\"), {#value1, #value2}").toString(),
+                "[arthas, test]");
+        System.clearProperty("arthas.test1");
+        System.clearProperty("arthas.ognl.test2");
     }
 
     @Test
