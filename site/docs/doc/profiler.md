@@ -312,7 +312,6 @@ profiler --cstack fp
 
 此命令将收集 native 栈帧的 Frame Pointer 信息。
 
-
 ## 当指定 native 函数执行时开始/停止 profiling
 
 使用 `--begin function` 和 `--end function` 选项在指定 native 函数被执行时让 profiling 过程启动或终止。主要用途是分析特定的 JVM 阶段，比如 GC 和安全点。需要使用特定 JVM 实现中的 native 函数名，比如 HotSpot JVM 中的 `SafepointSynchronize::begin` 和 `SafepointSynchronize::end`。
