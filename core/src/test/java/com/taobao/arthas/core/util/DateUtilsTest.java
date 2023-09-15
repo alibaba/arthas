@@ -13,7 +13,7 @@ public class DateUtilsTest {
     @Test
     public void testGetCurrentDateWithCorrectFormat() {
     	
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // supported date format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // supported date format
         Date date = new Date();
         Assert.assertEquals(DateUtils.formatDate(date), dateFormat.format(date));
 
