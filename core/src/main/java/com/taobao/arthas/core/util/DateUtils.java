@@ -12,7 +12,7 @@ public class DateUtils {
 
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         }
     };
 
