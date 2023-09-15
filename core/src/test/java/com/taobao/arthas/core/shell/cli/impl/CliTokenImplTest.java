@@ -39,6 +39,72 @@ public class CliTokenImplTest {
         actualTokens = CliTokenImpl.tokenize(cmd);
         assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
         Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread'|' grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread '|' grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread '|'grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread\"|\" grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread \"|\" grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread \"|\"grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"thread| grep", "xxx"};
+        cmd = "thread'| 'grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread\"| \"grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"thread |grep", "xxx"};
+        cmd = "thread' |'grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "thread\" |\"grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"thread \"|\"grep", "xxx"};
+        cmd = "thread' \"|\"'grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"thread '|'grep", "xxx"};
+        cmd = "thread\" '|'\"grep xxx";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+
     }
 
     /**
@@ -68,6 +134,71 @@ public class CliTokenImplTest {
         Assert.assertEquals(cmd, concatRaw(actualTokens));
 
         cmd = "trace -E classA|classB methodA|methodB |grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB'|' grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB '|' grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB '|'grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+
+        cmd = "trace -E classA|classB methodA|methodB\"|\" grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB \"|\" grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB \"|\"grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"trace", "-E", "classA|classB", "methodA|methodB| grep", "classA"};
+        cmd = "trace -E classA|classB methodA|methodB'| 'grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB\"| \"grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"trace", "-E", "classA|classB", "methodA|methodB |grep", "classA"};
+        cmd = "trace -E classA|classB methodA|methodB' |'grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        cmd = "trace -E classA|classB methodA|methodB\" |\"grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"trace", "-E", "classA|classB", "methodA|methodB '|'grep", "classA"};
+        cmd = "trace -E classA|classB methodA|methodB\" '|'\"grep classA";
+        actualTokens = CliTokenImpl.tokenize(cmd);
+        assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
+        Assert.assertEquals(cmd, concatRaw(actualTokens));
+
+        expectedTextTokenValue = new String[]{"trace", "-E", "classA|classB", "methodA|methodB \"|\"grep", "classA"};
+        cmd = "trace -E classA|classB methodA|methodB' \"|\"'grep classA";
         actualTokens = CliTokenImpl.tokenize(cmd);
         assertEqualsIgnoreBlank(expectedTextTokenValue, actualTokens);
         Assert.assertEquals(cmd, concatRaw(actualTokens));
