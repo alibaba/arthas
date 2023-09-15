@@ -111,20 +111,23 @@ public class CliTokenImpl implements CliToken {
                     break;
                 } else if (value.endsWith(symbol)) {
                     handled = true;
+                    int lastIndexOfSymbol = raw.lastIndexOf(symbol);
                     adjustedTokens.add(new CliTokenImpl(
                             token.isText(),
-                            value.substring(0, value.length() - symbol.length()),
-                            raw.substring(0, raw.length() - symbol.length())
+                            raw.substring(0, lastIndexOfSymbol),
+                            value.substring(0, value.length() - symbol.length())
                     ));
-                    adjustedTokens.add(new CliTokenImpl(true, symbol, symbol));
+                    adjustedTokens.add(new CliTokenImpl(true, raw.substring(lastIndexOfSymbol), symbol));
                     break;
                 } else if (value.startsWith(symbol)) {
                     handled = true;
-                    adjustedTokens.add(new CliTokenImpl(true, symbol, symbol));
+                    int firstIndexOfSymbol = raw.indexOf(symbol);
+                    adjustedTokens.add(new CliTokenImpl(true,
+                            raw.substring(0, firstIndexOfSymbol + symbol.length()), symbol));
                     adjustedTokens.add(new CliTokenImpl(
                             token.isText(),
-                            value.substring(symbol.length()),
-                            raw.substring(symbol.length())
+                            raw.substring(firstIndexOfSymbol + symbol.length()),
+                            value.substring(symbol.length())
                     ));
                     break;
                 }
