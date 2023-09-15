@@ -54,6 +54,9 @@ public class UserStatUtil {
     }
 
     public static void arthasStart() {
+        if (statUrl == null) {
+            return;
+        }
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
@@ -69,7 +72,7 @@ public class UserStatUtil {
         }
     }
 
-    public static void arthasUsage(String cmd, String detail) {
+    private static void arthasUsage(String cmd, String detail) {
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
@@ -89,6 +92,9 @@ public class UserStatUtil {
     }
 
     public static void arthasUsageSuccess(String cmd, List<String> args) {
+        if (statUrl == null) {
+            return;
+        }
         StringBuilder commandString = new StringBuilder(cmd);
         for (String arg : args) {
             commandString.append(" ").append(arg);
