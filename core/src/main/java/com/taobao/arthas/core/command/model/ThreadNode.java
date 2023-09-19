@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -13,14 +14,14 @@ public class ThreadNode extends TraceNode {
     private boolean daemon;
     private int priority;
     private String classloader;
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     private String traceId;
     private String rpcId;
 
     public ThreadNode() {
         super("thread");
-        timestamp = new Date();
+        timestamp = LocalDateTime.now();
     }
 
     public ThreadNode(String threadName, long threadId, boolean daemon, int priority, String classloader) {
@@ -30,7 +31,7 @@ public class ThreadNode extends TraceNode {
         this.daemon = daemon;
         this.priority = priority;
         this.classloader = classloader;
-        timestamp = new Date();
+        timestamp = LocalDateTime.now();
     }
 
     public String getThreadName() {
@@ -73,11 +74,11 @@ public class ThreadNode extends TraceNode {
         this.classloader = classloader;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

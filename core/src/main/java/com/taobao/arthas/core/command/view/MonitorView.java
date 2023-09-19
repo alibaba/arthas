@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.view;
 import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.command.monitor200.MonitorData;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -33,7 +34,7 @@ public class MonitorView extends ResultView<MonitorModel> {
 
         for (MonitorData data : result.getMonitorDataList()) {
             table.row(
-                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(data.getTimestamp()),
+                    DateUtils.formatDateTime(data.getTimestamp()),
                     data.getClassName(),
                     data.getMethodName(),
                     "" + data.getTotal(),

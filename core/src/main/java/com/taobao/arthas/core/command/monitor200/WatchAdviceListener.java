@@ -12,6 +12,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -87,7 +88,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
 
                 WatchModel model = new WatchModel();
-                model.setTs(new Date());
+                model.setTs(LocalDateTime.now());
                 model.setCost(cost);
                 model.setValue(new ObjectVO(value, command.getExpand()));
                 model.setSizeLimit(command.getSizeLimit());

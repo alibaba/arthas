@@ -12,6 +12,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 
@@ -68,7 +69,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
 
     private void afterFinishing(Advice advice) {
         double cost = threadLocalWatch.costInMillis();
-        TimeFragment timeTunnel = new TimeFragment(advice, new Date(), cost);
+        TimeFragment timeTunnel = new TimeFragment(advice, LocalDateTime.now(), cost);
 
         boolean match = false;
         try {

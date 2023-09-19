@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Date;
  */
 public class WatchModel extends ResultModel {
 
-    private Date ts;
+    private LocalDateTime ts;
     private double cost;
     private ObjectVO value;
 
@@ -26,11 +27,11 @@ public class WatchModel extends ResultModel {
         return "watch";
     }
 
-    public Date getTs() {
+    public LocalDateTime getTs() {
         return ts;
     }
 
-    public void setTs(Date ts) {
+    public void setTs(LocalDateTime ts) {
         this.ts = ts;
     }
 
