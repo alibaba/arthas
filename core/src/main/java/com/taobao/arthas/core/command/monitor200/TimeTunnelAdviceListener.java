@@ -14,7 +14,6 @@ import com.taobao.arthas.core.util.ThreadLocalWatch;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 
 /**
  * @author beiwei30 on 30/11/2016.

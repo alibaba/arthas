@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Thread root node of TraceCommand
