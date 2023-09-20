@@ -22,8 +22,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-class MessageUtils {
+public class MessageUtils {
     @VisibleForTesting
+    public
     enum ContentType {
         GRPC_WEB_BINARY, GRPC_WEB_TEXT;
     }
@@ -40,7 +41,7 @@ class MessageUtils {
     /**
      * Validate the content-type
      */
-    static ContentType validateContentType(String contentType) throws IllegalArgumentException {
+    public static ContentType validateContentType(String contentType) throws IllegalArgumentException {
         if (contentType == null || !GRPC_GCP_CONTENT_TYPES.containsKey(contentType)) {
             throw new IllegalArgumentException("This content type is not used for grpc-web: " + contentType);
         }

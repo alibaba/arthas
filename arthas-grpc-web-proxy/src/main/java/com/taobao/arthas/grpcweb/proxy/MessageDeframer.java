@@ -59,7 +59,7 @@ public class MessageDeframer {
      * Reads the bytes from the given InputStream and populates bytes in
      * {@link #mMsg}
      */
-    boolean processInput(InputStream in, MessageUtils.ContentType contentType) {
+    public boolean processInput(InputStream in, MessageUtils.ContentType contentType) {
         byte[] inBytes;
         try {
             InputStream inStream = (contentType == ContentType.GRPC_WEB_TEXT) ? Base64.getDecoder().wrap(in) : in;
