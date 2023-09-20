@@ -115,10 +115,9 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 
 可能是之前使用旧版本的 arthas 诊断过目标进程。可以先执行`stop`停止掉旧版本的 arthas，再重新使用新版本 attach。
 
-
 ### 在ognl表达式中获取到 spring bean cglib 对象，但是 field 是 null
 
 参考：
 
-* [https://github.com/alibaba/arthas/issues/1802](https://github.com/alibaba/arthas/issues/1802)
-* [https://github.com/alibaba/arthas/issues/1424](https://github.com/alibaba/arthas/issues/1424)
+- [https://github.com/alibaba/arthas/issues/1802](https://github.com/alibaba/arthas/issues/1802)
+- [https://github.com/alibaba/arthas/issues/1424](https://github.com/alibaba/arthas/issues/1424)

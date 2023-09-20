@@ -115,10 +115,9 @@ For example, the started version of `as.sh/arthas-boot.jar` is 3.5._, but after 
 
 It may be that the target process has been diagnosed with the old version of arthas before. You can execute `stop` to stop the old version of arthas, and then reuse the new version to attach.
 
-
 ### The spring bean cglib object is obtained in the ognl expression, but the field is null
 
 Reference:
 
-* [https://github.com/alibaba/arthas/issues/1802](https://github.com/alibaba/arthas/issues/1802)
-* [https://github.com/alibaba/arthas/issues/1424](https://github.com/alibaba/arthas/issues/1424)
+- [https://github.com/alibaba/arthas/issues/1802](https://github.com/alibaba/arthas/issues/1802)
+- [https://github.com/alibaba/arthas/issues/1424](https://github.com/alibaba/arthas/issues/1424)
