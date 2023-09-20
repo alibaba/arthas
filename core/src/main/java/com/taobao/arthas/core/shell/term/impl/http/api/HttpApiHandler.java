@@ -33,19 +33,15 @@ import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import io.termd.core.function.Function;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -230,7 +226,7 @@ public class HttpApiHandler {
             welcomeModel.setTutorials(ArthasBanner.tutorials());
             welcomeModel.setMainClass(PidUtils.mainClass());
             welcomeModel.setPid(PidUtils.currentPid());
-            welcomeModel.setTime(DateUtils.getCurrentDate());
+            welcomeModel.setTime(DateUtils.getCurrentDateTime());
             resultDistributor.appendResult(welcomeModel);
 
             //allow input

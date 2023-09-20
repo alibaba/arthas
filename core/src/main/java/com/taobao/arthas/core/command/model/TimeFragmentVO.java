@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * VO for TimeFragment
@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class TimeFragmentVO {
     private Integer index;
-    private Date timestamp;
+    private LocalDateTime timestamp;
     private double cost;
     private boolean isReturn;
     private boolean isThrow;
@@ -31,11 +31,11 @@ public class TimeFragmentVO {
         return this;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public TimeFragmentVO setTimestamp(Date timestamp) {
+    public TimeFragmentVO setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }

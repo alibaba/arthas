@@ -35,7 +35,7 @@ public class StackView extends ResultView<StackModel> {
                     .append(ste.getLineNumber())
                     .append(")\n");
         }
-        process.write("ts=" + DateUtils.formatDate(result.getTs()) + ";" + sb.toString() + "\n");
+        process.write("ts=" + DateUtils.formatDateTime(result.getTs()) + ";" + sb.toString() + "\n");
     }
 
 }
