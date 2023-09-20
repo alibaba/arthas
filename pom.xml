@@ -75,6 +75,7 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <module>web-client</module>
     </modules>
 
     <properties>
