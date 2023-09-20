@@ -100,6 +100,11 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 
 可以。下载全量包解压即可，参考: [下载](download.md)。
 
+### Arthas 怎么使用指定版本，不使用自动升级版本
+
+1. 启动 `as.sh`/`arthas-boot.jar`时，可以用 `--use-version` 参数指定。
+2. 下载全量包，解压后，`cd`到arthas目录启动，这种情况会使用当前目录下的版本。
+
 ### Attach docker/k8s 里的 pid 为 1 的进程失败
 
 参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)

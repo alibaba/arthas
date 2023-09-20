@@ -100,6 +100,11 @@ Reference: [https://github.com/alibaba/arthas/issues/2165](https://github.com/al
 
 Yes. Just download the full size package and unzip it, refer to: [Download](download.md).
 
+### How to use the specified version of Arthas without using the automatic upgrade version?
+
+1. When starting `as.sh`/`arthas-boot.jar`, you can specify it with the `--use-version` parameter.
+2. Download the full package, unzip it, and cd to the arthas directory to start. In this case, the version in the current directory will be used.
+
 ### Attach the process with pid 1 in docker/k8s failed
 
 Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
