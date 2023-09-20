@@ -119,14 +119,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>grpcweb.netty.proxy.server.StartGrpcTest</mainClass>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 
