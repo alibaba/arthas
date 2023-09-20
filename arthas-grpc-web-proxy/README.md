@@ -1,5 +1,3 @@
-
-
 ## netty grpc web proxy
 
 from: https://github.com/grpc/grpc-web/tree/1.4.2/src/connector
@@ -15,9 +13,13 @@ from: https://github.com/grpc/grpc-web/tree/1.4.2/src/connector
 
 工程导入IDE之后,进入test目录
 
-1. 启动 com.taobao.arthas.grpcweb.proxy.server.GrpcWebProxyServerTest#startGrpcWebProxy
-2. cd browser-test ，启动 http server，比如 `python -m http.server`
-3. 访问上面启动的 http server，比如 http://127.0.0.1:8000/echotest.html
+1. 启动 com.taobao.arthas.grpcweb.proxy.server.startGrpcTest
+2. 启动 com.taobao.arthas.grpcweb.proxy.server.startGrpcWebProxyTest
+3. 在 com.taobao.arthas.grpcweb.proxy.server.GrpcWebProxyServerTest 发送请求
+
+demo
+1. cd browser-test ，启动 http server，比如 `python -m http.server`
+2. 访问上面启动的 http server，比如 http://127.0.0.1:8000/echotest.html
 
 也可以用原项目的相关工程来测试
 
