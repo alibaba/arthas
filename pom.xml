@@ -75,6 +75,7 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <module>arthas-grpc-web-proxy</module>
     </modules>
 
     <properties>
