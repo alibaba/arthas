@@ -78,6 +78,12 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 watch OuterClass$InnerClass
 ```
 
+### 是否支持 watch、trace lambda 类？
+
+对于lambda生成的类，会跳过处理，因为 JVM 本身限制对 lambda 生成的类做增强。
+
+- [https://github.com/alibaba/arthas/issues/1225](https://github.com/alibaba/arthas/issues/1225)
+
 ### 输入中文/Unicode 字符
 
 把中文/Unicode 字符转为`\u`表示方法：
@@ -100,6 +106,11 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 
 可以。下载全量包解压即可，参考: [下载](download.md)。
 
+### Arthas 怎么使用指定版本，不使用自动升级版本
+
+1. 启动 `as.sh`/`arthas-boot.jar`时，可以用 `--use-version` 参数指定。
+2. 下载全量包，解压后，`cd`到arthas目录启动，这种情况会使用当前目录下的版本。
+
 ### Attach docker/k8s 里的 pid 为 1 的进程失败
 
 参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
@@ -109,3 +120,10 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 比如启动的 `as.sh/arthas-boot.jar` 版本是 3.5._ 的，但是连接上之后，打印的 arthas 版本是 3.4._ 的。
 
 可能是之前使用旧版本的 arthas 诊断过目标进程。可以先执行`stop`停止掉旧版本的 arthas，再重新使用新版本 attach。
+
+### 在ognl表达式中获取到 spring bean cglib 对象，但是 field 是 null
+
+参考：
+
+- [https://github.com/alibaba/arthas/issues/1802](https://github.com/alibaba/arthas/issues/1802)
+- [https://github.com/alibaba/arthas/issues/1424](https://github.com/alibaba/arthas/issues/1424)
