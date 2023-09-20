@@ -78,6 +78,12 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 watch OuterClass$InnerClass
 ```
 
+### 是否支持 watch、trace lambda 类？
+
+对于lambda生成的类，会跳过处理，因为 JVM 本身限制对 lambda 生成的类做增强。
+
+- [https://github.com/alibaba/arthas/issues/1225](https://github.com/alibaba/arthas/issues/1225)
+
 ### 输入中文/Unicode 字符
 
 把中文/Unicode 字符转为`\u`表示方法：
