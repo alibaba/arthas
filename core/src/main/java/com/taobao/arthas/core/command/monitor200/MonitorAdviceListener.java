@@ -11,6 +11,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -160,7 +161,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
                 MonitorData oData = value.get();
                 MonitorData nData = new MonitorData();
                 nData.setCost(oData.getCost() + cost);
-                nData.setTimestamp(new Date());
+                nData.setTimestamp(LocalDateTime.now());
                 if (isThrowing) {
                     nData.setFailed(oData.getFailed() + 1);
                     nData.setSuccess(oData.getSuccess());

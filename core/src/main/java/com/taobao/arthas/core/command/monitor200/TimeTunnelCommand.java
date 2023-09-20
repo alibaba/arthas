@@ -28,6 +28,7 @@ import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 import com.taobao.middleware.cli.annotations.Argument;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -513,7 +514,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
                 //copy from tt record
                 TimeFragmentVO replayResult = createTimeFragmentVO(index, tf, expand);
-                replayResult.setTimestamp(new Date())
+                replayResult.setTimestamp(LocalDateTime.now())
                         .setCost(0)
                         .setReturn(false)
                         .setReturnObj(null)

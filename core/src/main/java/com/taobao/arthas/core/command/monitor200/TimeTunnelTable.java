@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.TimeFragmentVO;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.text.Decoration;
@@ -81,7 +82,7 @@ public class TimeTunnelTable {
     static TableElement fillTableRow(TableElement table, TimeFragmentVO tf) {
         return table.row(
                 "" + tf.getIndex(),
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(tf.getTimestamp()),
+                DateUtils.formatDateTime(tf.getTimestamp()),
                 "" + tf.getCost(),
                 "" + tf.isReturn(),
                 "" + tf.isThrow(),

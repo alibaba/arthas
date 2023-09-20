@@ -104,7 +104,7 @@ public class DumpClassCommand extends AnnotatedCommand {
         try {
             if (directory != null) {
                 File dir = new File(directory);
-                if (dir.isFile()) {
+                if (!dir.isDirectory()) {
                     process.end(-1, directory + " :is not a directory, please check it");
                     return;
                 }

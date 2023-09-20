@@ -11,7 +11,7 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.util.ThreadUtil;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -61,7 +61,7 @@ public class StackAdviceListener extends AdviceListenerAdapter {
             if (conditionResult) {
                 // TODO: concurrency issues for process.write
                 StackModel stackModel = ThreadUtil.getThreadStackModel(advice.getLoader(), Thread.currentThread());
-                stackModel.setTs(new Date());
+                stackModel.setTs(LocalDateTime.now());
                 process.appendResult(stackModel);
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
