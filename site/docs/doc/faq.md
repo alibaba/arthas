@@ -82,7 +82,7 @@ watch OuterClass$InnerClass
 
 对于lambda生成的类，会跳过处理，因为 JVM 本身限制对 lambda 生成的类做增强。
 
-* [https://github.com/alibaba/arthas/issues/1225](https://github.com/alibaba/arthas/issues/1225)
+- [https://github.com/alibaba/arthas/issues/1225](https://github.com/alibaba/arthas/issues/1225)
 
 ### 输入中文/Unicode 字符
 
