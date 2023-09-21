@@ -9,7 +9,6 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
 import static com.taobao.text.ui.Element.label;
 
