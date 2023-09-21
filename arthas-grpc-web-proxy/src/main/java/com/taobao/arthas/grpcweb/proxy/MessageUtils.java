@@ -16,7 +16,6 @@
 package com.taobao.arthas.grpcweb.proxy;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;

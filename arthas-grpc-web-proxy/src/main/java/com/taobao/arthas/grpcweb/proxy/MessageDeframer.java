@@ -16,10 +16,9 @@
 package com.taobao.arthas.grpcweb.proxy;
 
 import com.taobao.arthas.grpcweb.proxy.MessageUtils.ContentType;
-import com.taobao.arthas.grpcweb.proxy.util.IOUtils;
+import com.taobao.arthas.common.IOUtils;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
@@ -63,7 +62,7 @@ public class MessageDeframer {
         byte[] inBytes;
         try {
             InputStream inStream = (contentType == ContentType.GRPC_WEB_TEXT) ? Base64.getDecoder().wrap(in) : in;
-            inBytes = IOUtils.toByteArray(inStream);
+            inBytes = IOUtils.getBytes(inStream);
         } catch (IOException e) {
             e.printStackTrace();
             logger.warn("invalid input");

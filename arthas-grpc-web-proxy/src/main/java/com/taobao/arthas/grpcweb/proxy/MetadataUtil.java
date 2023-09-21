@@ -17,7 +17,6 @@ package com.taobao.arthas.grpcweb.proxy;
 
 import io.grpc.Metadata;
 import io.netty.handler.codec.http.HttpHeaders;
-
 import java.util.*;
 
 class MetadataUtil {

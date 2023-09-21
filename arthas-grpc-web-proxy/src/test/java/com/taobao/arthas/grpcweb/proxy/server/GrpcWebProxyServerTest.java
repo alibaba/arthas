@@ -32,16 +32,22 @@ public class GrpcWebProxyServerTest {
         GRPC_PORT = SocketUtils.findAvailableTcpPort();
         // 启动grpc服务
         Thread grpcStart = new Thread(() -> {
-            startGrpcTest startGrpcTest = new startGrpcTest(GRPC_PORT);
+            StartGrpcTest startGrpcTest = new StartGrpcTest(GRPC_PORT);
             startGrpcTest.startGrpcService();
         });
         grpcStart.start();
         // 启动grpc-web-proxy服务
         Thread grpcWebProxyStart = new Thread(() -> {
-            startGrpcWebProxyTest startGrpcWebProxyTest = new startGrpcWebProxyTest(GRPC_WEB_PROXY_PORT,GRPC_PORT);
+            StartGrpcWebProxyTest startGrpcWebProxyTest = new StartGrpcWebProxyTest(GRPC_WEB_PROXY_PORT,GRPC_PORT);
             startGrpcWebProxyTest.startGrpcWebProxy();
         });
         grpcWebProxyStart.start();
+        try {
+            // waiting for the server to start
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         hostName = "http://127.0.0.1:" + GRPC_WEB_PROXY_PORT;
         httpClient = HttpClients.createDefault();
     }
