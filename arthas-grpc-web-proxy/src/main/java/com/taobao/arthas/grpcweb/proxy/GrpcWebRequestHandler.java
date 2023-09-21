@@ -15,9 +15,7 @@
  */
 package com.taobao.arthas.grpcweb.proxy;
 
-
-import com.taobao.arthas.grpcweb.proxy.util.ImmutablePair;
-import com.taobao.arthas.grpcweb.proxy.util.Pair;
+import com.taobao.arthas.common.Pair;
 import io.grpc.Channel;
 import io.grpc.Metadata;
 import io.grpc.Status;
@@ -66,8 +64,8 @@ public class GrpcWebRequestHandler {
             String pathInfo = queryStringDecoder.path();
 
             Pair<String, String> classAndMethodNames = getClassAndMethod(pathInfo);
-            String className = classAndMethodNames.getLeft();
-            String methodName = classAndMethodNames.getRight();
+            String className = classAndMethodNames.getFirst();
+            String methodName = classAndMethodNames.getSecond();
             Class cls = getClassObject(className);
             if (cls == null) {
                 logger.error("cannot find service impl in the request, className: " + className);
@@ -118,7 +116,7 @@ public class GrpcWebRequestHandler {
         String rpcClassName = rpcClassAndMethodTokens[0];
         String rpcMethodNameRecvd = rpcClassAndMethodTokens[1];
         String rpcMethodName = rpcMethodNameRecvd.substring(0, 1).toLowerCase() + rpcMethodNameRecvd.substring(1);
-        return new ImmutablePair<>(rpcClassName, rpcMethodName);
+        return new Pair<>(rpcClassName, rpcMethodName);
     }
 
     private Class<?> getClassObject(String className) {
