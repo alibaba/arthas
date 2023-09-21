@@ -4,6 +4,7 @@ import com.taobao.arthas.grpcweb.proxy.server.grpcService.EchoImpl;
 import com.taobao.arthas.grpcweb.proxy.server.grpcService.GreeterService;
 import com.taobao.arthas.grpcweb.proxy.server.grpcService.HelloImpl;
 import io.grpc.BindableService;
+import io.grpc.Grpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -11,9 +12,13 @@ import java.io.IOException;
 
 public class startGrpcTest {
 
-    static final int GRPC_PORT = 50051;
+    private int GRPC_PORT;
 
-    public static void main(String[] args) {
+    public startGrpcTest(int grpcPort){
+        this.GRPC_PORT = grpcPort;
+    }
+
+    public void startGrpcService(){
         try {
             Server grpcServer = ServerBuilder.forPort(GRPC_PORT).addService((BindableService) new GreeterService())
                     .addService((BindableService) new HelloImpl()).addService(new EchoImpl()).build();
@@ -25,5 +30,4 @@ public class startGrpcTest {
             throw new RuntimeException(e);
         }
     }
-
 }

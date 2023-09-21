@@ -2,10 +2,18 @@ package com.taobao.arthas.grpcweb.proxy.server;
 
 public class startGrpcWebProxyTest {
 
-    static final int GRPC_WEB_PORT = 8080;
+    private int GRPC_WEB_PROXY_PORT;
 
-    public static void main(String[] args) {
-        GrpcWebProxyServer grpcWebProxyServer = new GrpcWebProxyServer(GRPC_WEB_PORT, 50051);
+    private int GRPC_PORT;
+
+
+    public startGrpcWebProxyTest(int grpcWebPort, int grpcPort){
+        this.GRPC_WEB_PROXY_PORT = grpcWebPort;
+        this.GRPC_PORT = grpcPort;
+    }
+
+    public void startGrpcWebProxy(){
+        GrpcWebProxyServer grpcWebProxyServer = new GrpcWebProxyServer(GRPC_WEB_PROXY_PORT, GRPC_PORT);
         grpcWebProxyServer.start();
     }
 }

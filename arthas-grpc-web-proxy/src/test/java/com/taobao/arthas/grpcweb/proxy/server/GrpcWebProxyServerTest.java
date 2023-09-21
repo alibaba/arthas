@@ -1,7 +1,6 @@
 package com.taobao.arthas.grpcweb.proxy.server;
 
 import grpc.gateway.testing.Echo;
-import helloworld.Helloworld;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -11,6 +10,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import com.taobao.arthas.common.SocketUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,13 +22,34 @@ import java.util.Base64;
 
 public class GrpcWebProxyServerTest {
 
-    //创建httpclient对象
-    CloseableHttpClient httpClient = HttpClients.createDefault();
+    private int GRPC_WEB_PROXY_PORT;
+    private int GRPC_PORT;
+    private String hostName;
+    private CloseableHttpClient httpClient;
+    @Before
+    public void startServer(){
+        GRPC_WEB_PROXY_PORT = SocketUtils.findAvailableTcpPort();
+        GRPC_PORT = SocketUtils.findAvailableTcpPort();
+        // 启动grpc服务
+        Thread grpcStart = new Thread(() -> {
+            startGrpcTest startGrpcTest = new startGrpcTest(GRPC_PORT);
+            startGrpcTest.startGrpcService();
+        });
+        grpcStart.start();
+        // 启动grpc-web-proxy服务
+        Thread grpcWebProxyStart = new Thread(() -> {
+            startGrpcWebProxyTest startGrpcWebProxyTest = new startGrpcWebProxyTest(GRPC_WEB_PROXY_PORT,GRPC_PORT);
+            startGrpcWebProxyTest.startGrpcWebProxy();
+        });
+        grpcWebProxyStart.start();
+        hostName = "http://127.0.0.1:" + GRPC_WEB_PROXY_PORT;
+        httpClient = HttpClients.createDefault();
+    }
 
     @Test
     public void simpleReqTest()  {
         // 单个response
-        String url = "http://127.0.0.1:8080/grpc.gateway.testing.EchoService/Echo";
+        String url = hostName +"/grpc.gateway.testing.EchoService/Echo";
 
         String requestStr = "hello world!!!";
         Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage(requestStr).build();
@@ -77,7 +99,7 @@ public class GrpcWebProxyServerTest {
     @Test
     public void streamReqTest() {
         // stream response
-        String url = "http://127.0.0.1:8080/grpc.gateway.testing.EchoService/ServerStreamingEcho";
+        String url = hostName + "/grpc.gateway.testing.EchoService/ServerStreamingEcho";
         String requestStr = "hello world!!!";
         Echo.ServerStreamingEchoRequest request = Echo.ServerStreamingEchoRequest.newBuilder().setMessage(requestStr)
                 .setMessageCount(5)
