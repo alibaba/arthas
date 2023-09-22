@@ -41,12 +41,10 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-services</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
@@ -96,6 +94,11 @@
             <artifactId>arthas-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-vmtool</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -134,8 +137,8 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>test-compile</goal>
-                            <goal>test-compile-custom</goal>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
                         </goals>
                     </execution>
                 </executions>

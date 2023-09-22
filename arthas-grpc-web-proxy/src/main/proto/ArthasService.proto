@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+
+package arthas.grpc.api;
+
+service ObjectService{
+  rpc get(StringValue) returns (StringValue);
+}
+
+service SystemProperty {
+  rpc get(google.protobuf.Empty) returns (ResponseBody);
+  rpc getByKey(StringKey) returns (ResponseBody);
+  rpc update(Properties) returns (ResponseBody);
+}
+
+service Pwd{
+  rpc pwd(google.protobuf.Empty) returns (ResponseBody);
+}
+
+service Watch{
+  rpc watch(WatchRequest) returns (stream ResponseBody);
+}
+
+message StringKey {
+  string key = 1;
+}
+
+message StringValue {
+  string value = 1;
+}
+
+message Properties {
+  map<string, string> properties = 1;
+}
+
+message WatchRequest {
+  string classPattern = 1;
+  string methodPattern = 2;
+  string express = 3;
+  string conditionExpress = 4;
+  bool isBefore = 5;
+  bool isFinish = 6;
+  bool isException = 7;
+  bool isSuccess = 8;
+  int32 expand = 9;
+  int32 sizeLimit = 10;
+  bool isRegEx = 11;
+  int32 numberOfLimit = 12;
+  string excludeClassPattern = 13;
+  int64 listenerId = 14;
+  bool verbose = 15;
+  int32 maxNumOfMatchedClass = 16;
+  int64 jobId = 17;
+}
+
+
+
+message SimpleResponse{
+  int32 jobId = 1;
+  string jobStatus = 2;
+  string type = 3;
+  map<string, string> results = 4;
+}
+
+message WatchResponse {
+  int32 jobId = 1;
+  string ts = 2;
+  double cost = 3;
+  string value = 4;
+  int32 sizeLimit = 5;
+  string className = 6;
+  string methodName = 7;
+  string accessPoint = 8;
+  string type = 9;
+}
+
+message ResponseBody {
+  string sessionId = 1;
+  int32 statusCode = 2;
+  string message  = 3;
+  google.protobuf.Any body = 4;
+}
