@@ -14,12 +14,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
-import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.CommandUtils;
-import com.taobao.arthas.core.util.Decompiler;
-import com.taobao.arthas.core.util.InstrumentationUtils;
-import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.*;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
@@ -77,7 +72,7 @@ public class JadCommand extends AnnotatedCommand {
     }
 
     @Argument(argName = "method-name", index = 1, required = false)
-    @Description("method name pattern, decompile a specific method instead of the whole class")
+    @Description("Method name pattern, decompile a specific method instead of the whole class")
     public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
@@ -102,7 +97,7 @@ public class JadCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "hideUnicode", flag = true)
-    @Description("hide unicode, default value false")
+    @Description("Hide unicode, default value false")
     public void setHideUnicode(boolean hideUnicode) {
         this.hideUnicode = hideUnicode;
     }
@@ -115,20 +110,23 @@ public class JadCommand extends AnnotatedCommand {
 
     @Option(longName = "lineNumber")
     @DefaultValue("true")
-    @Description("Output source code contins line number, default value true")
+    @Description("Output source code contains line number, default value true")
     public void setLineNumber(boolean lineNumber) {
         this.lineNumber = lineNumber;
     }
 
     @Option(shortName = "d", longName = "directory")
-    @Description("Sets the destination directory for dummped class files required by cfr decompiler")
+    @Description("Sets the destination directory for dumped class files required by cfr decompiler")
     public void setDirectory(String directory) {
         this.directory = directory;
     }
 
     @Override
     public void process(CommandProcess process) {
-        RowAffect affect = new RowAffect();
+        if (directory != null && !FileUtils.isDirectoryOrNotExist(directory)) {
+            process.end(-1, directory + " :is not a directory, please check it");
+            return;
+        }
         Instrumentation inst = process.session().getInstrumentation();
 
         if (code == null && classLoaderClass != null) {
@@ -152,7 +150,8 @@ public class JadCommand extends AnnotatedCommand {
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
 
         try {
-            ExitStatus status = null;
+            final RowAffect affect = new RowAffect();
+            final ExitStatus status;
             if (matchedClasses == null || matchedClasses.isEmpty()) {
                 status = processNoMatch(process);
             } else if (matchedClasses.size() > 1) {
@@ -177,9 +176,8 @@ public class JadCommand extends AnnotatedCommand {
 
     private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
-        Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
+        Set<Class<?>> allClasses = new HashSet<>(withInnerClasses);
         allClasses.add(c);
-
         try {
             final ClassDumpTransformer transformer;
             if (directory == null) {
@@ -195,7 +193,6 @@ public class JadCommand extends AnnotatedCommand {
                 "\" or try with \"-d/--directory\" to specify the directory of dump files");
             }
             File classFile = classFiles.get(c);
-
             Pair<String,NavigableMap<Integer,Integer>> decompileResult = Decompiler.decompileWithMappings(classFile.getAbsolutePath(), methodName, hideUnicode, lineNumber);
             String source = decompileResult.getFirst();
             if (source != null) {
@@ -203,7 +200,6 @@ public class JadCommand extends AnnotatedCommand {
             } else {
                 source = "unknown";
             }
-
             JadModel jadModel = new JadModel();
             jadModel.setSource(source);
             jadModel.setMappings(decompileResult.getSecond());
@@ -212,7 +208,6 @@ public class JadCommand extends AnnotatedCommand {
                 jadModel.setLocation(ClassUtils.getCodeSource(c.getProtectionDomain().getCodeSource()));
             }
             process.appendResult(jadModel);
-
             affect.rCnt(classFiles.keySet().size());
             return ExitStatus.success();
         } catch (Throwable t) {
