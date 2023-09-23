@@ -138,6 +138,8 @@ Perf events:
 
 如果遇到 OS 本身的权限/配置问题，然后缺少部分 event，可以参考 [async-profiler 的文档](https://github.com/jvm-profiling-tools/async-profiler)。
 
+可以使用 `check` action 测试某个 event 是否可用，此 action 的参数格式与 start 一致。
+
 可以用`--event`参数指定要采样的事件，比如 `alloc` 表示分析内存分配情况：
 
 ```bash
@@ -178,13 +180,13 @@ profiler execute 'start,framebuf=5000000'
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)
+具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/32601bccd9e49adda9510a2ed79d142ac6ef0ff9/src/arguments.cpp#L52)
 
 ## 查看所有支持的 action
 
 ```bash
 $ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status]
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status, check]
 ```
 
 ## 查看版本
@@ -324,3 +326,7 @@ profiler --cstack fp
 profiler start --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
 profiler --ttsp
 ```
+
+## 使用 profiler 记录的 event 生成 JFR 文件
+
+用 `--jfrsync CONFIG` 选项可以指定配置启动 Java Flight Recording，输出的 jfr 文件会包含所有常规的 JFR event，但采样的来源是由 profiler 提供的。
