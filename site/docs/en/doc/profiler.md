@@ -138,6 +138,8 @@ Perf events:
 
 If you encounter the permissions/configuration issues of the OS itself and then missing some events, you can refer to the [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) documentation.
 
+You can use `check` action to check if a profiling event is available, this action receives the same format options with `start`.
+
 You can use the `--event` parameter to specify the event to sample, for example, `alloc` event means heap memory allocation profiling:
 
 ```bash
@@ -178,13 +180,13 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)
+Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/32601bccd9e49adda9510a2ed79d142ac6ef0ff9/src/arguments.cpp#L52)
 
 ## View all supported actions
 
 ```bash
 $ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status]
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status, check]
 ```
 
 ## View version
@@ -324,3 +326,7 @@ The `--ttsp` option is an alias for `--begin SafepointSynchronize::begin --end R
 profiler start --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
 profiler --ttsp
 ```
+
+## Use events from profiler for Java Flight Recording
+
+Use `--jfrsync CONFIG` to start Java Flight Recording with the given configuration synchronously with the profiler. The output .jfr file will include all regular JFR events, except that execution samples will be obtained from async-profiler. This option implies -o jfr.
