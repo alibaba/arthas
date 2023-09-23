@@ -226,10 +226,10 @@ profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*
 
 ## 指定执行时间
 
-比如，希望 profiler 执行 300 秒自动结束，可以用 `-d`/`--duration` 参数指定：
+比如，希望 profiler 执行 300 秒自动结束，可以用 `-d`/`--duration` 参数为 collect action 指定时间：
 
 ```bash
-profiler start --duration 300
+profiler collect --duration 300
 ```
 
 ## 生成 jfr 格式结果
@@ -338,3 +338,14 @@ profiler --ttsp
 ```bash
 profiler start -e cpu --jfrsync profile -f combined.jfr
 ```
+## 周期性保存结果
+
+使用 `--loop TIME` 可以持续运行 profiler 并周期性保存结果。选项格式可以是具体时间 hh:mm:ss 或以秒、分钟、小时或天计算的时间间隔。需要确保指定的输出文件名中包含时间戳，否则每次输出的结果都会覆盖上次保存的结果。以下命令持续执行 profiling 并将每个小时内的记录保存到一个 jfr 文件中。
+
+```bash
+profiler start --loop 1h -f /var/log/profile-%t.jfr
+```
+
+## `--timeout` 选项
+
+这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
