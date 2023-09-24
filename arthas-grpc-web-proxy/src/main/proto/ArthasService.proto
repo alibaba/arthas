@@ -5,8 +5,13 @@ import "google/protobuf/any.proto";
 
 package arthas.grpc.api;
 
+message ObjectRequest {
+  string express = 1;
+  int32 expand = 2;
+}
+
 service ObjectService{
-  rpc get(StringValue) returns (StringValue);
+  rpc getInstance(ObjectRequest) returns (StringValue);
 }
 
 service SystemProperty {

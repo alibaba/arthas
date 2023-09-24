@@ -1,9 +1,9 @@
-package com.taobao.arthas.grpcweb.demo.server;
+package com.taobao.arthas.grpcweb.grpc.server;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.SocketUtils;
-import com.taobao.arthas.grpcweb.demo.service.ObjectService;
+import com.taobao.arthas.grpcweb.grpc.service.ObjectService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -15,6 +15,7 @@ public class GrpcServer {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
 
     private int port;
+
     private Server grpcServer;
 
     public GrpcServer(int port) {
