@@ -246,5 +246,15 @@ public class FileUtils {
         }
 
     }
+
+    /**
+     * Check if the given path is a directory or not exists.
+     * @param path path of file.
+     * @return {@code true} if the path is not exist or is an existing directory, otherwise returns {@code false}.
+     */
+    public static boolean isDirectoryOrNotExist(String path) {
+        File file = new File(path);
+        return !file.exists() || file.isDirectory();
+    }
 }
 
