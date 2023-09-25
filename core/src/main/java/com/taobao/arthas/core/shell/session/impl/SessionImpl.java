@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.session.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.session.Session;
@@ -7,20 +9,21 @@ import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 
 import java.lang.instrument.Instrumentation;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class SessionImpl implements Session {
+    private static final Logger logger = LoggerFactory.getLogger(SessionImpl.class);
     private final static AtomicInteger lockSequence = new AtomicInteger();
     private final static int LOCK_TX_EMPTY = -1;
     private final AtomicInteger lock = new AtomicInteger(LOCK_TX_EMPTY);
 
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private Map<String, Object> data = new HashMap<>();
+    private final Map<String, AutoCloseable> closeables = new ConcurrentHashMap<>();
 
     public SessionImpl() {
         long now = System.currentTimeMillis();
@@ -132,4 +135,20 @@ public class SessionImpl implements Session {
         return get(TTY) != null;
     }
 
+    @Override
+    public AutoCloseable registerCloseableResource(String name, AutoCloseable closeable) {
+        return closeables.computeIfAbsent(name, k -> closeable);
+    }
+
+    @Override
+    public void close() {
+        for (AutoCloseable closeable : closeables.values()) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                logger.error("failed to close {}", closeable, e);
+            }
+        }
+        closeables.clear();
+    }
 }

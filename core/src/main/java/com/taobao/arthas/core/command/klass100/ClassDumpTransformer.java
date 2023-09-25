@@ -4,6 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,22 +21,27 @@ import java.util.Set;
 class ClassDumpTransformer implements ClassFileTransformer {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassDumpTransformer.class);
+    private static final File ARTHAS_LOG_HOME = new File(LogUtil.loggingDir());
+    private static final String DEFAULT_DUMP_SUB_DIR = "classdump";
 
     private Set<Class<?>> classesToEnhance;
     private Map<Class<?>, File> dumpResult;
-    private File arthasLogHome;
-
-    private File directory;
+    private String baseDir;
+    private String subDir;
 
     public ClassDumpTransformer(Set<Class<?>> classesToEnhance) {
-        this(classesToEnhance, null);
+        this(classesToEnhance, null, null);
     }
 
-    public ClassDumpTransformer(Set<Class<?>> classesToEnhance, File directory) {
+    public ClassDumpTransformer(Set<Class<?>> classesToEnhance, String baseDir) {
+        this(classesToEnhance, baseDir, null);
+    }
+
+    public ClassDumpTransformer(Set<Class<?>> classesToEnhance, String baseDir, String subdir) {
         this.classesToEnhance = classesToEnhance;
-        this.dumpResult = new HashMap<Class<?>, File>();
-        this.arthasLogHome = new File(LogUtil.loggingDir());
-        this.directory = directory;
+        this.dumpResult = new HashMap<>();
+        this.baseDir = baseDir;
+        this.subDir = subdir;
     }
 
     @Override
@@ -53,14 +59,12 @@ class ClassDumpTransformer implements ClassFileTransformer {
     }
 
     public File dumpDir() {
-        String classDumpDir = "classdump";
-        final File dumpDir;
-        if (directory != null) {
-            dumpDir = directory;
-        } else {
-            dumpDir = new File(arthasLogHome, classDumpDir);
-        }
-        return dumpDir;
+        final File base = baseDir != null ? new File(baseDir) : defaultBaseDir();
+        return new File(base, StringUtils.isBlank(subDir) ? DEFAULT_DUMP_SUB_DIR : subDir);
+    }
+
+    private static File defaultBaseDir() {
+        return ARTHAS_LOG_HOME;
     }
 
     private void dumpClassIfNecessary(Class<?> clazz, byte[] data) {

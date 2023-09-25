@@ -11,6 +11,7 @@ import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.future.Future;
+import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.shell.*;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.impl.SessionImpl;
@@ -145,8 +146,11 @@ public class ShellImpl implements Shell {
         return term;
     }
 
-    public FutureHandler closedFutureHandler() {
-        return new FutureHandler(closedFuture);
+    public Handler<Void> closedFutureHandler() {
+        return f -> {
+            session.close();
+            closedFuture.complete();
+        };
     }
 
     public long lastAccessedTime() {

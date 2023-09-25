@@ -14,6 +14,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
+import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.*;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -24,13 +25,9 @@ import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -49,6 +46,8 @@ import java.util.regex.Pattern;
         Constants.WIKI + Constants.WIKI_HOME + "jad")
 public class JadCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(JadCommand.class);
+    private static final String RESOURCE_NAME = "jad_dump_dirs";
+    private static final String SESSION_DUMP_DIR_PREFIX = "jad_dump_session_";
     private static Pattern pattern = Pattern.compile("(?m)^/\\*\\s*\\*/\\s*$" + System.getProperty("line.separator"));
 
     private String classPattern;
@@ -179,12 +178,10 @@ public class JadCommand extends AnnotatedCommand {
         Set<Class<?>> allClasses = new HashSet<>(withInnerClasses);
         allClasses.add(c);
         try {
-            final ClassDumpTransformer transformer;
-            if (directory == null) {
-                transformer = new ClassDumpTransformer(allClasses);
-            } else {
-                transformer = new ClassDumpTransformer(allClasses, new File(directory));
-            }
+            Session session = process.session();
+            ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses, directory, SESSION_DUMP_DIR_PREFIX + session.getSessionId());
+            JadTmpDirResources dumpDirResources = (JadTmpDirResources) session.registerCloseableResource(RESOURCE_NAME, new JadTmpDirResources());
+            dumpDirResources.add(transformer.dumpDir());
             InstrumentationUtils.retransformClasses(inst, transformer, allClasses);
 
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
@@ -251,5 +248,26 @@ public class JadCommand extends AnnotatedCommand {
         }
 
         super.complete(completion);
+    }
+
+    static class JadTmpDirResources implements AutoCloseable {
+        private static final Logger logger = LoggerFactory.getLogger(JadTmpDirResources.class);
+        private final Set<File> tmpDirs = Collections.synchronizedSet(new HashSet<>());
+
+        public void add(File dir) {
+            tmpDirs.add(dir);
+        }
+
+        @Override
+        public void close() throws Exception {
+            for (File tmpDir : tmpDirs) {
+                try {
+                    FileUtils.deleteDirectory(tmpDir);
+                } catch (IOException e) {
+                    logger.error("Error delete directory {}", tmpDir, e);
+                }
+
+            }
+        }
     }
 }

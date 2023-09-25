@@ -168,4 +168,21 @@ public interface Session {
      * Whether the session is tty term
      */
     boolean isTty();
+
+    /**
+     * Register a closeable resource with a unique name to this session, when session is closed,
+     * all the registered resources of the session will be closed. If some resource with the given
+     * name has been registered, the registration does not work and returns the existing resource
+     * of the name. Otherwise, the source will be registered to the session with the name, then
+     * returns the same object.
+     * @param resourceName name to identify a resource
+     * @param closeable the resource to be closed when this session is closed
+     * @return the registered resource of the given name.
+     */
+    AutoCloseable registerCloseableResource(String resourceName, AutoCloseable closeable);
+
+    /**
+     * Close the session.
+     */
+    void close();
 }
