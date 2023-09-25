@@ -180,7 +180,7 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/32601bccd9e49adda9510a2ed79d142ac6ef0ff9/src/arguments.cpp#L52)
+Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v2.9/src/arguments.cpp#L52)
 
 ## View all supported actions
 
@@ -330,3 +330,11 @@ profiler --ttsp
 ## Use events from profiler for Java Flight Recording
 
 Use `--jfrsync CONFIG` to start Java Flight Recording with the given configuration synchronously with the profiler. The output .jfr file will include all regular JFR events, except that execution samples will be obtained from async-profiler. This option implies -o jfr.
+
+`CONFIG` can be `profile`, means using the predefined JFR config "profile" in `$JAVA_HOME/lib/jfr/`, or full path of a JFR configuration file (.jfc), this value has the same format with [settings option of JFR.start](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html).
+
+For example, command below use "profile" config of JFR:
+
+```bash
+profiler start -e cpu --jfrsync profile -f combined.jfr
+```
