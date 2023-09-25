@@ -180,7 +180,7 @@ profiler execute 'start,framebuf=5000000'
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/32601bccd9e49adda9510a2ed79d142ac6ef0ff9/src/arguments.cpp#L52)
+具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v2.9/src/arguments.cpp#L52)
 
 ## 查看所有支持的 action
 
@@ -330,3 +330,11 @@ profiler --ttsp
 ## 使用 profiler 记录的 event 生成 JFR 文件
 
 用 `--jfrsync CONFIG` 选项可以指定配置启动 Java Flight Recording，输出的 jfr 文件会包含所有常规的 JFR event，但采样的来源是由 profiler 提供的。
+
+`CONFIG` 选项可以是 `profile`，表示使用在 `$JAVA_HOME/lib/jfr` 目录下预置的“profile”配置，也可以是自定义的 JFR 配置文件（.jfc），此选项的值采用与 [JFR.start 命令的 settings 选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html) 相同的格式。
+
+比如，以下命令使用“profile”配置启动 JFR：
+
+```bash
+profiler start -e cpu --jfrsync profile -f combined.jfr
+```
