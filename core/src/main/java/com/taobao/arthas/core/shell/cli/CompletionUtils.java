@@ -77,6 +77,10 @@ public class CompletionUtils {
         }
     }
 
+    private static boolean isEndOfDirectory(String token) {
+        return !StringUtils.isBlank(token) && (token.endsWith(File.separator) || token.endsWith("/"));
+    }
+
     /**
      * 返回true表示已经完成completion，返回否则表示没有，调用者需要另外完成补全
      * @param completion
@@ -95,7 +99,7 @@ public class CompletionUtils {
         if (StringUtils.isBlank(token)) {
             dir = new File("").getAbsoluteFile();
             token = "";
-        } else if (token.endsWith("/")) {
+        } else if (isEndOfDirectory(token)) {
             dir = new File(token);
         } else {
             File parent = new File(token).getAbsoluteFile().getParentFile();
@@ -108,7 +112,7 @@ public class CompletionUtils {
         File tokenFile = new File(token);
 
         String tokenFileName = null;
-        if (token.endsWith("/")) {
+        if (isEndOfDirectory(token)) {
             tokenFileName = "";
         } else {
             tokenFileName = tokenFile.getName();
@@ -120,7 +124,7 @@ public class CompletionUtils {
 
         File[] listFiles = dir.listFiles();
 
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         if (listFiles != null) {
             for (File child : listFiles) {
                 if (child.getName().startsWith(partName)) {
@@ -133,7 +137,7 @@ public class CompletionUtils {
             }
         }
 
-        if (names.size() == 1 && names.get(0).endsWith("/")) {
+        if (names.size() == 1 && isEndOfDirectory(names.get(0))) {
             String name = names.get(0);
             // 这个函数补全后不会有空格，并且只能传入要补全的内容
             completion.complete(name.substring(tokenFileName.length()), false);
@@ -141,13 +145,13 @@ public class CompletionUtils {
         }
 
         String prefix = null;
-        if (token.endsWith("/")) {
+        if (isEndOfDirectory(token)) {
             prefix = token;
         } else {
             prefix = token.substring(0, token.length() - new File(token).getName().length());
         }
 
-        ArrayList<String> namesWithPrefix = new ArrayList<String>();
+        ArrayList<String> namesWithPrefix = new ArrayList<>();
         for (String name : names) {
             namesWithPrefix.add(prefix + name);
         }
