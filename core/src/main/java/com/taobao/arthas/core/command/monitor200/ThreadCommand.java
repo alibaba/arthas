@@ -96,7 +96,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "state")
-    @Description("Display the thead filter by the state. NEW, RUNNABLE, TIMED_WAITING, WAITING, BLOCKED, TERMINATED is optional.")
+    @Description("Display the thread filter by the state. NEW, RUNNABLE, TIMED_WAITING, WAITING, BLOCKED, TERMINATED is optional.")
     public void setState(String state) {
         this.state = state;
     }
