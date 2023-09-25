@@ -518,7 +518,7 @@ public class ProfilerCommand extends AnnotatedCommand {
             sb.append("alloc=").append(this.alloc).append(COMMA);
         }
         if (this.live) {
-            sb.append(this.live).append(COMMA);
+            sb.append("live").append(COMMA);
         }
         if (this.lock!= null) {
             sb.append("lock=").append(this.lock).append(COMMA);
