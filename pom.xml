@@ -151,7 +151,7 @@
             <dependency>
                 <groupId>com.fifesoft</groupId>
                 <artifactId>rsyntaxtextarea</artifactId>
-                <version>2.5.8</version>
+                <version>3.3.4</version>
             </dependency>
             <dependency>
                 <groupId>ognl</groupId>
