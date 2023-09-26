@@ -114,26 +114,23 @@ public class Decompiler {
 
         StringBuilder sb = new StringBuilder();
 
-        List<String> lines = StringUtils.toLines(src);
+        String[] lines = src.split("\\R");
 
-        if (maxLineNumber >= 1000) {
-            formatStr = "/*%4d*/ ";
-            emptyStr = "         ";
-        } else if (maxLineNumber >= 100) {
+        if (maxLineNumber >= 100) {
             formatStr = "/*%3d*/ ";
             emptyStr = "        ";
+        } else if (maxLineNumber >= 1000) {
+            formatStr = "/*%4d*/ ";
+            emptyStr = "         ";
         }
-
-        int index = 0;
-        for (String line : lines) {
-            Integer srcLineNumber = lineMapping.get(index + 1);
+        for (int i = 0; i < lines.length; ++i) {
+            Integer srcLineNumber = lineMapping.get(i + 1);
             if (srcLineNumber != null) {
                 sb.append(String.format(formatStr, srcLineNumber));
             } else {
                 sb.append(emptyStr);
             }
-            sb.append(line).append("\n");
-            index++;
+            sb.append(lines[i]).append("\n");
         }
 
         return sb.toString();

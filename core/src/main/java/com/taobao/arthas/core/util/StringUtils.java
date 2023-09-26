@@ -909,27 +909,6 @@ public abstract class StringUtils {
                 : String.format("%.1f EiB", (bytes >> 20) / 0x1p40);
     }
 
-    public static List<String> toLines(String text) {
-        List<String> result = new ArrayList<String>();
-        BufferedReader reader = new BufferedReader(new StringReader(text));
-        try {
-            String line = reader.readLine();
-            while (line != null) {
-                result.add(line);
-                line = reader.readLine();
-            }
-        } catch (IOException exc) {
-            // quit
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-        return result;
-    }
-
     public static String randomString(int length) {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++)
