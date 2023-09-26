@@ -93,6 +93,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String lock;
 
     /**
+     * start Java Flight Recording with the given config along with the profiler
+     */
+    private String jfrsync;
+
+    /**
      * output file name for dumping
      */
     private String file;
@@ -318,6 +323,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.lock = lock;
     }
 
+    @Option(longName = "jfrsync")
+    @Description("start Java Flight Recording with the given config along with the profiler")
+    public void setJfrsync(String jfrsync) {
+        this.jfrsync = jfrsync;
+    }
+
     @Option(shortName = "t", longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
@@ -493,7 +504,7 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     public enum ProfilerAction {
         // start, resume, stop, dump, check, status, meminfo, list, collect,
-        start, resume, stop, dump, status, meminfo, list,
+        start, resume, stop, dump, check, status, meminfo, list,
         version,
 
         load,
@@ -522,6 +533,10 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.lock!= null) {
             sb.append("lock=").append(this.lock).append(COMMA);
+        }
+        if (this.jfrsync != null) {
+            this.format = "jfr";
+            sb.append("jfrsync=").append(this.jfrsync).append(COMMA);
         }
         if (this.file != null) {
             sb.append("file=").append(this.file).append(COMMA);
@@ -670,6 +685,10 @@ public class ProfilerCommand extends AnnotatedCommand {
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
+                String result = execute(asyncProfiler, executeArgs);
+                appendExecuteResult(process, result);
+            } else if (ProfilerAction.check.equals(profilerAction)) {
+                String executeArgs = executeArgs(ProfilerAction.check);
                 String result = execute(asyncProfiler, executeArgs);
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
