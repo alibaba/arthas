@@ -22,7 +22,6 @@ Questions about how to use Arthas and opinions can be directly raised in issuesï
 
 ![](/images/dingding4_qr.png)
 
-
 ### Instructions for Installing DingTalk
 
 DingTalk can be downloaded from: [https://www.dingtalk.com/en](https://page.dingtalk.com/wow/dingtalk/act/en-download)
