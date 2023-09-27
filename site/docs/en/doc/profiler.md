@@ -338,6 +338,7 @@ For example, command below use "profile" config of JFR:
 ```bash
 profiler start -e cpu --jfrsync profile -f combined.jfr
 ```
+
 ## Run profiler in a loop
 
 Use `--loop TIME` to run profiler in a loop (continuous profiling). The argument is either a clock time (hh:mm:ss) or a loop duration in seconds, minutes, hours, or days. Make sure the filename includes a timestamp pattern, or the output will be overwritten on each iteration. The command below will run profiling endlessly and save records of each hour to a jfr file.

@@ -338,6 +338,7 @@ profiler --ttsp
 ```bash
 profiler start -e cpu --jfrsync profile -f combined.jfr
 ```
+
 ## 周期性保存结果
 
 使用 `--loop TIME` 可以持续运行 profiler 并周期性保存结果。选项格式可以是具体时间 hh:mm:ss 或以秒、分钟、小时或天计算的时间间隔。需要确保指定的输出文件名中包含时间戳，否则每次输出的结果都会覆盖上次保存的结果。以下命令持续执行 profiling 并将每个小时内的记录保存到一个 jfr 文件中。
