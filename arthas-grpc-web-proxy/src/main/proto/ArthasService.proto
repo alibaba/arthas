@@ -11,7 +11,58 @@ message ObjectRequest {
 }
 
 service ObjectService{
-  rpc getInstance(ObjectRequest) returns (StringValue);
+  rpc getInstance(ObjectRequest) returns (JavaObject);
+}
+
+message JavaField {
+  string name = 1;
+
+  oneof value {
+    JavaObject objectValue = 2;
+    BasicValue basicValue = 3;
+    ArrayValue arrayValue = 4;
+    NullValue nullValue = 5;
+    UnexpandedObject unexpandedObject = 6;
+  }
+}
+
+message JavaObject {
+  string className = 1;
+  repeated JavaField fields = 2;
+}
+
+message BasicValue {
+  oneof value {
+    int32 intValue = 2;
+    int64 longValue = 3;
+    float floatValue = 4;
+    double doubleValue = 5;
+    bool booleanValue = 6;
+    string stringValue = 7;
+  }
+}
+
+message ArrayElement {
+  oneof element {
+    BasicValue basicValue = 2;
+    JavaObject objectValue = 3;
+    ArrayValue arrayValue = 5;
+    NullValue nullValue = 6;
+    UnexpandedObject unexpandedObject = 7;
+  }
+}
+
+message ArrayValue {
+  string className = 1;
+  repeated ArrayElement elements = 2;
+}
+
+message NullValue {
+  string className = 1;
+}
+
+message UnexpandedObject {
+  string className = 1;
 }
 
 service SystemProperty {

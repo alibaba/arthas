@@ -9,13 +9,11 @@ import com.taobao.arthas.common.VmToolUtils;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
-import com.taobao.arthas.core.command.model.ObjectVO;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.view.ObjectView;
-import com.taobao.arthas.grpcweb.grpc.Test;
 import io.grpc.stub.StreamObserver;
 
 import java.io.File;
+
+import static com.taobao.arthas.grpcweb.grpc.objectUtils.JavaObjectConverter.toJavaObject;
 
 public class ObjectService extends ObjectServiceGrpc.ObjectServiceImplBase {
 
@@ -23,7 +21,6 @@ public class ObjectService extends ObjectServiceGrpc.ObjectServiceImplBase {
 
     public static VmTool initVmTool() {
         File path = new File(VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile();
-
         String libPath = new File(path, VmToolUtils.detectLibName()).getAbsolutePath();
         return VmTool.getInstance(libPath);
     }
@@ -45,14 +42,25 @@ public class ObjectService extends ObjectServiceGrpc.ObjectServiceImplBase {
     }
 
     @Override
-    public void getInstance(ArthasService.ObjectRequest request, StreamObserver<ArthasService.StringValue> observerResponse){
+    public void getInstance(ArthasService.ObjectRequest request, StreamObserver<ArthasService.JavaObject> observerResponse){
         String express = request.getExpress();
         int expand = request.getExpand();
 
         VmTool vmTool= initVmTool();
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Test test = new Test(3);
-        Object[] instances = vmTool.getInstances(Test.class);
+        String className = "com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject";
+        if (className == null || className.equals("")) {
+            logger.error("The className option cannot be empty!");
+            return;
+        }
+        Class matchClass;
+        try{
+            matchClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            logger.error("ClassNotFoundException: {}", className);
+            throw new RuntimeException(e);
+        }
+        Object[] instances = vmTool.getInstances(matchClass);
         Object value = instances;
         if (express != null) {
             Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
@@ -60,14 +68,18 @@ public class ObjectService extends ObjectServiceGrpc.ObjectServiceImplBase {
                 value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
             } catch (ExpressException e) {
                 logger.warn("ognl: failed execute express: " + express, e);
-
             }
         }
-        ObjectVO objectVO = new ObjectVO(value, expand);
-        String resultStr = StringUtils.objectToString(objectVO.needExpand() ? new ObjectView(objectVO).draw() : objectVO.getObject());
-
-        ArthasService.StringValue response = ArthasService.StringValue.newBuilder().setValue(resultStr).build();
-        observerResponse.onNext(response);
+        int depth;
+        if(expand > 3){
+            depth = 0;
+        }else if (expand > 0 && expand <= 3){
+            depth = 3 - expand;
+        }else {
+            depth = 2;
+        }
+        ArthasService.JavaObject javaObject = toJavaObject(value, depth);
+        observerResponse.onNext(javaObject);
         observerResponse.onCompleted();
     }
 

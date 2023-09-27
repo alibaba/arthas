@@ -1,17 +1,22 @@
 package com.taobao.arthas.grpcweb.grpc;
 
 import arthas.VmTool;
+import arthas.grpc.api.ArthasService;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.VmToolUtils;
+import com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ObjectVO;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.view.ObjectView;
+//import com.taobao.arthas.core.util.StringUtils;
+//import com.taobao.arthas.core.view.ObjectView;
 
 import java.io.File;
+
+import static com.taobao.arthas.grpcweb.grpc.Test.ccc;
+import static com.taobao.arthas.grpcweb.grpc.objectUtils.JavaObjectConverter.toJavaObject;
 
 
 /**
@@ -52,8 +57,9 @@ public class VmtoolUse {
 
     public static void main(String[] args) throws ClassNotFoundException {
         VmTool vmTool= initVmTool();
-        Test test = new Test(2);
-        String className = "com.taobao.arthas.grpcweb.grpc.Test";
+//        Test test = new Test(2);
+        ComplexObject ccc = ccc();
+        String className = "com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject";
         if (className == null || className.equals("")) {
             logger.error("The className option cannot be empty!");
             return;
@@ -67,8 +73,9 @@ public class VmtoolUse {
         Object[] instances = vmTool.getInstances(matchClass);
         Object value = instances;
 
-        String express = "instances[0].mapExample";
-        int expand = 6;
+        String express = "instances[0]";
+        int expand = 3;
+        int depth;
 
         if (express != null) {
             Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
@@ -78,17 +85,15 @@ public class VmtoolUse {
                 logger.warn("ognl: failed execute express: " + express, e);
             }
         }
-        ObjectVO objectVO = new ObjectVO(value, expand);
-        String resultStr = StringUtils.objectToString(objectVO.needExpand() ? new ObjectView(objectVO).draw() : objectVO.getObject());
-        System.out.println(resultStr);
-
-
-//        for(int i =0 ; i < 5; i++){
-//            Test test = new Test(i);
-//        }
-//        Test[] instances = vmTool.getInstances(Test.class);
-//        for(Test item: instances){
-//            System.out.println(item);
-//        }
+        if(expand > 3){
+            depth = 0;
+        }else if (expand > 0 && expand <= 3){
+            depth = 3 - expand;
+        }else {
+            depth = 2;
+        }
+        ArthasService.JavaObject javaObject = toJavaObject(value, depth);
+        System.err.println(javaObject);
+        vmTool.forceGc();
     }
 }
