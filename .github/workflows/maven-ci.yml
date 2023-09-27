@@ -48,4 +48,4 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_IMAGE: shiyindaxiaojie/arthas-tunnel-server
-          DOCKER_VERSION: 3.6.7
+          DOCKER_VERSION: v3.6.7

@@ -79,27 +79,20 @@ java -Dserver.port=8080 -jar target/arthas-tunnel-server.jar
 
 ### Docker 部署
 
-调整 Maven 配置文件 `setiings.xml`，填写相关凭据。
-````xml
-<settings>
-    <profiles>
-        <profile>
-            <id>github</id>
-            <properties>
-                <docker.username>${env.DOCKER_USERNAME}</docker.username>
-                <docker.password>${env.DOCKER_PASSWORD}</docker.password>
-                <docker.image>${env.DOCKER_IMAGE}</docker.image>
-            </properties>
-        </profile>
-    </profiles>
-</settings>
-````
+本项目使用了 Spring Boot 的镜像分层特性优化了镜像的构建效率，请确保正确安装了 Docker 工具，然后执行以下命令。
 
-在项目根目录执行 `mvn -Pgithub -pl tunnel-server jib:build -Djib.disableUpdateChecks=true` 打包为镜像。
+```bash
+docker build -f docker/Dockerfile -t arthas-tunnel-server:{tag} .
+```
 
 ### Helm 部署
 
-进入 `helm` 目录，执行 `helm install -n arthas arthas .` 安装，在 K8s 环境将自动创建 Arthas 所需的资源文件。
+以应用为中心，建议使用 Helm 统一管理所需部署的 K8s 资源描述文件，请参考以下命令完成应用的安装和卸载。
+
+```bash
+helm install arthas-tunnel-server ./helm # 部署资源
+helm uninstall arthas-tunnel-server # 卸载资源
+```
 
 ## 如何接入
 
