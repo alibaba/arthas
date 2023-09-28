@@ -93,6 +93,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private String lock;
 
     /**
+     * start Java Flight Recording with the given config along with the profiler
+     */
+    private String jfrsync;
+
+    /**
      * output file name for dumping
      */
     private String file;
@@ -214,6 +219,16 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String chunktime;
 
+    /**
+     * run profiler in a loop (continuous profiling)
+     */
+    private String loop;
+
+    /**
+     * automatically stop profiler at TIME (absolute or relative)
+     */
+    private String timeout;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -316,6 +331,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("lock profiling threshold in nanoseconds")
     public void setLock(String lock) {
         this.lock = lock;
+    }
+
+    @Option(longName = "jfrsync")
+    @Description("start Java Flight Recording with the given config along with the profiler")
+    public void setJfrsync(String jfrsync) {
+        this.jfrsync = jfrsync;
     }
 
     @Option(shortName = "t", longName = "threads", flag = true)
@@ -447,6 +468,25 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.chunktime = chunktime;
     }
 
+    @Option(longName = "loop")
+    @Description("run profiler in a loop (continuous profiling)")
+    public void setLoop(String loop) {
+        this.loop = loop;
+        if (this.action.equals("collect")) {
+            this.action = "start";
+        }
+    }
+
+    @Option(longName = "timeout")
+    @Description("automatically stop profiler at TIME (absolute or relative)")
+    public void setTimeout(String timeout) {
+        this.timeout = timeout;
+        if (this.action.equals("collect")) {
+            this.action = "start";
+        }
+    }
+
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -493,7 +533,7 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     public enum ProfilerAction {
         // start, resume, stop, dump, check, status, meminfo, list, collect,
-        start, resume, stop, dump, status, meminfo, list,
+        start, resume, stop, dump, check, status, meminfo, list, collect,
         version,
 
         load,
@@ -518,10 +558,14 @@ public class ProfilerCommand extends AnnotatedCommand {
             sb.append("alloc=").append(this.alloc).append(COMMA);
         }
         if (this.live) {
-            sb.append(this.live).append(COMMA);
+            sb.append("live").append(COMMA);
         }
         if (this.lock!= null) {
             sb.append("lock=").append(this.lock).append(COMMA);
+        }
+        if (this.jfrsync != null) {
+            this.format = "jfr";
+            sb.append("jfrsync=").append(this.jfrsync).append(COMMA);
         }
         if (this.file != null) {
             sb.append("file=").append(this.file).append(COMMA);
@@ -598,6 +642,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.chunktime!= null) {
             sb.append("chunktime=").append(this.chunktime).append(COMMA);
         }
+        if (this.loop != null) {
+            sb.append("loop=").append(this.loop).append(COMMA);
+        }
+        if (this.timeout != null) {
+            sb.append("timeout=").append(this.timeout).append(COMMA);
+        }
 
         return sb.toString();
     }
@@ -631,12 +681,8 @@ public class ProfilerCommand extends AnnotatedCommand {
                 }
                 String result = execute(asyncProfiler, this.actionArg);
                 appendExecuteResult(process, result);
-            } else if (ProfilerAction.start.equals(profilerAction)) {
-                //jfr录制，必须在start的时候就指定文件路径
-                if (this.file == null && "jfr".equals(format)) {
-                    this.file = outputFile();
-                }
-                String executeArgs = executeArgs(ProfilerAction.start);
+            } else if (ProfilerAction.collect.equals(profilerAction)) {
+                String executeArgs = executeArgs(ProfilerAction.collect);
                 String result = execute(asyncProfiler, executeArgs);
                 ProfilerModel profilerModel = createProfilerModel(result);
 
@@ -662,6 +708,10 @@ public class ProfilerCommand extends AnnotatedCommand {
                     }, this.duration, TimeUnit.SECONDS);
                 }
                 process.appendResult(profilerModel);
+            } else if (ProfilerAction.start.equals(profilerAction)) {
+                String executeArgs = executeArgs(ProfilerAction.start);
+                String result = execute(asyncProfiler, executeArgs);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.stop.equals(profilerAction)) {
                 ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
                 process.appendResult(profilerModel);
@@ -670,6 +720,10 @@ public class ProfilerCommand extends AnnotatedCommand {
                 process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
+                String result = execute(asyncProfiler, executeArgs);
+                appendExecuteResult(process, result);
+            } else if (ProfilerAction.check.equals(profilerAction)) {
+                String executeArgs = executeArgs(ProfilerAction.check);
                 String result = execute(asyncProfiler, executeArgs);
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
