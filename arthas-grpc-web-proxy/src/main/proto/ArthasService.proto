@@ -6,8 +6,9 @@ import "google/protobuf/any.proto";
 package arthas.grpc.api;
 
 message ObjectRequest {
-  string express = 1;
-  int32 expand = 2;
+  string className = 1;
+  string express = 2;
+  int32 expand = 3;
 }
 
 service ObjectService{

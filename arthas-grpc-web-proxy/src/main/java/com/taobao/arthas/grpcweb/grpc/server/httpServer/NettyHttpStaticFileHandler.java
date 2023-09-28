@@ -29,7 +29,7 @@ import javax.activation.MimetypesFileTypeMap;
 public class NettyHttpStaticFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     // 资源所在路径
-    private static final String STATIC_LOCATION = "F:\\ASummer\\arthas\\arthas-grpc-web-proxy\\src\\main\\java\\com\\taobao\\arthas\\grpcweb\\grpc\\server\\httpServer\\dist";
+    private final String STATIC_LOCATION = this.getClass().getResource("/dist").getPath();
  
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {

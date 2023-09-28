@@ -43,12 +43,13 @@ public class ObjectService extends ObjectServiceGrpc.ObjectServiceImplBase {
 
     @Override
     public void getInstance(ArthasService.ObjectRequest request, StreamObserver<ArthasService.JavaObject> observerResponse){
+        String className = request.getClassName();
         String express = request.getExpress();
         int expand = request.getExpand();
 
         VmTool vmTool= initVmTool();
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        String className = "com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject";
+        //String className = "com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject";
         if (className == null || className.equals("")) {
             logger.error("The className option cannot be empty!");
             return;

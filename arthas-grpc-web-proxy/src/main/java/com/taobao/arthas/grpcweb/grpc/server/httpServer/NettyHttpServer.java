@@ -29,7 +29,7 @@ public class NettyHttpServer {
                     .childHandler(new NettyHttpInitializer())
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            System.out.println("http url: " + "127.0.0.1:" + port + "/index.html");
+            logger.info("start http server on port: {}", port);
             ChannelFuture future = serverBootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
         } finally {
