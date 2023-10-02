@@ -8,6 +8,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.lang.invoke.MethodHandles;
 
 public class GrpcServer {
@@ -18,18 +19,22 @@ public class GrpcServer {
 
     private Server grpcServer;
 
-    public GrpcServer(int port) {
+    private Instrumentation instrumentation;
+
+
+    public GrpcServer(int port, Instrumentation instrumentation) {
         if (port == 0) {
             this.port = SocketUtils.findAvailableTcpPort();
         } else {
             this.port = port;
         }
+        this.instrumentation = instrumentation;
     }
 
     public void start() {
         try {
             grpcServer = ServerBuilder.forPort(port)
-                    .addService(new ObjectService())
+                    .addService(new ObjectService(instrumentation))
                     .build()
                     .start();
             logger.info("Server started, listening on " + port);

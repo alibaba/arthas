@@ -6,6 +6,7 @@ public class ComplexObject {
     private String name;
     private double value;
     private int[] numbers;
+    private Long[] longNumbers;
     private NestedObject nestedObject;
     private ComplexObject[] complexArray;
     private int[][] multiDimensionalArray;
@@ -107,4 +108,11 @@ public class ComplexObject {
         this.stringArray = stringArray;
     }
 
+    public Long[] getLongNumbers() {
+        return longNumbers;
+    }
+
+    public void setLongNumbers(Long[] longNumbers) {
+        this.longNumbers = longNumbers;
+    }
 }

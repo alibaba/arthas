@@ -9,6 +9,9 @@ message ObjectRequest {
   string className = 1;
   string express = 2;
   int32 expand = 3;
+  string hashCode = 4;
+  string classLoaderClass = 5;
+  int32 limit = 6;
 }
 
 service ObjectService{

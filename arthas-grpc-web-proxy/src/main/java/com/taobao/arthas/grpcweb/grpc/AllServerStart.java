@@ -2,13 +2,34 @@ package com.taobao.arthas.grpcweb.grpc;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
+import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
+import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
+import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.bytekit.utils.IOUtils;
 import com.taobao.arthas.common.SocketUtils;
+import com.taobao.arthas.core.advisor.TransformerManager;
+import com.taobao.arthas.core.server.ArthasBootstrap;
+import com.taobao.arthas.core.server.instrument.ClassLoader_Instrument;
+import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject;
 import com.taobao.arthas.grpcweb.grpc.server.GrpcServer;
 import com.taobao.arthas.grpcweb.grpc.server.httpServer.NettyHttpServer;
 import com.taobao.arthas.grpcweb.proxy.server.GrpcWebProxyServer;
+import demo.MathGame;
+import net.bytebuddy.agent.ByteBuddyAgent;
+import org.zeroturnaround.zip.ZipUtil;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.invoke.MethodHandles;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.jar.JarFile;
 
 
 public class AllServerStart {
@@ -21,13 +42,54 @@ public class AllServerStart {
 
     private int HTTP_PORT;
 
+    private Instrumentation instrumentation;
 
-    public void startAllServer() throws InterruptedException {
+    private InstrumentTransformer classLoaderInstrumentTransformer;
+
+    public static void appendSpyJar(Instrumentation instrumentation) throws IOException {
+        // find spy target/classes directory
+        String file = AllServerStart.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+
+        File spyClassDir = new File(file, "../../../spy/target/classes").getAbsoluteFile();
+
+        File destJarFile = new File(file, "../../../spy/target/test-spy.jar").getAbsoluteFile();
+
+        ZipUtil.pack(spyClassDir, destJarFile);
+
+        instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(destJarFile));
+
+    }
+
+    public void startAllServer() throws Throwable {
         ComplexObject ccc = createComplexObject();
+
+        // 0. 启动mathDemo
+        Thread mathDemo = new Thread(() ->{
+            MathGame game = new MathGame();
+            while (true) {
+                try {
+                    game.run();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        mathDemo.start();
+
+        instrumentation = ByteBuddyAgent.install();
+
+        appendSpyJar(instrumentation);
+
+        TransformerManager transformerManager = new TransformerManager(instrumentation);
 
         // 1. 启动grpc服务
         this.GRPC_PORT = SocketUtils.findAvailableTcpPort();
-        GrpcServer grpcServer = new GrpcServer(GRPC_PORT);
+        GrpcServer grpcServer = new GrpcServer(GRPC_PORT, instrumentation);
         grpcServer.start();
 
         // 2. 启动grpc-web-proxy服务
@@ -62,6 +124,9 @@ public class AllServerStart {
         // 设置基本类型的数组
         int[] numbers = { 1, 2, 3, 4, 5 };
         complexObject.setNumbers(numbers);
+
+        Long[] longNumbers = {10086l,10087l,10088l,10089l,10090l,10091l};
+        complexObject.setLongNumbers(longNumbers);
 
         // 创建并设置嵌套对象
         ComplexObject.NestedObject nestedObject = new ComplexObject.NestedObject();
@@ -102,7 +167,7 @@ public class AllServerStart {
         return complexObject;
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Throwable {
         AllServerStart allServerStart = new AllServerStart();
         allServerStart.startAllServer();
     }

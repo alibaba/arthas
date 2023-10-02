@@ -28,10 +28,10 @@ public class JavaObjectConverter {
         JavaObject.Builder objectBuilder = JavaObject.newBuilder();
         objectBuilder.setClassName(obj.getClass().getName());
 
-        if(obj.getClass().isPrimitive() || obj.getClass().equals(String.class)){
+        if(obj.getClass().isPrimitive() || isBasicType(obj.getClass())){
             BasicValue basicValue = createBasicValue(obj);
             JavaField javaField = JavaField.newBuilder().setBasicValue(basicValue).build();
-            return JavaObject.newBuilder().addFields(javaField).build();
+            return objectBuilder.addFields(javaField).build();
         }
 
         Field[] fields = obj.getClass().getDeclaredFields();
@@ -56,7 +56,7 @@ public class JavaObjectConverter {
                         fieldBuilder.setUnexpandedObject(
                                 UnexpandedObject.newBuilder().setClassName(fieldType.getName()).build());
                     }
-                } else if (fieldType.isPrimitive() || fieldType.equals(String.class)) {
+                } else if (fieldType.isPrimitive() || isBasicType(fieldType)) {
                     BasicValue basicValue = createBasicValue(fieldValue);
                     fieldBuilder.setBasicValue(basicValue);
                 } else {
@@ -104,7 +104,7 @@ public class JavaObjectConverter {
                                 UnexpandedObject.newBuilder().setClassName(element.getClass().getName()).build()));
                     }
 
-                } else if (componentType.isPrimitive() || componentType.equals(String.class)) {
+                } else if (componentType.isPrimitive() || isBasicType(componentType)) {
                     BasicValue basicValue = createBasicValue(element);
                     arrayBuilder.addElements(ArrayElement.newBuilder().setBasicValue(basicValue));
                 } else {
@@ -144,5 +144,14 @@ public class JavaObjectConverter {
         }
 
         return builder.build();
+    }
+
+    private static  boolean isBasicType(Class<?> classType){
+        return classType.equals(Integer.class) ||
+                classType.equals(Long.class) ||
+                classType.equals(Float.class) ||
+                classType.equals(Double.class) ||
+                classType.equals(Boolean.class) ||
+                classType.equals(String.class);
     }
 }
