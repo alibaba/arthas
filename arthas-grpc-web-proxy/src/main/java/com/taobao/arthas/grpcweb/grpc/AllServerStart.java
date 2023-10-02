@@ -42,7 +42,8 @@ public class AllServerStart {
 
         // 3. 启动http服务
         this.HTTP_PORT = SocketUtils.findAvailableTcpPort();
-        NettyHttpServer nettyHttpServer = new NettyHttpServer(HTTP_PORT);
+        String STATIC_LOCATION = this.getClass().getResource("/dist").getPath().substring(1);
+        NettyHttpServer nettyHttpServer = new NettyHttpServer(HTTP_PORT,STATIC_LOCATION);
         logger.info("start grpc server on port: {}, grpc web proxy server on port: {}, " +
                 "http server server on port: {}", GRPC_PORT,GRPC_WEB_PROXY_PORT,HTTP_PORT);
         System.out.println("Open your web browser and navigate to " + "http" + "://127.0.0.1:" + HTTP_PORT + '/' + "index.html");

@@ -15,8 +15,12 @@ public class NettyHttpServer {
 
     private int port;
 
-    public NettyHttpServer(int port) {
+    private final String STATIC_LOCATION;
+
+
+    public NettyHttpServer(int port, String staticLocation) {
         this.port = port;
+        this.STATIC_LOCATION = staticLocation;
     }
 
     public void start() throws InterruptedException {
@@ -26,7 +30,7 @@ public class NettyHttpServer {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(boss, work)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new NettyHttpInitializer())
+                    .childHandler(new NettyHttpInitializer(this.STATIC_LOCATION))
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             logger.info("start http server on port: {}", port);
