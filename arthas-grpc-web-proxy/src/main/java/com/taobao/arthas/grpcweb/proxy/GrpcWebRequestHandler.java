@@ -97,9 +97,9 @@ public class GrpcWebRequestHandler {
 
             // Invoke the rpc call
             asyncStubCall.invoke(asyncStub, inObj, new GrpcCallResponseReceiver(sendResponse, latch));
-            if (!latch.await(500 * 1000, TimeUnit.MILLISECONDS)) {
-                logger.warn("grpc call took too long!");
-            }
+//            if (!latch.await(500 * 1000, TimeUnit.MILLISECONDS)) {
+//                logger.warn("grpc call took too long!");
+//            }
         } catch (Exception e) {
             logger.error("try to invoke grpc serivce error, uri: {}", req.uri(), e);
             sendResponse.writeError(Status.UNAVAILABLE.withCause(e));

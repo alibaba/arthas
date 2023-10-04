@@ -3,7 +3,9 @@ package com.taobao.arthas.grpcweb.grpc.server;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.SocketUtils;
-import com.taobao.arthas.grpcweb.grpc.service.ObjectService;
+import com.taobao.arthas.core.advisor.TransformerManager;
+import com.taobao.arthas.grpcweb.grpc.service.*;
+import com.taobao.arthas.grpcweb.grpc.view.GrpcResultViewResolver;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -21,20 +23,28 @@ public class GrpcServer {
 
     private Instrumentation instrumentation;
 
+    private TransformerManager transformerManager;
 
-    public GrpcServer(int port, Instrumentation instrumentation) {
+    public GrpcServer(int port, Instrumentation instrumentation, TransformerManager transformerManager) {
         if (port == 0) {
             this.port = SocketUtils.findAvailableTcpPort();
         } else {
             this.port = port;
         }
         this.instrumentation = instrumentation;
+        this.transformerManager = transformerManager;
     }
 
     public void start() {
+        GrpcResultViewResolver grpcResultViewResolver = new GrpcResultViewResolver();
+        GrpcJobController grpcJobController = new GrpcJobController(this.instrumentation, this.transformerManager, grpcResultViewResolver);
+
         try {
             grpcServer = ServerBuilder.forPort(port)
-                    .addService(new ObjectService(instrumentation))
+                    .addService(new ObjectService(grpcJobController))
+                    .addService(new PwdCommandService(grpcJobController))
+                    .addService(new SystemPropertyCommandService(grpcJobController))
+                    .addService(new WatchCommandService(grpcJobController))
                     .build()
                     .start();
             logger.info("Server started, listening on " + port);

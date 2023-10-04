@@ -2,17 +2,8 @@ package com.taobao.arthas.grpcweb.grpc;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
-import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
-import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
-import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
-import com.alibaba.bytekit.utils.AsmUtils;
-import com.alibaba.bytekit.utils.IOUtils;
 import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.TransformerManager;
-import com.taobao.arthas.core.server.ArthasBootstrap;
-import com.taobao.arthas.core.server.instrument.ClassLoader_Instrument;
-import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.grpcweb.grpc.objectUtils.ComplexObject;
 import com.taobao.arthas.grpcweb.grpc.server.GrpcServer;
 import com.taobao.arthas.grpcweb.grpc.server.httpServer.NettyHttpServer;
@@ -24,15 +15,15 @@ import org.zeroturnaround.zip.ZipUtil;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
 import java.lang.invoke.MethodHandles;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 
 
-public class AllServerStart {
+public class DemoBootstrap {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
 
@@ -44,23 +35,15 @@ public class AllServerStart {
 
     private Instrumentation instrumentation;
 
-    private InstrumentTransformer classLoaderInstrumentTransformer;
+    private TransformerManager transformerManager;
 
-    public static void appendSpyJar(Instrumentation instrumentation) throws IOException {
-        // find spy target/classes directory
-        String file = AllServerStart.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+    private ScheduledExecutorService executorService;
 
-        File spyClassDir = new File(file, "../../../spy/target/classes").getAbsoluteFile();
 
-        File destJarFile = new File(file, "../../../spy/target/test-spy.jar").getAbsoluteFile();
+    private static DemoBootstrap demoBootstrap;
 
-        ZipUtil.pack(spyClassDir, destJarFile);
 
-        instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(destJarFile));
-
-    }
-
-    public void startAllServer() throws Throwable {
+    private DemoBootstrap() throws InterruptedException, IOException {
         ComplexObject ccc = createComplexObject();
 
         // 0. 启动mathDemo
@@ -81,26 +64,58 @@ public class AllServerStart {
         });
         mathDemo.start();
 
+        // 1. 初始化相关参数,获取自身Inst
         instrumentation = ByteBuddyAgent.install();
-
         appendSpyJar(instrumentation);
+        this.transformerManager = new TransformerManager(instrumentation);
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                final Thread t = new Thread(r, "grpc-service-execute");
+                t.setDaemon(true);
+                return t;
+            }
+        });
 
-        TransformerManager transformerManager = new TransformerManager(instrumentation);
+        //2. 启动grpc、grpcweb proxy、 http服务器
+        Thread allServerStartThread = new Thread("grpc-server-start"){
+            @Override
+            public void run(){
+                try {
+                    serverStart();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        allServerStartThread.start();
+    }
+
+    public void serverStart() throws IOException, InterruptedException {
 
         // 1. 启动grpc服务
         this.GRPC_PORT = SocketUtils.findAvailableTcpPort();
-        GrpcServer grpcServer = new GrpcServer(GRPC_PORT, instrumentation);
-        grpcServer.start();
+        Thread grpcStartThread = new Thread(() -> {
+            GrpcServer grpcServer = new GrpcServer(GRPC_PORT, instrumentation, transformerManager);
+            grpcServer.start();
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        grpcStartThread.start();
 
         // 2. 启动grpc-web-proxy服务
         //this.GRPC_WEB_PROXY_PORT = SocketUtils.findAvailableTcpPort();
         this.GRPC_WEB_PROXY_PORT = 8567;
-        Thread grpcWebProxyStart = new Thread(() -> {
+        Thread grpcWebProxyStartThread = new Thread(() -> {
             GrpcWebProxyServer grpcWebProxyServer = new GrpcWebProxyServer(GRPC_WEB_PROXY_PORT,GRPC_PORT);
             grpcWebProxyServer.start();
         });
-        grpcWebProxyStart.start();
-        Thread.sleep(100);
+        grpcWebProxyStartThread.start();
 
         // 3. 启动http服务
         this.HTTP_PORT = SocketUtils.findAvailableTcpPort();
@@ -110,6 +125,40 @@ public class AllServerStart {
                 "http server server on port: {}", GRPC_PORT,GRPC_WEB_PROXY_PORT,HTTP_PORT);
         System.out.println("Open your web browser and navigate to " + "http" + "://127.0.0.1:" + HTTP_PORT + '/' + "index.html");
         nettyHttpServer.start();
+    }
+
+    public synchronized static DemoBootstrap getInstance() throws Throwable {
+        if (demoBootstrap == null) {
+            demoBootstrap = new DemoBootstrap();
+        }
+        return demoBootstrap;
+    }
+
+    public static DemoBootstrap getRunningInstance() {
+        if (demoBootstrap == null) {
+            throw new IllegalStateException("AllServerStart must be initialized before!");
+        }
+        return demoBootstrap;
+    }
+
+    public void execute(Runnable command) {
+        executorService.execute(command);
+    }
+
+
+
+    public static void appendSpyJar(Instrumentation instrumentation) throws IOException {
+        // find spy target/classes directory
+        String file = DemoBootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+
+        File spyClassDir = new File(file, "../../../spy/target/classes").getAbsoluteFile();
+
+        File destJarFile = new File(file, "../../../spy/target/test-spy.jar").getAbsoluteFile();
+
+        ZipUtil.pack(spyClassDir, destJarFile);
+
+        instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(destJarFile));
+
     }
 
     public static ComplexObject createComplexObject() {
@@ -167,8 +216,18 @@ public class AllServerStart {
         return complexObject;
     }
 
+    public Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
+
+    public TransformerManager getTransformerManager() {
+        return transformerManager;
+    }
+
+    public ScheduledExecutorService getScheduledExecutorService() {
+        return this.executorService;
+    }
     public static void main(String[] args) throws Throwable {
-        AllServerStart allServerStart = new AllServerStart();
-        allServerStart.startAllServer();
+        DemoBootstrap.getInstance();
     }
 }
