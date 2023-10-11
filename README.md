@@ -82,7 +82,7 @@ java -Dserver.port=8080 -jar target/arthas-tunnel-server.jar
 本项目使用了 Spring Boot 的镜像分层特性优化了镜像的构建效率，请确保正确安装了 Docker 工具，然后执行以下命令。
 
 ```bash
-docker build -f docker/Dockerfile -t arthas-tunnel-server:{tag} .
+docker build -f Dockerfile-Tunnel -t arthas-tunnel-server:{tag} .
 ```
 
 ### Helm 部署
