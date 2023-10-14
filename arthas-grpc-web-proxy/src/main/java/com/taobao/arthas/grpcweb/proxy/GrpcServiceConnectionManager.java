@@ -41,4 +41,8 @@ public class GrpcServiceConnectionManager {
     Channel getChannelWithClientInterceptor(GrpcWebClientInterceptor interceptor) {
         return ClientInterceptors.intercept(channel, interceptor);
     }
+
+    public ManagedChannel getChannel() {
+        return channel;
+    }
 }

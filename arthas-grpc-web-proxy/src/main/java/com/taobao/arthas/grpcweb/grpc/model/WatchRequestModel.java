@@ -1,6 +1,6 @@
 package com.taobao.arthas.grpcweb.grpc.model;
 
-import arthas.grpc.api.ArthasService.WatchRequest;
+import io.arthas.api.ArthasServices.WatchRequest;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
@@ -24,6 +24,7 @@ public class WatchRequestModel extends EnhancerRequestModel {
     private Integer sizeLimit = 10 * 1024 * 1024;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
+    private static final int MAX_EXPAND = 4;
 
 
     public String toString() {
@@ -102,8 +103,10 @@ public class WatchRequestModel extends EnhancerRequestModel {
         if (!watchRequest.getIsBefore() && !watchRequest.getIsFinish() && !watchRequest.getIsException() && !watchRequest.getIsSuccess()) {
             this.isFinish = true;
         }
-        if (watchRequest.getExpand() == 0) {
+        if (watchRequest.getExpand() <= 0) {
             this.expand = 1;
+        } else if (watchRequest.getExpand() > MAX_EXPAND){
+            this.expand = MAX_EXPAND;
         } else {
             this.expand = watchRequest.getExpand();
         }

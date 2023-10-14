@@ -17,6 +17,7 @@ package com.taobao.arthas.grpcweb.proxy;
 
 import com.taobao.arthas.common.Pair;
 import io.grpc.Channel;
+import io.grpc.ManagedChannel;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.stub.MetadataUtils;
@@ -94,12 +95,12 @@ public class GrpcWebRequestHandler {
             if (deframer.processInput(in, contentType)) {
                 inObj = MessageUtils.getInputProtobufObj(asyncStubCall, deframer.getMessageBytes());
             }
-
+            ManagedChannel managedChannel = grpcServiceConnectionManager.getChannel();
             // Invoke the rpc call
-            asyncStubCall.invoke(asyncStub, inObj, new GrpcCallResponseReceiver(sendResponse, latch));
-//            if (!latch.await(500 * 1000, TimeUnit.MILLISECONDS)) {
-//                logger.warn("grpc call took too long!");
-//            }
+            asyncStubCall.invoke(asyncStub, inObj, new GrpcCallResponseReceiver(sendResponse, latch,managedChannel));
+            if (!latch.await( 1000, TimeUnit.MILLISECONDS)) {
+                logger.warn("grpc call took too long!");
+            }
         } catch (Exception e) {
             logger.error("try to invoke grpc serivce error, uri: {}", req.uri(), e);
             sendResponse.writeError(Status.UNAVAILABLE.withCause(e));
@@ -155,16 +156,23 @@ public class GrpcWebRequestHandler {
         private final SendGrpcWebResponse sendResponse;
         private final CountDownLatch latch;
 
-        GrpcCallResponseReceiver(SendGrpcWebResponse s, CountDownLatch c) {
+        private final ManagedChannel channel;
+
+        GrpcCallResponseReceiver(SendGrpcWebResponse s, CountDownLatch c, ManagedChannel channel) {
             sendResponse = s;
             latch = c;
+            this.channel = channel;
         }
 
         @Override
         public void onNext(java.lang.Object resp) {
             // TODO verify that the resp object is of Class instance returnedCls.
             byte[] outB = ((com.google.protobuf.GeneratedMessageV3) resp).toByteArray();
-            sendResponse.writeResponse(outB);
+            if(!sendResponse.writeResponse(outB)){
+                // 这里需要断开grpc
+                this.channel.shutdownNow();
+                logger.error("Grpc shutdown from grpc web proxy client");
+            }
         }
 
         @Override

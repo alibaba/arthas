@@ -1,7 +1,8 @@
 package com.taobao.arthas.grpcweb.grpc.service;
 
-import arthas.grpc.api.ArthasService.ResponseBody;
-import arthas.grpc.api.PwdGrpc;
+import com.taobao.arthas.core.shell.system.ExecStatus;
+import io.arthas.api.ArthasServices.ResponseBody;
+import io.arthas.api.PwdGrpc;
 import com.google.protobuf.Empty;
 import com.taobao.arthas.core.command.model.PwdModel;
 
@@ -18,11 +19,8 @@ public class PwdCommandService extends PwdGrpc.PwdImplBase{
 
     private GrpcJobController grpcJobController;
 
-    private Instrumentation instrumentation;
-
 
     public PwdCommandService(GrpcJobController grpcJobController) {
-        this.instrumentation = grpcJobController.getInstrumentation();
         this.grpcJobController = grpcJobController;
     }
 
@@ -30,6 +28,7 @@ public class PwdCommandService extends PwdGrpc.PwdImplBase{
     public void pwd(Empty empty, StreamObserver<ResponseBody> responseObserver){
         String path = new File("").getAbsolutePath();
         ArthasStreamObserver<ResponseBody> arthasStreamObserver = new ArthasStreamObserverImpl<>(responseObserver, null,grpcJobController);
+        arthasStreamObserver.setProcessStatus(ExecStatus.RUNNING);
         arthasStreamObserver.appendResult(new PwdModel(path));
         arthasStreamObserver.onCompleted();
     }

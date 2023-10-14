@@ -1,32 +1,30 @@
 package com.taobao.arthas.grpcweb.grpc.service;
 
-import arthas.grpc.api.ArthasService;
-import arthas.grpc.api.ArthasService.ResponseBody;
-import arthas.grpc.api.ArthasService.StringKey;
-import arthas.grpc.api.SystemPropertyGrpc;
+import com.taobao.arthas.core.shell.system.ExecStatus;
+import io.arthas.api.ArthasServices.ResponseBody;
+import io.arthas.api.ArthasServices.StringKey;
+import io.arthas.api.ArthasServices.StringStringMapValue;
+import io.arthas.api.SystemPropertyGrpc;
 import com.google.protobuf.Empty;
 import com.taobao.arthas.core.command.model.SystemPropertyModel;
 import com.taobao.arthas.grpcweb.grpc.observer.ArthasStreamObserver;
 import com.taobao.arthas.grpcweb.grpc.observer.impl.ArthasStreamObserverImpl;
 import io.grpc.stub.StreamObserver;
 
-import java.lang.instrument.Instrumentation;
 import java.util.Map;
 
 public class SystemPropertyCommandService extends SystemPropertyGrpc.SystemPropertyImplBase{
 
     private GrpcJobController grpcJobController;
 
-    private Instrumentation instrumentation;
-
     public SystemPropertyCommandService(GrpcJobController grpcJobController) {
-        this.instrumentation = grpcJobController.getInstrumentation();
         this.grpcJobController = grpcJobController;
     }
 
     @Override
     public void get(Empty empty, StreamObserver<ResponseBody> responseObserver){
         ArthasStreamObserver<ResponseBody> arthasStreamObserver = new ArthasStreamObserverImpl<>(responseObserver, null, grpcJobController);
+        arthasStreamObserver.setProcessStatus(ExecStatus.RUNNING);
         arthasStreamObserver.appendResult(new SystemPropertyModel(System.getProperties()));
         arthasStreamObserver.end();
     }
@@ -35,6 +33,7 @@ public class SystemPropertyCommandService extends SystemPropertyGrpc.SystemPrope
     public void getByKey(StringKey request, StreamObserver<ResponseBody> responseObserver){
         String propertyName = request.getKey();
         ArthasStreamObserver<ResponseBody> arthasStreamObserver = new ArthasStreamObserverImpl<>(responseObserver,null, grpcJobController);
+        arthasStreamObserver.setProcessStatus(ExecStatus.RUNNING);
         // view the specified system property
         String value = System.getProperty(propertyName);
         if (value == null) {
@@ -47,7 +46,7 @@ public class SystemPropertyCommandService extends SystemPropertyGrpc.SystemPrope
     }
 
     @Override
-    public void update(ArthasService.StringStringMapValue request, StreamObserver<ResponseBody> responseObserver){
+    public void update(StringStringMapValue request, StreamObserver<ResponseBody> responseObserver){
         // get properties from client
         Map<String, String> properties = request.getStringStringMapMap();
         String propertyName = "";
@@ -58,6 +57,7 @@ public class SystemPropertyCommandService extends SystemPropertyGrpc.SystemPrope
             propertyValue = entry.getValue();
         }
         ArthasStreamObserver<ResponseBody> arthasStreamObserver = new ArthasStreamObserverImpl<>(responseObserver,null, grpcJobController);
+        arthasStreamObserver.setProcessStatus(ExecStatus.RUNNING);
         try {
             System.setProperty(propertyName, propertyValue);
             arthasStreamObserver.appendResult(new SystemPropertyModel(propertyName, System.getProperty(propertyName)));

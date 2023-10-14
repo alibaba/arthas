@@ -2,7 +2,6 @@ package com.taobao.arthas.grpcweb.grpc.observer;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.model.ResultModel;
-import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -32,6 +31,8 @@ public interface ArthasStreamObserver<T>  {
     void end();
 
     ExecStatus getPorcessStatus();
+
+    void setProcessStatus(ExecStatus execStatus);
     /**
      * End the process.
      *

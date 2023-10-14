@@ -1,6 +1,6 @@
 package com.taobao.arthas.grpcweb.grpc.view;
 
-import arthas.grpc.api.ArthasService.ResponseBody;
+import io.arthas.api.ArthasServices.ResponseBody;
 import com.taobao.arthas.core.command.model.EnhancerModel;
 import com.taobao.arthas.core.command.view.ViewRenderUtil;
 import com.taobao.arthas.grpcweb.grpc.observer.ArthasStreamObserver;

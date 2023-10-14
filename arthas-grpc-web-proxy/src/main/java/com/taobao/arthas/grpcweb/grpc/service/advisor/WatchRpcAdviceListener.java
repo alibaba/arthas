@@ -9,13 +9,14 @@ import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ObjectVO;
-import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.grpcweb.grpc.model.WatchRequestModel;
 import com.taobao.arthas.grpcweb.grpc.model.WatchResponseModel;
 import com.taobao.arthas.grpcweb.grpc.observer.ArthasStreamObserver;
 
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,15 +84,6 @@ public class WatchRpcAdviceListener extends AdviceListenerAdapter {
             watching(advice);
         }
     }
-
-    public Object getNewObjectValue(long resultId, String express, int expand) throws ExpressException {
-        Advice advice = (Advice) results.get(resultId);
-        double cost = threadLocalWatch.costInMillis();
-        Object value = getExpressionResult(express, advice, cost);
-        ObjectVO objectVO = new ObjectVO(value, expand);
-        return objectVO;
-    }
-
 
     private void watching(Advice advice) {
         try {

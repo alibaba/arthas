@@ -1,5 +1,6 @@
 package com.taobao.arthas.grpcweb.grpc.server;
 
+import arthas.VmTool;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.SocketUtils;
@@ -9,6 +10,7 @@ import com.taobao.arthas.grpcweb.grpc.view.GrpcResultViewResolver;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.invoke.MethodHandles;
@@ -38,10 +40,12 @@ public class GrpcServer {
     public void start() {
         GrpcResultViewResolver grpcResultViewResolver = new GrpcResultViewResolver();
         GrpcJobController grpcJobController = new GrpcJobController(this.instrumentation, this.transformerManager, grpcResultViewResolver);
+        File path = new File(VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile();
+        String libPath = path.getAbsolutePath();
 
         try {
             grpcServer = ServerBuilder.forPort(port)
-                    .addService(new ObjectService(grpcJobController))
+                    .addService(new ObjectService(grpcJobController,libPath))
                     .addService(new PwdCommandService(grpcJobController))
                     .addService(new SystemPropertyCommandService(grpcJobController))
                     .addService(new WatchCommandService(grpcJobController))

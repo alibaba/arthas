@@ -1,5 +1,8 @@
 package com.taobao.arthas.grpcweb.grpc.objectUtils;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 // ComplexObject.java
 public class ComplexObject {
     private int id;
@@ -11,6 +14,14 @@ public class ComplexObject {
     private ComplexObject[] complexArray;
     private int[][] multiDimensionalArray;
     private String[] stringArray;
+
+    private Collection<String> collection;
+
+    List<String> stringList;
+
+    Map<String, Integer> stringIntegerMap;
+
+    private Double[] doubleArray;
 
     public static class NestedObject {
         private int nestedId;
@@ -43,6 +54,22 @@ public class ComplexObject {
 
     }
 
+
+    public Map<String, Integer> getStringIntegerMap() {
+        return stringIntegerMap;
+    }
+
+    public void setStringIntegerMap(Map<String, Integer> stringIntegerMap) {
+        this.stringIntegerMap = stringIntegerMap;
+    }
+
+    public Double[] getDoubleArray() {
+        return doubleArray;
+    }
+
+    public void setDoubleArray(Double[] doubleArray) {
+        this.doubleArray = doubleArray;
+    }
 
     public int getId() {
         return id;
@@ -114,5 +141,21 @@ public class ComplexObject {
 
     public void setLongNumbers(Long[] longNumbers) {
         this.longNumbers = longNumbers;
+    }
+
+    public Collection<String> getCollection() {
+        return collection;
+    }
+
+    public void setCollection(Collection<String> collection) {
+        this.collection = collection;
+    }
+
+    public List<String> getStringList() {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList) {
+        this.stringList = stringList;
     }
 }

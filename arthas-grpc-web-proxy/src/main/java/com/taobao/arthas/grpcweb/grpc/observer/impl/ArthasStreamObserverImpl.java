@@ -1,6 +1,6 @@
 package com.taobao.arthas.grpcweb.grpc.observer.impl;
 
-import arthas.grpc.api.ArthasService.StringValue;
+import io.arthas.api.ArthasServices.ResponseBody;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.command.model.ResultModel;
@@ -29,7 +29,7 @@ public class ArthasStreamObserverImpl<T> implements ArthasStreamObserver<T> {
     private GrpcProcess process;
 
     private Object requestModel;
-    private AdviceListener listener = null;
+    private AdviceListener listener;
 
     private ClassFileTransformer transformer;
 
@@ -51,7 +51,7 @@ public class ArthasStreamObserverImpl<T> implements ArthasStreamObserver<T> {
             resultDistributor = new GrpcResultDistributorImpl(this, grpcJobController.getResultViewResolver());
         }
         this.process = new GrpcProcess();
-        this.process.setProcessStatus(ExecStatus.RUNNING);
+        this.process.setProcessStatus(ExecStatus.READY);
         // 请求参数
         this.requestModel = requestModel;
         // 配置客户端取消事件
@@ -90,6 +90,7 @@ public class ArthasStreamObserverImpl<T> implements ArthasStreamObserver<T> {
             ProcessAware processAware = (ProcessAware) adviceListener;
             // listener 有可能是其它 command 创建的
             if(processAware.getProcess() == null) {
+                this.process.setProcessStatus(ExecStatus.RUNNING);
                 processAware.setProcess(this.process);
             }
         }
@@ -124,6 +125,10 @@ public class ArthasStreamObserverImpl<T> implements ArthasStreamObserver<T> {
     public ExecStatus getPorcessStatus() {
         return this.process.status();
     }
+    @Override
+    public void setProcessStatus(ExecStatus execStatus){
+        this.process.setProcessStatus(execStatus);
+    }
 
     @Override
     public void end(int statusCode) {
@@ -138,7 +143,7 @@ public class ArthasStreamObserverImpl<T> implements ArthasStreamObserver<T> {
 
     @Override
     public ArthasStreamObserver write(String msg) {
-        StringValue result = StringValue.newBuilder().setValue(msg).build();
+        ResponseBody result = ResponseBody.newBuilder().setStringValue(msg).build();
         onNext((T) result);
         return this;
     }
@@ -182,9 +187,9 @@ public class ArthasStreamObserverImpl<T> implements ArthasStreamObserver<T> {
         if (process.status() != ExecStatus.TERMINATED) {
             //add status message
             this.appendResult(new StatusModel(exitCode, message));
-//            if (process != null) {
-//                this.unregister();
-//            }
+            if (process != null) {
+                this.unregister();
+            }
             flag = true;
         } else {
             flag = false;

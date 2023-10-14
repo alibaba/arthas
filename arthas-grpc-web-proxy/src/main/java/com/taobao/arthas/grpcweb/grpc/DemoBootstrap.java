@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.invoke.MethodHandles;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -95,6 +96,8 @@ public class DemoBootstrap {
 
     public void serverStart() throws IOException, InterruptedException {
 
+        // 0. 创建一个对象
+        ComplexObject complexObject = createComplexObject();
         // 1. 启动grpc服务
         this.GRPC_PORT = SocketUtils.findAvailableTcpPort();
         Thread grpcStartThread = new Thread(() -> {
@@ -119,7 +122,7 @@ public class DemoBootstrap {
 
         // 3. 启动http服务
         this.HTTP_PORT = SocketUtils.findAvailableTcpPort();
-        String STATIC_LOCATION = this.getClass().getResource("/dist").getPath().substring(1);
+        String STATIC_LOCATION = new File(this.getClass().getResource("/dist").getPath()).getPath();
         NettyHttpServer nettyHttpServer = new NettyHttpServer(HTTP_PORT,STATIC_LOCATION);
         logger.info("start grpc server on port: {}, grpc web proxy server on port: {}, " +
                 "http server server on port: {}", GRPC_PORT,GRPC_WEB_PROXY_PORT,HTTP_PORT);
@@ -183,6 +186,25 @@ public class DemoBootstrap {
         nestedObject.setNestedName("Nested Object");
         nestedObject.setFlag(true);
         complexObject.setNestedObject(nestedObject);
+
+
+        List<String> stringList = new ArrayList<>();
+        stringList.add("foo");
+        stringList.add("bar");
+        stringList.add("baz");
+        complexObject.setStringList(stringList);
+
+        Map<String, Integer> stringIntegerMap = new HashMap<>();
+        stringIntegerMap.put("one", 1);
+        stringIntegerMap.put("two", 2);
+        complexObject.setStringIntegerMap(stringIntegerMap);
+
+        complexObject.setDoubleArray(new Double[] { 1.0, 2.0, 3.0 });
+
+        complexObject.setComplexArray(null);
+
+        complexObject.setCollection(Arrays.asList("element1", "element2"));
+
 
         // 创建并设置复杂对象数组
         ComplexObject[] complexArray = new ComplexObject[2];

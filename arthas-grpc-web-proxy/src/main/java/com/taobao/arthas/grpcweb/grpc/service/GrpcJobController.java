@@ -13,9 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GrpcJobController{
 
-    private final static Map<Long/*JOB_ID*/, ArthasStreamObserver> jobs
+    private Map<Long/*JOB_ID*/, ArthasStreamObserver> jobs
             = new ConcurrentHashMap<Long, ArthasStreamObserver>();
-
+//    private Map<Long/*JOB_ID*/, ArthasStreamObserver> jobs
+//            = new HashMap<>();
     private final AtomicInteger idGenerator = new AtomicInteger(0);
 
     private GrpcResultViewResolver resultViewResolver;

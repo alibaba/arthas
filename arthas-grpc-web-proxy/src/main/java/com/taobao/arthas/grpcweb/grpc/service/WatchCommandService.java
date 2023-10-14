@@ -1,8 +1,8 @@
 package com.taobao.arthas.grpcweb.grpc.service;
 
-import arthas.grpc.api.ArthasService.ResponseBody;
-import arthas.grpc.api.ArthasService.WatchRequest;
-import arthas.grpc.api.WatchGrpc;
+import io.arthas.api.ArthasServices.ResponseBody;
+import io.arthas.api.ArthasServices.WatchRequest;
+import io.arthas.api.WatchGrpc;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
@@ -16,9 +16,6 @@ import com.taobao.arthas.grpcweb.grpc.observer.impl.ArthasStreamObserverImpl;
 import com.taobao.arthas.grpcweb.grpc.service.advisor.WatchRpcAdviceListener;
 import io.grpc.stub.StreamObserver;
 
-import java.lang.instrument.Instrumentation;
-
-
 public class WatchCommandService extends WatchGrpc.WatchImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(WatchCommandService.class);
@@ -30,11 +27,7 @@ public class WatchCommandService extends WatchGrpc.WatchImplBase {
 
     private GrpcJobController grpcJobController;
 
-    private Instrumentation instrumentation;
-
-
     public WatchCommandService(GrpcJobController grpcJobController) {
-        this.instrumentation = grpcJobController.getInstrumentation();
         this.grpcJobController = grpcJobController;
     }
 
@@ -52,6 +45,7 @@ public class WatchCommandService extends WatchGrpc.WatchImplBase {
                 arthasStreamObserver.setRequestModel(watchRequestModel);
                 listener.setArthasStreamObserver(arthasStreamObserver);
                 arthasStreamObserver.appendResult(new MessageModel("SUCCESS CHANGE!!!!!!!!!!!"));
+                newArthasStreamObserver.setProcessStatus(ExecStatus.RUNNING);
                 newArthasStreamObserver.end(0,"修改成功!!!");
                 return;
             }else {
