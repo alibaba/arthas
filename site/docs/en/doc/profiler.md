@@ -226,10 +226,10 @@ profiler stop --include'java/*' --include 'com/demo/*' --exclude'*Unsafe.park*'
 
 ## Specify execution time
 
-For example, if you want the profiler to automatically end after 300 seconds, you can specify it with the `-d`/`--duration` parameter:
+For example, if you want the profiler to automatically end after 300 seconds, you can specify it with the `-d`/`--duration` parameter in collect action:
 
 ```bash
-profiler start --duration 300
+profiler collect --duration 300
 ```
 
 ## Generate jfr format result
@@ -338,3 +338,17 @@ For example, command below use "profile" config of JFR:
 ```bash
 profiler start -e cpu --jfrsync profile -f combined.jfr
 ```
+
+## Run profiler in a loop
+
+Use `--loop TIME` to run profiler in a loop (continuous profiling). The argument is either a clock time (hh:mm:ss) or a loop duration in seconds, minutes, hours, or days. Make sure the filename includes a timestamp pattern, or the output will be overwritten on each iteration. The command below will run profiling endlessly and save records of each hour to a jfr file.
+
+```bash
+profiler start --loop 1h -f /var/log/profile-%t.jfr
+```
+
+## `--timeout` option
+
+This option specifies the time when profiling will automatically stop. The format is the same as in loop: it is either a wall clock time (12:34:56) or a relative time interval (2h).
+
+Both `--loop` and `--timeout` are used for `start` action but not for `collect` action, for further information refer to [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789).
