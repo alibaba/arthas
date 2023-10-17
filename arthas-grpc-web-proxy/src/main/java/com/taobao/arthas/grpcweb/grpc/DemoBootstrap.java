@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -122,7 +123,8 @@ public class DemoBootstrap {
 
         // 3. 启动http服务
         this.HTTP_PORT = SocketUtils.findAvailableTcpPort();
-        String STATIC_LOCATION = new File(this.getClass().getResource("/dist").getPath()).getPath();
+        String currentDir = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getPath();
+        String STATIC_LOCATION = Paths.get(currentDir, "static").toString();
         NettyHttpServer nettyHttpServer = new NettyHttpServer(HTTP_PORT,STATIC_LOCATION);
         logger.info("start grpc server on port: {}, grpc web proxy server on port: {}, " +
                 "http server server on port: {}", GRPC_PORT,GRPC_WEB_PROXY_PORT,HTTP_PORT);
