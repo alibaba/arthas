@@ -29,11 +29,11 @@ public class DemoBootstrap {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
 
-    private int GRPC_WEB_PROXY_PORT;
+    private int GRPC_WEB_PROXY_PORT = 8567;
 
-    private int GRPC_PORT;
+    private int GRPC_PORT = SocketUtils.findAvailableTcpPort();
 
-    private int HTTP_PORT;
+    private int HTTP_PORT = SocketUtils.findAvailableTcpPort();
 
     private Instrumentation instrumentation;
 
@@ -100,7 +100,6 @@ public class DemoBootstrap {
         // 0. 创建一个对象
         ComplexObject complexObject = createComplexObject();
         // 1. 启动grpc服务
-        this.GRPC_PORT = SocketUtils.findAvailableTcpPort();
         Thread grpcStartThread = new Thread(() -> {
             GrpcServer grpcServer = new GrpcServer(GRPC_PORT, instrumentation, transformerManager);
             grpcServer.start();
@@ -114,7 +113,6 @@ public class DemoBootstrap {
 
         // 2. 启动grpc-web-proxy服务
         //this.GRPC_WEB_PROXY_PORT = SocketUtils.findAvailableTcpPort();
-        this.GRPC_WEB_PROXY_PORT = 8567;
         Thread grpcWebProxyStartThread = new Thread(() -> {
             GrpcWebProxyServer grpcWebProxyServer = new GrpcWebProxyServer(GRPC_WEB_PROXY_PORT,GRPC_PORT);
             grpcWebProxyServer.start();
@@ -122,7 +120,6 @@ public class DemoBootstrap {
         grpcWebProxyStartThread.start();
 
         // 3. 启动http服务
-        this.HTTP_PORT = SocketUtils.findAvailableTcpPort();
         String currentDir = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getPath();
         String STATIC_LOCATION = Paths.get(currentDir, "static").toString();
         NettyHttpServer nettyHttpServer = new NettyHttpServer(HTTP_PORT,STATIC_LOCATION);
