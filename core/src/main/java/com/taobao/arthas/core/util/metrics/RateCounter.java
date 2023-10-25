@@ -2,8 +2,7 @@ package com.taobao.arthas.core.util.metrics;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
-
-import com.taobao.arthas.core.util.ThreadLocalRandom;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <pre>
