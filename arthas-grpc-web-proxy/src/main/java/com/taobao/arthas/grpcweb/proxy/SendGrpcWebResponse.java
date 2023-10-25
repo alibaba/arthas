@@ -18,6 +18,8 @@ package com.taobao.arthas.grpcweb.proxy;
 import com.taobao.arthas.grpcweb.proxy.MessageUtils.ContentType;
 import io.grpc.Metadata;
 import io.grpc.Status;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.stream.ChunkedStream;
@@ -67,6 +69,11 @@ class SendGrpcWebResponse {
      * 在 grpc 协议里，在发送完 DATA 后，最后可能发送一个 trailer，它也需要转换为 HTTP Chunk
      */
     private boolean isTrailerSent = false;
+
+    /**
+     * 客户端主动断开连接后,需要断开相应的grpc连接, grpc服务端才能停止监听
+     */
+    private Boolean isSuccessSendData = true;
 
     private ChannelHandlerContext ctx;
 
@@ -146,14 +153,14 @@ class SendGrpcWebResponse {
         writeEndChunk();
     }
 
-    synchronized void writeResponse(byte[] out) {
-        writeResponse(out, MessageFramer.Type.DATA);
+    synchronized boolean writeResponse(byte[] out) {
+        return writeResponse(out, MessageFramer.Type.DATA);
     }
 
-    private void writeResponse(byte[] out, MessageFramer.Type type) {
+    private boolean writeResponse(byte[] out, MessageFramer.Type type) {
         if (isTrailerSent) {
             logger.error("grpcweb trailer sented, writeResponse can not be called, framer type: {}", type);
-            return;
+            return false;
         }
 
         try {
@@ -176,10 +183,22 @@ class SendGrpcWebResponse {
             InputStream dataStream = new ByteArrayInputStream(byteArray);
             ChunkedStream chunkedStream = new ChunkedStream(dataStream);
             SingleHttpChunkedInput httpChunkedInput = new SingleHttpChunkedInput(chunkedStream);
-            ctx.writeAndFlush(httpChunkedInput);
+            ChannelFuture channelFuture = ctx.writeAndFlush(httpChunkedInput);
+            ChannelFutureListener channelFutureListener = new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) {
+                    if (!future.isSuccess()) {
+                        // 写入操作失败
+                        isSuccessSendData = false;
+                    }
+                }
+            };
+            channelFuture.addListener(channelFutureListener);
+            return isSuccessSendData;
 
         } catch (IOException e) {
             logger.error("write grpcweb response error, framer type: {}", type, e);
+            return false;
         }
     }
 
