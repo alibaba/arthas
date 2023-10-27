@@ -48,9 +48,9 @@ For classloader with only one instance, it can be specified by `--classLoaderCla
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
-Tip: if the static field is a complex class, you can even use [`OGNL`](https://commons.apache.org/proper/commons-ognl/language-guide.html) to traverse, filter and access the inner properties of this class.
+Tip: if the static field is a complex class, you can even use [`OGNL`](https://commons.apache.org/dormant/commons-ognl/language-guide.html) to traverse, filter and access the inner properties of this class.
 
-- [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- [OGNL official guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 - [Special usages](https://github.com/alibaba/arthas/issues/71)
 
 E.g. suppose `n` is a `Map` and its key is a `Enum`, then you can achieve this if you want to pick the key with a specific `Enum` value:

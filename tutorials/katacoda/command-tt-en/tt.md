@@ -59,7 +59,7 @@ Tips:
 Advanced:
 * [Critical fields in expression](https://arthas.aliyun.com/doc/en/advice-class.html)
 * [Special usage](https://github.com/alibaba/arthas/issues/71)
-* [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+* [OGNL official guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 #### List all records
 
@@ -162,4 +162,3 @@ F.Y.I
 1. params may be modified
 
     Arthas save params into an array, they are object references. The Objects may be modified by other code.
-

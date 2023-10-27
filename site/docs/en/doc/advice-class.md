@@ -35,7 +35,7 @@ Description for the variables in the class `Advice`:
 |   isThrow | flag to indicate the method call ends with exception thrown                                                                                                         |
 |  isReturn | flag to indicate the method call ends normally without exception thrown                                                                                             |
 
-All variables listed above can be used directly in the [OGNL expression](https://commons.apache.org/proper/commons-ognl/language-guide.html). The command will not execute and exit if there's illegal OGNL grammar or unexpected variable in the expression.
+All variables listed above can be used directly in the [OGNL expression](https://commons.apache.org/dormant/commons-ognl/language-guide.html). The command will not execute and exit if there's illegal OGNL grammar or unexpected variable in the expression.
 
 - [typical use cases](https://github.com/alibaba/arthas/issues/71);
-- [OGNL language guide](https://commons.apache.org/proper/commons-ognl/language-guide.html).
+- [OGNL language guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html).

@@ -68,4 +68,4 @@ The `ognl` expression in Arthas is an important feature, and the `ognl` expressi
 For some more complicated usages, refer to:
 
 * For special usage of OGNL, please refer to: https://github.com/alibaba/arthas/issues/71
-* Official Guide to OGNL Expressions: https://commons.apache.org/proper/commons-ognl/language-guide.html
+* Official Guide to OGNL Expressions: https://commons.apache.org/dormant/commons-ognl/language-guide.html
