@@ -23,8 +23,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Display the stack trace for the specified class and method")
 @Description(Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
         "  stack org.apache.commons.lang.StringUtils isBlank\n" +
-        "  stack org.apache.commons.lang.StringUtils.isBlank ~\n" +
-        "  stack org.apache.commons.lang.StringUtils:isBlank ~\n" +
+        "  stack org.apache.commons.lang.StringUtils.isBlank =\n" +
+        "  stack org.apache.commons.lang.StringUtils:isBlank =\n" +
         "  stack *StringUtils isBlank\n" +
         "  stack *StringUtils isBlank params[0].length==1\n" +
         "  stack *StringUtils isBlank '#cost>100'\n" +

@@ -30,8 +30,8 @@ public abstract class AbstractMethodBasedCommand extends EnhancerCommand {
 
     @Override
     protected void enhance(final CommandProcess process) {
-        if ("~".equals(methodPattern)) { //smart way
-          final Pattern smartPattern = Pattern.compile("([.][A-Z][^.]*)([.:])([a-z][^. ]*)$");
+        if ("=".equals(methodPattern) || "~".equals(methodPattern) || ".".equals(methodPattern)) { //smart way
+          final Pattern smartPattern = Pattern.compile("([.][A-Z][^.]*)([.: ]+)([a-z][^. ]*)$");
           final Matcher matcher = smartPattern.matcher(classPattern);
           if (matcher.find()) {
               methodPattern = matcher.group(3);

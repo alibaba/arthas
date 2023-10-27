@@ -22,8 +22,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Monitor method execution statistics, e.g. total/success/failure count, average rt, fail rate, etc. ")
 @Description("\nExamples:\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank\n" +
-        "  monitor org.apache.commons.lang.StringUtils.isBlank ~\n" +
-        "  monitor org.apache.commons.lang.StringUtils:isBlank ~\n" +
+        "  monitor org.apache.commons.lang.StringUtils.isBlank =\n" +
+        "  monitor org.apache.commons.lang.StringUtils:isBlank =\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank -c 5\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
         "  monitor -b org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +

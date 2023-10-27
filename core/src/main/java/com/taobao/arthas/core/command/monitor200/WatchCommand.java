@@ -22,8 +22,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
 @Description(Constants.EXPRESS_DESCRIPTION + "\nExamples:\n" +
         "  watch org.apache.commons.lang.StringUtils isBlank\n" +
-        "  watch org.apache.commons.lang.StringUtils.isBlank ~\n" +
-        "  watch org.apache.commons.lang.StringUtils:isBlank ~\n" +
+        "  watch org.apache.commons.lang.StringUtils.isBlank =\n" +
+        "  watch org.apache.commons.lang.StringUtils:isBlank =\n" +
         "  watch org.apache.commons.lang.StringUtils isBlank '{params, target, returnObj, throwExp}' -x 2\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
         "  watch *StringUtils isBlank params '#cost>100'\n" +
