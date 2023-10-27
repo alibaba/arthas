@@ -25,10 +25,12 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @author hengyunabc 2015年12月7日 下午2:06:21
@@ -57,6 +59,8 @@ public class ThreadCommand extends AnnotatedCommand {
     private boolean lockedMonitors = false;
     private boolean lockedSynchronizers = false;
     private boolean all = false;
+
+    private Pattern namePattern;
 
     static {
         states = new HashSet<String>(State.values().length);
@@ -113,6 +117,16 @@ public class ThreadCommand extends AnnotatedCommand {
         this.lockedSynchronizers = lockedSynchronizers;
     }
 
+    @Option(shortName = "p",longName = "namePattern")
+    @Description("Include thread name by regex pattern.")
+    public void setNamePattern(final String pattern) {
+        if (pattern != null && !pattern.isEmpty()) {
+            this.namePattern = Pattern.compile(pattern);
+        } else {
+            this.namePattern = null;
+        }
+    }
+
     @Override
     public void process(CommandProcess process) {
         ExitStatus exitStatus;
@@ -160,7 +174,7 @@ public class ThreadCommand extends AnnotatedCommand {
         } else {
             resultThreads = threads;
         }
-
+        filterThreadByPattern(resultThreads, namePattern);
         //thread stats
         ThreadSampler threadSampler = new ThreadSampler();
         threadSampler.setIncludeInternalThreads(includeInternalThreads);
@@ -170,6 +184,17 @@ public class ThreadCommand extends AnnotatedCommand {
 
         process.appendResult(new ThreadModel(threadStats, stateCountMap, all));
         return ExitStatus.success();
+    }
+
+    static void filterThreadByPattern(Collection<ThreadVO> threads, Pattern pattern) {
+      if (!threads.isEmpty() && pattern != null) {
+        for (Iterator<ThreadVO> iter = threads.iterator(); iter.hasNext();) {
+            ThreadVO thread = iter.next();
+            if (!pattern.matcher(thread.getName()).find()) {
+                iter.remove();
+            }
+        }
+      }
     }
 
     private ExitStatus processBlockingThread(CommandProcess process) {
