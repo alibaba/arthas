@@ -22,32 +22,20 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Monitor method execution statistics, e.g. total/success/failure count, average rt, fail rate, etc. ")
 @Description("\nExamples:\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank\n" +
+        "  monitor org.apache.commons.lang.StringUtils.isBlank ~\n" +
+        "  monitor org.apache.commons.lang.StringUtils:isBlank ~\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank -c 5\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
         "  monitor -b org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
         "  monitor -E org\\.apache\\.commons\\.lang\\.StringUtils isBlank\n" +
         Constants.WIKI + Constants.WIKI_HOME + "monitor")
-public class MonitorCommand extends EnhancerCommand {
+public class MonitorCommand extends AbstractMethodBasedCommand {
 
-    private String classPattern;
-    private String methodPattern;
     private String conditionExpress;
     private int cycle = 60;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
     private boolean isBefore = false;
-
-    @Argument(argName = "class-pattern", index = 0)
-    @Description("Path and classname of Pattern Matching")
-    public void setClassPattern(String classPattern) {
-        this.classPattern = classPattern;
-    }
-
-    @Argument(argName = "method-pattern", index = 1)
-    @Description("Method of Pattern Matching")
-    public void setMethodPattern(String methodPattern) {
-        this.methodPattern = methodPattern;
-    }
 
     @Argument(argName = "condition-express", index = 2, required = false)
     @Description(Constants.CONDITION_EXPRESS)

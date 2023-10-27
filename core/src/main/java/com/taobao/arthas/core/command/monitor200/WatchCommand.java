@@ -22,6 +22,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
 @Description(Constants.EXPRESS_DESCRIPTION + "\nExamples:\n" +
         "  watch org.apache.commons.lang.StringUtils isBlank\n" +
+        "  watch org.apache.commons.lang.StringUtils.isBlank ~\n" +
+        "  watch org.apache.commons.lang.StringUtils:isBlank ~\n" +
         "  watch org.apache.commons.lang.StringUtils isBlank '{params, target, returnObj, throwExp}' -x 2\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
         "  watch *StringUtils isBlank params '#cost>100'\n" +
@@ -31,10 +33,8 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
         "  watch OuterClass$InnerClass\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
-public class WatchCommand extends EnhancerCommand {
+public class WatchCommand extends AbstractMethodBasedCommand {
 
-    private String classPattern;
-    private String methodPattern;
     private String express;
     private String conditionExpress;
     private boolean isBefore = false;
