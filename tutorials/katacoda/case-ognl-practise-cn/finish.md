@@ -4,7 +4,7 @@
 更多参考：
 
 * 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+* OGNL表达式官网：[https://commons.apache.org/dormant/commons-ognl/language-guide.html](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 
 ---
@@ -17,4 +17,3 @@
 欢迎关注公众号，获取Arthas项目的信息、源码分析、案例实践。
 
 ![Arthas公众号](/arthas/scenarios/common-resources/assets/qrcode_gongzhonghao.jpg)
-

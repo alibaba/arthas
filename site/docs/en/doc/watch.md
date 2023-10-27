@@ -37,7 +37,7 @@ Advanced:
 
 - [Critical fields in _expression_](advice-class.md)
 - [Special usages](https://github.com/alibaba/arthas/issues/71)
-- [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- [OGNL official guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 ## Usage
 

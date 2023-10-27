@@ -70,4 +70,4 @@ $ ognl '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("j
 一些更复杂的用法，可以参考：
 
 * OGNL特殊用法请参考：https://github.com/alibaba/arthas/issues/71
-* OGNL表达式官方指南：https://commons.apache.org/proper/commons-ognl/language-guide.html
+* OGNL表达式官方指南：https://commons.apache.org/dormant/commons-ognl/language-guide.html
