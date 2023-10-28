@@ -32,7 +32,7 @@ public class SessionView extends ResultView<SessionModel> {
             table.row("STAT_URL", result.getStatUrl());
         }
         if (result.getSessionData() != null) {
-             table.row("SESION_ENV", result.getSessionData().toString());
+             table.row("SESION_DATA", result.getSessionData().toString());
         }
         process.write(RenderUtil.render(table, process.width()));
     }

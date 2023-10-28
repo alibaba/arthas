@@ -23,6 +23,7 @@ import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.shell.term.Tty;
 import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
+
 import io.termd.core.function.Function;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -344,10 +345,25 @@ public class ProcessImpl implements Process {
                 args2.add(arg.value());
             }
         }
-
         CommandLine cl = null;
         try {
             if (commandContext.cli() != null) {
+                final String appCmdArgs = commandContext.name() +"-args";
+                final Object cmdArgs = process.session().get(appCmdArgs);
+                if (cmdArgs != null) {
+                    process.echoTips("appendCmdArgs: " + cmdArgs + "\n");
+                    final String cmdArgs1 = cmdArgs.toString();
+                    final String[] arr = cmdArgs1.contains("##") ? cmdArgs1.split("##")
+                        : cmdArgs1.split("[; ,:#]+");
+                    for (final String arg : arr) {
+                        if (arg.isEmpty()) {
+                            break;
+                        }
+                        args2.add(arg);
+                    }
+                    process.echoTips("appendCmdArgs done: " + args2 + "\n");
+                }
+                
                 if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
                     appendResult(new HelpCommand().createHelpDetailModel(commandContext));
                     terminate();

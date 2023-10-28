@@ -44,7 +44,7 @@ public class SessionCommand extends AnnotatedCommand {
 
     private boolean showSessionData = true;
 
-    private boolean showReservedNames = false;
+    private boolean showAll = false;
 
     private List<String> customSesionData;
 
@@ -57,7 +57,7 @@ public class SessionCommand extends AnnotatedCommand {
     @Option(shortName = "A", longName = "showAll", flag = true)
     @Description("Show all session data")
     public void setShowAll(final boolean showReservedNames) {
-        this.showReservedNames = showReservedNames;
+        this.showAll = showReservedNames;
     }
 
     @Option(shortName = "I", longName = "input")
@@ -102,7 +102,7 @@ public class SessionCommand extends AnnotatedCommand {
         }
         if (showSessionData) {
             final Map<String, Object> sessionData = session.cloneSessionData();
-            if (!this.showReservedNames) {
+            if (!this.showAll) {
                 final Iterator<Entry<String, Object>> iter = sessionData.entrySet().iterator();
                 while(iter.hasNext()) {
                     if (RESERVED_WORDS.contains(iter.next().getKey())) {
