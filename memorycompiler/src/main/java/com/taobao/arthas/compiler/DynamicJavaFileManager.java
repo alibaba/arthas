@@ -1,10 +1,9 @@
 package com.taobao.arthas.compiler;
 
+
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -13,31 +12,27 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 
 public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
-    private static final String[] superLocationNames = { StandardLocation.PLATFORM_CLASS_PATH.name(),
+    private static final List<String> superLocationNames = Arrays.asList(
             /** JPMS StandardLocation.SYSTEM_MODULES **/
-            "SYSTEM_MODULES" };
-    private final PackageInternalsFinder finder;
-
+            "SYSTEM_MODULES");
     private final DynamicClassLoader classLoader;
+    private final Set<String> classpathRoots;
     private final List<MemoryByteCode> byteCodes = new ArrayList<MemoryByteCode>();
 
-    public DynamicJavaFileManager(JavaFileManager fileManager, DynamicClassLoader classLoader) {
+    public DynamicJavaFileManager(JavaFileManager fileManager, Set<String> classpathRoots, DynamicClassLoader classLoader) {
         super(fileManager);
+        this.classpathRoots = classpathRoots;
         this.classLoader = classLoader;
-
-        finder = new PackageInternalsFinder(classLoader);
     }
 
     @Override
     public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className,
-                    JavaFileObject.Kind kind, FileObject sibling) throws IOException {
-
+                                               JavaFileObject.Kind kind, FileObject sibling) throws IOException {
         for (MemoryByteCode byteCode : byteCodes) {
             if (byteCode.getClassName().equals(className)) {
                 return byteCode;
             }
         }
-
         MemoryByteCode innerClass = new MemoryByteCode(className);
         byteCodes.add(innerClass);
         classLoader.registerCompiledSource(innerClass);
@@ -53,7 +48,7 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     @Override
     public String inferBinaryName(Location location, JavaFileObject file) {
         if (file instanceof CustomJavaFileObject) {
-            return ((CustomJavaFileObject) file).binaryName();
+            return ((CustomJavaFileObject) file).getClassName();
         } else {
             /**
              * if it's not CustomJavaFileObject, then it's coming from standard file manager
@@ -66,21 +61,25 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     @Override
     public Iterable<JavaFileObject> list(Location location, String packageName, Set<JavaFileObject.Kind> kinds,
                                          boolean recurse) throws IOException {
-        if (location instanceof StandardLocation) {
-            String locationName = ((StandardLocation) location).name();
-            for (String name : superLocationNames) {
-                if (name.equals(locationName)) {
-                    return super.list(location, packageName, kinds, recurse);
+        if (location == StandardLocation.PLATFORM_CLASS_PATH || superLocationNames.contains(location.getName())) {
+            return super.list(location, packageName, kinds, recurse);
+        }
+        if (location == StandardLocation.CLASS_PATH) {
+            List<JavaFileObject> result = new ArrayList<>();
+            for (String root : classpathRoots) {
+                File packageFile = new File(root, packageName.replace('.', '/'));
+                if (packageFile.exists() && packageFile.isDirectory()) {
+                    File[] files = packageFile.listFiles(item ->
+                            !item.isDirectory()
+                                    && kinds.contains(getKind(item.getName())
+                            ));
+                    for (File classFile : files) {
+                        result.add(new CustomJavaFileObject(classFile));
+                    }
                 }
             }
+            return new IterableJoin<>(super.list(location, packageName, kinds, recurse), result);
         }
-
-        // merge JavaFileObjects from specified ClassLoader
-        if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
-            return new IterableJoin<JavaFileObject>(super.list(location, packageName, kinds, recurse),
-                    finder.find(packageName));
-        }
-
         return super.list(location, packageName, kinds, recurse);
     }
 
@@ -123,5 +122,16 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
         public void remove() {
             throw new UnsupportedOperationException("remove");
         }
+    }
+
+    public static JavaFileObject.Kind getKind(String name) {
+        if (name.endsWith(JavaFileObject.Kind.CLASS.extension))
+            return JavaFileObject.Kind.CLASS;
+        else if (name.endsWith(JavaFileObject.Kind.SOURCE.extension))
+            return JavaFileObject.Kind.SOURCE;
+        else if (name.endsWith(JavaFileObject.Kind.HTML.extension))
+            return JavaFileObject.Kind.HTML;
+        else
+            return JavaFileObject.Kind.OTHER;
     }
 }
