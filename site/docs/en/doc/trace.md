@@ -11,7 +11,7 @@ Trace method calling path, and output the time cost for each node in the path.
 ## Parameters
 
 |                Name | Specification                                                                                          |
-| ------------------: |:-------------------------------------------------------------------------------------------------------|
+| ------------------: | :----------------------------------------------------------------------------------------------------- |
 |     _class-pattern_ | pattern for the class name                                                                             |
 |    _method-pattern_ | pattern for the method name                                                                            |
 | _condition-express_ | condition expression                                                                                   |
