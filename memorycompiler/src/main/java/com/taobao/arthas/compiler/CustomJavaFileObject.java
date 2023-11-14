@@ -1,44 +1,102 @@
 package com.taobao.arthas.compiler;
 
-import com.taobao.arthas.common.FileUtils;
+/*-
+ * #%L
+ * compiler
+ * %%
+ * Copyright (C) 2017 - 2018 SkaLogs
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 
-import javax.tools.SimpleJavaFileObject;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.NestingKind;
+import javax.tools.JavaFileObject;
 import java.io.*;
+import java.net.URI;
 
-public class CustomJavaFileObject extends SimpleJavaFileObject {
-
-    private File file;
+public class CustomJavaFileObject implements JavaFileObject {
+    private final URI uri;
+    private final String className;
+    private final Kind kind;
 
     public CustomJavaFileObject(File file) {
-        super(file.toURI(), DynamicJavaFileManager.getKind(file.getName()));
-        this.file = file;
+        this(file.toURI(), file.getName(), DynamicJavaFileManager.getKind(file.getName()));
     }
 
-    @Override
-    public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
-        return new String(FileUtils.readFileToByteArray(file));
+    public CustomJavaFileObject(URI uri, String className, Kind kind) {
+        this.uri = uri;
+        this.kind = kind;
+        this.className = className;
     }
 
-    @Override
-    public OutputStream openOutputStream() throws IOException {
-        return new FileOutputStream(super.uri.getPath());
+    public URI toUri() {
+        return this.uri;
     }
 
-    @Override
     public InputStream openInputStream() throws IOException {
-        return new FileInputStream(super.uri.getPath());
+        return this.uri.toURL().openStream();
     }
 
-    public String getClassName() {
-        String fileName = this.file.getName();
-        int index = fileName.lastIndexOf("/");
-        if (index != -1) {
-            fileName = fileName.substring(index + 1);
-        }
-        index = fileName.lastIndexOf(".");
-        if (index != -1) {
-            return fileName.substring(0, index);
-        }
-        return fileName;
+    public OutputStream openOutputStream() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getName() {
+        return this.className;
+    }
+
+    public Reader openReader(boolean ignoreEncodingErrors) {
+        throw new UnsupportedOperationException();
+    }
+
+    public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Writer openWriter() throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    public long getLastModified() {
+        return 0;
+    }
+
+    public boolean delete() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Kind getKind() {
+        return this.kind;
+    }
+
+    public boolean isNameCompatible(String simpleName, Kind kind) {
+        return kind.equals(getKind())
+                && this.className.endsWith(simpleName);
+    }
+
+    public NestingKind getNestingKind() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Modifier getAccessLevel() {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public String toString() {
+        return this.getClass().getName() + "[" + this.toUri() + "]";
     }
 }
+

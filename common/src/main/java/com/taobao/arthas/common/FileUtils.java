@@ -18,10 +18,6 @@ public class FileUtils {
 		return new File(System.getProperty("java.io.tmpdir"));
 	}
 
-	public static String getTempProcessDir() {
-		return String.format("%s/arthas/%s", System.getProperty("java.io.tmpdir"), PidUtils.currentPid());
-	}
-
 	/**
 	 * Writes a byte array to a file creating the file if it does not exist.
 	 * <p>

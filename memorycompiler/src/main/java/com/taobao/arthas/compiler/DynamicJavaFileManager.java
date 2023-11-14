@@ -1,32 +1,26 @@
 package com.taobao.arthas.compiler;
 
 
-import java.io.File;
+import javax.tools.*;
 import java.io.IOException;
 import java.util.*;
-
-import javax.tools.FileObject;
-import javax.tools.ForwardingJavaFileManager;
-import javax.tools.JavaFileManager;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
 
 public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
     private static final List<String> superLocationNames = Arrays.asList(
             /** JPMS StandardLocation.SYSTEM_MODULES **/
             "SYSTEM_MODULES");
+
     private final DynamicClassLoader classLoader;
-    private final Set<String> classpathRoots;
+    private final Set<JavaFileObjectSearchRoot> classpathRoots = new HashSet<>();
     private final List<MemoryByteCode> byteCodes = new ArrayList<MemoryByteCode>();
 
-    public DynamicJavaFileManager(JavaFileManager fileManager, Set<String> classpathRoots, DynamicClassLoader classLoader) {
+    public DynamicJavaFileManager(JavaFileManager fileManager, DynamicClassLoader classLoader) {
         super(fileManager);
-        this.classpathRoots = classpathRoots;
         this.classLoader = classLoader;
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className,
+    public JavaFileObject getJavaFileForOutput(Location location, String className,
                                                JavaFileObject.Kind kind, FileObject sibling) throws IOException {
         for (MemoryByteCode byteCode : byteCodes) {
             if (byteCode.getClassName().equals(className)) {
@@ -41,14 +35,14 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     }
 
     @Override
-    public ClassLoader getClassLoader(JavaFileManager.Location location) {
+    public ClassLoader getClassLoader(Location location) {
         return classLoader;
     }
 
     @Override
     public String inferBinaryName(Location location, JavaFileObject file) {
         if (file instanceof CustomJavaFileObject) {
-            return ((CustomJavaFileObject) file).getClassName();
+            return ((CustomJavaFileObject) file).getName();
         } else {
             /**
              * if it's not CustomJavaFileObject, then it's coming from standard file manager
@@ -66,21 +60,16 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
         }
         if (location == StandardLocation.CLASS_PATH) {
             List<JavaFileObject> result = new ArrayList<>();
-            for (String root : classpathRoots) {
-                File packageFile = new File(root, packageName.replace('.', '/'));
-                if (packageFile.exists() && packageFile.isDirectory()) {
-                    File[] files = packageFile.listFiles(item ->
-                            !item.isDirectory()
-                                    && kinds.contains(getKind(item.getName())
-                            ));
-                    for (File classFile : files) {
-                        result.add(new CustomJavaFileObject(classFile));
-                    }
-                }
+            for (JavaFileObjectSearchRoot classpathRoot : classpathRoots) {
+                result.addAll(classpathRoot.search(packageName, kinds));
             }
             return new IterableJoin<>(super.list(location, packageName, kinds, recurse), result);
         }
         return super.list(location, packageName, kinds, recurse);
+    }
+
+    public void addClasspathRoots(Set<JavaFileObjectSearchRoot> classSearchRoots) {
+        this.classpathRoots.addAll(classSearchRoots);
     }
 
     static class IterableJoin<T> implements Iterable<T> {

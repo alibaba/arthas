@@ -1,17 +1,13 @@
 package com.taobao.arthas.compiler;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,14 +18,7 @@ public class DynamicCompilerTest {
 
     @Test
     public void test() throws IOException {
-        String jarPath = LoggerFactory.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-        File file = new File(jarPath);
-
-        URLClassLoader classLoader = new URLClassLoader(new URL[] { file.toURI().toURL() },
-                        ClassLoader.getSystemClassLoader().getParent());
-
-        DynamicCompiler dynamicCompiler = new DynamicCompiler(classLoader);
-
+        DynamicCompiler dynamicCompiler = new DynamicCompiler(DynamicCompilerTest.class.getClassLoader());
         InputStream logger1Stream = DynamicCompilerTest.class.getClassLoader().getResourceAsStream("TestLogger1.java");
         InputStream logger2Stream = DynamicCompilerTest.class.getClassLoader().getResourceAsStream("TestLogger2.java");
 

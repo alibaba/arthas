@@ -47,7 +47,6 @@ public class DynamicCompilerException extends RuntimeException {
                 message.put("message", diagnostic.getMessage(Locale.US));
                 messages.add(message);
             }
-
         }
         return messages;
     }

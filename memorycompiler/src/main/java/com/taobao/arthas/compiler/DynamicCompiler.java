@@ -1,48 +1,44 @@
 package com.taobao.arthas.compiler;
 
-import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.FileUtils;
-import com.taobao.arthas.common.IOUtils;
-
+import javax.tools.*;
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import javax.tools.*;
 
 public class DynamicCompiler {
     private static final JavaCompiler COMPILER = ToolProvider.getSystemJavaCompiler();
     private static final StandardJavaFileManager STANDARD_FILE_MANAGER = COMPILER == null
             ? null : COMPILER.getStandardFileManager(null, null, null);
-    private static final Set<String> CLASSPATH_ROOTS = new HashSet<>();
+    private static final Set<JavaFileObjectSearchRoot> CLASS_SEARCH_ROOTS = new HashSet<>();
 
-    private final List<String> options = new ArrayList<String>();
+    private final List<String> options = new ArrayList<>();
+
     private final DynamicClassLoader dynamicClassLoader;
+
     private final Collection<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
-    private final List<Diagnostic<? extends JavaFileObject>> errors = new ArrayList<Diagnostic<? extends JavaFileObject>>();
-    private final List<Diagnostic<? extends JavaFileObject>> warnings = new ArrayList<Diagnostic<? extends JavaFileObject>>();
 
     static {
         if (STANDARD_FILE_MANAGER != null) {
-            Set<File> jarSearchPathSet = new HashSet<>();
-            Set<String> classpathRootSet = new HashSet<>();
-
             try {
+                enhanceCompiler();
+
+                Set<File> jarSearchPathSet = new HashSet<>();
+                Set<JavaFileObjectSearchRoot> classpathRootSet = new HashSet<>();
                 String userDir = System.getProperty("user.dir");
-                String[] jars = System.getProperty( "java.class.path").split(File.pathSeparator);
+                String[] jars = System.getProperty("java.class.path").split(File.pathSeparator);
                 for (String jarPath : jars) {
-                    try (JarFile jarFile = new JarFile(getJarAbsolutePath(jarPath, userDir))) {
+                    try (PathJarFile jarFile = new PathJarFile(getJarAbsolutePath(jarPath, userDir))) {
                         Manifest manifest = jarFile.getManifest();
                         if (manifest == null) {
                             continue;
                         }
                         String classpath = manifest.getMainAttributes().getValue(new Attributes.Name("Class-Path"));
                         if (Objects.nonNull(classpath)) {
-                            inner: for (StringTokenizer st = new StringTokenizer(classpath); st.hasMoreTokens(); ) {
+                            inner:
+                            for (StringTokenizer st = new StringTokenizer(classpath); st.hasMoreTokens(); ) {
                                 String ele = st.nextToken();
                                 if (ele.startsWith("file:/")) ele = ele.substring(6);
                                 if (ele.endsWith(".jar") || ele.endsWith(".zip")) {
@@ -50,7 +46,7 @@ public class DynamicCompiler {
                                     if (absolutePath != null) jarSearchPathSet.add(absolutePath);
                                     continue inner;
                                 }
-                                classpathRootSet.add(ele);
+                                classpathRootSet.add(new ClasspathObjectSearchRoot(ele));
                             }
                         }
                         // springboot的jar
@@ -61,9 +57,9 @@ public class DynamicCompiler {
                         }
                     }
                 }
-                CLASSPATH_ROOTS.addAll(classpathRootSet);
+                CLASS_SEARCH_ROOTS.addAll(classpathRootSet);
                 STANDARD_FILE_MANAGER.setLocation(StandardLocation.CLASS_PATH, jarSearchPathSet);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -80,42 +76,40 @@ public class DynamicCompiler {
     }
 
     public void addSource(String className, String source) {
-        addSource(new StringSource(className, source));
-    }
-
-    public void addSource(JavaFileObject javaFileObject) {
-        compilationUnits.add(javaFileObject);
+        compilationUnits.add(new StringSource(className, source));
     }
 
     public Map<String, byte[]> buildByteCodes() {
-        errors.clear();
-        warnings.clear();
-        JavaFileManager fileManager = new DynamicJavaFileManager(STANDARD_FILE_MANAGER, CLASSPATH_ROOTS, dynamicClassLoader);
+        if (compilationUnits.isEmpty()) {
+            return null;
+        }
+        List<Diagnostic<? extends JavaFileObject>> errors = new ArrayList<>();
+        List<Diagnostic<? extends JavaFileObject>> warnings = new ArrayList<>();
 
-        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<JavaFileObject>();
-        JavaCompiler.CompilationTask task = COMPILER.getTask(null, fileManager, collector, options, null,
-                compilationUnits);
+        DynamicJavaFileManager fileManager = new DynamicJavaFileManager(STANDARD_FILE_MANAGER, this.dynamicClassLoader);
+        fileManager.addClasspathRoots(CLASS_SEARCH_ROOTS);
+
+        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
+        JavaCompiler.CompilationTask task = COMPILER.getTask(null, fileManager, collector, options, null, compilationUnits);
         try {
-            if (!compilationUnits.isEmpty()) {
-                boolean result = task.call();
-                if (!result || collector.getDiagnostics().size() > 0) {
-                    for (Diagnostic<? extends JavaFileObject> diagnostic : collector.getDiagnostics()) {
-                        switch (diagnostic.getKind()) {
-                            case NOTE:
-                            case MANDATORY_WARNING:
-                            case WARNING:
-                                warnings.add(diagnostic);
-                                break;
-                            case OTHER:
-                            case ERROR:
-                            default:
-                                errors.add(diagnostic);
-                                break;
-                        }
+            boolean result = task.call();
+            if (!result || collector.getDiagnostics().size() > 0) {
+                for (Diagnostic<? extends JavaFileObject> diagnostic : collector.getDiagnostics()) {
+                    switch (diagnostic.getKind()) {
+                        case NOTE:
+                        case MANDATORY_WARNING:
+                        case WARNING:
+                            warnings.add(diagnostic);
+                            break;
+                        case OTHER:
+                        case ERROR:
+                        default:
+                            errors.add(diagnostic);
+                            break;
                     }
-                    if (!errors.isEmpty()) {
-                        throw new DynamicCompilerException("Compilation Error", errors);
-                    }
+                }
+                if (!errors.isEmpty()) {
+                    throw new DynamicCompilerException("Compilation Error", errors);
                 }
             }
             return dynamicClassLoader.getByteCodes();
@@ -126,45 +120,34 @@ public class DynamicCompiler {
         }
     }
 
-    private List<String> diagnosticToString(List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+    public static void enhanceCompiler() {
 
-        List<String> diagnosticMessages = new ArrayList<String>();
-
-        for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
-            diagnosticMessages.add(
-                    "line: " + diagnostic.getLineNumber() + ", message: " + diagnostic.getMessage(Locale.US));
-        }
-        return diagnosticMessages;
     }
 
-    public List<String> getErrors() {
-        return diagnosticToString(errors);
-    }
-
-    public List<String> getWarnings() {
-        return diagnosticToString(warnings);
-    }
-
-    public ClassLoader getClassLoader() {
-        return dynamicClassLoader;
-    }
-
-    private static void handleBootJar(JarFile jarFile, String classPrefix, String libPrefix, Set<File> jarSearchPathSet, Set<String> classpathRootSet) throws IOException {
-        String tmpClasspath = FileUtils.getTempProcessDir();
+    private static void handleBootJar(PathJarFile jarFile, String classPrefix, String libPrefix, Set<File> jarSearchPathSet, Set<JavaFileObjectSearchRoot> classpathRootSet) {
+        Map<String, PackageInnerClassObjectSearchRoot> packages = new HashMap<>();
         Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String entryName = entry.getName();
-            if ((entryName.startsWith(classPrefix) || entryName.startsWith(libPrefix))
-                    && (entryName.endsWith(".class") || entryName.endsWith(".jar"))) {
-                File tmpFile = new File(tmpClasspath, entryName.replace(classPrefix, ""));
-                FileUtils.writeByteArrayToFile(tmpFile, IOUtils.getBytes(jarFile.getInputStream(entry)));
-                if (entryName.endsWith(".jar")) {
-                    jarSearchPathSet.add(tmpFile);
+            if (entryName.startsWith(libPrefix) && entryName.endsWith(".jar")) {
+                jarSearchPathSet.add(new ZipInnerJarFile(jarFile.getPath(), entryName));
+            } else if (entryName.startsWith(classPrefix) && entryName.endsWith(".class")) {
+                String className = entryName
+                        .substring(0, entryName.length() - ".class".length())
+                        .replace(classPrefix, "")
+                        .replace("/", ".");
+                String packageName = className.substring(0, className.lastIndexOf("."));
+                PackageInnerClassObjectSearchRoot packageRoot = packages.get(packageName);
+                if (packageRoot == null) {
+                    packageRoot = new PackageInnerClassObjectSearchRoot(packageName);
+                    packages.put(packageName, packageRoot);
                 }
+                URI fileUri = jarFile.getFileUri(entryName);
+                packageRoot.addClassFile(className, fileUri);
             }
         }
-        classpathRootSet.add(tmpClasspath);
+        classpathRootSet.addAll(packages.values());
     }
 
     private static File getJarAbsolutePath(String jarFile, String userDir) {
