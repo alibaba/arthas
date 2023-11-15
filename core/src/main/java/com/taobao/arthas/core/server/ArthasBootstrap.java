@@ -191,7 +191,7 @@ public class ArthasBootstrap {
     private void initSpy() throws Throwable {
         // TODO init SpyImpl ?
 
-        // 指定Spy由ExtClassLoader加载
+        // 保证可见性,指定Spy由ExtClassLoader加载
         ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
         Class<?> spyClass = null;
         if (parent != null) {
