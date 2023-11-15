@@ -191,12 +191,12 @@ public class ArthasBootstrap {
     private void initSpy() throws Throwable {
         // TODO init SpyImpl ?
 
-        // 将Spy添加到BootstrapClassLoader
+        // 指定Spy由ExtClassLoader加载
         ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
         Class<?> spyClass = null;
         if (parent != null) {
             try {
-                spyClass =parent.loadClass("java.arthas.SpyAPI");
+                spyClass = parent.loadClass("java.arthas.SpyAPI");
             } catch (Throwable e) {
                 // ignore
             }
