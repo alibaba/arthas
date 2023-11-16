@@ -5,14 +5,14 @@
 
 ### Parameters
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*condition-express*|condition expression|
-|`[E]`|enable regex match, the default behavior is wildcards match|
-|`[n:]`|execution times|
-|#cost|time cost|
+|Name| Specification                                               |
+|---:|:------------------------------------------------------------|
+|*class-pattern*| pattern for the class name                                  |
+|*method-pattern*| pattern for the method name                                 |
+|*condition-express*| condition expression                                        |
+|`[E]`| enable regex match, the default behavior is wildcards match |
+|`[n:]`| execution times, the default value is 100.                  |
+|#cost| time cost                                                   |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
