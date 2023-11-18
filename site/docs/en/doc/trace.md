@@ -16,7 +16,7 @@ Trace method calling path, and output the time cost for each node in the path.
 |    _method-pattern_ | pattern for the method name                                                                            |
 | _condition-express_ | condition expression                                                                                   |
 |               `[E]` | enable regex match, the default behavior is wildcards match                                            |
-|              `[n:]` | execution times                                                                                        |
+|              `[n:]` | execution times, the default value is 100.                                                             |
 |               #cost | time cost                                                                                              |
 |         `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
