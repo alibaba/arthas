@@ -1,6 +1,6 @@
-package com.hello;
+package arthas.test;
 
-import com.test.TestLogger1;
+import arthas.test.TestLogger1;
 
 public class TestLogger2 extends TestLogger1 {
 

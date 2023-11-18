@@ -2,12 +2,12 @@ package com.taobao.arthas.compiler;
 
 import java.net.URI;
 
-public class ClassUrlWrapper {
+public class ClassUriWrapper {
     private final URI uri;
 
     private final String className;
 
-    public ClassUrlWrapper(String className, URI uri) {
+    public ClassUriWrapper(String className, URI uri) {
         this.className = className;
         this.uri = uri;
     }

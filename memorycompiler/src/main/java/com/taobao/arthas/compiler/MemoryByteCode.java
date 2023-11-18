@@ -35,9 +35,12 @@ public class MemoryByteCode extends SimpleJavaFileObject {
 
     private ByteArrayOutputStream byteArrayOutputStream;
 
+    private String className;
+
     public MemoryByteCode(String className) {
         super(URI.create("byte:///" + className.replace(PKG_SEPARATOR, DIR_SEPARATOR)
                 + Kind.CLASS.extension), Kind.CLASS);
+        this.className = className;
     }
 
     public MemoryByteCode(String className, ByteArrayOutputStream byteArrayOutputStream)
@@ -59,10 +62,11 @@ public class MemoryByteCode extends SimpleJavaFileObject {
     }
 
     public String getClassName() {
-        String className = getName();
-        className = className.replace(DIR_SEPARATOR, PKG_SEPARATOR);
-        className = className.substring(1, className.indexOf(CLASS_FILE_SUFFIX));
         return className;
     }
 
+    @Override
+    public String getName() {
+        return this.getClassName();
+    }
 }

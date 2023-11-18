@@ -9,16 +9,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public class ClasspathObjectSearchRoot implements JavaFileObjectSearchRoot {
+public class ClasspathSearchRoot implements JavaFileObjectSearchRoot {
 
-    private String root;
+    private String classpath;
 
-    public ClasspathObjectSearchRoot(String root) {
-        this.root = root;
+    public ClasspathSearchRoot(String classpath) {
+        this.classpath = classpath;
     }
 
     public List<JavaFileObject> search(String packageName, Set<JavaFileObject.Kind> kinds) {
-        File packageFile = new File(this.root, packageName);
+        File packageFile = new File(this.classpath, packageName);
         if (packageFile.exists() && packageFile.isDirectory()) {
             File[] files = packageFile.listFiles(item ->
                     !item.isDirectory()

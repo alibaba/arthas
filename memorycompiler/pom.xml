@@ -44,13 +44,11 @@
             <artifactId>arthas-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>
-            <groupId>com.github.olivergondza</groupId>
-            <artifactId>maven-jdk-tools-wrapper</artifactId>
-            <version>0.1</version>
-            <scope>provided</scope>
-            <optional>true</optional>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

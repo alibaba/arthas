@@ -1,4 +1,4 @@
-package com.test;
+package arthas.test;
 
 import org.slf4j.Marker;
 

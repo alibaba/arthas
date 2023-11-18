@@ -2,10 +2,10 @@ package com.taobao.arthas.compiler;
 
 import javax.tools.*;
 import java.io.File;
-import java.net.URI;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
 import java.util.jar.Manifest;
 
 public class DynamicCompiler {
@@ -16,80 +16,101 @@ public class DynamicCompiler {
 
     private final List<String> options = new ArrayList<>();
 
-    private final DynamicClassLoader dynamicClassLoader;
+    private final List<String> processors = new ArrayList<>();
+
+    private final List<String> processorsClassPath = new ArrayList<>();
 
     private final Collection<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
 
     static {
         if (STANDARD_FILE_MANAGER != null) {
             try {
-                enhanceCompiler();
-
                 Set<File> jarSearchPathSet = new HashSet<>();
                 Set<JavaFileObjectSearchRoot> classpathRootSet = new HashSet<>();
                 String userDir = System.getProperty("user.dir");
-                String[] jars = System.getProperty("java.class.path").split(File.pathSeparator);
-                for (String jarPath : jars) {
-                    try (PathJarFile jarFile = new PathJarFile(getJarAbsolutePath(jarPath, userDir))) {
+                String[] classSearchPaths = System.getProperty("java.class.path").split(File.pathSeparator);
+                if (classSearchPaths.length == 1 && isJarModeStart()) {
+                    String startJar = classSearchPaths[0];
+                    try (PathJarFile jarFile = new PathJarFile(getJarAbsolutePath(startJar, userDir))) {
                         Manifest manifest = jarFile.getManifest();
-                        if (manifest == null) {
-                            continue;
-                        }
-                        String classpath = manifest.getMainAttributes().getValue(new Attributes.Name("Class-Path"));
-                        if (Objects.nonNull(classpath)) {
-                            inner:
-                            for (StringTokenizer st = new StringTokenizer(classpath); st.hasMoreTokens(); ) {
-                                String ele = st.nextToken();
-                                if (ele.startsWith("file:/")) ele = ele.substring(6);
-                                if (ele.endsWith(".jar") || ele.endsWith(".zip")) {
-                                    File absolutePath = getJarAbsolutePath(ele, userDir);
-                                    if (absolutePath != null) jarSearchPathSet.add(absolutePath);
-                                    continue inner;
+                        if (manifest != null) {
+                            String classpath = manifest.getMainAttributes().getValue(new Attributes.Name("Class-Path"));
+                            if (Objects.nonNull(classpath)) {
+                                inner:
+                                for (StringTokenizer st = new StringTokenizer(classpath); st.hasMoreTokens(); ) {
+                                    String ele = st.nextToken();
+                                    if (ele.startsWith("file:/")) ele = ele.substring(6);
+                                    if (isJarFile(ele)) {
+                                        File absolutePath = getJarAbsolutePath(ele, userDir);
+                                        if (absolutePath != null) jarSearchPathSet.add(absolutePath);
+                                        continue inner;
+                                    }
+                                    classpathRootSet.add(new ClasspathSearchRoot(ele));
                                 }
-                                classpathRootSet.add(new ClasspathObjectSearchRoot(ele));
+                            }
+
+                            // springboot的jar
+                            String bootClasses = manifest.getMainAttributes().getValue(new Attributes.Name("Spring-Boot-Classes"));
+                            String bootLibs = manifest.getMainAttributes().getValue(new Attributes.Name("Spring-Boot-Lib"));
+                            if (Objects.nonNull(bootClasses) && Objects.nonNull(bootLibs)) {
+                                PackageNameSearchRoot.loadBootJar(jarFile, bootClasses, bootLibs, classpathRootSet);
                             }
                         }
-                        // springboot的jar
-                        String bootClasses = manifest.getMainAttributes().getValue(new Attributes.Name("Spring-Boot-Classes"));
-                        String bootLibs = manifest.getMainAttributes().getValue(new Attributes.Name("Spring-Boot-Lib"));
-                        if (Objects.nonNull(bootClasses) && Objects.nonNull(bootLibs)) {
-                            handleBootJar(jarFile, bootClasses, bootLibs, jarSearchPathSet, classpathRootSet);
-                        }
                     }
+                    CLASS_SEARCH_ROOTS.addAll(classpathRootSet);
+                    STANDARD_FILE_MANAGER.setLocation(StandardLocation.CLASS_PATH, jarSearchPathSet);
                 }
-                CLASS_SEARCH_ROOTS.addAll(classpathRootSet);
-                STANDARD_FILE_MANAGER.setLocation(StandardLocation.CLASS_PATH, jarSearchPathSet);
+                STANDARD_FILE_MANAGER.setLocation(StandardLocation.ANNOTATION_PROCESSOR_PATH, Collections.emptyList());
             } catch (Exception e) {
                 // ignore
+                e.printStackTrace();
             }
         }
     }
 
-    public DynamicCompiler(ClassLoader classLoader) {
+    private static boolean isJarFile(String classpath) {
+        return classpath.endsWith(".jar") || classpath.endsWith(".zip");
+    }
+
+    private static boolean isJarModeStart() {
+        for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+            if (arg.startsWith("-cp") || arg.startsWith("-classpath")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public DynamicCompiler() {
         if (COMPILER == null) {
             throw new IllegalStateException(
                     "Can not load JavaCompiler from javax.tools.ToolProvider#getSystemJavaCompiler(),"
                             + " please confirm the application running in JDK not JRE.");
         }
         options.add("-Xlint:unchecked");
-        dynamicClassLoader = new DynamicClassLoader(classLoader);
     }
 
     public void addSource(String className, String source) {
         compilationUnits.add(new StringSource(className, source));
     }
 
-    public Map<String, byte[]> buildByteCodes() {
+    public Map<String, byte[]> buildByteCodes() throws ClassNotFoundException, IOException {
         if (compilationUnits.isEmpty()) {
             return null;
         }
         List<Diagnostic<? extends JavaFileObject>> errors = new ArrayList<>();
         List<Diagnostic<? extends JavaFileObject>> warnings = new ArrayList<>();
-
-        DynamicJavaFileManager fileManager = new DynamicJavaFileManager(STANDARD_FILE_MANAGER, this.dynamicClassLoader);
-        fileManager.addClasspathRoots(CLASS_SEARCH_ROOTS);
-
         DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
+
+        if (this.processors.size() > 0) {
+            this.options.add("-processor");
+            this.options.add(createAnnotationProcessor());
+        }
+
+        DynamicJavaFileManager fileManager = new DynamicJavaFileManager(STANDARD_FILE_MANAGER);
+        fileManager.addClasspathRoots(CLASS_SEARCH_ROOTS);
+        fileManager.addProcessorPath(processorsClassPath);
+
         JavaCompiler.CompilationTask task = COMPILER.getTask(null, fileManager, collector, options, null, compilationUnits);
         try {
             boolean result = task.call();
@@ -112,42 +133,16 @@ public class DynamicCompiler {
                     throw new DynamicCompilerException("Compilation Error", errors);
                 }
             }
-            return dynamicClassLoader.getByteCodes();
-        } catch (ClassFormatError e) {
+            return fileManager.getArtifacts();
+        } catch (Throwable e) {
             throw new DynamicCompilerException(e, errors);
         } finally {
             compilationUnits.clear();
         }
     }
 
-    public static void enhanceCompiler() {
-
-    }
-
-    private static void handleBootJar(PathJarFile jarFile, String classPrefix, String libPrefix, Set<File> jarSearchPathSet, Set<JavaFileObjectSearchRoot> classpathRootSet) {
-        Map<String, PackageInnerClassObjectSearchRoot> packages = new HashMap<>();
-        Enumeration<JarEntry> entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
-            String entryName = entry.getName();
-            if (entryName.startsWith(libPrefix) && entryName.endsWith(".jar")) {
-                jarSearchPathSet.add(new ZipInnerJarFile(jarFile.getPath(), entryName));
-            } else if (entryName.startsWith(classPrefix) && entryName.endsWith(".class")) {
-                String className = entryName
-                        .substring(0, entryName.length() - ".class".length())
-                        .replace(classPrefix, "")
-                        .replace("/", ".");
-                String packageName = className.substring(0, className.lastIndexOf("."));
-                PackageInnerClassObjectSearchRoot packageRoot = packages.get(packageName);
-                if (packageRoot == null) {
-                    packageRoot = new PackageInnerClassObjectSearchRoot(packageName);
-                    packages.put(packageName, packageRoot);
-                }
-                URI fileUri = jarFile.getFileUri(entryName);
-                packageRoot.addClassFile(className, fileUri);
-            }
-        }
-        classpathRootSet.addAll(packages.values());
+    private String createAnnotationProcessor() throws ClassNotFoundException {
+        return String.join(",", this.processors);
     }
 
     private static File getJarAbsolutePath(String jarFile, String userDir) {
@@ -160,5 +155,18 @@ public class DynamicCompiler {
             return file;
         }
         return null;
+    }
+
+    public void addOption(String k, String v) {
+        this.options.add(k);
+        this.options.add(v);
+    }
+
+    public void addProcessor(String processor) {
+        this.processors.add(processor);
+    }
+
+    public void addProcessorPath(String processorPath) {
+        this.processorsClassPath.add(processorPath);
     }
 }

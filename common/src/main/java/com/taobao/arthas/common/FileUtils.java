@@ -14,6 +14,11 @@ import java.io.InputStream;
  */
 public class FileUtils {
 
+	public static String getTempProcessDirectory() {
+		return String.format("%s/arthas/", getTempDirectory());
+	}
+
+
 	public static File getTempDirectory() {
 		return new File(System.getProperty("java.io.tmpdir"));
 	}
