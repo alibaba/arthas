@@ -1,10 +1,24 @@
 package com.taobao.arthas.compiler;
 
-import javax.tools.*;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -163,10 +177,14 @@ public class DynamicCompiler {
     }
 
     public void addProcessor(String processor) {
-        this.processors.add(processor);
+        if (!this.processors.contains(processor)) {
+            this.processors.add(processor);
+        }
     }
 
     public void addProcessorPath(String processorPath) {
-        this.processorsClassPath.add(processorPath);
+        if (!this.processorsClassPath.contains(processorPath)) {
+            this.processorsClassPath.add(processorPath);
+        }
     }
 }

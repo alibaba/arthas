@@ -22,7 +22,11 @@ package com.taobao.arthas.compiler;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class DynamicCompilerException extends RuntimeException {
     private static final long serialVersionUID = 1L;

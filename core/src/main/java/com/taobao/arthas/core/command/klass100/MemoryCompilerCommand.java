@@ -103,13 +103,14 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
                 }
                 dynamicCompiler.addSource(name, sourceCode);
             }
-            // mc C:\\Users\\49168\\IdeaProjects\\billiards-center\\billiards-service\\src\\main\\java\\com\\yuyuka\\billiards\\service\\TestUser.java -processor com.hhy.lombok.processor.DataProcessor -processorPath C:\\Users\\49168\\IdeaProjects\\x-lombok\\target\\x-lombok.jar
             if (encoding != null) {
                 dynamicCompiler.addOption("-encoding", encoding);
             }
             if (lombok) {
                 dynamicCompiler.addProcessor("lombok.launch.AnnotationProcessorHider$AnnotationProcessor");
                 dynamicCompiler.addProcessor("lombok.launch.AnnotationProcessorHider$ClaimingProcessor");
+                Class<?> lombokDataClass = MemoryCompilerCommand.class.getClassLoader().loadClass("lombok.Data");
+                dynamicCompiler.addProcessorPath(lombokDataClass.getProtectionDomain().getCodeSource().getLocation().getPath());
             }
             if (processor != null) {
                 for (String p : processor.split(",")) {

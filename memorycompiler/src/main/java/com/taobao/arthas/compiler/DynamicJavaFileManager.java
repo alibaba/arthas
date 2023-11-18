@@ -1,11 +1,20 @@
 package com.taobao.arthas.compiler;
 
 
-import javax.tools.*;
+import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
+import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
@@ -34,7 +43,7 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     @Override
     public ClassLoader getClassLoader(Location location) {
         if (location == StandardLocation.ANNOTATION_PROCESSOR_PATH) {
-            return new AnnotationProcessorClassloader(processorPath.toArray(new URL[0]), DynamicJavaFileManager.class.getClassLoader());
+            return new AnnotationProcessorClassloader(processorPath.toArray(new URL[0]), this.fileManager.getClass().getClassLoader());
         }
          return ClassLoader.getSystemClassLoader();
     }
