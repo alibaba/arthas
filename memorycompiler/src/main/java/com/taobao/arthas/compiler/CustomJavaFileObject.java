@@ -23,7 +23,6 @@ package com.taobao.arthas.compiler;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileObject;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,10 +34,6 @@ public class CustomJavaFileObject implements JavaFileObject {
     private final URI uri;
     private final String className;
     private final Kind kind;
-
-    public CustomJavaFileObject(File file) {
-        this(file.toURI(), file.getName(), DynamicJavaFileManager.getKind(file.getName()));
-    }
 
     public CustomJavaFileObject(URI uri, String className, Kind kind) {
         this.uri = uri;

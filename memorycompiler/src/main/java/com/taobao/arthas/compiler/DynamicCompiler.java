@@ -9,7 +9,6 @@ import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,9 +42,11 @@ public class DynamicCompiler {
                 Set<JavaFileObjectSearchRoot> classpathRootSet = new HashSet<>();
                 String userDir = System.getProperty("user.dir");
                 String[] classSearchPaths = System.getProperty("java.class.path").split(File.pathSeparator);
-                if (classSearchPaths.length == 1 && isJarModeStart()) {
-                    String startJar = classSearchPaths[0];
-                    try (PathJarFile jarFile = new PathJarFile(getJarAbsolutePath(startJar, userDir))) {
+                for (String classSearchPath : classSearchPaths) {
+                    if (!isJarFile(classSearchPath)) {
+                        continue;
+                    }
+                    try (PathJarFile jarFile = new PathJarFile(getJarAbsolutePath(classSearchPath, userDir))) {
                         Manifest manifest = jarFile.getManifest();
                         if (manifest != null) {
                             String classpath = manifest.getMainAttributes().getValue(new Attributes.Name("Class-Path"));
@@ -84,15 +85,6 @@ public class DynamicCompiler {
 
     private static boolean isJarFile(String classpath) {
         return classpath.endsWith(".jar") || classpath.endsWith(".zip");
-    }
-
-    private static boolean isJarModeStart() {
-        for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-            if (arg.startsWith("-cp") || arg.startsWith("-classpath")) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public DynamicCompiler() {
