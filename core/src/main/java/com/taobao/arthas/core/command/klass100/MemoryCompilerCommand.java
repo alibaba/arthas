@@ -1,22 +1,28 @@
 package com.taobao.arthas.core.command.klass100;
 
 import java.io.File;
+import java.lang.instrument.Instrumentation;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.compiler.ClassloaderSearchRoot;
 import com.taobao.arthas.compiler.DynamicCompiler;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.MemoryCompilerModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -37,6 +43,10 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(MemoryCompilerCommand.class);
 
+    private String hashCode;
+
+    private String classLoaderClass;
+
     private String directory;
 
     private boolean lombok;
@@ -51,8 +61,20 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
 
     @Argument(argName = "sourcefiles", index = 0)
     @Description("Source files")
-    public void setClassPattern(List<String> sourcefiles) {
+    public void setSourcefiles(List<String> sourcefiles) {
         this.sourcefiles = sourcefiles;
+    }
+
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special ClassLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
     }
 
     @Option(longName = "lombok", flag = true)
@@ -92,6 +114,35 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
         try {
             DynamicCompiler dynamicCompiler = new DynamicCompiler();
             Charset charset = Charset.defaultCharset();
+            Instrumentation inst = process.session().getInstrumentation();
+
+            if (hashCode == null && classLoaderClass != null) {
+                List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+                if (matchedClassLoaders.size() == 1) {
+                    hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+                } else if (matchedClassLoaders.size() > 1) {
+                    Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                    MemoryCompilerModel memoryCompilerModel = new MemoryCompilerModel()
+                            .setClassLoaderClass(classLoaderClass)
+                            .setMatchedClassLoaders(classLoaderVOList);
+                    process.appendResult(memoryCompilerModel);
+                    process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                    return;
+                } else {
+                    process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                    return;
+                }
+            }
+
+            if (hashCode != null) {
+                ClassLoader classloader = ClassLoaderUtils.getClassLoader(inst, hashCode);
+                if (classloader == null) {
+                    process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                    return;
+                }
+                dynamicCompiler.addSearchRoot(new ClassloaderSearchRoot(classloader));
+            }
+
             if (encoding != null) {
                 charset = Charset.forName(encoding);
             }

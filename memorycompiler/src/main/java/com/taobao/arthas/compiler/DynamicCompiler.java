@@ -33,6 +33,8 @@ public class DynamicCompiler {
 
     private final List<String> processorsClassPath = new ArrayList<>();
 
+    private final Set<JavaFileObjectSearchRoot> searchRoots = new HashSet<>();
+
     private final Collection<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
 
     static {
@@ -68,7 +70,7 @@ public class DynamicCompiler {
                             String bootClasses = manifest.getMainAttributes().getValue(new Attributes.Name("Spring-Boot-Classes"));
                             String bootLibs = manifest.getMainAttributes().getValue(new Attributes.Name("Spring-Boot-Lib"));
                             if (Objects.nonNull(bootClasses) && Objects.nonNull(bootLibs)) {
-                                PackageNameSearchRoot.loadBootJar(jarFile, bootClasses, bootLibs, classpathRootSet);
+                                classpathRootSet.addAll(PackageNameSearchRoot.loadBootJar(jarFile, bootClasses, bootLibs));
                             }
                         }
                     }
@@ -114,7 +116,7 @@ public class DynamicCompiler {
         }
 
         DynamicJavaFileManager fileManager = new DynamicJavaFileManager(STANDARD_FILE_MANAGER);
-        fileManager.addClasspathRoots(CLASS_SEARCH_ROOTS);
+        fileManager.addClasspathRoots(this.searchRoots.size() > 0 ? this.searchRoots : CLASS_SEARCH_ROOTS);
         fileManager.addProcessorPath(processorsClassPath);
 
         JavaCompiler.CompilationTask task = COMPILER.getTask(null, fileManager, collector, options, null, compilationUnits);
@@ -178,5 +180,9 @@ public class DynamicCompiler {
         if (!this.processorsClassPath.contains(processorPath)) {
             this.processorsClassPath.add(processorPath);
         }
+    }
+
+    public void addSearchRoot(JavaFileObjectSearchRoot searchRoot) {
+        this.searchRoots.add(searchRoot);
     }
 }

@@ -67,7 +67,7 @@ public class InnerJarClassSearchRoot implements JavaFileObjectSearchRoot {
                         continue;
                     }
                     String packageName = className.substring(0, className.lastIndexOf("."));
-                    packages.add(packageName);
+                    this.packages.add(packageName);
                 }
             }
         }
@@ -89,7 +89,7 @@ public class InnerJarClassSearchRoot implements JavaFileObjectSearchRoot {
             }
             FileUtils.writeByteArrayToFile(this.tmpFile, IOUtils.getBytes(uri.toURL().openStream()));
             try (PathJarFile jarFile = new PathJarFile(this.tmpFile)) {
-                this.packageNameSearchRoot = PackageNameSearchRoot.load(jarFile);
+                this.packageNameSearchRoot = PackageNameSearchRoot.loadJar(jarFile);
             }
             this.loaded = true;
         }

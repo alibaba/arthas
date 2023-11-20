@@ -26,7 +26,7 @@ public class PackageNameSearchRoot implements JavaFileObjectSearchRoot {
         this.classes = new HashSet<>();
     }
 
-    public static Map<String, PackageNameSearchRoot> load(PathJarFile jarFile) throws IOException {
+    public static Map<String, PackageNameSearchRoot> loadJar(PathJarFile jarFile) throws IOException {
         Map<String, PackageNameSearchRoot> packages = new HashMap<>();
         Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
@@ -54,7 +54,8 @@ public class PackageNameSearchRoot implements JavaFileObjectSearchRoot {
         return packages;
     }
 
-    public static void loadBootJar(PathJarFile jarFile, String classPrefix, String libPrefix, Set<JavaFileObjectSearchRoot> classpathRootSet) throws IOException {
+    public static Set<JavaFileObjectSearchRoot> loadBootJar(PathJarFile jarFile, String classPrefix, String libPrefix) throws IOException {
+        Set<JavaFileObjectSearchRoot> classpathRootSet = new HashSet<>();
         Map<String, PackageNameSearchRoot> packages = new HashMap<>();
         Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
@@ -83,6 +84,7 @@ public class PackageNameSearchRoot implements JavaFileObjectSearchRoot {
             }
         }
         classpathRootSet.addAll(packages.values());
+        return classpathRootSet;
     }
 
     public void addClassFile(String className, URI uri) {

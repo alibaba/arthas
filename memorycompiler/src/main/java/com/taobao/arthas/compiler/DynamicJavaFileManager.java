@@ -96,7 +96,7 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
         for (String processorJarPath : processorsClassPath) {
             File processorJar = new File(processorJarPath);
             if (processorJar.exists()) {
-                Map<String, PackageNameSearchRoot> loaded = PackageNameSearchRoot.load(new PathJarFile(processorJar));
+                Map<String, PackageNameSearchRoot> loaded = PackageNameSearchRoot.loadJar(new PathJarFile(processorJar));
                 this.classpathRoots.addAll(loaded.values());
                 this.processorPath.add(processorJar.toURI().toURL());
             }
