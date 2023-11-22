@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class PackageInternalsFinder {
     private final ClassLoader classLoader;
     private static final String CLASS_FILE_EXTENSION = ".class";
 
-    private static final Map<String, JarFileIndex> INDEXS = new HashMap<>();
+    private static final Map<String, JarFileIndex> INDEXS = new ConcurrentHashMap<>();
 
     public PackageInternalsFinder(ClassLoader classLoader) {
         this.classLoader = classLoader;
@@ -193,6 +194,9 @@ public class PackageInternalsFinder {
         }
 
         public List<JavaFileObject> search(String packageName) {
+            if (this.packages.isEmpty()) {
+                return null;
+            }
             if (this.packages.containsKey(packageName)) {
                 return packages.get(packageName).stream().map(item -> {
                     return new CustomJavaFileObject(item.getClassName(), item.getUri());
