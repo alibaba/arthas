@@ -24,8 +24,7 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     public DynamicJavaFileManager(JavaFileManager fileManager, DynamicClassLoader classLoader) {
         super(fileManager);
         this.classLoader = classLoader;
-
-        finder = new PackageInternalsFinder(classLoader);
+        this.finder = new PackageInternalsFinder(classLoader);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     @Override
     public String inferBinaryName(Location location, JavaFileObject file) {
         if (file instanceof CustomJavaFileObject) {
-            return ((CustomJavaFileObject) file).binaryName();
+            return ((CustomJavaFileObject) file).getClassName();
         } else {
             /**
              * if it's not CustomJavaFileObject, then it's coming from standard file manager
