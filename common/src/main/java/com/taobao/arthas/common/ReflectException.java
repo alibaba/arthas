@@ -6,7 +6,7 @@ public class ReflectException extends RuntimeException {
     private Throwable cause;
 
     public ReflectException(Throwable cause) {
-        super(cause.getClass().getName() + "-->" + cause.getMessage());
+        super(cause != null ? cause.getClass().getName() + "-->" + cause.getMessage() : "");
         this.cause = cause;
     }
 
