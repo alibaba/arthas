@@ -1,16 +1,24 @@
 package com.taobao.arthas.core.util;
 
+import java.arthas.SpyAPI;
+import java.lang.management.LockInfo;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MonitorInfo;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import com.taobao.arthas.core.command.model.BlockingLockInfo;
 import com.taobao.arthas.core.command.model.BusyThreadInfo;
 import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.command.model.ThreadNode;
 import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.view.Ansi;
-
-import java.arthas.SpyAPI;
-import java.lang.management.*;
-import java.lang.reflect.Method;
-import java.util.*;
 
 /**
  * 
@@ -96,7 +104,11 @@ abstract public class ThreadUtil {
      *
      * @return the BlockingLockInfo object, or an empty object if not found.
      */
-    public static BlockingLockInfo findMostBlockingLock() {
+     public static BlockingLockInfo findMostBlockingLock() {
+        return findMostBlockingLock(null);
+     }
+
+     public static BlockingLockInfo findMostBlockingLock(final Pattern threadNamePattern) {
         ThreadInfo[] infos = threadMXBean.dumpAllThreads(threadMXBean.isObjectMonitorUsageSupported(),
                 threadMXBean.isSynchronizerUsageSupported());
 
@@ -109,7 +121,9 @@ abstract public class ThreadUtil {
             if (info == null) {
                 continue;
             }
-
+            if (threadNamePattern != null && ! threadNamePattern.matcher(info.getThreadName()).find()) {
+                continue;
+            }
             LockInfo lockInfo = info.getLockInfo();
             if (lockInfo != null) {
                 // the current thread is blocked waiting on some condition

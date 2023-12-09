@@ -198,7 +198,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     private ExitStatus processBlockingThread(CommandProcess process) {
-        BlockingLockInfo blockingLockInfo = ThreadUtil.findMostBlockingLock();
+        final BlockingLockInfo blockingLockInfo = ThreadUtil.findMostBlockingLock(this.namePattern);
         if (blockingLockInfo.getThreadInfo() == null) {
             return ExitStatus.failure(1, "No most blocking thread found!");
         }
@@ -211,6 +211,7 @@ public class ThreadCommand extends AnnotatedCommand {
         threadSampler.sample(ThreadUtil.getThreads());
         threadSampler.pause(sampleInterval);
         List<ThreadVO> threadStats = threadSampler.sample(ThreadUtil.getThreads());
+        filterThreadByPattern(threadStats, namePattern);
 
         int limit = Math.min(threadStats.size(), topNBusy);
 
