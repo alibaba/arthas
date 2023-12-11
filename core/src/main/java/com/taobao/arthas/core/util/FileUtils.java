@@ -42,20 +42,10 @@ public class FileUtils {
      * @since IO 2.1
      */
     public static void writeByteArrayToFile(File file, byte[] data, boolean append) throws IOException {
-        OutputStream out = null;
-        try {
-            out = openOutputStream(file, append);
+        try (OutputStream out = openOutputStream(file, append)) {
             out.write(data);
-            out.close(); // don't swallow close Exception if copy completes normally
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ioe) {
-                // ignore
-            }
         }
+        // ignore
     }
 
     /**
@@ -111,10 +101,8 @@ public class FileUtils {
      * @param file the file to save the history
      */
     public static void saveCommandHistory(List<int[]> history, File file) {
-        OutputStream out = null;
-        try {
-            out = new BufferedOutputStream(openOutputStream(file, false));
-            for (int[] command: history) {
+        try (OutputStream out = new BufferedOutputStream(openOutputStream(file, false))) {
+            for (int[] command : history) {
                 String commandStr = Helper.fromCodePoints(command);
                 if (isAuthCommand(commandStr)) {
                     command = AUTH_CODEPOINTS;
@@ -127,15 +115,8 @@ public class FileUtils {
             }
         } catch (IOException e) {
             // ignore
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ioe) {
-                // ignore
-            }
         }
+        // ignore
     }
 
     public static List<int[]> loadCommandHistory(File file) {
@@ -167,10 +148,8 @@ public class FileUtils {
      * @param file the file to save the history
      */
     public static void saveCommandHistoryString(List<String> history, File file) {
-        OutputStream out = null;
-        try {
-            out = new BufferedOutputStream(openOutputStream(file, false));
-            for (String command: history) {
+        try (OutputStream out = new BufferedOutputStream(openOutputStream(file, false))) {
+            for (String command : history) {
                 if (!StringUtils.isBlank(command)) {
                     if (isAuthCommand(command)) {
                         command = ArthasConstants.AUTH;
@@ -181,15 +160,8 @@ public class FileUtils {
             }
         } catch (IOException e) {
             // ignore
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ioe) {
-                // ignore
-            }
         }
+        // ignore
     }
 
     public static List<String> loadCommandHistoryString(File file) {
@@ -218,8 +190,7 @@ public class FileUtils {
     }
 
     public static String readFileToString(File file, Charset encoding) throws IOException {
-        FileInputStream stream = new FileInputStream(file);
-        try {
+        try (FileInputStream stream = new FileInputStream(file)) {
             Reader reader = new BufferedReader(new InputStreamReader(stream, encoding));
             StringBuilder builder = new StringBuilder();
             char[] buffer = new char[8192];
@@ -228,8 +199,6 @@ public class FileUtils {
                 builder.append(buffer, 0, read);
             }
             return builder.toString();
-        } finally {
-            stream.close();
         }
     }
 
