@@ -140,7 +140,7 @@ public class FileUtils {
 
     public static List<int[]> loadCommandHistory(File file) {
         BufferedReader br = null;
-        List<int[]> history = new ArrayList<int[]>();
+        List<int[]> history = new ArrayList<>();
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             String line;
@@ -194,7 +194,7 @@ public class FileUtils {
 
     public static List<String> loadCommandHistoryString(File file) {
         BufferedReader br = null;
-        List<String> history = new ArrayList<String>();
+        List<String> history = new ArrayList<>();
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
             String line;
