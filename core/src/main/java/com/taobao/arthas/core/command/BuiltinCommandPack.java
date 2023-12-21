@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.command;
 
-import com.taobao.arthas.core.command.klass100.ReflectAnalysisCommand;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +82,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(RetransformCommand.class);
         commandClassList.add(DashboardCommand.class);
         commandClassList.add(DumpClassCommand.class);
-        commandClassList.add(ReflectAnalysisCommand.class);
         commandClassList.add(HeapDumpCommand.class);
         commandClassList.add(JulyCommand.class);
         commandClassList.add(ThanksCommand.class);

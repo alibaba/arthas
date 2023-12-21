@@ -263,12 +263,6 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>3.25.7</version>
-        </dependency>
     </dependencies>
 
 </project>
