@@ -82,8 +82,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
-        <spring-boot.version>2.7.11</spring-boot.version>
-        <spring-boot3.version>3.0.6</spring-boot3.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot3.version>3.1.7</spring-boot3.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
