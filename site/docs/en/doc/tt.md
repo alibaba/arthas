@@ -12,8 +12,8 @@ With the help of `tt` (_TimeTunnel_), you can check the contexts of the methods 
 
 ## Precautions
 
-* The implementation of the tt command is to save the input parameters/return values of the function into a `Map<Integer, TimeFragment>`. The default size is 100.
-* After using tt related functions, you need to manually release the memory, otherwise OOM may occur for a long time. Exiting arthas will not automatically clear tt's cache map.
+- The implementation of the tt command is to save the input parameters/return values of the function into a `Map<Integer, TimeFragment>`. The default size is 100.
+- After using tt related functions, you need to manually release the memory, otherwise OOM may occur for a long time. Exiting arthas will not automatically clear tt's cache map.
 
 ## Usage
 
