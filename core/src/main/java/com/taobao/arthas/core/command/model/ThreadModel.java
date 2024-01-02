@@ -25,6 +25,8 @@ public class ThreadModel extends ResultModel {
     private Map<Thread.State, Integer> threadStateCount;
     private boolean all;
 
+    private int stacktraceMax;
+
     public ThreadModel() {
     }
 
@@ -98,4 +100,19 @@ public class ThreadModel extends ResultModel {
     public void setAll(boolean all) {
         this.all = all;
     }
+
+    /**
+     * @return int return the stacktraceMax
+     */
+    public int getStacktraceMax() {
+        return stacktraceMax;
+    }
+
+    /**
+     * @param stacktraceMax the stacktraceMax to set
+     */
+    public void setStacktraceMax(int stacktraceMax) {
+        this.stacktraceMax = stacktraceMax;
+    }
+
 }
