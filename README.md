@@ -44,9 +44,9 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports Linux/Mac/Windows.
 
 
-### [Online Tutorials(Recommended)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
+### Online Tutorials(Recommended)
 
-* [Usages](tutorials/katacoda/README.md#online-tutorial-usages)
+* [View](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
 
 ### Quick start
 
