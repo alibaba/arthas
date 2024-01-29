@@ -8,7 +8,6 @@ For questions that are not in this list, please search in issues. [https://githu
 
 Log file path: `~/logs/arthas/arthas.log`
 
-
 ### telnet: connect to address 127.0.0.1: Connection refused
 
 1. Check the log `~/logs/arthas/arthas.log`
