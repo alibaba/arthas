@@ -440,7 +440,14 @@ public class ReflectUtils {
                 protectionDomain = PROTECTION_DOMAIN;
             }
             try {
-                c = (Class) unreflect.invoke(loader, className, b, 0, b.length, protectionDomain);
+                List args = new ArrayList(6);
+                args.add(loader);
+                args.add(className);
+                args.add(b);
+                args.add(0);
+                args.add(b.length);
+                args.add(protectionDomain);
+                c = (Class) unreflect.invokeWithArguments(args);
             } catch (InvocationTargetException ex) {
                 throw new ReflectException(ex.getTargetException());
             } catch (Throwable ex) {
