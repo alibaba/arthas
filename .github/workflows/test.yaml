@@ -36,10 +36,13 @@ jobs:
         run: mvn clean install -P full
 
   macos_build:
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         java: [8, 11]
+        os:
+          - macos-latest
+          - macos-14
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
