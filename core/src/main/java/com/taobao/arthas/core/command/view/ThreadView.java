@@ -21,18 +21,19 @@ public class ThreadView extends ResultView<ThreadModel> {
 
     @Override
     public void draw(CommandProcess process, ThreadModel result) {
+        final int stacktraceMax = result.getStacktraceMax();
         if (result.getThreadInfo() != null) {
             // no cpu usage info
-            String content = ThreadUtil.getFullStacktrace(result.getThreadInfo());
+            String content = ThreadUtil.getFullStacktrace(result.getThreadInfo(), stacktraceMax);
             process.write(content);
         } else if (result.getBusyThreads() != null) {
             List<BusyThreadInfo> threadInfos = result.getBusyThreads();
             for (BusyThreadInfo info : threadInfos) {
-                String stacktrace = ThreadUtil.getFullStacktrace(info, -1, -1);
+                String stacktrace = ThreadUtil.getFullStacktrace(info, -1, -1, stacktraceMax);
                 process.write(stacktrace).write("\n");
             }
         } else if (result.getBlockingLockInfo() != null) {
-            String stacktrace = ThreadUtil.getFullStacktrace(result.getBlockingLockInfo());
+            String stacktrace = ThreadUtil.getFullStacktrace(result.getBlockingLockInfo(), stacktraceMax);
             process.write(stacktrace);
 
         } else if (result.getThreadStateCount() != null) {
