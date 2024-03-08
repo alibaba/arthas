@@ -213,10 +213,8 @@ public class CompletionUtils {
         // retrieve the class name
         String className;
         if (StringUtils.isBlank(lastToken)) {
-            // tokens = { " ", "CLASS_NAME", " "}
             className = tokens.get(tokens.size() - 2).value();
         } else {
-            // tokens = { " ", "CLASS_NAME", " ", "PARTIAL_METHOD_NAME"}
             className = tokens.get(tokens.size() - 3).value();
         }
 
