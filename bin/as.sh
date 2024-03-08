@@ -260,7 +260,7 @@ reset_for_env()
         JAVA_HOME=$(echo "$JAVA_COMMAND_PATH" | sed -n 's/\/bin\/java$//p')
     fi
 
-    # iterater throught candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
+    # iterater through candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
     if [ ! -d "${JAVA_HOME}" ]; then
         JAVA_HOME_CANDIDATES=($(ps aux | grep java | grep -v 'grep java' | awk '{print $11}' | sed -n 's/\/bin\/java$//p'))
         for JAVA_HOME_TEMP in ${JAVA_HOME_CANDIDATES[@]}; do

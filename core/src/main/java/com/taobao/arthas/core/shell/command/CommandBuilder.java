@@ -13,7 +13,7 @@ import com.taobao.middleware.cli.CLI;
 public abstract class CommandBuilder {
 
     /**
-     * Create a new commmand builder, the command is responsible for managing the options and arguments via the
+     * Create a new command builder, the command is responsible for managing the options and arguments via the
      * {@link CommandProcess#args() arguments}.
      *
      * @param name the command name
@@ -24,7 +24,7 @@ public abstract class CommandBuilder {
     }
 
     /**
-     * Create a new commmand with its {@link CLI} descriptor. This command can then retrieve the parsed
+     * Create a new command with its {@link CLI} descriptor. This command can then retrieve the parsed
      * {@link CommandProcess#commandLine()} when it executes to know get the command arguments and options.
      *
      * @param cli the cli to use

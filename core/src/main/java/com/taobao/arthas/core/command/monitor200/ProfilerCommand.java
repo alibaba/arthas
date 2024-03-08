@@ -77,7 +77,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     /**
      * profile allocations with BYTES interval
-     * according to async-profiler README, alloc may contains non-numeric charactors
+     * according to async-profiler README, alloc may contains non-numeric characters
      */
     private String alloc;
 
@@ -88,7 +88,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     /**
      * profile contended locks longer than DURATION ns
-     * according to async-profiler README, alloc may contains non-numeric charactors
+     * according to async-profiler README, alloc may contains non-numeric characters
      */
     private String lock;
 
