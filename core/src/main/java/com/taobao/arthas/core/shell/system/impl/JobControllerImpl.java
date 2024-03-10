@@ -85,7 +85,7 @@ public class JobControllerImpl implements JobController {
             line.append(arg.raw());
         }
         boolean runInBackground = runInBackground(tokens);
-        Process process = createProcess(session, tokens, commandManager, jobId, term, resultDistributor);
+        Process process = createProcess(session, tokens, commandManager, jobId, term, resultDistributor,runInBackground);
         process.setJobId(jobId);
         JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, session, jobHandler);
         jobs.put(jobId, job);
@@ -141,9 +141,10 @@ public class JobControllerImpl implements JobController {
      * @param jobId job id
      * @param term term
      * @param resultDistributor
+     * @param runInBackground
      * @return the created process
      */
-    private Process createProcess(Session session, List<CliToken> line, InternalCommandManager commandManager, int jobId, Term term, ResultDistributor resultDistributor) {
+    private Process createProcess(Session session, List<CliToken> line, InternalCommandManager commandManager, int jobId, Term term, ResultDistributor resultDistributor,boolean runInBackground) {
         try {
             ListIterator<CliToken> tokens = line.listIterator();
             while (tokens.hasNext()) {
@@ -153,7 +154,7 @@ public class JobControllerImpl implements JobController {
                     checkPermission(session, token);
                     Command command = commandManager.getCommand(token.value());
                     if (command != null) {
-                        return createCommandProcess(command, tokens, jobId, term, resultDistributor);
+                        return createCommandProcess(command, tokens, jobId, term, resultDistributor,runInBackground);
                     } else {
                         throw new IllegalArgumentException(token.value() + ": command not found");
                     }
@@ -175,13 +176,12 @@ public class JobControllerImpl implements JobController {
         return runInBackground;
     }
 
-    private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term, ResultDistributor resultDistributor) throws IOException {
+    private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term, ResultDistributor resultDistributor,boolean  runInBackground) throws IOException {
         List<CliToken> remaining = new ArrayList<CliToken>();
         List<CliToken> pipelineTokens = new ArrayList<CliToken>();
         boolean isPipeline = false;
         RedirectHandler redirectHandler = null;
         List<Function<String, String>> stdoutHandlerChain = new ArrayList<Function<String, String>>();
-        String cacheLocation = null;
         while (tokens.hasNext()) {
             CliToken remainingToken = tokens.next();
             if (remainingToken.isText()) {
@@ -196,8 +196,6 @@ public class JobControllerImpl implements JobController {
                     if (name == null) {
                         // 如果没有指定重定向文件名，那么重定向到以jobid命名的缓存中
                         name = LogUtil.cacheDir() + File.separator + Constants.PID + File.separator + jobId;
-                        cacheLocation = name;
-
                         if (getRedirectJobCount() == 8) {
                             throw new IllegalStateException("The amount of async command that saving result to file can't > 8");
                         }
@@ -215,12 +213,20 @@ public class JobControllerImpl implements JobController {
         injectHandler(stdoutHandlerChain, pipelineTokens);
         if (redirectHandler != null) {
             stdoutHandlerChain.add(redirectHandler);
-            term.write("redirect output file will be: " + redirectHandler.getFilePath()+"\n");
+        } else if (runInBackground) {
+            redirectHandler = new RedirectHandler();
+            stdoutHandlerChain.add(redirectHandler);
         } else {
             stdoutHandlerChain.add(new TermHandler(term));
             if (GlobalOptions.isSaveResult) {
-                stdoutHandlerChain.add(new RedirectHandler());
+                RedirectHandler saveResultRedirectHandler = new RedirectHandler();
+                stdoutHandlerChain.add(saveResultRedirectHandler);
+                term.write("save result job output file location: " + saveResultRedirectHandler.getFilePath() + "\n");
             }
+        }
+        String cacheLocation = null;
+        if(redirectHandler !=null){
+            cacheLocation = redirectHandler.getFilePath();
         }
         ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
         ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput, resultDistributor);
