@@ -134,6 +134,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![滴滴出行](static/didiglobal.jpg)
 ![兑观科技](static/videt.png)
 ![高德红外](static/guideir.jpg)
+![一洽软件](static/echatsoft.png)
 
 * 网易云
 * 派迩信息技术
