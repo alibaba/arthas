@@ -17,6 +17,7 @@
 ```
 
 应用启动后，spring 会启动 arthas，并且 attach 自身进程。
+> 项目启动成功即可通过ip:8563 访问arthas默认的web控制页面
 
 ::: tip
 一键创建包含 Arthas Spring Boot Starter 的工程：<a href="https://start.aliyun.com/bootstrap.html/#!dependencies=arthas" target="_blank">点击</a>
