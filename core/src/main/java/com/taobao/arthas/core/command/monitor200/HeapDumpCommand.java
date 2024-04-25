@@ -51,7 +51,7 @@ public class HeapDumpCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         try {
-            String dumpFile = file == null ? process.getArthasOutput().getAbsolutePath() : null;
+            String dumpFile = file == null ? (process.getArthasOutput().getAbsolutePath()+"heapdump"+System.currentTimeMillis()+".hprof") : null;
             if (dumpFile == null || dumpFile.isEmpty()) {
                 String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date());
                 File file = File.createTempFile("heapdump" + date + (live ? "-live" : ""), ".hprof");
