@@ -233,29 +233,29 @@ public class ProfilerCommand extends AnnotatedCommand {
     private static AsyncProfiler profiler = null;
 
     static {
-        String profierSoPath = null;
+        String profilerSoPath = null;
         if (OSUtils.isMac()) {
             // FAT_BINARY support both x86_64/arm64
-            profierSoPath = "async-profiler/libasyncProfiler-mac.so";
+            profilerSoPath = "async-profiler/libasyncProfiler-mac.so";
         }
         if (OSUtils.isLinux()) {
             if (OSUtils.isX86_64() && OSUtils.isMuslLibc()) {
-                profierSoPath = "async-profiler/libasyncProfiler-linux-musl-x64.so";
+                profilerSoPath = "async-profiler/libasyncProfiler-linux-musl-x64.so";
             } else if(OSUtils.isX86_64()){
-                profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
+                profilerSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
             } else if (OSUtils.isArm64() && OSUtils.isMuslLibc()) {
-                profierSoPath = "async-profiler/libasyncProfiler-linux-musl-arm64.so";
+                profilerSoPath = "async-profiler/libasyncProfiler-linux-musl-arm64.so";
             } else if (OSUtils.isArm64()) {
-                profierSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
+                profilerSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
             }
         }
 
-        if (profierSoPath != null) {
+        if (profilerSoPath != null) {
             CodeSource codeSource = ProfilerCommand.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
                 try {
                     File bootJarPath = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
-                    File soFile = new File(bootJarPath.getParentFile(), profierSoPath);
+                    File soFile = new File(bootJarPath.getParentFile(), profilerSoPath);
                     if (soFile.exists()) {
                         libPath = soFile.getAbsolutePath();
                     }
