@@ -175,6 +175,30 @@ public class SpyImpl extends AbstractSpy {
         }
     }
 
+    @Override
+    public void atLine(Class<?> clazz, String methodInfo, Object target, Object[] args, String line, Object[] vars, String[] varNames) {
+        ClassLoader classLoader = clazz.getClassLoader();
+
+        String[] info = StringUtils.splitMethodInfo(methodInfo);
+        String methodName = info[0];
+        String methodDesc = info[1];
+
+        List<AdviceListener> listeners = com.taobao.arthas.core.advisor.AdviceListenerManager.queryLineAdviceListeners(classLoader, clazz.getName(), line,
+                methodName, methodDesc);
+        if (listeners != null) {
+            for (AdviceListener adviceListener : listeners) {
+                try {
+                    if (skipAdviceListener(adviceListener)) {
+                        continue;
+                    }
+                    adviceListener.atLine(clazz, methodName, methodDesc, target, args, line, vars, varNames);
+                } catch (Throwable e) {
+                    logger.error("class: {}, methodInfo: {}, line: {}", clazz.getName(), methodInfo, line, e);
+                }
+            }
+        }
+    }
+
     private static boolean skipAdviceListener(AdviceListener adviceListener) {
         if (adviceListener instanceof ProcessAware) {
             ProcessAware processAware = (ProcessAware) adviceListener;
