@@ -27,7 +27,8 @@ import com.taobao.middleware.cli.annotations.*;
                 "  line org.apache.commons.lang.StringUtils isBlank -1 'varMap'\n" +
                 "  line org.apache.commons.lang.StringUtils isBlank 3581 'varMap'  'varMap[\"strLen\"] == 3'\n" +
                 "  line *StringUtils isBlank 128 '{params,varMap}'  \n" +
-                "  line org.apache.commons.lang.StringUtils isBlank abcd-1 'varMap'\n"
+                "  line org.apache.commons.lang.StringUtils isBlank abcd-1 'varMap'\n" +
+                Constants.WIKI + Constants.WIKI_HOME + "line"
 )
 public class LineCommand extends EnhancerCommand {
 
