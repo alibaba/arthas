@@ -3,6 +3,8 @@ package com.taobao.arthas;
 import com.taobao.arthas.service.impl.HelloServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 
@@ -16,6 +18,7 @@ public class Main {
         Server server = ServerBuilder.forPort(port)
                 .addService(new HelloServiceImpl())
                 .build();
+        ByteBuf buffer = Unpooled.buffer();
         try {
             server.start();
             System.out.println("Server started, listening on " + port);
