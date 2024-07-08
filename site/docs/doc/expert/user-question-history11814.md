@@ -6,10 +6,12 @@ category: "expertConsultation"
 description: "使用Arthas排查内存泄漏可以遵循以下步骤：1. **检查JVM内存状态**     首先，使用Arthas的`memory`命令来查看当前Java虚拟机的内存使用情况。这将帮助你了解各个内存区域的使用率，如堆、非堆内存以及特定的垃圾收集器相关区域的状态。例如，执行`memory`后，你会看到类似"
 ---
 
-## 用户问题 ： 
- arthas 怎么排查内存泄漏  
+## 用户问题 ：
 
----------------
+arthas 怎么排查内存泄漏
+
+---
+
 ## 专家官方解答 ：
 
 使用Arthas排查内存泄漏可以遵循以下步骤：
@@ -29,26 +31,22 @@ description: "使用Arthas排查内存泄漏可以遵循以下步骤：1. **检�
 **解释**：  
 通过以上步骤，我们首先利用Arthas的实时监控能力快速识别内存使用的异常情况，接着通过堆转储和专业分析工具深入挖掘，定位到具体的泄漏对象。这种方式结合了动态监测与静态分析，是排查内存泄漏的有效手段。如果在执行过程中遇到问题，比如启动Arthas时出现内存溢出错误，可能需要调整目标应用程序的内存配置，确保Arthas有足够的资源进行诊断操作。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*专家经验：Arthas 排查内存泄露的方法 
- 
- *专家经验：arthas启动时内存溢出 
- 
- *专家经验：Arthas 快速启动 
+\*专家经验：Arthas 排查内存泄露的方法
 
+\*专家经验：arthas启动时内存溢出
 
- <font color="#949494">---------------</font> 
- 
+\*专家经验：Arthas 快速启动
 
+<font color="#949494">---------------</font>
 
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16058)给我们反馈。

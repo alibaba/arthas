@@ -6,26 +6,32 @@ category: "expertConsultation"
 description: "要使用Arthas查看方法的耗时，可以采用Arthas的`trace`命令，该命令能自动高亮显示最耗时的方法调用，非常适合进行性能分析。以下是具体的操作步骤：1. **启动Arthas**     首先，你需要启动Arthas并连接到目标Java进程。在命令行中，执行以下命令（假设Arthas的脚本"
 ---
 
-## 用户问题 ： 
- arthas 怎样查看方法耗时  
+## 用户问题 ：
 
----------------
+arthas 怎样查看方法耗时
+
+---
+
 ## 专家官方解答 ：
 
 要使用Arthas查看方法的耗时，可以采用Arthas的`trace`命令，该命令能自动高亮显示最耗时的方法调用，非常适合进行性能分析。以下是具体的操作步骤：
 
 1. **启动Arthas**  
    首先，你需要启动Arthas并连接到目标Java进程。在命令行中，执行以下命令（假设Arthas的脚本路径为`./as.sh`）：
+
    ```bash
    ./as.sh
    ```
+
    接着，从列出的Java进程中选择你要监控的应用进程。
 
 2. **使用trace命令**  
    接下来，使用`trace`命令指定你想要监控的方法。例如，如果你想要监控`com.example.YourClass.yourMethod`方法的耗时，可以执行：
+
    ```bash
    trace com.example.YourClass yourMethod
    ```
+
    这将会开始跟踪该方法及其内部的所有调用，并显示每个调用的耗时以及被调用的次数。
 
 3. **查看自动高亮显示的结果**  
@@ -38,26 +44,22 @@ description: "要使用Arthas查看方法的耗时，可以采用Arthas的`trace
 
 通过这些步骤，你可以有效地利用Arthas来诊断和优化Java应用中的方法耗时问题。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*[### Arthas3.0 的新特性](https://github.com/alibaba/arthas/tree/master/site/docs/doc/arthas3.md)
- 
- *[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
- 
- *专家经验：利用Arthas排查NoSuchMethodError 
+\*[### Arthas3.0 的新特性](https://github.com/alibaba/arthas/tree/master/site/docs/doc/arthas3.md)
 
+\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
 
- <font color="#949494">---------------</font> 
- 
+\*专家经验：利用Arthas排查NoSuchMethodError
 
+<font color="#949494">---------------</font>
 
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16047)给我们反馈。

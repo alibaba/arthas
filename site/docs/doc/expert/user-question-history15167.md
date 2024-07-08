@@ -6,10 +6,12 @@ category: "expertConsultation"
 description: "Arthas 是一款由阿里巴巴开源的Java诊断工具，它能够帮助开发者高效地解决各种复杂的线上问题，无需修改代码或重启应用程序。以下是对Arthas的详细介绍以及如何开始使用它：### Arthas 功能简介Arthas 主要用于解决以下场景的问题：1. **类加载问题**：定位类是从哪个jar包加"
 ---
 
-## 用户问题 ： 
- 介绍一下arthas  
+## 用户问题 ：
 
----------------
+介绍一下arthas
+
+---
+
 ## 专家官方解答 ：
 
 Arthas 是一款由阿里巴巴开源的Java诊断工具，它能够帮助开发者高效地解决各种复杂的线上问题，无需修改代码或重启应用程序。以下是对Arthas的详细介绍以及如何开始使用它：
@@ -17,6 +19,7 @@ Arthas 是一款由阿里巴巴开源的Java诊断工具，它能够帮助开发
 ### Arthas 功能简介
 
 Arthas 主要用于解决以下场景的问题：
+
 1. **类加载问题**：定位类是从哪个jar包加载以及类相关的异常原因。
 2. **代码执行疑惑**：确认修改的代码是否生效，避免因版本控制操作失误导致的问题。
 3. **线上调试难题**：无需添加日志或重新部署，直接在线上环境进行问题诊断。
@@ -34,11 +37,12 @@ Arthas 主要用于解决以下场景的问题：
    ```bash
    curl -O https://arthas.aliyun.com/arthas-boot.jar
    ```
-   
 2. **启动并选择目标Java进程**:
+
    ```bash
    java -jar arthas-boot.jar
    ```
+
    在列出的进程中选择你要挂载的Java应用序号。
 
 3. **使用Arthas命令**:
@@ -50,9 +54,11 @@ Arthas 主要用于解决以下场景的问题：
 ### 其他安装方式
 
 - **使用`as.sh`一键安装**（适用于Linux/Unix/Mac）:
+
   ```bash
   curl -L https://arthas.aliyun.com/install.sh | sh
   ```
+
   然后通过`./as.sh`启动Arthas。
 
 - **全量安装、手动安装、rpm/deb包安装**等更多安装方式，请参考[官方文档](https://arthas.aliyun.com/doc/install.html)。
@@ -61,26 +67,22 @@ Arthas 主要用于解决以下场景的问题：
 
 通过上述步骤，你可以轻松开始使用Arthas进行Java应用的诊断。Arthas以其强大的功能和易用性，成为Java开发者排查问题时的得力助手。如果你对特定命令的使用或者更高级的功能有疑问，可以查阅[Arthas官方文档](https://arthas.aliyun.com/doc/)获取更多信息。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*专家经验：Arthas 介绍 
- 
- *专家经验：Arthas 快速启动 
- 
- *[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+\*专家经验：Arthas 介绍
 
+\*专家经验：Arthas 快速启动
 
- <font color="#949494">---------------</font> 
- 
+\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
 
+<font color="#949494">---------------</font>
 
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16085)给我们反馈。

@@ -6,10 +6,12 @@ category: "expertConsultation"
 description: "要使用Arthas排查项目中哪个对象泄露了或占用内存过大，可以遵循以下步骤：1. **确认内存状况**：   首先，需要确认应用程序确实存在内存泄漏或异常的内存占用。使用Arthas的`memory`命令查看当前JVM的内存状态，如堆内存、各代内存分区（Eden、Survivor、Old Gen）、"
 ---
 
-## 用户问题 ： 
- 通过arthas怎样排查项目中，哪个对象泄露了，或者占用内存太大  
+## 用户问题 ：
 
----------------
+通过arthas怎样排查项目中，哪个对象泄露了，或者占用内存太大
+
+---
+
 ## 专家官方解答 ：
 
 要使用Arthas排查项目中哪个对象泄露了或占用内存过大，可以遵循以下步骤：
@@ -34,24 +36,20 @@ description: "要使用Arthas排查项目中哪个对象泄露了或占用内存
 
 通过上述步骤，结合Arthas提供的强大诊断能力与内存分析工具的深度洞察，你可以系统地诊断并解决项目中的内存泄漏或异常占用问题。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*专家经验：Arthas 排查内存泄露的方法 
- 
- *[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+\*专家经验：Arthas 排查内存泄露的方法
 
+\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
 
- <font color="#949494">---------------</font> 
- 
+<font color="#949494">---------------</font>
 
-
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16072)给我们反馈。

@@ -6,16 +6,19 @@ category: "expertConsultation"
 description: "要使用Arthas查看实时JVM内存大小，可以遵循以下步骤：1. **连接目标Java进程**     首先，确保Arthas工具已经在你的系统中安装并可用。接着，通过命令行进入Arthas启动界面，使用`attach`命令连接到你想要监控的Java进程。例如，如果目标进程的ID为12345，命令将"
 ---
 
-## 用户问题 ： 
- 查看实时jvm内存大小  
+## 用户问题 ：
 
----------------
+查看实时jvm内存大小
+
+---
+
 ## 专家官方解答 ：
 
 要使用Arthas查看实时JVM内存大小，可以遵循以下步骤：
 
 1. **连接目标Java进程**  
    首先，确保Arthas工具已经在你的系统中安装并可用。接着，通过命令行进入Arthas启动界面，使用`attach`命令连接到你想要监控的Java进程。例如，如果目标进程的ID为12345，命令将会是：
+
    ```bash
    arthas attach 12345
    ```
@@ -33,6 +36,7 @@ description: "要使用Arthas查看实时JVM内存大小，可以遵循以下步
    如果怀疑存在内存泄漏，可以进一步使用`heapdump`命令生成堆内存快照，然后利用诸如Eclipse Memory Analyzer (MAT)等工具进行离线分析，以定位具体泄漏的对象及其引用链路。
 
 ### 解释
+
 - **第一步**是为了建立与目标Java进程的连接，以便于监控其运行时状态。
 - **第二步**直接展示了JVM的内存分配和使用情况，帮助快速识别内存使用概况。
 - **第三步**和**第四步**是基于动态监测的理念，通过对比不同时间点的内存状态，有效识别内存泄漏的模式。
@@ -40,26 +44,22 @@ description: "要使用Arthas查看实时JVM内存大小，可以遵循以下步
 
 以上步骤结合了Arthas的强大功能，能够有效地帮助排查和解决JVM内存相关问题，包括但不限于内存泄漏。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*专家经验：Arthas 排查内存泄露的方法 
- 
- *[# jvm](https://github.com/alibaba/arthas/tree/master/site/docs/doc/jvm.md)
- 
- *专家经验：arthas启动时内存溢出 
+\*专家经验：Arthas 排查内存泄露的方法
 
+\*[# jvm](https://github.com/alibaba/arthas/tree/master/site/docs/doc/jvm.md)
 
- <font color="#949494">---------------</font> 
- 
+\*专家经验：arthas启动时内存溢出
 
+<font color="#949494">---------------</font>
 
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16073)给我们反馈。

@@ -6,10 +6,12 @@ category: "expertConsultation"
 description: "Arthas 的使用主要分为两个阶段：安装与启动。接下来我将依据提供的知识内容，分步骤向您介绍如何使用 Arthas。### 安装 Arthas**方法一：使用 arthas-boot（推荐）**1. **下载 arthas-boot.jar**   执行以下命令下载 arthas-boot.jar"
 ---
 
-## 用户问题 ： 
- arthas 怎么使用？  
+## 用户问题 ：
 
----------------
+arthas 怎么使用？
+
+---
+
 ## 专家官方解答 ：
 
 Arthas 的使用主要分为两个阶段：安装与启动。接下来我将依据提供的知识内容，分步骤向您介绍如何使用 Arthas。
@@ -20,10 +22,13 @@ Arthas 的使用主要分为两个阶段：安装与启动。接下来我将依�
 
 1. **下载 arthas-boot.jar**
    执行以下命令下载 arthas-boot.jar 文件：
+
    ```bash
    curl -O https://arthas.aliyun.com/arthas-boot.jar
    ```
+
    如果下载速度慢，可以尝试阿里云镜像：
+
    ```bash
    java -jar arthas-boot.jar --repo-mirror aliyun --use-http
    ```
@@ -78,6 +83,7 @@ Arthas 的使用主要分为两个阶段：安装与启动。接下来我将依�
 ### Arthas 功能简介
 
 Arthas 提供了多种功能来帮助你诊断 Java 应用，包括但不限于：
+
 - 查看类加载信息
 - 动态追踪方法调用
 - 实时代码热更新
@@ -87,26 +93,22 @@ Arthas 提供了多种功能来帮助你诊断 Java 应用，包括但不限于�
 
 以上步骤涵盖了安装、启动及简要介绍了 Arthas 的强大功能。根据具体需求，您可以进一步探索 Arthas 的详细命令和高级用法。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
- 
- *[# 启动 Arthas](https://github.com/alibaba/arthas/tree/master/site/docs/doc/start-arthas.md)
- 
- *专家经验：Arthas 介绍 
+\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
 
+\*[# 启动 Arthas](https://github.com/alibaba/arthas/tree/master/site/docs/doc/start-arthas.md)
 
- <font color="#949494">---------------</font> 
- 
+\*专家经验：Arthas 介绍
 
+<font color="#949494">---------------</font>
 
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16051)给我们反馈。

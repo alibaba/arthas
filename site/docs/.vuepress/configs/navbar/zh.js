@@ -20,7 +20,7 @@ export const navbarZH = [
     text: "下载",
     link: "/doc/download.md",
   },
-  {  
+  {
     text: "专家答疑",
     link: "/doc/expert/intro.md",
   },

@@ -6,10 +6,12 @@ category: "expertConsultation"
 description: "要使用Arthas查看Java内存中哪些对象在增长，我们可以按照以下步骤操作：1. **监控整体内存状态**：   首先，你需要频繁地运行Arthas的`memory`命令来观察JVM的整体内存使用情况。这将帮助你识别是否有特定区域的内存持续增长，从而初步判断内存泄漏的可能性及大致位置。比如，如果`"
 ---
 
-## 用户问题 ： 
- 如何查看java内存增长哪些对象  
+## 用户问题 ：
 
----------------
+如何查看java内存增长哪些对象
+
+---
+
 ## 专家官方解答 ：
 
 要使用Arthas查看Java内存中哪些对象在增长，我们可以按照以下步骤操作：
@@ -19,9 +21,11 @@ description: "要使用Arthas查看Java内存中哪些对象在增长，我们�
 
 2. **对比分析内存快照**：
    使用`heapdump`命令生成堆的全量内存信息。为了分析内存增长的具体对象，你需要在不同时间点执行此命令，比如每隔一段时间执行一次：
+
    ```bash
    [arthas@58205]$ heapdump arthas-output/dump_$(date +%Y%m%d%H%M%S).hprof
    ```
+
    这样每次生成的堆转储文件名都会包含时间戳，便于区分和对比。
 
 3. **分析堆转储文件**：
@@ -37,26 +41,22 @@ description: "要使用Arthas查看Java内存中哪些对象在增长，我们�
 
 **注意**：上述步骤依赖于Arthas工具及其提供的命令，请确保你的环境中已正确安装并配置了Arthas。此外，频繁的堆转储操作可能会对应用性能产生影响，因此在生产环境中实施时需谨慎选择时机。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*专家经验：Arthas 排查内存泄露的方法 
- 
- *专家经验：Java 堆内存说明 
- 
- *[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+\*专家经验：Arthas 排查内存泄露的方法
 
+\*专家经验：Java 堆内存说明
 
- <font color="#949494">---------------</font> 
- 
+\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
 
+<font color="#949494">---------------</font>
 
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16075)给我们反馈。

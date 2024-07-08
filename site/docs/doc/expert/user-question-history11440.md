@@ -6,10 +6,12 @@ category: "expertConsultation"
 description: "Arthas 是一个Java诊断工具，它提供了丰富的命令来帮助开发者诊断应用程序的运行时问题。以下是如何使用 Arthas 的简要指南，基于你提供的信息：### 启动 Arthas1. **安装 Arthas**：首先，确保你已经安装了 Arthas。如果尚未安装，可以通过下载其发布包或使用 Hom"
 ---
 
-## 用户问题 ： 
- artahs 怎么使用？  
+## 用户问题 ：
 
----------------
+artahs 怎么使用？
+
+---
+
 ## 专家官方解答 ：
 
 Arthas 是一个Java诊断工具，它提供了丰富的命令来帮助开发者诊断应用程序的运行时问题。以下是如何使用 Arthas 的简要指南，基于你提供的信息：
@@ -47,22 +49,18 @@ Arthas 是一个Java诊断工具，它提供了丰富的命令来帮助开发者
 
 综上所述，利用 Arthas 的 `trace` 命令，你可以有效地监控和诊断 Java 应用程序中的方法调用行为，进而定位性能问题或理解程序的执行流程。请根据实际需要灵活运用上述命令和选项。
 
-
-<font color="#949494">---------------</font> 
-
+<font color="#949494">---------------</font>
 
 ## 参考链接 ：
 
-*[# trace](https://github.com/alibaba/arthas/tree/master/site/docs/doc/trace.md)
+\*[# trace](https://github.com/alibaba/arthas/tree/master/site/docs/doc/trace.md)
 
+<font color="#949494">---------------</font>
 
- <font color="#949494">---------------</font> 
- 
-
-
-## <font color="#FF0000">答疑服务说明：</font> 
+## <font color="#FF0000">答疑服务说明：</font>
 
 本内容经由技术专家审阅的用户问答的镜像生成，我们提供了<font color="#FF0000">专家智能答疑服务</font>，在<font color="#FF0000">页面的右下的浮窗”专家答疑“</font>。您也可以访问 : [全局专家答疑](https://answer.opensource.alibaba.com/docs/intro) 。 咨询其他产品的的问题
 
 ### 反馈
+
 如问答有错漏，欢迎点：[差评](https://ai.nacos.io/user/feedbackByEnhancerGradePOJOID?enhancerGradePOJOId=16040)给我们反馈。
