@@ -16,6 +16,11 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
 /**
  * @author: FengYe
  * @date: 2024/7/3 上午12:30
@@ -27,6 +32,21 @@ public class ArthasGrpcServer {
         SelfSignedCertificate ssc = new SelfSignedCertificate();
         SslContext sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey())
                 .build();
+
+
+        // 指定生成自签名证书和密钥的位置
+        File certFile = new File(System.getProperty("user.dir"),"certificate.crt");
+        File keyFile = new File(System.getProperty("user.dir"),"privateKey.key");
+
+        // 将生成的证书和私钥移动到指定位置
+        moveFile(ssc.certificate(), certFile);
+        moveFile(ssc.privateKey(), keyFile);
+
+        System.out.println(certFile.getAbsolutePath());
+        System.out.println(keyFile.getAbsolutePath());
+
+        System.out.println("Certificate: " + ssc.certificate());
+        System.out.println("Private Key: " + ssc.privateKey());
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -51,5 +71,12 @@ public class ArthasGrpcServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    private static void moveFile(File source, File target) throws IOException {
+        if (!target.getParentFile().exists()) {
+            target.getParentFile().mkdirs();
+        }
+        Files.move(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }
