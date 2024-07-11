@@ -50,11 +50,11 @@ thread -b
 
 ## 参考链接 ：
 
-\*[# thread](https://github.com/alibaba/arthas/tree/master/site/docs/doc/thread.md)
+[thread](../thread.md)
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
 <font color="#949494">---------------</font>
 

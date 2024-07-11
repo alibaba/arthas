@@ -54,11 +54,11 @@ java -jar arthas-boot.jar
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 如何借助arthas诊断cpu过高的原因？
+专家经验：Arthas 如何借助arthas诊断cpu过高的原因？
 
-\*专家经验：Arthas 快速启动
+专家经验：Arthas 快速启动
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
 <font color="#949494">---------------</font>
 

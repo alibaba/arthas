@@ -59,11 +59,11 @@ arthas 获取成员变量
 
 ## 参考链接 ：
 
-\*专家经验：arthas 你好
+专家经验：arthas 你好
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
-\*[# 启动 Arthas](https://github.com/alibaba/arthas/tree/master/site/docs/doc/start-arthas.md)
+[启动 Arthas](../start-arthas.md)
 
 <font color="#949494">---------------</font>
 

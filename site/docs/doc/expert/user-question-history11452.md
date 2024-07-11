@@ -49,11 +49,11 @@ arthas 查看方法耗时
 
 ## 参考链接 ：
 
-\*[### Arthas3.0 的新特性](https://github.com/alibaba/arthas/tree/master/site/docs/doc/arthas3.md)
+[Arthas3.0 的新特性](../arthas3.md)
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
-\*专家经验：利用Arthas排查NoSuchMethodError
+专家经验：利用Arthas排查NoSuchMethodError
 
 <font color="#949494">---------------</font>
 

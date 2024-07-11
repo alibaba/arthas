@@ -45,11 +45,11 @@ arthas启动时遇到内存溢出的问题，其原因在于arthas作为一个Ja
 
 ## 参考链接 ：
 
-\*专家经验：arthas启动时内存溢出
+专家经验：arthas启动时内存溢出
 
-\*[# 快速入门](https://github.com/alibaba/arthas/tree/master/site/docs/doc/quick-start.md)
+[快速入门](../quick-start.md)
 
-\*[# 手动安装 Arthas](https://github.com/alibaba/arthas/tree/master/site/docs/doc/manual-install.md)
+[手动安装 Arthas](../manual-install.md)
 
 <font color="#949494">---------------</font>
 

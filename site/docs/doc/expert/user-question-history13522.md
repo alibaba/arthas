@@ -46,11 +46,11 @@ Connect to telnet server error: 127.0.0.1 3658
 
 ## 参考链接 ：
 
-\*[# Arthas Properties](https://github.com/alibaba/arthas/tree/master/site/docs/doc/arthas-properties.md)
+[Arthas Properties](../arthas-properties.md)
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
-\*[# 启动 Arthas](https://github.com/alibaba/arthas/tree/master/site/docs/doc/start-arthas.md)
+[启动 Arthas](../start-arthas.md)
 
 <font color="#949494">---------------</font>
 

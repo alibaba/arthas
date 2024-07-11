@@ -31,11 +31,11 @@ arthas 有没有在线教程？
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
-\*专家经验：arthas 你好
+专家经验：arthas 你好
 
 <font color="#949494">---------------</font>
 

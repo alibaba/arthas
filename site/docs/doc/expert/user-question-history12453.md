@@ -1,6 +1,6 @@
 ---
 id: "question-history-12453"
-title: "artahs 怎么查看内存情况？"
+title: "arthas 怎么查看内存情况？"
 date: "2024-07-04"
 category: "expertConsultation"
 description: "要使用Arthas查看Java应用的内存情况，可以遵循以下步骤：1. **连接到目标Java进程**：   首先确保你已经安装了Arthas。如果还未安装，可以按照以下简要步骤操作：   - 下载arthas-boot.jar：`curl -O https://arthas.aliyun.com/a"
@@ -8,7 +8,7 @@ description: "要使用Arthas查看Java应用的内存情况，可以遵循以�
 
 ## 用户问题 ：
 
-artahs 怎么查看内存情况？
+arthas 怎么查看内存情况？
 
 ---
 
@@ -53,11 +53,11 @@ artahs 怎么查看内存情况？
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+专家经验：Arthas 排查内存泄露的方法
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
-\*专家经验：Arthas 快速启动
+专家经验：Arthas 快速启动
 
 <font color="#949494">---------------</font>
 

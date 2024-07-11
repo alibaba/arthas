@@ -53,11 +53,11 @@ Arthas 可以监听私有方法。根据 我了解的知识 中的内容，Artha
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
 <font color="#949494">---------------</font>
 

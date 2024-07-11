@@ -68,9 +68,9 @@ Arthas是一款由Alibaba开源的强大Java诊断工具，它能够帮助开发
 
 ## 参考链接 ：
 
-\*[# 命令列表](https://github.com/alibaba/arthas/tree/master/site/docs/doc/commands.md)
+[命令列表](../commands.md)
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
 <font color="#949494">---------------</font>
 

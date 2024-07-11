@@ -44,11 +44,11 @@ Unsupported class file major version 61 using arthas 3.6.3
 
 ## 参考链接 ：
 
-\*专家经验：arthas支持jdk17吗？
+专家经验：arthas支持jdk17吗？
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
 <font color="#949494">---------------</font>
 

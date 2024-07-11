@@ -86,11 +86,11 @@ Arthas提供了诸如`trace`、`watch`、`monitor`、`heapdump`等多种命令�
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
-\*专家经验：Arthas 快速启动
+专家经验：Arthas 快速启动
 
 <font color="#949494">---------------</font>
 

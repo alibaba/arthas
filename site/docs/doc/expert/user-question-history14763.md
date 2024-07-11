@@ -40,11 +40,11 @@ description: "利用Arthas排查`NoSuchMethodError`的问题可以按照以下�
 
 ## 参考链接 ：
 
-\*专家经验：利用Arthas排查NoSuchMethodError
+专家经验：利用Arthas排查NoSuchMethodError
 
-\*专家经验：arthas 你好
+专家经验：arthas 你好
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
 <font color="#949494">---------------</font>
 

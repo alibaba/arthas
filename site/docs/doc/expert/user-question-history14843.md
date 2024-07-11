@@ -37,7 +37,7 @@ arthas 支持jdk 20么？
 
 ## 参考链接 ：
 
-\*专家经验：arthas支持jdk17吗？
+专家经验：arthas支持jdk17吗？
 
 <font color="#949494">---------------</font>
 

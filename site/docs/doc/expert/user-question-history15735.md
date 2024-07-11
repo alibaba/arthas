@@ -54,11 +54,11 @@ arthas报错connect to telnet server error: 127.0.0.1 9999
 
 ## 参考链接 ：
 
-\*[# Arthas Tunnel](https://github.com/alibaba/arthas/tree/master/site/docs/doc/tunnel.md)
+[Arthas Tunnel](../tunnel.md)
 
-\*专家经验：arthas 你好
+专家经验：arthas 你好
 
-\*[# Arthas Properties](https://github.com/alibaba/arthas/tree/master/site/docs/doc/arthas-properties.md)
+[Arthas Properties](../arthas-properties.md)
 
 <font color="#949494">---------------</font>
 

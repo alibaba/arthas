@@ -45,9 +45,9 @@ description: "要使用Arthas查看成员变量值，可以遵循以下步骤：
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
-\*专家经验：利用Arthas排查NoSuchMethodError
+专家经验：利用Arthas排查NoSuchMethodError
 
 <font color="#949494">---------------</font>
 

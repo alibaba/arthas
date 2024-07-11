@@ -71,11 +71,11 @@ linux的arthas使用教程
 
 ## 参考链接 ：
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
 <font color="#949494">---------------</font>
 

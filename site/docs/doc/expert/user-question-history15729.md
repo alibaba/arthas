@@ -69,11 +69,11 @@ arthas 怎么查看变量内容
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 快速启动
+专家经验：Arthas 快速启动
 
-\*专家经验：arthas启动时内存溢出
+专家经验：arthas启动时内存溢出
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
 <font color="#949494">---------------</font>
 

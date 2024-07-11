@@ -57,11 +57,11 @@ arthas 如何查询static变量
 
 ## 参考链接 ：
 
-\*专家经验：利用Arthas排查NoSuchMethodError
+专家经验：利用Arthas排查NoSuchMethodError
 
-\*专家经验：Arthas 快速启动
+专家经验：Arthas 快速启动
 
-\*专家经验：arthas 你好
+专家经验：arthas 你好
 
 <font color="#949494">---------------</font>
 

@@ -62,11 +62,11 @@ heapdump /path/to/dumpfile.hprof
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+专家经验：Arthas 排查内存泄露的方法
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
-\*专家经验：arthas启动时内存溢出
+专家经验：arthas启动时内存溢出
 
 <font color="#949494">---------------</font>
 

@@ -50,11 +50,11 @@ arthas 下载和安装
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 快速启动
+专家经验：Arthas 快速启动
 
-\*[# 手动安装 Arthas](https://github.com/alibaba/arthas/tree/master/site/docs/doc/manual-install.md)
+[手动安装 Arthas](../manual-install.md)
 
-\*[# Arthas Tunnel](https://github.com/alibaba/arthas/tree/master/site/docs/doc/tunnel.md)
+[Arthas Tunnel](../tunnel.md)
 
 <font color="#949494">---------------</font>
 

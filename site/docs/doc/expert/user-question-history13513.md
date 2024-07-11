@@ -50,11 +50,11 @@ arthas 监听成员变量值的方法是什么？
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 介绍
+专家经验：Arthas 介绍
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*专家经验：arthas 你好
+专家经验：arthas 你好
 
 <font color="#949494">---------------</font>
 

@@ -1,6 +1,6 @@
 ---
 id: "question-history-15740"
-title: "arthas 分析内存身高的方法"
+title: "arthas 分析内存升高的方法"
 date: "2024-07-04"
 category: "expertConsultation"
 description: "要使用Arthas分析应用程序内存持续升高的方法，可以遵循以下步骤，依据的是已有的知识内容：### 1. 初始诊断与监控内存状态首先，你需要使用Arthas的`memory`命令来查看当前Java虚拟机(JVM)的内存状态。这一步骤能帮助你确认是否存在内存泄漏的问题，以及大致确定泄漏发生的区域。多次"
@@ -8,7 +8,7 @@ description: "要使用Arthas分析应用程序内存持续升高的方法，可
 
 ## 用户问题 ：
 
-arthas 分析内存身高的方法
+arthas 分析内存升高的方法
 
 ---
 
@@ -66,11 +66,11 @@ $ profiler meminfo
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+专家经验：arthas 排查内存泄露的方法
 
-\*专家经验：arthas启动时内存溢出
+专家经验：arthas 启动时内存溢出
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
 <font color="#949494">---------------</font>
 

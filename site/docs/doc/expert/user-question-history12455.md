@@ -45,11 +45,11 @@ arthas 排查内存泄露的具体方法
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+专家经验：Arthas 排查内存泄露的方法
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
 <font color="#949494">---------------</font>
 
