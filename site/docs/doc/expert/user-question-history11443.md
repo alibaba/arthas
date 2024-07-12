@@ -50,7 +50,7 @@ arthas 下载和安装
 
 ## 参考链接 ：
 
-专家经验：Arthas 快速启动
+[专家经验：Arthas 快速启动](./user-question-history11440.md)
 
 [手动安装 Arthas](../manual-install.md)
 

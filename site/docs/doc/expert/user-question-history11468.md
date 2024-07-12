@@ -101,7 +101,7 @@ Arthas 提供了多种功能来帮助你诊断 Java 应用，包括但不限于�
 
 [启动 Arthas](../start-arthas.md)
 
-专家经验：Arthas 介绍
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
 <font color="#949494">---------------</font>
 

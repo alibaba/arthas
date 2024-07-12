@@ -52,7 +52,7 @@ thread -b
 
 [thread](../thread.md)
 
-专家经验：Arthas 官方教程
+[专家经验：Arthas 官方教程](./user-question-history11466.md)
 
 [profiler](../profiler.md)
 

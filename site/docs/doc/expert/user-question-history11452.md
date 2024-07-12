@@ -53,7 +53,7 @@ arthas 查看方法耗时
 
 [profiler](../profiler.md)
 
-专家经验：利用Arthas排查NoSuchMethodError
+[专家经验：利用Arthas排查NoSuchMethodError](./user-question-history14763.md)
 
 <font color="#949494">---------------</font>
 

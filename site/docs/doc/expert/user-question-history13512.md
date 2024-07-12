@@ -45,9 +45,9 @@ description: "要使用Arthas查看Java内存中哪些对象在增长，我们�
 
 ## 参考链接 ：
 
-专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
-专家经验：Java 堆内存说明
+[专家经验：Java 堆内存说明](./user-question-history12716.md)
 
 [profiler](../profiler.md)
 

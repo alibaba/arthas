@@ -43,8 +43,6 @@ Dashboard 命令cpuUsage长期在90%左右
 
 ## 参考链接 ：
 
-专家经验：Dashboard 命令cpuUsage长期在90%左右
-
 [命令列表](../commands.md)
 
 <font color="#949494">---------------</font>

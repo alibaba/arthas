@@ -56,7 +56,7 @@ arthas报错connect to telnet server error: 127.0.0.1 9999
 
 [Arthas Tunnel](../tunnel.md)
 
-专家经验：arthas 你好
+[专家经验：arthas 你好](./user-question-history11442.md)
 
 [Arthas Properties](../arthas-properties.md)
 

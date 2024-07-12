@@ -73,9 +73,9 @@ linux的arthas使用教程
 
 [Arthas Install](../install-detail.md)
 
-专家经验：Arthas 官方教程
+[专家经验：Arthas 官方教程](./user-question-history11466.md)
 
-专家经验：Arthas 介绍
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
 <font color="#949494">---------------</font>
 

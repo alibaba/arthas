@@ -59,7 +59,7 @@ arthas 获取成员变量
 
 ## 参考链接 ：
 
-专家经验：arthas 你好
+[专家经验：arthas 你好](./user-question-history11442.md)
 
 [Arthas Install](../install-detail.md)
 

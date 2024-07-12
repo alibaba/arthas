@@ -53,7 +53,7 @@ Arthas 是一个Java诊断工具，它提供了丰富的命令来帮助开发者
 
 ## 参考链接 ：
 
-[trace](../profiler.md)
+[trace](../trace.md)
 
 <font color="#949494">---------------</font>
 

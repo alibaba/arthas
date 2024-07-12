@@ -70,7 +70,7 @@ Arthas是一款由Alibaba开源的强大Java诊断工具，它能够帮助开发
 
 [命令列表](../commands.md)
 
-专家经验：Arthas 介绍
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
 <font color="#949494">---------------</font>
 

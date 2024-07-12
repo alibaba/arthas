@@ -45,9 +45,7 @@ arthas 排查内存泄露的具体方法
 
 ## 参考链接 ：
 
-专家经验：Arthas 排查内存泄露的方法
-
-专家经验：Arthas 官方教程
+[专家经验：Arthas 官方教程](./user-question-history11466.md)
 
 [profiler](../profiler.md)
 

@@ -40,7 +40,7 @@ description: "要使用Arthas排查项目中哪个对象泄露了或占用内存
 
 ## 参考链接 ：
 
-专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
 [profiler](../profiler.md)
 

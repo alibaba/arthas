@@ -60,11 +60,11 @@ java 如何用arthas 查看 内存 情况？
 
 ## 参考链接 ：
 
-专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
 [profiler](../profiler.md)
 
-专家经验：arthas启动时内存溢出
+[专家经验：arthas启动时内存溢出](./user-question-history14832.md)
 
 <font color="#949494">---------------</font>
 

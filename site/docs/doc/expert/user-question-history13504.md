@@ -49,7 +49,7 @@ description: "要使用Arthas查看实时JVM内存大小占用，可以遵循以
 
 ## 参考链接 ：
 
-专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
 [jvm](../jvm.md)
 
