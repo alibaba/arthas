@@ -8,6 +8,9 @@ service HelloService {
 
 message HelloRequest {
   string name = 1;
+  double age = 2;
+  int64 price = 3;
+  float man = 4;
 }
 
 message HelloReply {

@@ -59,14 +59,14 @@ public class ArthasGrpcServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast(sslCtx.newHandler(ch.alloc()));
+//                            ch.pipeline().addLast(sslCtx.newHandler(ch.alloc()));
                             ch.pipeline().addLast(Http2FrameCodecBuilder.forServer().build());
                             ch.pipeline().addLast(new Http2Handler());
                         }
                     });
 
             // Bind and start to accept incoming connections.
-            b.bind(8443).sync().channel().closeFuture().sync();
+            b.bind(9090).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
