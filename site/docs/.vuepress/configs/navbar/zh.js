@@ -20,4 +20,13 @@ export const navbarZH = [
     text: "下载",
     link: "/doc/download.md",
   },
+  {
+    text: "版本",
+    children: [
+      {
+        text: "v4.x",
+        link: "https://arthas.aliyun.com/",
+      },
+    ]
+  },
 ];
