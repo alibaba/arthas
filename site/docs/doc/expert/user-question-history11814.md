@@ -35,11 +35,9 @@ arthas 怎么排查内存泄漏
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+[专家经验：arthas启动时内存溢出](./user-question-history14832.md)
 
-\*专家经验：arthas启动时内存溢出
-
-\*专家经验：Arthas 快速启动
+[专家经验：Arthas 快速启动](./user-question-history11440.md)
 
 <font color="#949494">---------------</font>
 

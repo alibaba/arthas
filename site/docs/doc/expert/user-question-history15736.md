@@ -1,6 +1,6 @@
 ---
 id: "question-history-15736"
-title: "artahs中jad参数"
+title: "arthas 中jad参数"
 date: "2024-07-04"
 category: "expertConsultation"
 description: "在Arthas中，`jad`命令用于反编译已加载到JVM中的类的字节码为Java源代码，以便于理解类的内部实现。该命令提供了多种参数以适应不同的使用场景。针对您的问题，这里详细解析`jad`命令的各种参数及其用途：1. **基础用法与参数说明**：   - `_class-pattern_`：这是必"
@@ -8,7 +8,7 @@ description: "在Arthas中，`jad`命令用于反编译已加载到JVM中的类�
 
 ## 用户问题 ：
 
-artahs中jad参数
+arthas中jad参数
 
 ---
 
@@ -46,7 +46,7 @@ jad --source-only demo.MyClass myMethod -d /path/to/save/directory
 
 ## 参考链接 ：
 
-\*[# jad](https://github.com/alibaba/arthas/tree/master/site/docs/doc/jad.md)
+[jad](../jad.md)
 
 <font color="#949494">---------------</font>
 

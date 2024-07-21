@@ -56,11 +56,11 @@ arthas 怎么查看内存情况？
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
-\*专家经验：arthas启动时内存溢出
+[专家经验：arthas启动时内存溢出](./user-question-history14832.md)
 
 <font color="#949494">---------------</font>
 

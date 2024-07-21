@@ -50,11 +50,11 @@ description: "要使用Arthas查看系统中哪个地方的内存占用过大，
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
-\*专家经验：Arthas 介绍
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
 <font color="#949494">---------------</font>
 

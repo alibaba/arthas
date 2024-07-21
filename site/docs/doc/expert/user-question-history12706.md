@@ -46,11 +46,9 @@ arthas 火焰图 怎么看？
 
 ## 参考链接 ：
 
-\*[# profiler](https://github.com/alibaba/arthas/tree/master/site/docs/doc/profiler.md)
+[profiler](../profiler.md)
 
-\*专家经验：Arthas 介绍
-
-\*专家经验：arthas 你好
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
 <font color="#949494">---------------</font>
 

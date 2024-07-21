@@ -50,9 +50,9 @@ arthas中tt命令如何查看方法入参的具体命令
 
 ## 参考链接 ：
 
-\*[# 命令列表](https://github.com/alibaba/arthas/tree/master/site/docs/doc/commands.md)
+[命令列表](../commands.md)
 
-\*[# Http API](https://github.com/alibaba/arthas/tree/master/site/docs/doc/http-api.md)
+[Http API](../http-api.md)
 
 <font color="#949494">---------------</font>
 

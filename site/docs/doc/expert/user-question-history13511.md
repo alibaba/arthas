@@ -50,7 +50,7 @@ arthas方法运行后查看成员变量
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 排查内存泄露的方法
+[专家经验：Arthas 排查内存泄露的方法](./user-question-history12455.md)
 
 <font color="#949494">---------------</font>
 

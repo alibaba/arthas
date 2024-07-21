@@ -54,11 +54,11 @@ com.sun.tools.attach.AttachOperationFailedException: java.lang.OutOfMemoryError:
 
 ## 参考链接 ：
 
-\*专家经验：arthas启动时内存溢出
+[专家经验：arthas启动时内存溢出](./user-question-history14832.md)
 
-\*专家经验：Java 堆内存说明
+[专家经验：Java 堆内存说明](./user-question-history12716.md)
 
-\*专家经验：arthas 你好
+[专家经验：arthas 你好](./user-question-history11442.md)
 
 <font color="#949494">---------------</font>
 

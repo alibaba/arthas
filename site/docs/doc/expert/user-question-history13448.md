@@ -62,11 +62,11 @@ description: "要使用Arthas分析慢查询，我们可以按照以下步骤操
 
 ## 参考链接 ：
 
-\*专家经验：利用Arthas排查NoSuchMethodError
+[专家经验：利用Arthas排查NoSuchMethodError](./user-question-history14763.md)
 
-\*专家经验：Arthas 介绍
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
-\*专家经验：Arthas 如何借助arthas诊断cpu过高的原因？
+[专家经验：Arthas 如何借助arthas诊断cpu过高的原因？](./user-question-history11451.md)
 
 <font color="#949494">---------------</font>
 

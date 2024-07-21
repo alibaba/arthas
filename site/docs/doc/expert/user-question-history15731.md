@@ -1,6 +1,6 @@
 ---
 id: "question-history-15731"
-title: "artahs 过滤方法的阐述"
+title: "arthas 过滤方法的阐述"
 date: "2024-07-04"
 category: "expertConsultation"
 description: "Arthas 提供了强大的方法调用监控与分析功能，其中在监控方法执行时，能够实现根据特定条件（如执行耗时或自定义条件表达式）来过滤统计结果，这有助于快速定位和诊断性能瓶颈或异常调用。下面我将依据提供的知识内容，对 Arthas 过滤方法的机制进行阐述：### 1. 按耗时过滤方法执行在 Arthas"
@@ -8,7 +8,7 @@ description: "Arthas 提供了强大的方法调用监控与分析功能，其�
 
 ## 用户问题 ：
 
-artahs 过滤方法的阐述
+arthas 过滤方法的阐述
 
 ---
 
@@ -54,11 +54,11 @@ monitor -c 5 demo.MathGame primeFactors "params[0] <= 2"
 
 ## 参考链接 ：
 
-\*[# watch](https://github.com/alibaba/arthas/tree/master/site/docs/doc/watch.md)
+[watch](../watch.md)
 
-\*[### Arthas3.0 的新特性](https://github.com/alibaba/arthas/tree/master/site/docs/doc/arthas3.md)
+[Arthas3.0 的新特性](../arthas3.md)
 
-\*[# monitor](https://github.com/alibaba/arthas/tree/master/site/docs/doc/monitor.md)
+[monitor](../monitor.md)
 
 <font color="#949494">---------------</font>
 

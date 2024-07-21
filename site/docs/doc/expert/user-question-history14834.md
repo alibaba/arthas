@@ -41,11 +41,11 @@ description: "在您使用Arthas跟踪进程服务后遇到进程所占用的文
 
 ## 参考链接 ：
 
-\*专家经验：使用arthas 跟踪进程服务后，进程所占用的文件描述符陡增，且文件描述符不下降
+专家经验：使用arthas 跟踪进程服务后，进程所占用的文件描述符陡增，且文件描述符不下降
 
-\*[# jvm](https://github.com/alibaba/arthas/tree/master/site/docs/doc/jvm.md)
+[jvm](../jvm.md)
 
-\*专家经验：Arthas 官方教程
+专家经验：Arthas 官方教程
 
 <font color="#949494">---------------</font>
 

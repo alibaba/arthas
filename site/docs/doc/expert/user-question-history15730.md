@@ -52,7 +52,7 @@ arthas 观察方法中的某个变量的值
 
 ## 参考链接 ：
 
-\*[# watch](https://github.com/alibaba/arthas/tree/master/site/docs/doc/watch.md)
+[watch](../watch.md)
 
 <font color="#949494">---------------</font>
 

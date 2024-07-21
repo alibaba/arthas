@@ -69,11 +69,11 @@ arthas如何查看hashmap的值
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 快速启动
+[专家经验：Arthas 快速启动](./user-question-history11440.md)
 
-\*专家经验：arthas 你好
+[专家经验：arthas 你好](./user-question-history11442.md)
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
 <font color="#949494">---------------</font>
 

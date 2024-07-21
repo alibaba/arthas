@@ -71,11 +71,11 @@ Arthas 主要用于解决以下场景的问题：
 
 ## 参考链接 ：
 
-\*专家经验：Arthas 介绍
+[专家经验：Arthas 介绍](./user-question-history11442.md)
 
-\*专家经验：Arthas 快速启动
+[专家经验：Arthas 快速启动](./user-question-history11440.md)
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
 <font color="#949494">---------------</font>
 

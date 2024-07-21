@@ -72,9 +72,9 @@ Arthas 是一款Java诊断工具，它提供了丰富的命令集来帮助开发
 
 ## 参考链接 ：
 
-\*[# Arthas Install](https://github.com/alibaba/arthas/tree/master/site/docs/doc/install-detail.md)
+[Arthas Install](../install-detail.md)
 
-\*[# 命令列表](https://github.com/alibaba/arthas/tree/master/site/docs/doc/commands.md)
+[命令列表](../commands.md)
 
 <font color="#949494">---------------</font>
 
