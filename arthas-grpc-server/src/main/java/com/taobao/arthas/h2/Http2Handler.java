@@ -3,10 +3,11 @@ package com.taobao.arthas.h2;/**
  * @date: 2024/7/7 下午9:58
  */
 
+import com.baidu.bjf.remoting.protobuf.Codec;
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.google.protobuf.CodedInputStream;
 import com.taobao.arthas.service.ArthasSampleService;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
-import helloworld.Test;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -71,9 +72,13 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
             byteBuf.writeBytes(decompressedData);
             if (dataFrame.isEndStream()) {
                 byteBuf.readBytes(5);
-                ArthasSampleRequest arthasSampleRequest = new ArthasSampleRequest(byteBuf.nioBuffer());
-                Test.HelloRequest helloRequest = Test.HelloRequest.parseFrom(CodedInputStream.newInstance(byteBuf.nioBuffer()));
-                System.out.println(helloRequest.getName());
+
+                byte[] byteArray = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(byteArray);
+                Codec<ArthasSampleRequest> codec = ProtobufProxy.create(ArthasSampleRequest.class);
+                ArthasSampleRequest decode = codec.decode(byteArray);
+                System.out.println(decode);
+
             }
 
 
