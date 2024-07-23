@@ -2,7 +2,7 @@ ${package}
 
 import java.io.Serializable;
 <!-- $BeginBlock imports -->
-import ${importPackage};
+import ${importBlock};
 <!-- $EndBlock imports -->
 
 public class ${className} implements ${codecClassName}<${targetProxyClassName}>, Serializable {
