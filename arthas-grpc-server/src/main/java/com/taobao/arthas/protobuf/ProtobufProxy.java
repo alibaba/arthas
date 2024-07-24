@@ -5,13 +5,12 @@ package com.taobao.arthas.protobuf;/**
 
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,8 +27,12 @@ public class ProtobufProxy {
 
     private MiniTemplator miniTemplator;
 
+    private List<ProtobufField> protobufFields;
+
     public ProtobufProxy(Class<?> clazz) {
+        Objects.requireNonNull(clazz);
         this.clazz = clazz;
+        loadProtobufField();
     }
 
     public ProtobufCodec getCodecCacheSide(Class<?> clazz) {
@@ -63,7 +66,7 @@ public class ProtobufProxy {
         return null;
     }
 
-    private void processImportBlock(){
+    private void processImportBlock() {
         Set<String> imports = new HashSet<>();
         imports.add("java.util.*");
         imports.add("java.io.IOException");
@@ -80,5 +83,19 @@ public class ProtobufProxy {
         }
     }
 
+    public void processEncodeBlock() {
+
+    }
+
+
+    private void loadProtobufField() {
+        List<Field> fields = new ArrayList<>();
+        ProtobufClass annotation = clazz.getAnnotation(ProtobufClass.class);
+        if (annotation != null) {
+
+        } else {
+            //todo 添加指定字段映射关系
+        }
+    }
 
 }
