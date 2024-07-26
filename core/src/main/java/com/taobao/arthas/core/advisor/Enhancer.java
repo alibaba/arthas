@@ -53,6 +53,7 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKIntercep
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
+import com.taobao.arthas.core.command.monitor200.LineHelper;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -72,6 +73,13 @@ public class Enhancer implements ClassFileTransformer {
     private final AdviceListener listener;
     private final boolean isTracing;
     private final boolean skipJDKTrace;
+
+    /**
+     * line命令使用的行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+     * 若为line命令，则该字段不为null
+     */
+    private String line;
+
     private final Matcher classNameMatcher;
     private final Matcher classNameExcludeMatcher;
     private final Matcher methodNameMatcher;
@@ -90,16 +98,18 @@ public class Enhancer implements ClassFileTransformer {
     /**
      * @param adviceId          通知编号
      * @param isTracing         可跟踪方法调用
+     * @param line              行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode),如果为空，则说明不是line命令
      * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
      * @param matchingClasses   匹配中的类
      * @param methodNameMatcher 方法名匹配
      * @param affect            影响统计
      */
-    public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+    public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, String line, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher) {
         this.listener = listener;
         this.isTracing = isTracing;
+        this.line = line;
         this.skipJDKTrace = skipJDKTrace;
         this.classNameMatcher = classNameMatcher;
         this.classNameExcludeMatcher = classNameExcludeMatcher;
@@ -135,27 +145,6 @@ public class Enhancer implements ClassFileTransformer {
             // remove JSR https://github.com/alibaba/arthas/issues/1304
             classNode = AsmUtils.removeJSRInstructions(classNode);
 
-            // 生成增强字节码
-            DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
-
-            final List<InterceptorProcessor> interceptorProcessors = new ArrayList<InterceptorProcessor>();
-
-            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
-            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
-            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
-
-            if (this.isTracing) {
-                if (!this.skipJDKTrace) {
-                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor1.class));
-                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor2.class));
-                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor3.class));
-                } else {
-                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor1.class));
-                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
-                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
-                }
-            }
-
             List<MethodNode> matchedMethods = new ArrayList<MethodNode>();
             for (MethodNode methodNode : classNode.methods) {
                 if (!isIgnore(methodNode, methodNameMatcher)) {
@@ -172,80 +161,132 @@ public class Enhancer implements ClassFileTransformer {
                 }
             }
 
-            // 用于检查是否已插入了 spy函数，如果已有则不重复处理
-            GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
+            // 判断是否为line命令
+            boolean isLineCommand = line != null;
+            //line 的增强是只针对到具体的行，跟以往的 watch、trace 有所差异，所以分离开来，写到一起会比较混乱
+            if (isLineCommand) {
+                //手动创建一个 line命令 使用的 InterceptorProcessor
+                InterceptorProcessor lookInterceptorProcessor = LineHelper.createLineInterceptorProcessor(this.line);
 
-            LocationFilter enterFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class), "atEnter",
-                    LocationType.ENTER);
-            LocationFilter existFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class), "atExit",
-                    LocationType.EXIT);
-            LocationFilter exceptionFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
-                    "atExceptionExit", LocationType.EXCEPTION_EXIT);
+                // 用于检查是否已插入了 spy函数，如果已有则不重复处理
+                GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
+                LocationFilter locationLineFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atLineNumber", LocationType.LINE);
+                LocationFilter locationCodeFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atLineCode", LocationType.USER_DEFINE);
+                groupLocationFilter.addFilter(locationLineFilter);
+                groupLocationFilter.addFilter(locationCodeFilter);
 
-            groupLocationFilter.addFilter(enterFilter);
-            groupLocationFilter.addFilter(existFilter);
-            groupLocationFilter.addFilter(exceptionFilter);
+                for (MethodNode methodNode : matchedMethods) {
+                    MethodProcessor methodProcessorWithoutFilter = new MethodProcessor(classNode, methodNode);
+                    // 这里先看看不过滤的时候有多少命中的Location，因为process方法会过滤掉已经被增强的Location，没有Location返回可能是因为Location已经被增强，或者是真的没有匹配的Location
+                    List<Location> matchLocations = lookInterceptorProcessor.getLocationMatcher().match(methodProcessorWithoutFilter);
+                    if (!matchLocations.isEmpty()) {
+                        try {
+                            // 有Location时候则进行增强
+                            MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
+                            lookInterceptorProcessor.process(methodProcessor);
 
-            LocationFilter invokeBeforeFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
-                    "atBeforeInvoke", LocationType.INVOKE);
-            LocationFilter invokeAfterFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
-                    "atInvokeException", LocationType.INVOKE_COMPLETED);
-            LocationFilter invokeExceptionFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
-                    "atInvokeException", LocationType.INVOKE_EXCEPTION_EXIT);
-            groupLocationFilter.addFilter(invokeBeforeFilter);
-            groupLocationFilter.addFilter(invokeAfterFilter);
-            groupLocationFilter.addFilter(invokeExceptionFilter);
-
-            for (MethodNode methodNode : matchedMethods) {
-                if (AsmUtils.isNative(methodNode)) {
-                    logger.info("ignore native method: {}",
-                            AsmUtils.methodDeclaration(Type.getObjectType(classNode.name), methodNode));
-                    continue;
+                            // 添加Listener
+                            AdviceListenerManager.registerLineAdviceListener(inClassLoader, className,
+                                    this.line, methodNode.name, methodNode.desc, listener);
+                            affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
+                        } catch (Throwable e) {
+                            logger.error("line command enhancer error, class: {}, method: {}, line: {}, interceptor: {}", classNode.name, methodNode.name, this.line, lookInterceptorProcessor.getClass().getName(), e);
+                        }
+                    }
                 }
-                // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
-                if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
-                    for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
-                            .getNext()) {
-                        if (insnNode instanceof MethodInsnNode) {
-                            final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
-                            if(this.skipJDKTrace) {
-                                if(methodInsnNode.owner.startsWith("java/")) {
+            } else {
+                //常规的watch、trace的增强逻辑
+                final List<InterceptorProcessor> interceptorProcessors = new ArrayList<InterceptorProcessor>();
+
+                // 生成增强字节码
+                DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
+                // 常用的进入方法、退出方法、抛出异常
+                interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
+                interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
+                interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
+                if (this.isTracing) {
+                    // trace 才会使用到的 invoke
+                    if (!this.skipJDKTrace) {
+                        interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor1.class));
+                        interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor2.class));
+                        interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor3.class));
+                    } else {
+                        interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor1.class));
+                        interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
+                        interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
+                    }
+                }
+
+                // 用于检查是否已插入了 spy函数，如果已有则不重复处理
+                GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
+                LocationFilter enterFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class), "atEnter",
+                        LocationType.ENTER);
+                LocationFilter existFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class), "atExit",
+                        LocationType.EXIT);
+                LocationFilter exceptionFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atExceptionExit", LocationType.EXCEPTION_EXIT);
+
+                groupLocationFilter.addFilter(enterFilter);
+                groupLocationFilter.addFilter(existFilter);
+                groupLocationFilter.addFilter(exceptionFilter);
+
+                LocationFilter invokeBeforeFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atBeforeInvoke", LocationType.INVOKE);
+                LocationFilter invokeAfterFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atInvokeException", LocationType.INVOKE_COMPLETED);
+                LocationFilter invokeExceptionFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atInvokeException", LocationType.INVOKE_EXCEPTION_EXIT);
+
+                groupLocationFilter.addFilter(invokeBeforeFilter);
+                groupLocationFilter.addFilter(invokeAfterFilter);
+                groupLocationFilter.addFilter(invokeExceptionFilter);
+
+                for (MethodNode methodNode : matchedMethods) {
+                    // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
+                    if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
+                        for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                                .getNext()) {
+                            if (insnNode instanceof MethodInsnNode) {
+                                final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                                if(this.skipJDKTrace) {
+                                    if(methodInsnNode.owner.startsWith("java/")) {
+                                        continue;
+                                    }
+                                }
+                                // 原始类型的box类型相关的都跳过
+                                if(AsmOpUtils.isBoxType(Type.getObjectType(methodInsnNode.owner))) {
                                     continue;
                                 }
+                                AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
+                                        methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
                             }
-                            // 原始类型的box类型相关的都跳过
-                            if(AsmOpUtils.isBoxType(Type.getObjectType(methodInsnNode.owner))) {
-                                continue;
-                            }
-                            AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
-                                    methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
                         }
-                    }
-                }else {
-                    MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
-                    for (InterceptorProcessor interceptor : interceptorProcessors) {
-                        try {
-                            List<Location> locations = interceptor.process(methodProcessor);
-                            for (Location location : locations) {
-                                if (location instanceof MethodInsnNodeWare) {
-                                    MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
-                                    MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
-
-                                    AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
-                                            methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
+                    }else {
+                        MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
+                        for (InterceptorProcessor interceptor : interceptorProcessors) {
+                            try {
+                                List<Location> locations = interceptor.process(methodProcessor);
+                                for (Location location : locations) {
+                                    if (location instanceof MethodInsnNodeWare) {
+                                        MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
+                                        MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
+                                        AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
+                                                methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
+                                    }
                                 }
+                            } catch (Throwable e) {
+                                logger.error("enhancer error, class: {}, method: {}, interceptor: {}", classNode.name, methodNode.name, interceptor.getClass().getName(), e);
                             }
-
-                        } catch (Throwable e) {
-                            logger.error("enhancer error, class: {}, method: {}, interceptor: {}", classNode.name, methodNode.name, interceptor.getClass().getName(), e);
                         }
                     }
-                }
 
-                // enter/exist 总是要插入 listener
-                AdviceListenerManager.registerAdviceListener(inClassLoader, className, methodNode.name, methodNode.desc,
-                        listener);
-                affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
+                    // 这里才处理像watch的这种，enter/exist 总是要插入 listener
+                    AdviceListenerManager.registerAdviceListener(inClassLoader, className, methodNode.name, methodNode.desc,
+                            listener);
+                    affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
+                }
             }
 
             // https://github.com/alibaba/arthas/issues/1223 , V1_5 的major version是49
