@@ -117,6 +117,7 @@ public class ShellImpl implements Shell {
         this.setPrompt();
     }
 
+    @Override
     public JobController jobController() {
         return jobController;
     }
@@ -127,8 +128,7 @@ public class ShellImpl implements Shell {
 
     @Override
     public synchronized Job createJob(List<CliToken> args) {
-        Job job = jobController.createJob(commandManager, args, session, new ShellJobHandler(this), term, null);
-        return job;
+        return jobController.createJob(commandManager, args, session, new ShellJobHandler(this), term, null);
     }
 
     @Override
@@ -203,6 +203,7 @@ public class ShellImpl implements Shell {
                 new CommandManagerCompletionHandler(commandManager));
     }
 
+    @Override
     public void close(String reason) {
         if (term != null) {
             try {
