@@ -32,17 +32,16 @@ Arthas 是阿里巴巴开源的在线诊断工具，提供了 `Dashboard 负载�
 
 配置管理
 
-````yaml
-arthas:
-  tunnel:
-    users:
-      - name: admin
-        password: 123456
-        roles: '*' # 全部授权
-      - name: user
-        password: 123456
-        roles:
-          - eden-gateway # 特定服务授权
+````properties
+# tunnel-server/src/main/resources/application.properties
+# 管理员授权
+spring.security.users[0].name=admin
+spring.security.users[0].password=123456
+spring.security.users[0].roles=ADMIN
+# 指定服务授权
+spring.security.users[1].name=user
+spring.security.users[1].password=123456
+spring.security.users[1].roles=eden-gateway,eden-demo-cola
 ````
 
 ## 如何构建
