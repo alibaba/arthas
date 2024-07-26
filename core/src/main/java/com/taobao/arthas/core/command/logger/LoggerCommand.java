@@ -53,6 +53,7 @@ public class LoggerCommand extends AnnotatedCommand {
     private static byte[] Log4jHelperBytes;
     private static byte[] LogbackHelperBytes;
     private static byte[] Log4j2HelperBytes;
+    private static byte[] Slf4jSimpleHelperBytes;
 
     private static Map<Class<?>, byte[]> classToBytesMap = new HashMap<Class<?>, byte[]>();
 
@@ -64,11 +65,13 @@ public class LoggerCommand extends AnnotatedCommand {
         Log4jHelperBytes = loadClassBytes(Log4jHelper.class);
         LogbackHelperBytes = loadClassBytes(LogbackHelper.class);
         Log4j2HelperBytes = loadClassBytes(Log4j2Helper.class);
+        Slf4jSimpleHelperBytes = loadClassBytes(Slf4jSimpleHelper.class);
 
         classToBytesMap.put(LoggerHelper.class, LoggerHelperBytes);
         classToBytesMap.put(Log4jHelper.class, Log4jHelperBytes);
         classToBytesMap.put(LogbackHelper.class, LogbackHelperBytes);
         classToBytesMap.put(Log4j2Helper.class, Log4j2HelperBytes);
+        classToBytesMap.put(Slf4jSimpleHelper.class, Slf4jSimpleHelperBytes);
     }
 
     private String name;
@@ -193,6 +196,17 @@ public class LoggerCommand extends AnnotatedCommand {
             }
         }
 
+        if (types.contains(LoggerType.SLF4J_SIMPLE)) {
+            try {
+                Boolean updateResult = this.updateLevel(inst, Slf4jSimpleHelper.class, classloader);
+                if (Boolean.TRUE.equals(updateResult)) {
+                    result = true;
+                }
+                updatOkTypes.put(LoggerType.SLF4J_SIMPLE, updateResult);
+            } catch (Throwable e) {
+                logger.error("logger command update slf4j-simpile level error", e);
+            }
+        }
         if (result) {
             process.end(0, "Update logger level success.");
         } else {
@@ -350,7 +364,7 @@ public class LoggerCommand extends AnnotatedCommand {
     }
 
     static enum LoggerType {
-        LOG4J, LOGBACK, LOG4J2
+        LOG4J, LOGBACK, LOG4J2, SLF4J_SIMPLE
     }
 
     static class LoggerTypes {
