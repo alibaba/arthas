@@ -365,7 +365,7 @@ public class ProcessImpl implements Process {
 
         if (cacheLocation() != null) {
             process.echoTips("job id  : " + this.jobId + "\n");
-            process.echoTips("cache location  : " + cacheLocation() + "\n");
+            process.echoTips("job output file location : " + cacheLocation() + "\n");
         }
         Runnable task = new CommandProcessTask(process);
         ArthasBootstrap.getInstance().execute(task);
