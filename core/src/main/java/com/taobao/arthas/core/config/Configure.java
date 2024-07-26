@@ -86,11 +86,11 @@ public class Configure {
         return telnetPort;
     }
 
-    public void setTelnetPort(int telnetPort) {
+    public void setTelnetPort(Integer telnetPort) {
         this.telnetPort = telnetPort;
     }
 
-    public void setHttpPort(int httpPort) {
+    public void setHttpPort(Integer httpPort) {
         this.httpPort = httpPort;
     }
 
