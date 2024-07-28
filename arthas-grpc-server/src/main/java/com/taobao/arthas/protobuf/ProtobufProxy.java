@@ -5,8 +5,11 @@ package com.taobao.arthas.protobuf;/**
 
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.taobao.arthas.protobuf.annotation.EnableZigZap;
 import com.taobao.arthas.protobuf.annotation.ProtobufClass;
+import com.taobao.arthas.protobuf.utils.FieldUtil;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
+import com.taobao.arthas.service.req.ArthasSampleRequest;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -31,11 +34,14 @@ public class ProtobufProxy {
 
     public ProtobufProxy(Class<?> clazz) {
         Objects.requireNonNull(clazz);
+        if (clazz.getAnnotation(ProtobufClass.class) == null) {
+            throw new IllegalArgumentException("class is not annotated with @ProtobufClass");
+        }
         this.clazz = clazz;
         loadProtobufField();
     }
 
-    public ProtobufCodec getCodecCacheSide(Class<?> clazz) {
+    public ProtobufCodec getCodecCacheSide() {
         ProtobufCodec codec = codecCache.get(clazz.getName());
         if (codec != null) {
             return codec;
@@ -50,7 +56,7 @@ public class ProtobufProxy {
         }
     }
 
-    public ProtobufCodec create(Class<?> clazz) throws Exception {
+    private ProtobufCodec create(Class<?> clazz) throws Exception {
         String path = Objects.requireNonNull(clazz.getResource(TEMPLATE_FILE)).getPath();
         miniTemplator = new MiniTemplator(path);
 
@@ -84,17 +90,33 @@ public class ProtobufProxy {
     }
 
     public void processEncodeBlock() {
+        for (ProtobufField protobufField : protobufFields) {
+            boolean isList = protobufField.isList();
+            boolean isMap = protobufField.isMap();
 
+            ProtobufFieldTypeEnum protobufFieldType = protobufField.getProtobufFieldType();
+            String encodeFieldGetter = FieldUtil.getAccessMethod("target", protobufField.getJavaField(), clazz, protobufField.isWildcardType());
+            String encodeFileType = isList ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
+            String encodeFieldName = "f_" + protobufField.getOrder();
+
+            miniTemplator.setVariable("encodeFileType",encodeFileType);
+            miniTemplator.setVariable("encodeFieldName",encodeFieldName);
+            miniTemplator.setVariable("encodeFieldGetter",encodeFieldGetter);
+        }
     }
 
 
     private void loadProtobufField() {
-        List<Field> fields = new ArrayList<>();
-        ProtobufClass annotation = clazz.getAnnotation(ProtobufClass.class);
-        if (annotation != null) {
+        protobufFields = FieldUtil.getProtobufFieldList(clazz,
+                clazz.getAnnotation(EnableZigZap.class) != null
+        );
+    }
 
-        } else {
-            //todo 添加指定字段映射关系
+    public static void main(String[] args) {
+        List<ProtobufField> protobufFieldList = FieldUtil.getProtobufFieldList(ArthasSampleRequest.class, false);
+        for (ProtobufField protobufField : protobufFieldList) {
+            String target = FieldUtil.getAccessMethod("target", protobufField.getJavaField(), ArthasSampleRequest.class, protobufField.isWildcardType());
+            System.out.println(target);
         }
     }
 

@@ -9,9 +9,17 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
 	public static final long serialVersionUID = 1L;
     private ${descriptorClsName} descriptor;
 
-    public byte[] encode(${targetProxyClassName} t) throws IOException {
+    public byte[] encode(${targetProxyClassName} target) throws IOException {
         CodecOutputByteArray output = CodecOutputByteArray.get();
-        doWriteTo(t, output.getCodedOutputStream());
+
+        <!-- $BeginBlock encodeFields -->
+        ${encodeFieldType} ${encodeFieldName} = null;
+        if (!CodedConstant.isNull(${encodeFieldGetter})) {
+            ${encodeFieldName} = ${writeValueToField};
+            ${encodeWriteFieldValue}
+        }
+        <!-- $EndBlock encodeFields -->
+
         return output.getData();
     }
 
@@ -20,33 +28,16 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
         return readFrom(input);
     }
 
-    public int size(${targetProxyClassName} t) throws IOException {
+    public int size(${targetProxyClassName} target) throws IOException {
         int size = 0;
         <!-- $BeginBlock encodeFields -->
         ${encodeFieldType} ${encodeFieldName} = null;
         if (!CodedConstant.isNull(${encodeFieldGetter})) {
-            ${encodeFieldName} = ${writeValueToField};  
+            ${encodeFieldName} = ${encodeFieldGetter};
             size += ${calcSize}
         }
-        ${checkNull}
         <!-- $EndBlock encodeFields -->
         return size;
-    }
- 
-    public void doWriteTo(${targetProxyClassName} t, CodedOutputStream output)
-            throws IOException {
-         <!-- $BeginBlock encodeFields -->
-        ${encodeFieldType} ${encodeFieldName} = null;
-        if (!CodedConstant.isNull(${encodeFieldGetter})) {
-            ${encodeFieldName} = ${writeValueToField};
-            ${encodeWriteFieldValue}  
-        }
-        <!-- $EndBlock encodeFields -->
-    }            
- 
-    public void writeTo(${targetProxyClassName} t, CodedOutputStream output)
-            throws IOException {
-        doWriteTo(t, output);
     }
  
     public ${targetProxyClassName} readFrom(CodedInputStream input) throws IOException {

@@ -3,7 +3,7 @@ package com.taobao.arthas.protobuf.annotation;/**
  * @date: 2024/7/25 上午12:21
  */
 
-import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.taobao.arthas.protobuf.ProtobufFieldTypeEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,11 +13,11 @@ import java.lang.annotation.Target;
 /**
  * @author: FengYe
  * @date: 2024/7/25 上午12:21
- * @description: ProtobufField 用于自定义标识字段；当类上添加 ProtobufClass 时，该注解不生效
+ * @description: ProtobufField 用于自定义标识字段
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ProtobufCustomedField {
+public @interface ProtobufCustomizedField {
     int order() default 0;
-    FieldType fieldType() default FieldType.DEFAULT;
+    ProtobufFieldTypeEnum protoBufFieldType() default ProtobufFieldTypeEnum.DEFAULT;
 }

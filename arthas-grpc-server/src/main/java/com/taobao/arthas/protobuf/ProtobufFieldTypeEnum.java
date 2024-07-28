@@ -10,7 +10,7 @@ import com.google.protobuf.WireFormat;
  * @date: 2024/7/17 下午10:02
  * @description: ProtoBufFieldType
  */
-public enum ProtobufFieldType {
+public enum ProtobufFieldTypeEnum {
     /**
      * types defined in .proto file.
      */
@@ -128,7 +128,7 @@ public enum ProtobufFieldType {
      * @return java original type
      */
     public String getJavaType() {
-        if (this == ProtobufFieldType.ENUM) {
+        if (this == ProtobufFieldTypeEnum.ENUM) {
             return Enum.class.getName();
         }
         return javaType;
@@ -141,8 +141,8 @@ public enum ProtobufFieldType {
      * @param type protobuf type
      * @param wireFormat protobuf wire format type
      */
-    ProtobufFieldType(String javaType, String type, String wireFormat,
-              String toPrimitiveType, WireFormat.FieldType internalFieldType, String defaultValue) {
+    ProtobufFieldTypeEnum(String javaType, String type, String wireFormat,
+                          String toPrimitiveType, WireFormat.FieldType internalFieldType, String defaultValue) {
         this.javaType = javaType;
         this.type = type;
         this.wireFormat = wireFormat;
@@ -161,7 +161,7 @@ public enum ProtobufFieldType {
                 || this == FIXED64 || this == FLOAT
                 || this == INT64 || this == SFIXED32
                 || this == SFIXED64 || this == SINT32
-                || this == SINT64 || this == BOOL || this == ProtobufFieldType.UINT32 || this == ProtobufFieldType.UINT64) {
+                || this == SINT64 || this == BOOL || this == ProtobufFieldTypeEnum.UINT32 || this == ProtobufFieldTypeEnum.UINT64) {
             return true;
         }
 
