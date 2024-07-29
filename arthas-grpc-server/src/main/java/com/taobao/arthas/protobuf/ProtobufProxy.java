@@ -4,15 +4,12 @@ package com.taobao.arthas.protobuf;/**
  */
 
 
-import com.baidu.bjf.remoting.protobuf.Codec;
-import com.taobao.arthas.protobuf.annotation.EnableZigZap;
+import com.taobao.arthas.protobuf.annotation.ProtobufEnableZigZap;
 import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.utils.FieldUtil;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,22 +23,17 @@ public class ProtobufProxy {
 
     private static final Map<String, ProtobufCodec> codecCache = new ConcurrentHashMap<String, ProtobufCodec>();
 
-    private Class<?> clazz;
+    private static Class<?> clazz;
 
-    private MiniTemplator miniTemplator;
+    private static MiniTemplator miniTemplator;
 
-    private List<ProtobufField> protobufFields;
+    private static List<ProtobufField> protobufFields;
 
     public ProtobufProxy(Class<?> clazz) {
-        Objects.requireNonNull(clazz);
-        if (clazz.getAnnotation(ProtobufClass.class) == null) {
-            throw new IllegalArgumentException("class is not annotated with @ProtobufClass");
-        }
-        this.clazz = clazz;
-        loadProtobufField();
+
     }
 
-    public ProtobufCodec getCodecCacheSide() {
+    public ProtobufCodec getCodecCacheSide(Class<?> clazz) {
         ProtobufCodec codec = codecCache.get(clazz.getName());
         if (codec != null) {
             return codec;
@@ -56,7 +48,14 @@ public class ProtobufProxy {
         }
     }
 
-    private ProtobufCodec create(Class<?> clazz) throws Exception {
+    public static ProtobufCodec create(Class<?> clazz) throws Exception {
+        Objects.requireNonNull(clazz);
+        if (clazz.getAnnotation(ProtobufClass.class) == null) {
+            throw new IllegalArgumentException("class is not annotated with @ProtobufClass");
+        }
+        ProtobufProxy.clazz = clazz;
+        loadProtobufField();
+
         String path = Objects.requireNonNull(clazz.getResource(TEMPLATE_FILE)).getPath();
         miniTemplator = new MiniTemplator(path);
 
@@ -72,7 +71,7 @@ public class ProtobufProxy {
         return null;
     }
 
-    private void processImportBlock() {
+    private static void processImportBlock() {
         Set<String> imports = new HashSet<>();
         imports.add("java.util.*");
         imports.add("java.io.IOException");
@@ -89,7 +88,7 @@ public class ProtobufProxy {
         }
     }
 
-    public void processEncodeBlock() {
+    private static void processEncodeBlock() {
         for (ProtobufField protobufField : protobufFields) {
             boolean isList = protobufField.isList();
             boolean isMap = protobufField.isMap();
@@ -106,9 +105,9 @@ public class ProtobufProxy {
     }
 
 
-    private void loadProtobufField() {
+    private static void loadProtobufField() {
         protobufFields = FieldUtil.getProtobufFieldList(clazz,
-                clazz.getAnnotation(EnableZigZap.class) != null
+                clazz.getAnnotation(ProtobufEnableZigZap.class) != null
         );
     }
 

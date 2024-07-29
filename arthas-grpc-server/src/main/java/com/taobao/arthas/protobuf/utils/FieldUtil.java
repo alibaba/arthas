@@ -3,23 +3,29 @@ package com.taobao.arthas.protobuf.utils;/**
  * @date: 2024/7/25 上午12:33
  */
 
+
+import com.baidu.bjf.remoting.protobuf.EnumReadable;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.code.CodedConstant;
-import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
-import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
 import com.baidu.bjf.remoting.protobuf.utils.FieldUtils;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.CodedOutputStream;
+import com.google.protobuf.MapEntry;
+import com.google.protobuf.WireFormat;
+import com.taobao.arthas.protobuf.ProtobufCodec;
 import com.taobao.arthas.protobuf.ProtobufField;
 import com.taobao.arthas.protobuf.ProtobufFieldTypeEnum;
+import com.taobao.arthas.protobuf.ProtobufProxy;
+import com.taobao.arthas.protobuf.annotation.ProtobufPacked;
 import com.taobao.arthas.protobuf.annotation.ProtobufCustomizedField;
 import com.taobao.arthas.protobuf.annotation.ProtobufIgnore;
-import com.taobao.arthas.service.req.ArthasSampleRequest;
+
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * @author: FengYe
@@ -89,7 +95,7 @@ public class FieldUtil {
             ProtobufCustomizedField customizedField = field.getAnnotation(ProtobufCustomizedField.class);
             int order = 0;
 
-            if (field.getAnnotation(Ignore.class) != null || Modifier.isTransient(field.getModifiers())) {
+            if (field.getAnnotation(ProtobufIgnore.class) != null || Modifier.isTransient(field.getModifiers())) {
                 continue;
             }
 
@@ -156,6 +162,11 @@ public class FieldUtil {
             }
 
             res.add(protobufField);
+
+            // 如果使用 packed 注解则打包
+            if (protobufField.isList() && (protobufField.getProtobufFieldType().isPrimitive() || protobufField.getProtobufFieldType().isEnum())) {
+                protobufField.setPacked(field.getAnnotation(ProtobufPacked.class) != null);
+            }
         }
 
         if (unOrderFields.isEmpty()) {
@@ -241,13 +252,109 @@ public class FieldUtil {
 
         // use reflection to get value
         String code = "(" + FieldUtils.toObjectType(type) + ") ";
-        code += "FieldUtils.getField(" + target + ", \"" + field.getName() + "\")";
+        code += "FieldUtil.getField(" + target + ", \"" + field.getName() + "\")";
 
         return code;
     }
 
-    public static String getMappedTypeSize(){
-        //todo
+    public static String getMappedTypeSize(ProtobufField field) {
+        ProtobufFieldTypeEnum protobufFieldType = field.getProtobufFieldType();
+        int order = field.getOrder();
+        boolean isList = field.isList();
+        boolean isMap = field.isMap();
+        boolean packed = field.isPacked();
+        String type = protobufFieldType.getType().toUpperCase();
+
+        if (isList) {
+            //todo
+        }
+
         return null;
+    }
+
+    public static int getListSize(int order, Collection<?> list, ProtobufFieldTypeEnum type, boolean packed) {
+        int size = 0;
+        if (list == null || list.isEmpty()) {
+            return size;
+        }
+
+        int dataSize = 0;
+        for (Object object : list) {
+            dataSize += getObjectSize(order, object, type);
+        }
+        size += dataSize;
+        if (type != ProtobufFieldTypeEnum.OBJECT) {
+            if (packed) {
+                size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+                int tag = CodedConstant.makeTag(order, WireFormat.WIRETYPE_LENGTH_DELIMITED);
+                size += com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(tag);
+            } else {
+                size += list.size() * CodedOutputStream.computeTagSize(order);
+            }
+        }
+        return size;
+    }
+
+    public static <K, V> int getMapSize(int order, Map<K, V> map,com.google.protobuf.WireFormat.FieldType keyType,
+                                        K defaultKey, com.google.protobuf.WireFormat.FieldType valueType, V defalutValue) {
+        int size = 0;
+        for (java.util.Map.Entry<K, V> entry : map.entrySet()) {
+            MapEntry<K, V> valuesDefaultEntry = MapEntry
+                    .<K, V> newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
+
+            MapEntry<K, V> values =
+                    valuesDefaultEntry.newBuilderForType().setKey(entry.getKey()).setValue(entry.getValue()).build();
+
+            size += com.google.protobuf.CodedOutputStream.computeMessageSize(order, values);
+        }
+        return size;
+    }
+
+    public static int getObjectSize(int order, Object object, ProtobufFieldTypeEnum type) {
+        int size = 0;
+        if (object == null) {
+            return size;
+        }
+
+        if (type == ProtobufFieldTypeEnum.OBJECT) {
+            try {
+                Class cls = object.getClass();
+                ProtobufCodec target = ProtobufProxy.create(cls);
+                size = target.size(object);
+                size = size + CodedOutputStream.computeRawVarint32Size(size);
+                return size + CodedOutputStream.computeTagSize(order);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+
+        if (type == ProtobufFieldTypeEnum.STRING) {
+            size = CodedOutputStream.computeStringSizeNoTag(String.valueOf(object));
+        } else if (type == ProtobufFieldTypeEnum.BOOL) {
+            size = CodedOutputStream.computeBoolSizeNoTag(Boolean.valueOf(String.valueOf(object)));
+        } else if (type == ProtobufFieldTypeEnum.BYTES) {
+            byte[] bb = (byte[]) object;
+            size = CodedOutputStream.computeBytesSizeNoTag(ByteString.copyFrom(bb));
+        } else if (type == ProtobufFieldTypeEnum.DOUBLE) {
+            size = CodedOutputStream.computeDoubleSizeNoTag(Double.valueOf(object.toString()));
+        } else if (type == ProtobufFieldTypeEnum.FIXED32 || type == ProtobufFieldTypeEnum.SFIXED32) {
+            size = CodedOutputStream.computeFixed32SizeNoTag(Integer.valueOf(object.toString()));
+        } else if (type == ProtobufFieldTypeEnum.INT32 || type == ProtobufFieldTypeEnum.SINT32 || type == ProtobufFieldTypeEnum.UINT32) {
+            size = CodedOutputStream.computeInt32SizeNoTag(Integer.valueOf(object.toString()));
+        } else if (type == ProtobufFieldTypeEnum.FIXED64 || type == ProtobufFieldTypeEnum.SFIXED64) {
+            size = CodedOutputStream.computeSFixed64SizeNoTag(Long.valueOf(object.toString()));
+        } else if (type == ProtobufFieldTypeEnum.INT64 || type == ProtobufFieldTypeEnum.SINT64 || type == ProtobufFieldTypeEnum.UINT64) {
+            size = CodedOutputStream.computeInt64SizeNoTag(Long.valueOf(object.toString()));
+        } else if (type == ProtobufFieldTypeEnum.FLOAT) {
+            size = CodedOutputStream.computeFloatSizeNoTag(Float.valueOf(object.toString()));
+        } else if (type == ProtobufFieldTypeEnum.ENUM) {
+            if (object instanceof EnumReadable) {
+                size = CodedOutputStream.computeInt32SizeNoTag(((EnumReadable) object).value());
+            } else if (object instanceof Enum) {
+                size = CodedOutputStream.computeInt32SizeNoTag(((Enum) object).ordinal());
+            }
+        }
+
+        return size;
     }
 }

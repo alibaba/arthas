@@ -58,6 +58,8 @@ public class ProtobufField {
      */
     private boolean wildcardType;
 
+    private boolean packed;
+
     /**
      * 处理 List 和 Map 类型字段
      *
@@ -229,6 +231,14 @@ public class ProtobufField {
 
     public void setWildcardType(boolean wildcardType) {
         this.wildcardType = wildcardType;
+    }
+
+    public boolean isPacked() {
+        return packed;
+    }
+
+    public void setPacked(boolean packed) {
+        this.packed = packed;
     }
 
     @Override
