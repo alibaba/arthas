@@ -94,9 +94,9 @@ public class ProtobufProxy {
             boolean isMap = protobufField.isMap();
 
             ProtobufFieldTypeEnum protobufFieldType = protobufField.getProtobufFieldType();
-            String encodeFieldGetter = FieldUtil.getAccessMethod("target", protobufField.getJavaField(), clazz, protobufField.isWildcardType());
+            String encodeFieldGetter = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), clazz, protobufField.isWildcardType());
             String encodeFileType = isList ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
-            String encodeFieldName = "f_" + protobufField.getOrder();
+            String encodeFieldName = FieldUtil.getDynamicFieldName(protobufField.getOrder());
 
             miniTemplator.setVariable("encodeFileType",encodeFileType);
             miniTemplator.setVariable("encodeFieldName",encodeFieldName);
@@ -114,7 +114,7 @@ public class ProtobufProxy {
     public static void main(String[] args) {
         List<ProtobufField> protobufFieldList = FieldUtil.getProtobufFieldList(ArthasSampleRequest.class, false);
         for (ProtobufField protobufField : protobufFieldList) {
-            String target = FieldUtil.getAccessMethod("target", protobufField.getJavaField(), ArthasSampleRequest.class, protobufField.isWildcardType());
+            String target = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), ArthasSampleRequest.class, protobufField.isWildcardType());
             System.out.println(target);
         }
     }

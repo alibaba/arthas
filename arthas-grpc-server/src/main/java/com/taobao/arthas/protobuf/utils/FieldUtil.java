@@ -5,9 +5,9 @@ package com.taobao.arthas.protobuf.utils;/**
 
 
 import com.baidu.bjf.remoting.protobuf.EnumReadable;
-import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
-import com.baidu.bjf.remoting.protobuf.code.CodedConstant;
-import com.baidu.bjf.remoting.protobuf.utils.FieldUtils;
+import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.code.ICodeGenerator;
+import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.MapEntry;
@@ -37,6 +37,22 @@ public class FieldUtil {
     public static final String PACKAGE_SEPARATOR = ".";
 
     public static final Map<Class<?>, ProtobufFieldTypeEnum> TYPE_MAPPER;
+
+    private static final Map<String, String> PRIMITIVE_TYPE_MAPPING;
+
+    static {
+
+        PRIMITIVE_TYPE_MAPPING = new HashMap<String, String>();
+
+        PRIMITIVE_TYPE_MAPPING.put(int.class.getSimpleName(), Integer.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(long.class.getSimpleName(), Long.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(short.class.getSimpleName(), Short.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(boolean.class.getSimpleName(), Boolean.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(double.class.getSimpleName(), Double.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(float.class.getSimpleName(), Float.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(char.class.getSimpleName(), Character.class.getSimpleName());
+        PRIMITIVE_TYPE_MAPPING.put(byte.class.getSimpleName(), Byte.class.getSimpleName());
+    }
 
     static {
         TYPE_MAPPER = new HashMap<Class<?>, ProtobufFieldTypeEnum>();
@@ -226,16 +242,16 @@ public class FieldUtil {
      * @param wildcardType
      * @return
      */
-    public static String getAccessMethod(String target, Field field, Class<?> clazz, boolean wildcardType) {
+    public static String getGetterDynamicString(String target, Field field, Class<?> clazz, boolean wildcardType) {
         if (field.getModifiers() == Modifier.PUBLIC && !wildcardType) {
             return target + PACKAGE_SEPARATOR + field.getName();
         }
 
         String getter;
         if ("boolean".equalsIgnoreCase(field.getType().getCanonicalName())) {
-            getter = "is" + CodedConstant.capitalize(field.getName());
+            getter = "is" + capitalize(field.getName());
         } else {
-            getter = "get" + CodedConstant.capitalize(field.getName());
+            getter = "get" + capitalize(field.getName());
         }
 
         try {
@@ -250,26 +266,138 @@ public class FieldUtil {
             type = "byte[]";
         }
 
-        // use reflection to get value
-        String code = "(" + FieldUtils.toObjectType(type) + ") ";
+        String code = "(" + toObjectType(type) + ") ";
         code += "FieldUtil.getField(" + target + ", \"" + field.getName() + "\")";
 
         return code;
     }
 
-    public static String getMappedTypeSize(ProtobufField field) {
+    public static String getSizeDynamicString(ProtobufField field) {
         ProtobufFieldTypeEnum protobufFieldType = field.getProtobufFieldType();
         int order = field.getOrder();
         boolean isList = field.isList();
         boolean isMap = field.isMap();
         boolean packed = field.isPacked();
-        String type = protobufFieldType.getType().toUpperCase();
+        String typeName = protobufFieldType.getType().toUpperCase();
+        String dynamicFieldName = getDynamicFieldName(order);
+
 
         if (isList) {
-            //todo
+            return "FieldUtil.getListSize(" + order + "," + dynamicFieldName + "," + ProtobufFieldTypeEnum.class.getName() + "." + typeName
+                    + "," + field.isPacked() + ");\n";
+        } else if (isMap) {
+            return "FieldUtil.getMapSize(" + order + "," + dynamicFieldName + "," + getMapFieldGenericParameterString(field) + ");\n";
         }
 
-        return null;
+        if (protobufFieldType == ProtobufFieldTypeEnum.OBJECT) {
+            return "FieldUtil.getObjectSize(" + order + "," + dynamicFieldName + ", " + ProtobufFieldTypeEnum.class.getName() + "."
+                    + typeName + ");\n";
+        }
+
+        String javaType = protobufFieldType.getType();
+        if (protobufFieldType == ProtobufFieldTypeEnum.STRING) {
+            javaType = "String";
+        }
+
+        if (protobufFieldType == ProtobufFieldTypeEnum.BYTES) {
+            javaType = "ByteArray";
+        }
+        javaType = capitalize(javaType);
+        dynamicFieldName = dynamicFieldName + protobufFieldType.getToPrimitiveType();
+        //todo check 感觉上面这个有点问题，测试的时候看下
+        return "com.google.protobuf.CodedOutputStream.compute" + javaType + "Size(" + order + "," + dynamicFieldName + ")"
+                + ");\n";
+    }
+
+    private static String getMapFieldGenericParameterString(ProtobufField field) {
+        String wireFormatClassName = WireFormat.FieldType.class.getCanonicalName();
+        ProtobufFieldTypeEnum fieldType = TYPE_MAPPER.get(field.getGenericKeyType());
+        String keyClass;
+        String defaultKeyValue;
+        if (fieldType == null) {
+            if (Enum.class.isAssignableFrom(field.getGenericKeyType())) {
+                keyClass = wireFormatClassName + ".ENUM";
+                Class<?> declaringClass = field.getGenericKeyType();
+                Field[] fields = declaringClass.getFields();
+                if (fields.length > 0) {
+                    defaultKeyValue = field.getGenericKeyType().getCanonicalName() + "."
+                            + fields[0].getName();
+                } else {
+                    defaultKeyValue = "0";
+                }
+
+            } else {
+                keyClass = wireFormatClassName + ".MESSAGE";
+                boolean hasDefaultConstructor = hasDefaultConstructor(field.getGenericKeyType());
+                if (!hasDefaultConstructor) {
+                    throw new IllegalArgumentException("Class '" + field.getGenericKeyType().getCanonicalName()
+                            + "' must has default constructor method with no parameters.");
+                }
+                defaultKeyValue =
+                        "new " + field.getGenericKeyType().getCanonicalName() + "()";
+            }
+        } else {
+            keyClass = wireFormatClassName + "." + fieldType.toString();
+
+            defaultKeyValue = fieldType.getDefaultValue();
+        }
+
+        fieldType = TYPE_MAPPER.get(field.getGenericValueType());
+        String valueClass;
+        String defaultValueValue;
+        if (fieldType == null) {
+            if (Enum.class.isAssignableFrom(field.getGenericValueType())) {
+                valueClass = wireFormatClassName + ".ENUM";
+                Class<?> declaringClass = field.getGenericValueType();
+                Field[] fields = declaringClass.getFields();
+                if (fields.length > 0) {
+                    defaultValueValue = field.getGenericValueType().getCanonicalName()
+                            + "." + fields[0].getName();
+                } else {
+                    defaultValueValue = "0";
+                }
+
+            } else {
+                valueClass = wireFormatClassName + ".MESSAGE";
+                // check constructor
+                boolean hasDefaultConstructor = hasDefaultConstructor(field.getGenericValueType());
+                if (!hasDefaultConstructor) {
+                    throw new IllegalArgumentException("Class '" + field.getGenericValueType().getCanonicalName()
+                            + "' must has default constructor method with no parameters.");
+                }
+                defaultValueValue =
+                        "new " + field.getGenericValueType().getCanonicalName() + "()";
+            }
+        } else {
+            valueClass = wireFormatClassName + "." + fieldType;
+            defaultValueValue = fieldType.getDefaultValue();
+        }
+        String joinedSentence = keyClass + "," + defaultKeyValue + "," + valueClass + "," + defaultValueValue;
+        return joinedSentence;
+    }
+
+    public static boolean hasDefaultConstructor(Class<?> cls) {
+        if (cls == null) {
+            return false;
+        }
+        try {
+            cls.getConstructor(new Class<?>[0]);
+        } catch (NoSuchMethodException e) {
+            return false;
+        } catch (SecurityException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+        return true;
+    }
+
+    /**
+     * 通过 order 获取动态生成的字段名
+     *
+     * @param order
+     * @return
+     */
+    public static String getDynamicFieldName(int order) {
+        return "f_" + order;
     }
 
     public static int getListSize(int order, Collection<?> list, ProtobufFieldTypeEnum type, boolean packed) {
@@ -286,7 +414,7 @@ public class FieldUtil {
         if (type != ProtobufFieldTypeEnum.OBJECT) {
             if (packed) {
                 size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
-                int tag = CodedConstant.makeTag(order, WireFormat.WIRETYPE_LENGTH_DELIMITED);
+                int tag = makeTag(order, WireFormat.WIRETYPE_LENGTH_DELIMITED);
                 size += com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(tag);
             } else {
                 size += list.size() * CodedOutputStream.computeTagSize(order);
@@ -295,12 +423,12 @@ public class FieldUtil {
         return size;
     }
 
-    public static <K, V> int getMapSize(int order, Map<K, V> map,com.google.protobuf.WireFormat.FieldType keyType,
+    public static <K, V> int getMapSize(int order, Map<K, V> map, com.google.protobuf.WireFormat.FieldType keyType,
                                         K defaultKey, com.google.protobuf.WireFormat.FieldType valueType, V defalutValue) {
         int size = 0;
         for (java.util.Map.Entry<K, V> entry : map.entrySet()) {
             MapEntry<K, V> valuesDefaultEntry = MapEntry
-                    .<K, V> newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
+                    .<K, V>newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
 
             MapEntry<K, V> values =
                     valuesDefaultEntry.newBuilderForType().setKey(entry.getKey()).setValue(entry.getValue()).build();
@@ -348,13 +476,45 @@ public class FieldUtil {
         } else if (type == ProtobufFieldTypeEnum.FLOAT) {
             size = CodedOutputStream.computeFloatSizeNoTag(Float.valueOf(object.toString()));
         } else if (type == ProtobufFieldTypeEnum.ENUM) {
-            if (object instanceof EnumReadable) {
-                size = CodedOutputStream.computeInt32SizeNoTag(((EnumReadable) object).value());
-            } else if (object instanceof Enum) {
-                size = CodedOutputStream.computeInt32SizeNoTag(((Enum) object).ordinal());
-            }
+            size = CodedOutputStream.computeInt32SizeNoTag(((Enum) object).ordinal());
         }
-
         return size;
+    }
+
+    /**
+     * 首字母大写
+     *
+     * @param str
+     * @return
+     */
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toTitleCase(str.charAt(0)) + str.substring(1);
+    }
+
+    /**
+     * 生成 protobuf tag
+     *
+     * @param fieldNumber
+     * @param wireType
+     * @return
+     */
+    public static int makeTag(final int fieldNumber, final int wireType) {
+        return (fieldNumber << 3) | wireType;
+    }
+
+    /**
+     * 基础类型转为包装对象
+     *
+     * @param primitiveType
+     * @return
+     */
+    public static String toObjectType(String primitiveType) {
+        if (PRIMITIVE_TYPE_MAPPING.containsKey(primitiveType)) {
+            return PRIMITIVE_TYPE_MAPPING.get(primitiveType);
+        }
+        return primitiveType;
     }
 }
