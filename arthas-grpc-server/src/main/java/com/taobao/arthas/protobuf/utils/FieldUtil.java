@@ -277,7 +277,6 @@ public class FieldUtil {
         int order = field.getOrder();
         boolean isList = field.isList();
         boolean isMap = field.isMap();
-        boolean packed = field.isPacked();
         String typeName = protobufFieldType.getType().toUpperCase();
         String dynamicFieldName = getDynamicFieldName(order);
 
@@ -516,5 +515,38 @@ public class FieldUtil {
             return PRIMITIVE_TYPE_MAPPING.get(primitiveType);
         }
         return primitiveType;
+    }
+
+
+    public static boolean isNull(Object o) {
+        return o == null;
+    }
+
+    public static boolean isNull(double o) {
+        return false;
+    }
+
+    public static boolean isNull(int o) {
+        return false;
+    }
+
+    public static boolean isNull(byte o) {
+        return false;
+    }
+
+    public static boolean isNull(short o) {
+        return false;
+    }
+
+    public static boolean isNull(long o) {
+        return false;
+    }
+
+    public static boolean isNull(float o) {
+        return false;
+    }
+
+    public static boolean isNull(char o) {
+        return false;
     }
 }

@@ -13,9 +13,9 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
         CodecOutputByteArray output = CodecOutputByteArray.get();
 
         <!-- $BeginBlock encodeFields -->
-        ${encodeFieldType} ${encodeFieldName} = null;
-        if (!CodedConstant.isNull(${encodeFieldGetter})) {
-            ${encodeFieldName} = ${writeValueToField};
+        ${dynamicFieldType} ${dynamicFieldName} = null;
+        if (!FieldUtil.isNull(${dynamicFieldGetter})) {
+            ${dynamicFieldName} = ${dynamicFieldGetter};
             ${encodeWriteFieldValue}
         }
         <!-- $EndBlock encodeFields -->
@@ -31,10 +31,10 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
     public int size(${targetProxyClassName} target) throws IOException {
         int size = 0;
         <!-- $BeginBlock encodeFields -->
-        ${encodeFieldType} ${encodeFieldName} = null;
-        if (!CodedConstant.isNull(${encodeFieldGetter})) {
-            ${encodeFieldName} = ${encodeFieldGetter};
-            size += ${calcSize}
+        ${dynamicFieldType} ${dynamicFieldName} = null;
+        if (!CodedConstant.isNull(${dynamicFieldGetter})) {
+            ${dynamicFieldName} = ${dynamicFieldGetter};
+            size += ${sizeDynamicString}
         }
         <!-- $EndBlock encodeFields -->
         return size;

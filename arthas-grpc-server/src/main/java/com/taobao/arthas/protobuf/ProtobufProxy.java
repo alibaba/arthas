@@ -94,13 +94,19 @@ public class ProtobufProxy {
             boolean isMap = protobufField.isMap();
 
             ProtobufFieldTypeEnum protobufFieldType = protobufField.getProtobufFieldType();
-            String encodeFieldGetter = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), clazz, protobufField.isWildcardType());
-            String encodeFileType = isList ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
-            String encodeFieldName = FieldUtil.getDynamicFieldName(protobufField.getOrder());
+            String dynamicFieldGetter = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), clazz, protobufField.isWildcardType());
+            String dynamicFieldType = isList ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
+            String dynamicFieldName = FieldUtil.getDynamicFieldName(protobufField.getOrder());
 
-            miniTemplator.setVariable("encodeFileType",encodeFileType);
-            miniTemplator.setVariable("encodeFieldName",encodeFieldName);
-            miniTemplator.setVariable("encodeFieldGetter",encodeFieldGetter);
+            miniTemplator.setVariable("dynamicFieldType", dynamicFieldType);
+            miniTemplator.setVariable("dynamicFieldName", dynamicFieldName);
+            miniTemplator.setVariable("dynamicFieldGetter", dynamicFieldGetter);
+            String sizeDynamicString = FieldUtil.getSizeDynamicString(protobufField);
+            miniTemplator.setVariable("sizeDynamicString", sizeDynamicString);
+
+            //todo
+
+            miniTemplator.addBlock("encodeFields");
         }
     }
 
