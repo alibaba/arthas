@@ -4,12 +4,14 @@ package com.taobao.arthas.protobuf;/**
  */
 
 
+import com.baidu.bjf.remoting.protobuf.code.CodedConstant;
 import com.taobao.arthas.protobuf.annotation.ProtobufEnableZigZap;
 import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.utils.FieldUtil;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,7 +50,7 @@ public class ProtobufProxy {
         }
     }
 
-    public static ProtobufCodec create(Class<?> clazz) throws Exception {
+    public static ProtobufCodec create(Class<?> clazz) {
         Objects.requireNonNull(clazz);
         if (clazz.getAnnotation(ProtobufClass.class) == null) {
             throw new IllegalArgumentException("class is not annotated with @ProtobufClass");
@@ -57,7 +59,11 @@ public class ProtobufProxy {
         loadProtobufField();
 
         String path = Objects.requireNonNull(clazz.getResource(TEMPLATE_FILE)).getPath();
-        miniTemplator = new MiniTemplator(path);
+        try {
+            miniTemplator = new MiniTemplator(path);
+        } catch (Exception e) {
+            throw new RuntimeException("miniTemplator init failed. " + path, e);
+        }
 
         miniTemplator.setVariable("package", "package " + clazz.getPackage().getName() + ";");
 
@@ -66,7 +72,8 @@ public class ProtobufProxy {
         miniTemplator.setVariable("className", clazz.getName() + "$$ProxyClass");
         miniTemplator.setVariable("codecClassName", ProtobufCodec.class.getName());
         miniTemplator.setVariable("targetProxyClassName", clazz.getName());
-
+        processEncodeBlock();
+        processDecodeBlock();
 
         return null;
     }
@@ -90,12 +97,8 @@ public class ProtobufProxy {
 
     private static void processEncodeBlock() {
         for (ProtobufField protobufField : protobufFields) {
-            boolean isList = protobufField.isList();
-            boolean isMap = protobufField.isMap();
-
-            ProtobufFieldTypeEnum protobufFieldType = protobufField.getProtobufFieldType();
-            String dynamicFieldGetter = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), clazz, protobufField.isWildcardType());
-            String dynamicFieldType = isList ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
+            String dynamicFieldGetter = FieldUtil.getGetterDynamicString(protobufField, clazz);
+            String dynamicFieldType = protobufField.isList() ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
             String dynamicFieldName = FieldUtil.getDynamicFieldName(protobufField.getOrder());
 
             miniTemplator.setVariable("dynamicFieldType", dynamicFieldType);
@@ -103,11 +106,13 @@ public class ProtobufProxy {
             miniTemplator.setVariable("dynamicFieldGetter", dynamicFieldGetter);
             String sizeDynamicString = FieldUtil.getSizeDynamicString(protobufField);
             miniTemplator.setVariable("sizeDynamicString", sizeDynamicString);
-
-            //todo
-
+            miniTemplator.setVariable("encodeWriteFieldValue", FieldUtil.getWriteByteDynamicString(protobufField));
             miniTemplator.addBlock("encodeFields");
         }
+    }
+
+    private static void processDecodeBlock() {
+
     }
 
 

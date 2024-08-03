@@ -4,8 +4,10 @@ package com.taobao.arthas.protobuf.utils;/**
  */
 
 
+import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.EnumReadable;
 import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.code.CodecOutputByteArray;
 import com.baidu.bjf.remoting.protobuf.code.ICodeGenerator;
 import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
 import com.google.protobuf.ByteString;
@@ -21,6 +23,7 @@ import com.taobao.arthas.protobuf.annotation.ProtobufCustomizedField;
 import com.taobao.arthas.protobuf.annotation.ProtobufIgnore;
 
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -34,11 +37,18 @@ import java.util.*;
  */
 public class FieldUtil {
 
-    public static final String PACKAGE_SEPARATOR = ".";
 
     public static final Map<Class<?>, ProtobufFieldTypeEnum> TYPE_MAPPER;
 
     private static final Map<String, String> PRIMITIVE_TYPE_MAPPING;
+
+    private static final String dynamicTarget = "target";
+
+    public static final String PACKAGE_SEPARATOR = ".";
+
+    private static final String LINE_BREAK = "\n";
+
+    private static final String CODE_OUTPUT_STREAM_OBJ_NAME = "output";
 
     static {
 
@@ -233,18 +243,13 @@ public class FieldUtil {
         return null;
     }
 
-    /**
-     * 获取目标的访问方法字符串，如果目标已经声明 getter 则返回 getter，否则使用 FieldUtil.getField
-     *
-     * @param target
-     * @param field
-     * @param clazz
-     * @param wildcardType
-     * @return
-     */
-    public static String getGetterDynamicString(String target, Field field, Class<?> clazz, boolean wildcardType) {
+
+    public static String getGetterDynamicString(ProtobufField protobufField, Class<?> dynamicTargetClass) {
+        Field field = protobufField.getJavaField();
+        boolean wildcardType = protobufField.isWildcardType();
+
         if (field.getModifiers() == Modifier.PUBLIC && !wildcardType) {
-            return target + PACKAGE_SEPARATOR + field.getName();
+            return dynamicTarget + PACKAGE_SEPARATOR + field.getName();
         }
 
         String getter;
@@ -255,8 +260,8 @@ public class FieldUtil {
         }
 
         try {
-            clazz.getMethod(getter, new Class<?>[0]);
-            return target + PACKAGE_SEPARATOR + getter + "()";
+            dynamicTargetClass.getMethod(getter, new Class<?>[0]);
+            return dynamicTarget + PACKAGE_SEPARATOR + getter + "()";
         } catch (Exception e) {
             //todo log
         }
@@ -267,11 +272,17 @@ public class FieldUtil {
         }
 
         String code = "(" + toObjectType(type) + ") ";
-        code += "FieldUtil.getField(" + target + ", \"" + field.getName() + "\")";
+        code += "FieldUtil.getField(" + dynamicTarget + ", \"" + field.getName() + "\")";
 
         return code;
     }
 
+    /**
+     * 获取计算 size 动态字符串
+     *
+     * @param field
+     * @return
+     */
     public static String getSizeDynamicString(ProtobufField field) {
         ProtobufFieldTypeEnum protobufFieldType = field.getProtobufFieldType();
         int order = field.getOrder();
@@ -283,14 +294,14 @@ public class FieldUtil {
 
         if (isList) {
             return "FieldUtil.getListSize(" + order + "," + dynamicFieldName + "," + ProtobufFieldTypeEnum.class.getName() + "." + typeName
-                    + "," + field.isPacked() + ");\n";
+                    + "," + field.isPacked() + ");" + LINE_BREAK;
         } else if (isMap) {
-            return "FieldUtil.getMapSize(" + order + "," + dynamicFieldName + "," + getMapFieldGenericParameterString(field) + ");\n";
+            return "FieldUtil.getMapSize(" + order + "," + dynamicFieldName + "," + getMapFieldGenericParameterString(field) + ");" + LINE_BREAK;
         }
 
         if (protobufFieldType == ProtobufFieldTypeEnum.OBJECT) {
             return "FieldUtil.getObjectSize(" + order + "," + dynamicFieldName + ", " + ProtobufFieldTypeEnum.class.getName() + "."
-                    + typeName + ");\n";
+                    + typeName + ");" + LINE_BREAK;
         }
 
         String javaType = protobufFieldType.getType();
@@ -305,7 +316,246 @@ public class FieldUtil {
         dynamicFieldName = dynamicFieldName + protobufFieldType.getToPrimitiveType();
         //todo check 感觉上面这个有点问题，测试的时候看下
         return "com.google.protobuf.CodedOutputStream.compute" + javaType + "Size(" + order + "," + dynamicFieldName + ")"
-                + ");\n";
+                + ");" + LINE_BREAK;
+    }
+
+    /**
+     * 获取写入 CodedOutputStream 动态字符串
+     *
+     * @param protobufField
+     * @return
+     */
+    public static String getWriteByteDynamicString(ProtobufField protobufField) {
+        ProtobufFieldTypeEnum protobufFieldType = protobufField.getProtobufFieldType();
+        int order = protobufField.getOrder();
+        String dynamicFieldName = getDynamicFieldName(protobufField.getOrder());
+        StringBuilder sb = new StringBuilder();
+        sb.append("if (").append(dynamicFieldName).append(" != null){").append(LINE_BREAK);
+
+        if (protobufField.isList()) {
+            String typeString = protobufFieldType.getType().toUpperCase();
+            sb.append("Field.writeList(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
+            sb.append(order).append(",").append(ProtobufFieldTypeEnum.class.getName()).append(".").append(typeString);
+            sb.append(",").append(dynamicFieldName).append(",").append(Boolean.valueOf(protobufField.isPacked())).append(")")
+                    .append(";" + LINE_BREAK).append("}").append(LINE_BREAK);
+            return sb.toString();
+        } else if (protobufField.isMap()) {
+            sb.append("Field.writeMap(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
+            sb.append(order).append(",").append(dynamicFieldName);
+
+            String joinedSentence = getMapFieldGenericParameterString(protobufField);
+            sb.append(",").append(joinedSentence);
+
+            sb.append(")").append(";" + LINE_BREAK).append("}").append(LINE_BREAK);
+            return sb.toString();
+        } else {
+            dynamicFieldName = dynamicFieldName + protobufFieldType.getToPrimitiveType();
+        }
+
+        if (protobufFieldType == ProtobufFieldTypeEnum.OBJECT) {
+            String typeString = protobufFieldType.getType().toUpperCase();
+            sb.append("Field.writeObject(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
+            sb.append(order).append(",").append(ProtobufFieldTypeEnum.class.getName()).append(".").append(typeString);
+            sb.append(",").append(dynamicFieldName).append(", false)").append(";" + LINE_BREAK).append("}")
+                    .append(LINE_BREAK);
+            return sb.toString();
+        }
+
+        if (protobufFieldType == ProtobufFieldTypeEnum.STRING) {
+            sb.append(CODE_OUTPUT_STREAM_OBJ_NAME).append(".writeString(").append(order);
+            sb.append(", ").append(dynamicFieldName).append(")").append(";" + LINE_BREAK).append("}")
+                    .append(LINE_BREAK);
+            return sb.toString();
+        }
+
+        if (protobufFieldType == ProtobufFieldTypeEnum.BYTES) {
+            sb.append(CODE_OUTPUT_STREAM_OBJ_NAME).append(".writeByteArray(").append(order);
+            sb.append(", ").append(dynamicFieldName).append(")").append(";" + LINE_BREAK).append("}")
+                    .append(LINE_BREAK);
+            return sb.toString();
+        }
+
+        String t = protobufFieldType.getType();
+        t = capitalize(t);
+
+        sb.append(CODE_OUTPUT_STREAM_OBJ_NAME).append(".write").append(t).append("(").append(order);
+        sb.append(", ").append(dynamicFieldName).append(")").append(";" + LINE_BREAK).append("}")
+                .append(LINE_BREAK);
+        return sb.toString();
+    }
+
+    public static void writeList(CodedOutputStream out, int order, ProtobufFieldTypeEnum type, Collection list)
+            throws IOException {
+        writeList(out, order, type, list, false);
+    }
+
+    /**
+     * java list 写入 CodedOutputStream
+     */
+    public static void writeList(CodedOutputStream out, int order, ProtobufFieldTypeEnum type, Collection list, boolean packed)
+            throws IOException {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+
+        CodedOutputStreamCache output = CodedOutputStreamCache.get();
+        for (Object object : list) {
+            if (object == null) {
+                throw new NullPointerException("List can not include Null value.");
+            }
+            writeObject(output.getCodedOutputStream(), order, type, object, true, !packed);
+        }
+        byte[] byteArray = output.getData();
+
+        if (packed) {
+            out.writeUInt32NoTag(makeTag(order, WireFormat.WIRETYPE_LENGTH_DELIMITED));
+            out.writeUInt32NoTag(byteArray.length);
+        }
+
+        out.write(byteArray, 0, byteArray.length);
+
+    }
+
+    /**
+     * java map 写入 output
+     */
+    public static <K, V> void writeMap(CodedOutputStream output, int order, Map<K, V> map,
+                                       com.google.protobuf.WireFormat.FieldType keyType, K defaultKey,
+                                       com.google.protobuf.WireFormat.FieldType valueType, V defalutValue) throws IOException {
+        MapEntry<K, V> valuesDefaultEntry = MapEntry
+                .<K, V>newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
+        for (java.util.Map.Entry<K, V> entry : map.entrySet()) {
+            MapEntry<K, V> values =
+                    valuesDefaultEntry.newBuilderForType().setKey(entry.getKey()).setValue(entry.getValue()).build();
+            output.writeMessage(order, values);
+        }
+    }
+
+    /**
+     * java object 写入 CodedOutputStream
+     */
+    public static void writeObject(CodedOutputStream out, int order, ProtobufFieldTypeEnum type, Object o, boolean list,
+                                   boolean withTag) throws IOException {
+        if (o == null) {
+            return;
+        }
+
+        if (type == ProtobufFieldTypeEnum.OBJECT) {
+
+            Class cls = o.getClass();
+            ProtobufCodec target = ProtobufProxy.create(cls);
+
+            if (withTag) {
+                out.writeUInt32NoTag(makeTag(order, WireFormat.WIRETYPE_LENGTH_DELIMITED));
+            }
+
+            byte[] byteArray = target.encode(o);
+            out.writeUInt32NoTag(byteArray.length);
+            out.write(byteArray, 0, byteArray.length);
+
+            return;
+        }
+
+        if (type == ProtobufFieldTypeEnum.BOOL) {
+            if (withTag) {
+                out.writeBool(order, (Boolean) o);
+            } else {
+                out.writeBoolNoTag((Boolean) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.BYTES) {
+            byte[] bb = (byte[]) o;
+            if (withTag) {
+                out.writeBytes(order, ByteString.copyFrom(bb));
+            } else {
+                out.writeBytesNoTag(ByteString.copyFrom(bb));
+            }
+        } else if (type == ProtobufFieldTypeEnum.DOUBLE) {
+            if (withTag) {
+                out.writeDouble(order, (Double) o);
+            } else {
+                out.writeDoubleNoTag((Double) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.FIXED32) {
+            if (withTag) {
+                out.writeFixed32(order, (Integer) o);
+            } else {
+                out.writeFixed32NoTag((Integer) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.FIXED64) {
+            if (withTag) {
+                out.writeFixed64(order, (Long) o);
+            } else {
+                out.writeFixed64NoTag((Long) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.FLOAT) {
+            if (withTag) {
+                out.writeFloat(order, (Float) o);
+            } else {
+                out.writeFloatNoTag((Float) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.INT32) {
+            if (withTag) {
+                out.writeInt32(order, (Integer) o);
+            } else {
+                out.writeInt32NoTag((Integer) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.INT64) {
+            if (withTag) {
+                out.writeInt64(order, (Long) o);
+            } else {
+                out.writeInt64NoTag((Long) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.SFIXED32) {
+            if (withTag) {
+                out.writeSFixed32(order, (Integer) o);
+            } else {
+                out.writeSFixed32NoTag((Integer) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.SFIXED64) {
+            if (withTag) {
+                out.writeSFixed64(order, (Long) o);
+            } else {
+                out.writeSFixed64NoTag((Long) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.SINT32) {
+            if (withTag) {
+                out.writeSInt32(order, (Integer) o);
+            } else {
+                out.writeSInt32NoTag((Integer) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.SINT64) {
+            if (withTag) {
+                out.writeSInt64(order, (Long) o);
+            } else {
+                out.writeSInt64NoTag((Long) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.STRING) {
+            if (withTag) {
+                out.writeBytes(order, ByteString.copyFromUtf8(String.valueOf(o)));
+            } else {
+                out.writeBytesNoTag(ByteString.copyFromUtf8(String.valueOf(o)));
+            }
+        } else if (type == ProtobufFieldTypeEnum.UINT32) {
+            if (withTag) {
+                out.writeUInt32(order, (Integer) o);
+            } else {
+                out.writeUInt32NoTag((Integer) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.UINT64) {
+            if (withTag) {
+                out.writeUInt64(order, (Long) o);
+            } else {
+                out.writeUInt64NoTag((Long) o);
+            }
+        } else if (type == ProtobufFieldTypeEnum.ENUM) {
+            int value;
+            value = ((Enum) o).ordinal();
+            if (withTag) {
+                out.writeEnum(order, value);
+            } else {
+                out.writeEnumNoTag(value);
+            }
+        }
     }
 
     private static String getMapFieldGenericParameterString(ProtobufField field) {

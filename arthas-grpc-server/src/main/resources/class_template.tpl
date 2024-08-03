@@ -10,8 +10,13 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
     private ${descriptorClsName} descriptor;
 
     public byte[] encode(${targetProxyClassName} target) throws IOException {
-        CodecOutputByteArray output = CodecOutputByteArray.get();
+        CodedOutputStreamCache outputCache = CodedOutputStreamCache.get();
+        doWriteTo(target, outputCache.getCodedOutputStream());
+        return outputCache.getData();
+    }
 
+    public void doWriteTo(${targetProxyClassName} t, CodedOutputStream output)
+            throws IOException {
         <!-- $BeginBlock encodeFields -->
         ${dynamicFieldType} ${dynamicFieldName} = null;
         if (!FieldUtil.isNull(${dynamicFieldGetter})) {
@@ -19,8 +24,6 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
             ${encodeWriteFieldValue}
         }
         <!-- $EndBlock encodeFields -->
-
-        return output.getData();
     }
 
     public ${targetProxyClassName} decode(byte[] bb) throws IOException {
