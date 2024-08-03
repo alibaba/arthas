@@ -44,7 +44,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
     }
  
     public ${targetProxyClassName} readFrom(CodedInputStream input) throws IOException {
-        ${targetProxyClassName} ret = new ${targetProxyClassName}();
+        ${targetProxyClassName} target = new ${targetProxyClassName}();
         
         ${initListMapFields}
 
@@ -78,7 +78,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
             throw e;
         }
 
-        return ret;       
+        return target;
         
     } 
  

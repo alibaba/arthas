@@ -4,12 +4,6 @@ package com.taobao.arthas.protobuf.utils;/**
  */
 
 
-import com.baidu.bjf.remoting.protobuf.Codec;
-import com.baidu.bjf.remoting.protobuf.EnumReadable;
-import com.baidu.bjf.remoting.protobuf.FieldType;
-import com.baidu.bjf.remoting.protobuf.code.CodecOutputByteArray;
-import com.baidu.bjf.remoting.protobuf.code.ICodeGenerator;
-import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.MapEntry;
@@ -42,11 +36,13 @@ public class FieldUtil {
 
     private static final Map<String, String> PRIMITIVE_TYPE_MAPPING;
 
-    private static final String dynamicTarget = "target";
+    private static final String DYNAMIC_TARGET = "target";
 
     public static final String PACKAGE_SEPARATOR = ".";
 
     private static final String LINE_BREAK = "\n";
+
+    private static final String JAVA_LINE_BREAK = ";" + LINE_BREAK;
 
     private static final String CODE_OUTPUT_STREAM_OBJ_NAME = "output";
 
@@ -206,6 +202,25 @@ public class FieldUtil {
         return res;
     }
 
+    /**
+     * 在 clazz 上寻找字段名为 name 的字段
+     *
+     * @param clazz
+     * @param name
+     * @return
+     */
+    public static Field findField(Class clazz, String name) {
+        return findField(clazz, name, null);
+    }
+
+    /**
+     * 在 clazz 上寻找字段名为 name、字段类型为 type 的字段
+     *
+     * @param clazz
+     * @param name
+     * @param type
+     * @return
+     */
     public static Field findField(Class clazz, String name, Class type) {
         if (clazz == null) {
             throw new IllegalArgumentException("Class must not be null");
@@ -229,6 +244,13 @@ public class FieldUtil {
         return null;
     }
 
+    /**
+     * 获取对象 t 上的字段名为 name 的字段值
+     *
+     * @param t
+     * @param name
+     * @return
+     */
     public static Object getField(Object t, String name) {
         Field field = findField(t.getClass(), name, null);
         if (field == null) {
@@ -243,13 +265,26 @@ public class FieldUtil {
         return null;
     }
 
+    public static void setField(Object t, String name, Object value) {
+        Field field = findField(t.getClass(), name);
+        if (field == null) {
+            return;
+        }
+        field.setAccessible(true);
+        try {
+            field.set(t, value);
+        } catch (Exception e) {
+            //todo log
+        }
+    }
+
 
     public static String getGetterDynamicString(ProtobufField protobufField, Class<?> dynamicTargetClass) {
         Field field = protobufField.getJavaField();
         boolean wildcardType = protobufField.isWildcardType();
 
         if (field.getModifiers() == Modifier.PUBLIC && !wildcardType) {
-            return dynamicTarget + PACKAGE_SEPARATOR + field.getName();
+            return DYNAMIC_TARGET + PACKAGE_SEPARATOR + field.getName();
         }
 
         String getter;
@@ -261,7 +296,7 @@ public class FieldUtil {
 
         try {
             dynamicTargetClass.getMethod(getter, new Class<?>[0]);
-            return dynamicTarget + PACKAGE_SEPARATOR + getter + "()";
+            return DYNAMIC_TARGET + PACKAGE_SEPARATOR + getter + "()";
         } catch (Exception e) {
             //todo log
         }
@@ -272,7 +307,7 @@ public class FieldUtil {
         }
 
         String code = "(" + toObjectType(type) + ") ";
-        code += "FieldUtil.getField(" + dynamicTarget + ", \"" + field.getName() + "\")";
+        code += "FieldUtil.getField(" + DYNAMIC_TARGET + ", \"" + field.getName() + "\")";
 
         return code;
     }
@@ -337,7 +372,7 @@ public class FieldUtil {
             sb.append("Field.writeList(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
             sb.append(order).append(",").append(ProtobufFieldTypeEnum.class.getName()).append(".").append(typeString);
             sb.append(",").append(dynamicFieldName).append(",").append(Boolean.valueOf(protobufField.isPacked())).append(")")
-                    .append(";" + LINE_BREAK).append("}").append(LINE_BREAK);
+                    .append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
             return sb.toString();
         } else if (protobufField.isMap()) {
             sb.append("Field.writeMap(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
@@ -346,7 +381,7 @@ public class FieldUtil {
             String joinedSentence = getMapFieldGenericParameterString(protobufField);
             sb.append(",").append(joinedSentence);
 
-            sb.append(")").append(";" + LINE_BREAK).append("}").append(LINE_BREAK);
+            sb.append(")").append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
             return sb.toString();
         } else {
             dynamicFieldName = dynamicFieldName + protobufFieldType.getToPrimitiveType();
@@ -356,21 +391,21 @@ public class FieldUtil {
             String typeString = protobufFieldType.getType().toUpperCase();
             sb.append("Field.writeObject(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
             sb.append(order).append(",").append(ProtobufFieldTypeEnum.class.getName()).append(".").append(typeString);
-            sb.append(",").append(dynamicFieldName).append(", false)").append(";" + LINE_BREAK).append("}")
+            sb.append(",").append(dynamicFieldName).append(", false)").append(JAVA_LINE_BREAK).append("}")
                     .append(LINE_BREAK);
             return sb.toString();
         }
 
         if (protobufFieldType == ProtobufFieldTypeEnum.STRING) {
             sb.append(CODE_OUTPUT_STREAM_OBJ_NAME).append(".writeString(").append(order);
-            sb.append(", ").append(dynamicFieldName).append(")").append(";" + LINE_BREAK).append("}")
+            sb.append(", ").append(dynamicFieldName).append(")").append(JAVA_LINE_BREAK).append("}")
                     .append(LINE_BREAK);
             return sb.toString();
         }
 
         if (protobufFieldType == ProtobufFieldTypeEnum.BYTES) {
             sb.append(CODE_OUTPUT_STREAM_OBJ_NAME).append(".writeByteArray(").append(order);
-            sb.append(", ").append(dynamicFieldName).append(")").append(";" + LINE_BREAK).append("}")
+            sb.append(", ").append(dynamicFieldName).append(")").append(JAVA_LINE_BREAK).append("}")
                     .append(LINE_BREAK);
             return sb.toString();
         }
@@ -379,7 +414,7 @@ public class FieldUtil {
         t = capitalize(t);
 
         sb.append(CODE_OUTPUT_STREAM_OBJ_NAME).append(".write").append(t).append("(").append(order);
-        sb.append(", ").append(dynamicFieldName).append(")").append(";" + LINE_BREAK).append("}")
+        sb.append(", ").append(dynamicFieldName).append(")").append(JAVA_LINE_BREAK).append("}")
                 .append(LINE_BREAK);
         return sb.toString();
     }
@@ -649,6 +684,155 @@ public class FieldUtil {
         return "f_" + order;
     }
 
+    /**
+     * 获取 set 指定对象指定字段的方法
+     *
+     * @param protobufField
+     * @param dynamicTargetClass
+     * @param express
+     * @return
+     */
+    public static String getSetFieldDynamicString(ProtobufField protobufField, Class<?> dynamicTargetClass, String express) {
+        StringBuilder sb = new StringBuilder();
+        boolean isMap = protobufField.isMap();
+        boolean isList = protobufField.isList();
+        boolean isWildcardType = protobufField.isWildcardType();
+        boolean isPacked = protobufField.isPacked();
+        Field javaField = protobufField.getJavaField();
+
+
+        if (isList || isMap) {
+            sb.append("if ((").append(getGetterDynamicString(protobufField, dynamicTargetClass)).append(") == null) {")
+                    .append(LINE_BREAK);
+        }
+
+        String collectionTypetoCreate = "";
+        String collectionType = "";
+        if (List.class.isAssignableFrom(javaField.getType())) {
+            collectionTypetoCreate = "new ArrayList()";
+            collectionType = "List";
+        } else if (Set.class.isAssignableFrom(javaField.getType())) {
+            collectionTypetoCreate = "new HashSet()";
+            collectionType = "Set";
+        }
+
+        // if field of public modifier we can access directly
+        if (Modifier.isPublic(javaField.getModifiers()) && !isWildcardType) {
+            if (isList) {
+                // should initialize list
+                sb.append(DYNAMIC_TARGET).append(PACKAGE_SEPARATOR).append(javaField.getName()).append("= ")
+                        .append(collectionTypetoCreate).append(JAVA_LINE_BREAK).append("}")
+                        .append(LINE_BREAK);
+                if (express != null) {
+                    if (isPacked) {
+                        sb.append("while (input.getBytesUntilLimit() > 0) {").append(LINE_BREAK);
+                    }
+                    sb.append(DYNAMIC_TARGET).append(PACKAGE_SEPARATOR).append(javaField.getName()).append(".add(")
+                            .append(express).append(")");
+                    if (isPacked) {
+                        sb.append(";}").append(LINE_BREAK);
+                    }
+                }
+                return sb.toString();
+            } else if (isMap) {
+                sb.append(DYNAMIC_TARGET).append(PACKAGE_SEPARATOR).append(javaField.getName())
+                        .append("= new HashMap()").append(JAVA_LINE_BREAK).append("}")
+                        .append(LINE_BREAK);
+                return sb.append(express).toString();
+            }
+            // if date type
+            if (javaField.getType().equals(Date.class)) {
+                express = "new Date(" + express + ")";
+            }
+            return DYNAMIC_TARGET + PACKAGE_SEPARATOR + javaField.getName() + "=" + express + LINE_BREAK;
+        }
+        String setter = "set" + capitalize(javaField.getName());
+        // check method exist
+        try {
+            dynamicTargetClass.getMethod(setter, new Class<?>[]{javaField.getType()});
+            if (isList) {
+                sb.append(collectionType).append(" __list = ").append(collectionTypetoCreate)
+                        .append(JAVA_LINE_BREAK);
+                sb.append(DYNAMIC_TARGET).append(PACKAGE_SEPARATOR).append(setter).append("(__list)")
+                        .append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
+
+                if (express != null) {
+                    if (isPacked) {
+                        sb.append("while (input.getBytesUntilLimit() > 0) {").append(LINE_BREAK);
+                    }
+                    sb.append("(").append(getGetterDynamicString(protobufField, dynamicTargetClass)).append(").add(")
+                            .append(express).append(")");
+                    if (isPacked) {
+                        sb.append(";}").append(LINE_BREAK);
+                    }
+                }
+                return sb.toString();
+            } else if (isMap) {
+                sb.append("Map __map = new HashMap()").append(JAVA_LINE_BREAK);
+                sb.append(DYNAMIC_TARGET).append(PACKAGE_SEPARATOR).append(setter).append("(__map)")
+                        .append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
+                return sb + express;
+            }
+
+            // fix date type
+            if (javaField.getType().equals(Date.class)) {
+                express = "new Date(" + express + ")";
+            }
+
+            return DYNAMIC_TARGET + PACKAGE_SEPARATOR + setter + "(" + express + ")\n";
+        } catch (Exception e) {
+            //todo log
+        }
+
+        if (isList) {
+            sb.append(collectionType).append(" __list = ").append(collectionTypetoCreate)
+                    .append(JAVA_LINE_BREAK);
+            sb.append("FieldUtil.setField(").append(DYNAMIC_TARGET).append(", \"").append(javaField.getName())
+                    .append("\", __list)").append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
+            if (express != null) {
+                if (isPacked) {
+                    sb.append("while (input.getBytesUntilLimit() > 0) {").append(LINE_BREAK);
+                }
+                sb.append("(").append(getGetterDynamicString(protobufField, dynamicTargetClass)).append(").add(")
+                        .append(express).append(")");
+                if (isPacked) {
+                    sb.append(";}").append(LINE_BREAK);
+                }
+            }
+            return sb.toString();
+        } else if (isMap) {
+            sb.append("Map __map = new HashMap()").append(JAVA_LINE_BREAK);
+            sb.append("FieldUtil.setField(").append(DYNAMIC_TARGET).append(", \"").append(javaField.getName())
+                    .append("\", __map)").append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
+            return sb + express;
+        }
+
+        // use reflection to get value
+        String code = "";
+        if (express != null) {
+            // if date type
+            if (javaField.getType().equals(Date.class)) {
+                express = "new Date(" + express + ")";
+            }
+
+            code = "FieldUtil.setField(" + DYNAMIC_TARGET + ", \"" + javaField.getName() + "\", " + express + ")"
+                    + LINE_BREAK;
+        }
+        return code;
+    }
+
+    /**
+     * 获取初始化 list、map 字段的动态字符串
+     *
+     * @param protobufField
+     * @return
+     */
+    public static String getInitListMapFieldDynamicString(ProtobufField protobufField, String express) {
+        return "FieldUtil.setField(" + DYNAMIC_TARGET + ", \"" + protobufField.getJavaField().getName() + "\", " + express + ");"
+                + LINE_BREAK;
+    }
+
+
     public static int getListSize(int order, Collection<?> list, ProtobufFieldTypeEnum type, boolean packed) {
         int size = 0;
         if (list == null || list.isEmpty()) {
@@ -687,6 +871,14 @@ public class FieldUtil {
         return size;
     }
 
+    /**
+     * 获取 object protobuf size
+     *
+     * @param order
+     * @param object
+     * @param type
+     * @return
+     */
     public static int getObjectSize(int order, Object object, ProtobufFieldTypeEnum type) {
         int size = 0;
         if (object == null) {
@@ -766,7 +958,6 @@ public class FieldUtil {
         }
         return primitiveType;
     }
-
 
     public static boolean isNull(Object o) {
         return o == null;

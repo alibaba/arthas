@@ -4,7 +4,11 @@ package com.taobao.arthas.protobuf;/**
  */
 
 
+import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.code.ClassCode;
 import com.baidu.bjf.remoting.protobuf.code.CodedConstant;
+import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
+import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
 import com.taobao.arthas.protobuf.annotation.ProtobufEnableZigZap;
 import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.utils.FieldUtil;
@@ -112,7 +116,40 @@ public class ProtobufProxy {
     }
 
     private static void processDecodeBlock() {
+        // 初始化 list、map、enum
+        StringBuilder initListMapFields = new StringBuilder();
+        for (ProtobufField protobufField : protobufFields) {
+            boolean isList = protobufField.isList();
+            boolean isMap = protobufField.isMap();
+            String e = "";
+            if (isList) {
+                if (FieldInfo.isListType(protobufField.getJavaField())) {
+                    e = "new ArrayList()";
+                } else if (FieldInfo.isSetType(protobufField.getJavaField())) {
+                    e = "new HashSet()";
+                }
+            } else if (isMap) {
+                e = "new HashMap()";
+            }
+            if (isList || isMap) {
+                initListMapFields.append(FieldUtil.getInitListMapFieldDynamicString(protobufField, e));
+            }
 
+            if (protobufField.getProtobufFieldType() == ProtobufFieldTypeEnum.ENUM) {
+                String clsName = protobufField.getJavaField().getType().getCanonicalName();
+                if (!isList) {
+                    String express =
+                            "CodedConstant.getEnumValue(" + clsName + ".class, " + clsName + ".values()[0].name())";
+                    // add set get method
+                    String setToField = getSetToField("ret", field.getField(), cls, express, isList, field.isMap(),
+                            false, field.isWildcardType());
+                    miniTemplator.setVariable("enumInitialize", setToField);
+                    miniTemplator.addBlock("enumFields");
+                }
+            }
+        }
+
+        miniTemplator.setVariable("initListMapFields", initListMapFields.toString());
     }
 
 
@@ -123,11 +160,11 @@ public class ProtobufProxy {
     }
 
     public static void main(String[] args) {
-        List<ProtobufField> protobufFieldList = FieldUtil.getProtobufFieldList(ArthasSampleRequest.class, false);
-        for (ProtobufField protobufField : protobufFieldList) {
-            String target = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), ArthasSampleRequest.class, protobufField.isWildcardType());
-            System.out.println(target);
-        }
+//        List<ProtobufField> protobufFieldList = FieldUtil.getProtobufFieldList(ArthasSampleRequest.class, false);
+//        for (ProtobufField protobufField : protobufFieldList) {
+//            String target = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), ArthasSampleRequest.class, protobufField.isWildcardType());
+//            System.out.println(target);
+//        }
     }
 
 }

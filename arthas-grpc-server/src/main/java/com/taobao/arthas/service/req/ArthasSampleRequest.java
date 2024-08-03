@@ -25,4 +25,20 @@ public class ArthasSampleRequest{
     private String name;
     private double age;
     private long price;
+    private StatusEnum status;
+    private List<String> testList;
+
+
+    enum StatusEnum{
+        START(1,"开始"),
+        STOP(2,"结束");
+
+        StatusEnum(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        private int code;
+        private String desc;
+    }
 }
