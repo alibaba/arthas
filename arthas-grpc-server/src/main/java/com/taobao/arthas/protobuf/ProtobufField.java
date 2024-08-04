@@ -169,6 +169,20 @@ public class ProtobufField {
 
     }
 
+    public boolean isEnumValueType() {
+        if (genericValueType != null) {
+            return Enum.class.isAssignableFrom(genericValueType);
+        }
+        return false;
+    }
+
+    public boolean isEnumKeyType() {
+        if (genericKeyType != null) {
+            return Enum.class.isAssignableFrom(genericKeyType);
+        }
+        return false;
+    }
+
     public int getOrder() {
         return order;
     }

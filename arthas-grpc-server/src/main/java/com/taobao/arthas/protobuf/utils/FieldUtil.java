@@ -4,6 +4,12 @@ package com.taobao.arthas.protobuf.utils;/**
  */
 
 
+import com.baidu.bjf.remoting.protobuf.EnumReadable;
+import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
+import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
+import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
+import com.baidu.bjf.remoting.protobuf.utils.StringUtils;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.MapEntry;
@@ -34,17 +40,19 @@ public class FieldUtil {
 
     public static final Map<Class<?>, ProtobufFieldTypeEnum> TYPE_MAPPER;
 
-    private static final Map<String, String> PRIMITIVE_TYPE_MAPPING;
+    public static final Map<String, String> PRIMITIVE_TYPE_MAPPING;
 
-    private static final String DYNAMIC_TARGET = "target";
+    public static final String DYNAMIC_TARGET = "target";
 
     public static final String PACKAGE_SEPARATOR = ".";
 
-    private static final String LINE_BREAK = "\n";
+    public static final String LINE_BREAK = "\n";
 
-    private static final String JAVA_LINE_BREAK = ";" + LINE_BREAK;
+    public static final String JAVA_LINE_BREAK = ";" + LINE_BREAK;
 
-    private static final String CODE_OUTPUT_STREAM_OBJ_NAME = "output";
+    public static final String CODE_OUTPUT_STREAM_OBJ_NAME = "output";
+
+    public static final String WIREFORMAT_CLSNAME = com.google.protobuf.WireFormat.FieldType.class.getCanonicalName();
 
     static {
 
@@ -593,7 +601,7 @@ public class FieldUtil {
         }
     }
 
-    private static String getMapFieldGenericParameterString(ProtobufField field) {
+    public static String getMapFieldGenericParameterString(ProtobufField field) {
         String wireFormatClassName = WireFormat.FieldType.class.getCanonicalName();
         ProtobufFieldTypeEnum fieldType = TYPE_MAPPER.get(field.getGenericKeyType());
         String keyClass;
@@ -819,6 +827,39 @@ public class FieldUtil {
                     + LINE_BREAK;
         }
         return code;
+    }
+
+    public static int getEnumOrdinal(Enum en) {
+        if (en != null) {
+            return en.ordinal();
+        }
+        return -1;
+    }
+
+    public static <T extends Enum<T>> T getEnumValue(Class<T> enumType, String name) {
+        if (StringUtils.isEmpty(name)) {
+            return null;
+        }
+
+        try {
+            T v = Enum.valueOf(enumType, name);
+            return v;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public static String getEnumName(Enum[] e, int value) {
+        if (e != null) {
+            int toCompareValue;
+            for (Enum en : e) {
+                toCompareValue = en.ordinal();
+                if (value == toCompareValue) {
+                    return en.name();
+                }
+            }
+        }
+        return "";
     }
 
     /**

@@ -64,7 +64,6 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
                     ${objectDecodeExpress}
                     ${decodeFieldSetValue}
                     ${objectDecodeExpressSuffix}
-                    ${deocdeCheckNull}
                     continue;
                 }
                 ${objectPackedDecodeExpress}
