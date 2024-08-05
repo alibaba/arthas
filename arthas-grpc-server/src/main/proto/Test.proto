@@ -17,9 +17,12 @@ message HelloRequest {
   double age = 2;
   int64 price = 3;
   StatusEnum status = 4;
-  repeated string testList = 5;
+  repeated TestClass testList = 5;
 }
 
+message TestClass{
+  string name = 1;
+}
 
 message HelloReply {
   string message = 1;

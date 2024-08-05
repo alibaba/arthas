@@ -183,6 +183,24 @@ public class ProtobufField {
         return false;
     }
 
+    public static boolean isListType(Field field) {
+        return List.class.isAssignableFrom(field.getType());
+    }
+
+    public static boolean isSetType(Field field) {
+        return Set.class.isAssignableFrom(field.getType());
+    }
+
+    public static boolean isPrimitiveType(Class c) {
+        if (c.isPrimitive()) {
+            return true;
+        }
+        if (c.getName().equals(String.class.getName())) {
+            return true;
+        }
+        return false;
+    }
+
     public int getOrder() {
         return order;
     }

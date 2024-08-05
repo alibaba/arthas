@@ -26,7 +26,7 @@ public class ArthasSampleRequest{
     private double age;
     private long price;
     private StatusEnum status;
-    private List<String> testList;
+    private List<TestClass> testList;
 
 
     enum StatusEnum{
@@ -40,5 +40,9 @@ public class ArthasSampleRequest{
 
         private int code;
         private String desc;
+    }
+
+    static class TestClass{
+        private String name;
     }
 }

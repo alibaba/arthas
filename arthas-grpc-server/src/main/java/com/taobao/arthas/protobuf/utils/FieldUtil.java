@@ -10,10 +10,7 @@ import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
 import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
 import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.baidu.bjf.remoting.protobuf.utils.StringUtils;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.CodedOutputStream;
-import com.google.protobuf.MapEntry;
-import com.google.protobuf.WireFormat;
+import com.google.protobuf.*;
 import com.taobao.arthas.protobuf.ProtobufCodec;
 import com.taobao.arthas.protobuf.ProtobufField;
 import com.taobao.arthas.protobuf.ProtobufFieldTypeEnum;
@@ -24,6 +21,7 @@ import com.taobao.arthas.protobuf.annotation.ProtobufIgnore;
 
 
 import java.io.IOException;
+import java.lang.Enum;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -284,6 +282,54 @@ public class FieldUtil {
         } catch (Exception e) {
             //todo log
         }
+    }
+
+    /**
+     * 读取 input put 进 map
+     * @param input
+     * @param map
+     * @param keyType
+     * @param defaultKey
+     * @param valueType
+     * @param defalutValue
+     * @param <K>
+     * @param <V>
+     * @throws IOException
+     */
+    public static <K, V> void putMapValue(CodedInputStream input, Map<K, V> map,
+                                          com.google.protobuf.WireFormat.FieldType keyType, K defaultKey,
+                                          com.google.protobuf.WireFormat.FieldType valueType, V defalutValue) throws IOException {
+        putMapValue(input, map, keyType, defaultKey, valueType, defalutValue, null);
+    }
+
+    public static <K, V> void putMapValue(CodedInputStream input, Map<K, V> map,
+                                          com.google.protobuf.WireFormat.FieldType keyType, K defaultKey,
+                                          com.google.protobuf.WireFormat.FieldType valueType, V defalutValue, EnumHandler<V> handler)
+            throws IOException {
+        putMapValue(input, map, keyType, defaultKey, valueType, defalutValue, null, handler);
+
+    }
+
+    public static <K, V> void putMapValue(CodedInputStream input, Map<K, V> map,
+                                          com.google.protobuf.WireFormat.FieldType keyType, K defaultKey,
+                                          com.google.protobuf.WireFormat.FieldType valueType, V defalutValue, EnumHandler<K> keyHandler, EnumHandler<V> valHandler)
+            throws IOException {
+        MapEntry<K, V> valuesDefaultEntry = MapEntry
+                .<K, V> newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
+
+        MapEntry<K, V> values =
+                input.readMessage(valuesDefaultEntry.getParserForType(), null);
+
+        Object value = values.getValue();
+        Object key = values.getKey();
+        if (keyHandler != null) {
+            key = keyHandler.handle((int) key);
+        }
+
+        if (valHandler != null) {
+            value = valHandler.handle((int) value);
+        }
+        map.put((K) key, (V) value);
     }
 
 
