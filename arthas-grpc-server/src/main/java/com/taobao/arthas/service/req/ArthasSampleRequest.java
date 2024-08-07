@@ -4,8 +4,8 @@ package com.taobao.arthas.service.req;/**
  */
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.protobuf.*;
+import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.annotation.ProtobufCustomizedField;
 import com.taobao.arthas.protobuf.annotation.ProtobufIgnore;
 

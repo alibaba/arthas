@@ -75,6 +75,8 @@ public class ProtobufProxy {
         processEncodeBlock();
         processDecodeBlock();
 
+        String s = miniTemplator.generateOutput();
+
         return null;
     }
 
@@ -83,10 +85,7 @@ public class ProtobufProxy {
         imports.add("java.util.*");
         imports.add("java.io.IOException");
         imports.add("java.lang.reflect.*");
-//        imports.add("com.baidu.bjf.remoting.protobuf.FieldType"); // fix the class ambiguous of FieldType
-//        imports.add("com.baidu.bjf.remoting.protobuf.code.*");
-//        imports.add("com.baidu.bjf.remoting.protobuf.utils.*");
-//        imports.add("com.baidu.bjf.remoting.protobuf.*");
+        imports.add("import com.taobao.arthas.protobuf.*");
         imports.add("com.google.protobuf.*");
         imports.add(clazz.getName());
         for (String pkg : imports) {
@@ -143,8 +142,6 @@ public class ProtobufProxy {
             }
         }
         miniTemplator.setVariable("initListMapFields", initListMapFields.toString());
-
-        //todo 继续看下
 
         //处理字段赋值
         StringBuilder code = new StringBuilder();
@@ -249,7 +246,7 @@ public class ProtobufProxy {
                 objectDecodeExpress = code.toString();
                 code.setLength(0);
 
-                express = "Field.putMapValue(input, " + getMapCommand + ",";
+                express = "FieldUtil.putMapValue(input, " + getMapCommand + ",";
                 express += FieldUtil.getMapFieldGenericParameterString(protobufField);
                 if (protobufField.isEnumKeyType()) {
                     express += ", keyhandler";
@@ -355,12 +352,8 @@ public class ProtobufProxy {
         );
     }
 
-//    public static void main(String[] args) {
-//        List<ProtobufField> protobufFieldList = FieldUtil.getProtobufFieldList(ArthasSampleRequest.class, false);
-//        for (ProtobufField protobufField : protobufFieldList) {
-//            String target = FieldUtil.getGetterDynamicString("target", protobufField.getJavaField(), ArthasSampleRequest.class, protobufField.isWildcardType());
-//            System.out.println(target);
-//        }
-//    }
+    public static void main(String[] args) {
+        ProtobufCodec protobufCodec = ProtobufProxy.create(ArthasSampleRequest.class);
+    }
 
 }

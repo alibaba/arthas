@@ -1,5 +1,6 @@
 package com.taobao.arthas;
 
+import com.taobao.arthas.protobuf.*;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class Main {
     private static final String TEMPLATE_FILE = "/class_template.tpl";
 
     public static void main(String[] args) throws IOException {
+
         String path = Objects.requireNonNull(Main.class.getResource(TEMPLATE_FILE)).getPath();
 
         MiniTemplator miniTemplator = new MiniTemplator(path);

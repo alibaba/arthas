@@ -7,7 +7,6 @@ import ${importBlock};
 
 public class ${className} implements ${codecClassName}<${targetProxyClassName}>, Serializable {
 	public static final long serialVersionUID = 1L;
-    private ${descriptorClsName} descriptor;
 
     public byte[] encode(${targetProxyClassName} target) throws IOException {
         CodedOutputStreamCache outputCache = CodedOutputStreamCache.get();
@@ -79,17 +78,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
 
         return target;
         
-    } 
- 
- 
-     public com.google.protobuf.Descriptors.Descriptor getDescriptor() throws IOException {
-        if (this.descriptor != null) {
-            return this.descriptor;
-        }
-        com.google.protobuf.Descriptors.Descriptor descriptor =
-                CodedConstant.getDescriptor(${targetProxyClassName}.class);
-        return (this.descriptor = descriptor);
-    }   
+    }
 }
 
     
