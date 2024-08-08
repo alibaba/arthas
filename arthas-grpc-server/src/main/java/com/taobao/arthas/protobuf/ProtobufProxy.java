@@ -4,14 +4,20 @@ package com.taobao.arthas.protobuf;/**
  */
 
 
+import com.baidu.bjf.remoting.protobuf.Codec;
+import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
+import com.baidu.bjf.remoting.protobuf.utils.StringUtils;
 import com.google.protobuf.WireFormat;
 import com.taobao.arthas.protobuf.annotation.ProtobufEnableZigZap;
 import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.utils.FieldUtil;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
+import com.taobao.arthas.protobuf.utils.ProtoBufClassCompiler;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,7 +56,7 @@ public class ProtobufProxy {
         }
     }
 
-    public static ProtobufCodec create(Class<?> clazz) {
+    public static <T> ProtobufCodec create(Class<T> clazz) {
         Objects.requireNonNull(clazz);
         if (clazz.getAnnotation(ProtobufClass.class) == null) {
             throw new IllegalArgumentException("class is not annotated with @ProtobufClass");
@@ -69,13 +75,31 @@ public class ProtobufProxy {
 
         processImportBlock();
 
-        miniTemplator.setVariable("className", clazz.getName() + "$$ProxyClass");
+        miniTemplator.setVariable("className", FieldUtil.getClassName(clazz) + "$$ProxyClass");
         miniTemplator.setVariable("codecClassName", ProtobufCodec.class.getName());
         miniTemplator.setVariable("targetProxyClassName", clazz.getName());
         processEncodeBlock();
         processDecodeBlock();
 
-        String s = miniTemplator.generateOutput();
+        String code = miniTemplator.generateOutput();
+
+        ProtoBufClassCompiler protoBufClassCompiler = new ProtoBufClassCompiler(ProtoBufClassCompiler.class.getClassLoader());
+        String fullClassName = FieldUtil.getFullClassName(clazz)+"$$ProxyClass";
+        Class<?> newClass = protoBufClassCompiler.compile(fullClassName, code, clazz.getClassLoader());
+
+        try {
+            ProtobufCodec<T> newInstance = (ProtobufCodec<T>)newClass.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
 
         return null;
     }
@@ -85,7 +109,9 @@ public class ProtobufProxy {
         imports.add("java.util.*");
         imports.add("java.io.IOException");
         imports.add("java.lang.reflect.*");
-        imports.add("import com.taobao.arthas.protobuf.*");
+        imports.add("com.taobao.arthas.protobuf.*");
+        imports.add("com.taobao.arthas.protobuf.utils.*");
+        imports.add("com.taobao.arthas.protobuf.annotation.*");
         imports.add("com.google.protobuf.*");
         imports.add(clazz.getName());
         for (String pkg : imports) {
@@ -344,7 +370,6 @@ public class ProtobufProxy {
         getMapCommand = getMapCommand + FieldUtil.getGetterDynamicString(protobufField, clazz);
         return getMapCommand;
     }
-
 
     private static void loadProtobufField() {
         protobufFields = FieldUtil.getProtobufFieldList(clazz,

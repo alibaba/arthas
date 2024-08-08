@@ -20,6 +20,7 @@ import java.util.Map;
  * @description: ArthasSampleRequest
  */
 @ProtobufClass
+@com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass
 public class ArthasSampleRequest{
 
     private String name;

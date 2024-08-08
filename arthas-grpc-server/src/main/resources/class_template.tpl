@@ -14,7 +14,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
         return outputCache.getData();
     }
 
-    public void doWriteTo(${targetProxyClassName} t, CodedOutputStream output)
+    public void doWriteTo(${targetProxyClassName} target, CodedOutputStream output)
             throws IOException {
         <!-- $BeginBlock encodeFields -->
         ${dynamicFieldType} ${dynamicFieldName} = null;
@@ -34,7 +34,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
         int size = 0;
         <!-- $BeginBlock encodeFields -->
         ${dynamicFieldType} ${dynamicFieldName} = null;
-        if (!CodedConstant.isNull(${dynamicFieldGetter})) {
+        if (!FieldUtil.isNull(${dynamicFieldGetter})) {
             ${dynamicFieldName} = ${dynamicFieldGetter};
             size += ${sizeDynamicString}
         }
@@ -52,7 +52,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
         <!-- $EndBlock enumFields -->
         try {
             boolean done = false;
-            Codec codec = null;
+            ProtobufCodec codec = null;
             while (!done) {
                 int tag = input.readTag();
                 if (tag == 0) {

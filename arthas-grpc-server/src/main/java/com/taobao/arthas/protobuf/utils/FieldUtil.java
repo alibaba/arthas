@@ -286,6 +286,7 @@ public class FieldUtil {
 
     /**
      * 读取 input put 进 map
+     *
      * @param input
      * @param map
      * @param keyType
@@ -315,7 +316,7 @@ public class FieldUtil {
                                           com.google.protobuf.WireFormat.FieldType valueType, V defalutValue, EnumHandler<K> keyHandler, EnumHandler<V> valHandler)
             throws IOException {
         MapEntry<K, V> valuesDefaultEntry = MapEntry
-                .<K, V> newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
+                .<K, V>newDefaultInstance(null, keyType, defaultKey, valueType, defalutValue);
 
         MapEntry<K, V> values =
                 input.readMessage(valuesDefaultEntry.getParserForType(), null);
@@ -404,7 +405,7 @@ public class FieldUtil {
         javaType = capitalize(javaType);
         dynamicFieldName = dynamicFieldName + protobufFieldType.getToPrimitiveType();
         //todo check 感觉上面这个有点问题，测试的时候看下
-        return "com.google.protobuf.CodedOutputStream.compute" + javaType + "Size(" + order + "," + dynamicFieldName + ")"
+        return "com.google.protobuf.CodedOutputStream.compute" + javaType + "Size(" + order + "," + dynamicFieldName
                 + ");" + LINE_BREAK;
     }
 
@@ -423,7 +424,7 @@ public class FieldUtil {
 
         if (protobufField.isList()) {
             String typeString = protobufFieldType.getType().toUpperCase();
-            sb.append("Field.writeList(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
+            sb.append("FieldUtil.writeList(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
             sb.append(order).append(",").append(ProtobufFieldTypeEnum.class.getName()).append(".").append(typeString);
             sb.append(",").append(dynamicFieldName).append(",").append(Boolean.valueOf(protobufField.isPacked())).append(")")
                     .append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
@@ -1044,6 +1045,39 @@ public class FieldUtil {
             return PRIMITIVE_TYPE_MAPPING.get(primitiveType);
         }
         return primitiveType;
+    }
+
+    public static String getFullClassName(Class<?> cls) {
+        if (StringUtils.isEmpty(getPackage(cls))) {
+            return getClassName(cls);
+        }
+
+        return getPackage(cls) + ClassHelper.PACKAGE_SEPARATOR + getClassName(cls);
+    }
+
+    public static String getPackage(Class<?> cls) {
+        Package pkg = cls.getPackage();
+        // maybe null if package is blank or dynamic load class
+        if (pkg == null) {
+            String fullName = cls.getName();
+            int index = fullName.lastIndexOf(PACKAGE_SEPARATOR);
+            if (index != -1) {
+                return fullName.substring(0, index);
+            }
+            return "";
+        }
+
+        return pkg.getName();
+    }
+
+    public static String getClassName(Class<?> cls) {
+        if (cls.isMemberClass()) {
+            String name = cls.getName();
+            name = StringUtils.substringAfterLast(name, PACKAGE_SEPARATOR);
+            return name;
+        }
+
+        return cls.getSimpleName();
     }
 
     public static boolean isNull(Object o) {
