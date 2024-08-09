@@ -8,6 +8,7 @@ import com.google.protobuf.*;
 import com.taobao.arthas.protobuf.annotation.ProtobufClass;
 import com.taobao.arthas.protobuf.annotation.ProtobufCustomizedField;
 import com.taobao.arthas.protobuf.annotation.ProtobufIgnore;
+import lombok.ToString;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -19,9 +20,11 @@ import java.util.Map;
  * @date: 2024/7/14 上午4:28
  * @description: ArthasSampleRequest
  */
-@ProtobufClass
+
 @com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass
-public class ArthasSampleRequest{
+@ProtobufClass
+@ToString
+public class ArthasSampleRequest {
 
     private String name;
     private double age;
@@ -29,10 +32,11 @@ public class ArthasSampleRequest{
     private StatusEnum status;
     private List<TestClass> testList;
 
-
-    enum StatusEnum{
-        START(1,"开始"),
-        STOP(2,"结束");
+    @com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass
+    @ProtobufClass
+    public enum StatusEnum {
+        START(1, "开始"),
+        STOP(2, "结束");
 
         StatusEnum(int code, String desc) {
             this.code = code;
@@ -43,7 +47,9 @@ public class ArthasSampleRequest{
         private String desc;
     }
 
-    static class TestClass{
+    @com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass
+    @ProtobufClass
+    public static class TestClass {
         private String name;
     }
 }

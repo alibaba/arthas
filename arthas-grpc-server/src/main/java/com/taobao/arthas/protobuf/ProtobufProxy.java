@@ -59,7 +59,7 @@ public class ProtobufProxy {
     public static <T> ProtobufCodec create(Class<T> clazz) {
         Objects.requireNonNull(clazz);
         if (clazz.getAnnotation(ProtobufClass.class) == null) {
-            throw new IllegalArgumentException("class is not annotated with @ProtobufClass");
+            throw new IllegalArgumentException(clazz + "class is not annotated with @ProtobufClass");
         }
         ProtobufProxy.clazz = clazz;
         loadProtobufField();
@@ -77,19 +77,20 @@ public class ProtobufProxy {
 
         miniTemplator.setVariable("className", FieldUtil.getClassName(clazz) + "$$ProxyClass");
         miniTemplator.setVariable("codecClassName", ProtobufCodec.class.getName());
-        miniTemplator.setVariable("targetProxyClassName", clazz.getName());
+        miniTemplator.setVariable("targetProxyClassName", clazz.getCanonicalName());
         processEncodeBlock();
         processDecodeBlock();
 
         String code = miniTemplator.generateOutput();
+        System.out.println(code);
 
         ProtoBufClassCompiler protoBufClassCompiler = new ProtoBufClassCompiler(ProtoBufClassCompiler.class.getClassLoader());
-        String fullClassName = FieldUtil.getFullClassName(clazz)+"$$ProxyClass";
+        String fullClassName = FieldUtil.getFullClassName(clazz) + "$$ProxyClass";
         Class<?> newClass = protoBufClassCompiler.compile(fullClassName, code, clazz.getClassLoader());
 
         try {
-            ProtobufCodec<T> newInstance = (ProtobufCodec<T>)newClass.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
-
+            ProtobufCodec<T> newInstance = (ProtobufCodec<T>) newClass.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+            return newInstance;
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -99,9 +100,6 @@ public class ProtobufProxy {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-
-
-        return null;
     }
 
     private static void processImportBlock() {
@@ -113,7 +111,7 @@ public class ProtobufProxy {
         imports.add("com.taobao.arthas.protobuf.utils.*");
         imports.add("com.taobao.arthas.protobuf.annotation.*");
         imports.add("com.google.protobuf.*");
-        imports.add(clazz.getName());
+        imports.add(clazz.getCanonicalName());
         for (String pkg : imports) {
             miniTemplator.setVariable("importBlock", pkg);
             miniTemplator.addBlock("imports");
@@ -161,7 +159,7 @@ public class ProtobufProxy {
                 if (!isList) {
                     express = "FieldUtil.getEnumValue(" + clsName + ".class, " + clsName + ".values()[0].name())";
                     // add set get method
-                    String setToField = FieldUtil.getSetFieldDynamicString(protobufField,clazz,express);
+                    String setToField = FieldUtil.getSetFieldDynamicString(protobufField, clazz, express);
                     miniTemplator.setVariable("enumInitialize", setToField);
                     miniTemplator.addBlock("enumFields");
                 }
@@ -206,7 +204,7 @@ public class ProtobufProxy {
             } else {
                 // here is the trick way to process BigDecimal and BigInteger
                 if (protobufField.getProtobufFieldType() == ProtobufFieldTypeEnum.BIGDECIMAL || protobufField.getProtobufFieldType() == ProtobufFieldTypeEnum.BIGINTEGER) {
-                    express = "new " + protobufField.getProtobufFieldType().getJavaType() +  "(input.read" + t + "())";
+                    express = "new " + protobufField.getProtobufFieldType().getJavaType() + "(input.read" + t + "())";
                 } else {
                     express = "input.read" + t + "()";
                 }
@@ -313,7 +311,7 @@ public class ProtobufProxy {
                 express += ".toByteArray()";
             }
 
-            String decodeFieldSetValue = FieldUtil.getSetFieldDynamicString(protobufField,clazz,express) + FieldUtil.JAVA_LINE_BREAK;
+            String decodeFieldSetValue = FieldUtil.getSetFieldDynamicString(protobufField, clazz, express) + FieldUtil.JAVA_LINE_BREAK;
 
             if (listTypeCheck) {
                 objectDecodeExpressSuffix += "input.checkLastTagWas(0)" + FieldUtil.JAVA_LINE_BREAK;
@@ -332,7 +330,7 @@ public class ProtobufProxy {
                     code.append("int length = input.readRawVarint32()").append(FieldUtil.JAVA_LINE_BREAK);
                     code.append("int limit = input.pushLimit(length)").append(FieldUtil.JAVA_LINE_BREAK);
 
-                    code.append(FieldUtil.getSetFieldDynamicString(protobufField,clazz,express));
+                    code.append(FieldUtil.getSetFieldDynamicString(protobufField, clazz, express));
 
                     code.append("input.popLimit(limit)").append(FieldUtil.JAVA_LINE_BREAK);
 

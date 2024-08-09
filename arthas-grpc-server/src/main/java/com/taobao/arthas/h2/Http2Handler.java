@@ -6,6 +6,7 @@ package com.taobao.arthas.h2;/**
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.google.protobuf.CodedInputStream;
+import com.taobao.arthas.protobuf.ProtobufCodec;
 import com.taobao.arthas.service.ArthasSampleService;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
 import io.netty.buffer.ByteBuf;
@@ -75,9 +76,19 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
                 byte[] byteArray = new byte[byteBuf.readableBytes()];
                 byteBuf.readBytes(byteArray);
-                Codec<ArthasSampleRequest> codec = ProtobufProxy.create(ArthasSampleRequest.class);
+                Codec<ArthasSampleRequest> codec = ProtobufProxy.create(ArthasSampleRequest.class,true);
+                ProtobufCodec<ArthasSampleRequest> protobufCodec = com.taobao.arthas.protobuf.ProtobufProxy.create(ArthasSampleRequest.class);
+
                 ArthasSampleRequest decode = codec.decode(byteArray);
+                ArthasSampleRequest decode1 = protobufCodec.decode(byteArray);
+
+                System.out.println(codec.decode(protobufCodec.encode(decode1)));
+                System.out.println(protobufCodec.decode(protobufCodec.encode(decode)));
+                System.out.println(codec.decode(codec.encode(decode1)));
+                System.out.println(protobufCodec.decode(codec.encode(decode1)));
+
                 System.out.println(decode);
+                System.out.println(decode1);
 
             }
 
