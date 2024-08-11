@@ -4,11 +4,11 @@ package com.taobao.arthas.h2;/**
  */
 
 import com.baidu.bjf.remoting.protobuf.Codec;
-import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
-import com.google.protobuf.CodedInputStream;
 import com.taobao.arthas.protobuf.ProtobufCodec;
+import com.taobao.arthas.protobuf.ProtobufProxy;
 import com.taobao.arthas.service.ArthasSampleService;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
+import com.taobao.arthas.service.res.ArthasSampleResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,75 +37,9 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Http2Frame frame) throws IOException {
         if (frame instanceof Http2HeadersFrame) {
-            System.out.println("header");
-            Http2HeadersFrame headersFrame = (Http2HeadersFrame) frame;
-            int id = headersFrame.stream().id();
-            dataBuffer.put(id, ctx.alloc().buffer());
-
-            System.out.println("Received headers: " + headersFrame.headers());
-            System.out.println(headersFrame.headers().path().toString());
-
-            // Respond to the client with headers
-            Http2Headers responseHeaders = new DefaultHttp2Headers()
-                    .status("200")
-                    .set("content-type", "text/plain; charset=UTF-8");
-
-            // 创建响应数据
-            byte[] content = "Hello, HTTP/2 World!".getBytes();
-            Http2DataFrame dataFrame = new DefaultHttp2DataFrame(ctx.alloc().buffer().writeBytes(content), true);
-
-            // 发送响应头
-            ctx.write(new DefaultHttp2HeadersFrame(responseHeaders).stream(headersFrame.stream()));
-
-            // 发送响应数据
-            ctx.writeAndFlush(dataFrame.stream(headersFrame.stream()));
-
+            handleGrpcRequest((Http2HeadersFrame) frame, ctx);
         } else if (frame instanceof Http2DataFrame) {
-            Http2DataFrame dataFrame = (Http2DataFrame) frame;
-            byte[] data = new byte[dataFrame.content().readableBytes()];
-            System.out.println(dataFrame.content().readableBytes());
-            System.out.println(dataFrame.isEndStream());
-            dataFrame.content().readBytes(data);
-
-//          Decompress if needed
-            byte[] decompressedData = decompressGzip(data);
-            ByteBuf byteBuf = dataBuffer.get(dataFrame.stream().id());
-            byteBuf.writeBytes(decompressedData);
-            if (dataFrame.isEndStream()) {
-                byteBuf.readBytes(5);
-
-                byte[] byteArray = new byte[byteBuf.readableBytes()];
-                byteBuf.readBytes(byteArray);
-                Codec<ArthasSampleRequest> codec = ProtobufProxy.create(ArthasSampleRequest.class,true);
-                ProtobufCodec<ArthasSampleRequest> protobufCodec = com.taobao.arthas.protobuf.ProtobufProxy.create(ArthasSampleRequest.class);
-
-                ArthasSampleRequest decode = codec.decode(byteArray);
-                ArthasSampleRequest decode1 = protobufCodec.decode(byteArray);
-
-                System.out.println(codec.decode(protobufCodec.encode(decode1)));
-                System.out.println(protobufCodec.decode(protobufCodec.encode(decode)));
-                System.out.println(codec.decode(codec.encode(decode1)));
-                System.out.println(protobufCodec.decode(codec.encode(decode1)));
-
-                System.out.println(decode);
-                System.out.println(decode1);
-
-            }
-
-
-//
-//            byte[] responseData = "hello".getBytes();
-//
-//            // Send response
-//            Http2Headers responseHeaders = new DefaultHttp2Headers()
-//                    .status("200")
-//                    .set("content-type", "application/grpc");
-//            ctx.write(new DefaultHttp2HeadersFrame(responseHeaders));
-//            ctx.writeAndFlush(new DefaultHttp2DataFrame(ctx.alloc().buffer().writeBytes(responseData)).stream(dataFrame.stream()));
-//            System.out.println("finish");
-//            if (((Http2DataFrame) frame).isEndStream()) {
-//                dataFrame.release();
-//            }
+            handleGrpcData((Http2DataFrame) frame,ctx);
         }
     }
 
@@ -113,6 +47,69 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    private void handleGrpcRequest(Http2HeadersFrame headersFrame, ChannelHandlerContext ctx) {
+        int id = headersFrame.stream().id();
+        dataBuffer.put(id, ctx.alloc().buffer());
+
+        System.out.println("Received headers: " + headersFrame.headers());
+        System.out.println(headersFrame.headers().path().toString());
+
+        // Respond to the client with headers
+        Http2Headers responseHeaders = new DefaultHttp2Headers()
+                .status("200")
+                .set("content-type", "text/plain; charset=UTF-8");
+
+        // 创建响应数据
+        byte[] content = "Hello, HTTP/2 World!".getBytes();
+        Http2DataFrame dataFrame = new DefaultHttp2DataFrame(ctx.alloc().buffer().writeBytes(content), true);
+
+        // 发送响应头
+        ctx.write(new DefaultHttp2HeadersFrame(responseHeaders).stream(headersFrame.stream()));
+
+        // 发送响应数据
+        ctx.writeAndFlush(dataFrame.stream(headersFrame.stream()));
+    }
+
+    private void handleGrpcData(Http2DataFrame dataFrame,ChannelHandlerContext ctx) throws IOException {
+        byte[] data = new byte[dataFrame.content().readableBytes()];
+        System.out.println(dataFrame.content().readableBytes());
+        System.out.println(dataFrame.isEndStream());
+        dataFrame.content().readBytes(data);
+
+//          Decompress if needed
+        byte[] decompressedData = decompressGzip(data);
+        ByteBuf byteBuf = dataBuffer.get(dataFrame.stream().id());
+        byteBuf.writeBytes(decompressedData);
+
+        byte[] responseData = null;
+        if (dataFrame.isEndStream()) {
+            byteBuf.readBytes(5);
+
+            byte[] byteArray = new byte[byteBuf.readableBytes()];
+            byteBuf.readBytes(byteArray);
+            ProtobufCodec<ArthasSampleRequest> requestCodec = ProtobufProxy.create(ArthasSampleRequest.class);
+            ProtobufCodec<ArthasSampleResponse> responseCodec = ProtobufProxy.create(ArthasSampleResponse.class);
+
+            ArthasSampleRequest decode = requestCodec.decode(byteArray);
+
+            ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
+            arthasSampleResponse.setMessage(decode.getName());
+            responseData = responseCodec.encode(arthasSampleResponse);
+        }
+
+
+        // Send response
+        Http2Headers responseHeaders = new DefaultHttp2Headers()
+                .status("200")
+                .set("content-type", "application/grpc");
+        ctx.write(new DefaultHttp2HeadersFrame(responseHeaders));
+        ctx.writeAndFlush(new DefaultHttp2DataFrame(ctx.alloc().buffer().writeBytes(responseData)).stream(dataFrame.stream()));
+        System.out.println("finish");
+        if (dataFrame.isEndStream()) {
+            dataFrame.release();
+        }
     }
 
     private static byte[] decompressGzip(byte[] compressedData) throws IOException {

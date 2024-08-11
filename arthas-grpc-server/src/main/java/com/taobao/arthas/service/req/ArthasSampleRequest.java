@@ -52,4 +52,44 @@ public class ArthasSampleRequest {
     public static class TestClass {
         private String name;
     }
+
+    public List<TestClass> getTestList() {
+        return testList;
+    }
+
+    public void setTestList(List<TestClass> testList) {
+        this.testList = testList;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public double getAge() {
+        return age;
+    }
+
+    public void setAge(double age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -82,7 +82,6 @@ public class ProtobufProxy {
         processDecodeBlock();
 
         String code = miniTemplator.generateOutput();
-        System.out.println(code);
 
         ProtoBufClassCompiler protoBufClassCompiler = new ProtoBufClassCompiler(ProtoBufClassCompiler.class.getClassLoader());
         String fullClassName = FieldUtil.getFullClassName(clazz) + "$$ProxyClass";

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package helloworld;
+package arthasSample;
 
 
 enum StatusEnum {
@@ -8,11 +8,11 @@ enum StatusEnum {
     STOP = 1;
 }
 
-service HelloService {
-  rpc SayHello(HelloRequest) returns (HelloReply);
+service ArthasService {
+  rpc SayHello(ArthasSampleRequest) returns (ArthasSampleResponse);
 }
 
-message HelloRequest {
+message ArthasSampleRequest {
   string name = 1;
   double age = 2;
   int64 price = 3;
@@ -24,6 +24,6 @@ message TestClass{
   string name = 1;
 }
 
-message HelloReply {
+message ArthasSampleResponse {
   string message = 1;
 }
