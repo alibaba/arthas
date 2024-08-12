@@ -83,9 +83,9 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         ByteBuf byteBuf = dataBuffer.get(dataFrame.stream().id());
         byteBuf.writeBytes(decompressedData);
 
-        byte[] responseData = null;
         if (dataFrame.isEndStream()) {
-            byteBuf.readBytes(5);
+            int length = byteBuf.readInt();
+            boolean b = byteBuf.readBoolean();
 
             byte[] byteArray = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(byteArray);
@@ -94,21 +94,26 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
             ArthasSampleRequest decode = requestCodec.decode(byteArray);
 
+            System.out.println(decode);
+
             ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
             arthasSampleResponse.setMessage(decode.getName());
-            responseData = responseCodec.encode(arthasSampleResponse);
-        }
+            byte[] responseData = responseCodec.encode(arthasSampleResponse);
 
+            // Send response
+            Http2Headers responseHeaders = new DefaultHttp2Headers()
+                    .status("200")
+                    .set("content-type", "application/grpc");
+            ctx.write(new DefaultHttp2HeadersFrame(responseHeaders));
+            ByteBuf buffer = ctx.alloc().buffer();
+            buffer.writeInt(responseData.length);
+            buffer.writeBoolean(false);
+            buffer.writeBytes(responseData);
+            System.out.println(responseData.length);
+            ctx.writeAndFlush(new DefaultHttp2DataFrame(buffer,true).stream(dataFrame.stream()));
+//            dataFrame.retain();
+        } else {
 
-        // Send response
-        Http2Headers responseHeaders = new DefaultHttp2Headers()
-                .status("200")
-                .set("content-type", "application/grpc");
-        ctx.write(new DefaultHttp2HeadersFrame(responseHeaders));
-        ctx.writeAndFlush(new DefaultHttp2DataFrame(ctx.alloc().buffer().writeBytes(responseData)).stream(dataFrame.stream()));
-        System.out.println("finish");
-        if (dataFrame.isEndStream()) {
-            dataFrame.release();
         }
     }
 

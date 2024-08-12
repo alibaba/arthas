@@ -1,7 +1,13 @@
 package com.taobao.arthas;
 
+import arthasSample.ArthasSample;
 import com.taobao.arthas.protobuf.*;
 import com.taobao.arthas.protobuf.utils.MiniTemplator;
+import com.taobao.arthas.service.ArthasSampleService;
+import com.taobao.arthas.service.impl.ArthasSampleServiceImpl;
+import com.taobao.arthas.temp.TempImpl;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,14 +21,22 @@ public class Main {
 
     private static final String TEMPLATE_FILE = "/class_template.tpl";
 
-    public static void main(String[] args) throws IOException {
+    private static Server server;
 
-        String path = Objects.requireNonNull(Main.class.getResource(TEMPLATE_FILE)).getPath();
+    public static void main(String[] args) throws Exception {
+        Main service = new Main();
+        service.start();
+        service.blockUntilShutdown();
+    }
 
-        MiniTemplator miniTemplator = new MiniTemplator(path);
+    public static void start() throws IOException {
+        ServerBuilder builder = ServerBuilder.forPort(9090)
+                .addService(new TempImpl());
+        server = builder.build();
+        server.start();
+    }
 
-        miniTemplator.setVariable("importPackage","test");
-        miniTemplator.addBlock("imports");
-        System.out.println(miniTemplator.generateOutput());
+    public void blockUntilShutdown() throws InterruptedException {
+        server.awaitTermination();
     }
 }

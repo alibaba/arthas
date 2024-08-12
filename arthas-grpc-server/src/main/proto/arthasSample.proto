@@ -8,7 +8,7 @@ enum StatusEnum {
     STOP = 1;
 }
 
-service ArthasService {
+service ArthasTempService {
   rpc SayHello(ArthasSampleRequest) returns (ArthasSampleResponse);
 }
 
