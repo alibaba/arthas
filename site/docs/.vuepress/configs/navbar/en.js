@@ -27,6 +27,6 @@ export const navbarEN = [
         text: "v4.x",
         link: "https://arthas.aliyun.com/en/",
       },
-    ]
+    ],
   },
 ];
