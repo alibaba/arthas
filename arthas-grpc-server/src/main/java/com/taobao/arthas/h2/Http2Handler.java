@@ -34,6 +34,8 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
      */
     private ConcurrentHashMap<Integer, ByteBuf> dataBuffer = new ConcurrentHashMap<>();
 
+    private final Http2FrameWriter frameWriter = new DefaultHttp2FrameWriter();
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Http2Frame frame) throws IOException {
         if (frame instanceof Http2HeadersFrame) {
@@ -104,14 +106,15 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
             Http2Headers responseHeaders = new DefaultHttp2Headers()
                     .status("200")
                     .set("content-type", "application/grpc");
-            ctx.write(new DefaultHttp2HeadersFrame(responseHeaders));
+            DefaultHttp2HeadersFrame headersFrame = new DefaultHttp2HeadersFrame(responseHeaders);
+            ctx.write(headersFrame);
             ByteBuf buffer = ctx.alloc().buffer();
             buffer.writeInt(responseData.length);
             buffer.writeBoolean(false);
             buffer.writeBytes(responseData);
             System.out.println(responseData.length);
-            ctx.writeAndFlush(new DefaultHttp2DataFrame(buffer,true).stream(dataFrame.stream()));
-//            dataFrame.retain();
+            DefaultHttp2DataFrame stream = new DefaultHttp2DataFrame(buffer, true).stream(dataFrame.stream());
+            ctx.writeAndFlush(stream);
         } else {
 
         }
