@@ -423,6 +423,11 @@ public class Bootstrap {
             arthasHomeDir = new File(bootstrap.getArthasHome());
         }
         if (arthasHomeDir == null && bootstrap.getUseVersion() != null) {
+            // exit when useVersion is not 3.x
+            if (!bootstrap.getUseVersion().startsWith("3")) {
+                AnsiLog.error("Arthas version {} is not supported; only version 3.x is supported.", bootstrap.getUseVersion());
+                System.exit(1);
+            }
             // try to find from ~/.arthas/lib
             File specialVersionDir = new File(System.getProperty("user.home"), ".arthas" + File.separator + "lib"
                             + File.separator + bootstrap.getUseVersion() + File.separator + "arthas");
@@ -435,7 +440,7 @@ public class Bootstrap {
             arthasHomeDir = specialVersionDir;
         }
 
-        // Try set the directory where arthas-boot.jar is located to arhtas home
+        // Try set the directory where arthas-boot.jar is located to arthas home
         if (arthasHomeDir == null) {
             CodeSource codeSource = Bootstrap.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
@@ -461,24 +466,25 @@ public class Bootstrap {
 
             /**
              * <pre>
-             * 1. get local latest version
-             * 2. get remote latest version
+             * 1. get local latest 3.x version
+             * 2. get remote latest 3.x version
              * 3. compare two version
              * </pre>
              */
             List<String> versionList = listNames(ARTHAS_LIB_DIR);
-            Collections.sort(versionList);
 
-            String localLastestVersion = null;
-            if (!versionList.isEmpty()) {
-                localLastestVersion = versionList.get(versionList.size() - 1);
+            String localLatest3xVersion = null;
+            for (String version : versionList) {
+                if (version.startsWith("3") && (localLatest3xVersion == null || version.compareTo(localLatest3xVersion) > 0)) {
+                    localLatest3xVersion = version;
+                }
             }
 
-            String remoteLastestVersion = DownloadUtils.readLatestReleaseVersion();
+            String remoteLatest3xVersion = DownloadUtils.readLatest3xReleaseVersion();
 
             boolean needDownload = false;
-            if (localLastestVersion == null) {
-                if (remoteLastestVersion == null) {
+            if (localLatest3xVersion == null) {
+                if (remoteLatest3xVersion == null) {
                     // exit
                     AnsiLog.error("Can not find Arthas under local: {} and remote repo mirror: {}", ARTHAS_LIB_DIR,
                             bootstrap.getRepoMirror());
@@ -489,10 +495,10 @@ public class Bootstrap {
                     needDownload = true;
                 }
             } else {
-                if (remoteLastestVersion != null) {
-                    if (localLastestVersion.compareTo(remoteLastestVersion) < 0) {
-                        AnsiLog.info("local lastest version: {}, remote lastest version: {}, try to download from remote.",
-                                        localLastestVersion, remoteLastestVersion);
+                if (remoteLatest3xVersion != null) {
+                    if (localLatest3xVersion.compareTo(remoteLatest3xVersion) < 0) {
+                        AnsiLog.info("local latest 3.x version: {}, remote latest 3.x version: {}, try to download from remote.",
+                                        localLatest3xVersion, remoteLatest3xVersion);
                         needDownload = true;
                     }
                 }
@@ -500,12 +506,12 @@ public class Bootstrap {
             if (needDownload) {
                 // try to download arthas from remote server.
                 DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
-                                remoteLastestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
-                localLastestVersion = remoteLastestVersion;
+                                remoteLatest3xVersion, ARTHAS_LIB_DIR.getAbsolutePath());
+                localLatest3xVersion = remoteLatest3xVersion;
             }
 
-            // get the latest version
-            arthasHomeDir = new File(ARTHAS_LIB_DIR, localLastestVersion + File.separator + "arthas");
+            // get the latest 3.x version
+            arthasHomeDir = new File(ARTHAS_LIB_DIR, localLatest3xVersion + File.separator + "arthas");
         }
 
         verifyArthasHome(arthasHomeDir.getAbsolutePath());

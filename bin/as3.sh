@@ -319,10 +319,10 @@ reset_for_env()
 
 }
 
-# get latest version from local
-get_local_version()
+# get latest 3.x version from local
+get_local_3x_version()
 {
-    ls "${ARTHAS_LIB_DIR}" | sort | tail -1
+    ls "${ARTHAS_LIB_DIR}" | grep -oE '3\.[0-9]+\.[0-9]+.*' | sort -V | tail -1 | tr -d '\r\n'
 }
 
 get_repo_url()
@@ -334,10 +334,10 @@ get_repo_url()
     echo "${repoUrl}"
 }
 
-# get latest version from remote
-get_remote_version()
+# get latest 3.x version from remote
+get_remote_3x_version()
 {
-    curl -sLk "https://arthas.aliyun.com/api/latest_version"
+    curl -sLk "https://arthas.aliyun.com/api/versions" | grep -oE '3\.[0-9]+\.[0-9]+.*' | sort -V | tail -1 | tr -d '\r\n'
 }
 
 # check version greater
@@ -1051,13 +1051,17 @@ main()
 
     # try to find arthas home from --use-version
     if [[ (-z "${ARTHAS_HOME}")  && (! -z "${USE_VERSION}") ]]; then
+        if [[ "${USE_VERSION:0:1}" != "3" ]] ; then
+          echo "Arthas version ${USE_VERSION} is not supported; only version 3.x is supported." 1>&2
+            exit 1
+        fi
         if [[ ! -d "${ARTHAS_LIB_DIR}/${USE_VERSION}/arthas" ]] ; then
             update_if_necessary "${USE_VERSION}" || echo "update fail, ignore this update." 1>&2
         fi
         ARTHAS_HOME="${ARTHAS_LIB_DIR}/${USE_VERSION}/arthas"
     fi
 
-    # try to set arthas home from as.sh directory
+    # try to set arthas home from as3.sh directory
     if [ -z "${ARTHAS_HOME}" ] ; then
         [[ -a "${DIR}/arthas-core.jar" ]] \
         && [[ -a "${DIR}/arthas-agent.jar" ]] \
@@ -1067,13 +1071,13 @@ main()
 
     # try to find arthas under ~/.arthas/lib
     if [ -z "${ARTHAS_HOME}" ] ; then
-        local remote_version=$(get_remote_version)
-        local arthas_local_version=$(get_local_version)
-        if $(version_gt $remote_version $arthas_local_version) ; then
-            update_if_necessary "${remote_version}" || echo "update fail, ignore this update." 1>&2
+        local remote_3x_version=$(get_remote_3x_version)
+        local arthas_local_3x_version=$(get_local_3x_version)
+        if $(version_gt $remote_3x_version $arthas_local_3x_version) ; then
+            update_if_necessary "${remote_3x_version}" || echo "update fail, ignore this update." 1>&2
         fi
-        local arthas_local_version=$(get_local_version)
-        ARTHAS_HOME="${ARTHAS_LIB_DIR}/${arthas_local_version}/arthas"
+        local arthas_local_3x_version=$(get_local_3x_version)
+        ARTHAS_HOME="${ARTHAS_LIB_DIR}/${arthas_local_3x_version}/arthas"
     fi
 
     echo "Arthas home: ${ARTHAS_HOME}"

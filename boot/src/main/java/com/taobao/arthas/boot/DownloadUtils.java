@@ -44,6 +44,19 @@ public class DownloadUtils {
         return null;
     }
 
+    public static String readLatest3xReleaseVersion() {
+        List<String> versions = readRemoteVersions();
+        String latest3xReleaseVersion = null;
+        if (versions != null) {
+            for (String version : versions) {
+                if (version.startsWith("3") && (latest3xReleaseVersion == null || version.compareTo(latest3xReleaseVersion) > 0)) {
+                    latest3xReleaseVersion = version;
+                }
+            }
+        }
+        return latest3xReleaseVersion;
+    }
+
     public static List<String> readRemoteVersions() {
         InputStream inputStream = null;
         try {
