@@ -56,7 +56,7 @@ The order of configuration is: command line parameters > System Env > System Pro
 
 such as:
 
-- `./as.sh --telnet-port 9999` command line configuration will overwrite the default value `arthas.telnetPort=3658` in `arthas.properties`.
+- `./as3.sh --telnet-port 9999` command line configuration will overwrite the default value `arthas.telnetPort=3658` in `arthas.properties`.
 - If the application itself sets system properties `arthas.telnetPort=8888`, it will override the default value `arthas.telnetPort=3658` in `arthas.properties`.
 
 If you want `arthas.properties` to have the highest order, you can configure `arthas.config.overrideAll=true`.

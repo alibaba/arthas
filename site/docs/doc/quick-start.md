@@ -18,19 +18,19 @@ java -jar math-game.jar
 在命令行下面执行（使用和目标进程一致的用户启动，否则可能 attach 失败）：
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
-- 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。
+- 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot3.jar` 或 `sudo -u admin -EH java -jar arthas-boot3.jar`。
 - 如果 attach 不上目标进程，可以查看`~/logs/arthas/` 目录下的日志。
-- 如果下载速度比较慢，可以使用 aliyun 的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
-- `java -jar arthas-boot.jar -h` 打印更多参数信息。
+- 如果下载速度比较慢，可以使用 aliyun 的镜像：`java -jar arthas-boot3.jar --repo-mirror aliyun --use-http`
+- `java -jar arthas-boot3.jar -h` 打印更多参数信息。
 
 选择应用 java 进程：
 
 ```bash
-$ $ java -jar arthas-boot.jar
+$ $ java -jar arthas-boot3.jar
 * [1]: 35542
   [2]: 71560 math-game.jar
 ```

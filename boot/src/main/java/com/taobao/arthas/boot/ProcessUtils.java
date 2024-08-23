@@ -220,7 +220,7 @@ public class ProcessUtils {
                 }
 
                 throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome
-                                + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
+                                + ", please try to start arthas-boot3 with full path java. Such as /opt/jdk/bin/java -jar arthas-boot3.jar");
             }
         } else {
             FOUND_JAVA_HOME = javaHome;

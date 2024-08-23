@@ -3,11 +3,11 @@
 ## 交互模式启动
 
 ```bash
-./as.sh
+./as3.sh
 ```
 
 ```bash
-➜  bin git:(develop) ✗ ./as.sh
+➜  bin git:(develop) ✗ ./as3.sh
 Found existing java process, please choose one and input the serial number of the process, eg: 1 . Then hit ENTER.
   [1]: 3088 org.jetbrains.idea.maven.server.RemoteMavenServer
 * [2]: 12872 org.apache.catalina.startup.Bootstrap
@@ -26,7 +26,7 @@ $
 启动脚本如下：
 
 ```bash
-./as.sh <PID>[@IP:PORT]
+./as3.sh <PID>[@IP:PORT]
 ```
 
 ### 参数说明
@@ -39,11 +39,11 @@ $
 
 - 如果不指定 IP 和 PORT，默认是 127.0.0.1 和 3658
 
-  > ./as.sh 12345
+  > ./as3.sh 12345
 
   上述命令等价于：
 
-  > ./as.sh 12356@127.0.0.1:3658
+  > ./as3.sh 12356@127.0.0.1:3658
 
 ### 远程诊断
 
@@ -55,10 +55,10 @@ telnet 192.168.1.119 3658
 
 ### sudo 支持
 
-成熟的线上管理环境一般都不会直接开放 JVM 部署用户权限给你，而是通过 sudo-list 来控制和监控用户的越权操作。由于 as.sh 脚本中会对当前用户的环境变量产生感知，所以需要加上 -H 参数
+成熟的线上管理环境一般都不会直接开放 JVM 部署用户权限给你，而是通过 sudo-list 来控制和监控用户的越权操作。由于 as3.sh 脚本中会对当前用户的环境变量产生感知，所以需要加上 -H 参数
 
 ```bash
-sudo -u admin -H ./as.sh 12345
+sudo -u admin -H ./as3.sh 12345
 ```
 
 ### Windows 环境支持

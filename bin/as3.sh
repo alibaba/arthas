@@ -188,23 +188,23 @@ esac
 
 # check curl/grep/awk/telnet/unzip command
 if ! [ -x "$(command -v curl)" ]; then
-  echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
+  echo 'Error: curl is not installed. Try to use java -jar arthas-boot3.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v grep)" ]; then
-  echo 'Error: grep is not installed. Try to use java -jar arthas-boot.jar' >&2
+  echo 'Error: grep is not installed. Try to use java -jar arthas-boot3.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v awk)" ]; then
-  echo 'Error: awk is not installed. Try to use java -jar arthas-boot.jar' >&2
+  echo 'Error: awk is not installed. Try to use java -jar arthas-boot3.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v telnet)" ]; then
-  echo 'Error: telnet is not installed. Try to use java -jar arthas-boot.jar' >&2
+  echo 'Error: telnet is not installed. Try to use java -jar arthas-boot3.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v unzip)" ]; then
-  echo 'Error: unzip is not installed. Try to use java -jar arthas-boot.jar' >&2
+  echo 'Error: unzip is not installed. Try to use java -jar arthas-boot3.jar' >&2
   exit 1
 fi
 
@@ -466,20 +466,20 @@ Options and Arguments:
  <pid>                          Target pid
 
 EXAMPLES:
-  ./as.sh <pid>
-  ./as.sh --telnet-port 9999 --http-port -1
-  ./as.sh --username admin --password <password>
-  ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
-  ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
-  ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
-  ./as.sh -c 'sysprop; thread' <pid>
-  ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.7.2
-  ./as.sh --session-timeout 3600
-  ./as.sh --attach-only
-  ./as.sh --disabled-commands stop,dump
-  ./as.sh --select math-game
-  ./as.sh --repo-mirror aliyun --use-http
+  ./as3.sh <pid>
+  ./as3.sh --telnet-port 9999 --http-port -1
+  ./as3.sh --username admin --password <password>
+  ./as3.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
+  ./as3.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
+  ./as3.sh --stat-url 'http://192.168.10.11:8080/api/stat'
+  ./as3.sh -c 'sysprop; thread' <pid>
+  ./as3.sh -f batch.as <pid>
+  ./as3.sh --use-version 3.7.2
+  ./as3.sh --session-timeout 3600
+  ./as3.sh --attach-only
+  ./as3.sh --disabled-commands stop,dump
+  ./as3.sh --select math-game
+  ./as3.sh --repo-mirror aliyun --use-http
 WIKI:
   https://arthas.aliyun.com/doc
 
@@ -812,8 +812,8 @@ parse_arguments()
         fi
         if [[ ($httpPortPid) && ($TARGET_PID != $httpPortPid) ]]; then
             echo "Target process $TARGET_PID is not the process using port $(getHttpPortOrDefault), you will connect to an unexpected process."
-            echo "1. Try to restart as.sh, select process $httpPortPid, shutdown it first with running the 'stop' command."
-            echo "2. Try to use different http port, for example: as.sh --telnet-port 9998 --http-port 9999"
+            echo "1. Try to restart as3.sh, select process $httpPortPid, shutdown it first with running the 'stop' command."
+            echo "2. Try to use different http port, for example: as3.sh --telnet-port 9998 --http-port 9999"
             exit 1
         fi
     elif [ -z ${TARGET_PID} ]; then
@@ -931,8 +931,8 @@ sanity_check() {
     if [ "$current_user" != "$target_user" ]; then
         echo "The current user ($current_user) does not match with the owner of process ${TARGET_PID} ($target_user)."
         echo "To solve this, choose one of the following command:"
-        echo "  1) sudo su $target_user && ./as.sh"
-        echo "  2) sudo -u $target_user -EH ./as.sh"
+        echo "  1) sudo su $target_user && ./as3.sh"
+        echo "  2) sudo -u $target_user -EH ./as3.sh"
         exit_on_err 1
     fi
 }
@@ -972,15 +972,15 @@ port_pid_check() {
 
 print_telnet_port_pid_error() {
     echo "[ERROR] The telnet port $(getTelnetPortOrDefault) is used by process $telnetPortPid instead of target process $TARGET_PID, you will connect to an unexpected process."
-    echo "[ERROR] 1. Try to restart as.sh, select process $telnetPortPid, shutdown it first with running the 'stop' command."
+    echo "[ERROR] 1. Try to restart as3.sh, select process $telnetPortPid, shutdown it first with running the 'stop' command."
     echo "[ERROR] 2. Try to stop the existing arthas instance: java -jar arthas-client.jar 127.0.0.1 $(getTelnetPortOrDefault) -c \"stop\""
-    echo "[ERROR] 3. Try to use different telnet port, for example: as.sh --telnet-port 9998 --http-port -1"
+    echo "[ERROR] 3. Try to use different telnet port, for example: as3.sh --telnet-port 9998 --http-port -1"
 }
 
 print_telnet_port_used_error() {
     local error_msg=$1
     echo "[ERROR] The telnet port $(getTelnetPortOrDefault) is used, but process $error_msg, you will connect to an unexpected process."
-    echo "[ERROR] Try to use different telnet port, for example: as.sh --telnet-port 9998 --http-port -1"
+    echo "[ERROR] Try to use different telnet port, for example: as3.sh --telnet-port 9998 --http-port -1"
 }
 
 # active console

@@ -106,6 +106,6 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 
 ### 为什么下载了新版本的 Arthas，连接的却是旧版本？
 
-比如启动的 `as.sh/arthas-boot.jar` 版本是 3.5._ 的，但是连接上之后，打印的 arthas 版本是 3.4._ 的。
+比如启动的 `as3.sh/arthas-boot3.jar` 版本是 3.5._ 的，但是连接上之后，打印的 arthas 版本是 3.4._ 的。
 
 可能是之前使用旧版本的 arthas 诊断过目标进程。可以先执行`stop`停止掉旧版本的 arthas，再重新使用新版本 attach。

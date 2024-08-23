@@ -56,7 +56,7 @@ arthas.disabledCommands=stop,dump
 
 比如：
 
-- `./as.sh --telnet-port 9999` 传入的配置会覆盖掉`arthas.properties`里的默认值`arthas.telnetPort=3658`。
+- `./as3.sh --telnet-port 9999` 传入的配置会覆盖掉`arthas.properties`里的默认值`arthas.telnetPort=3658`。
 - 如果应用自身设置了 system properties `arthas.telnetPort=8888`，则会覆盖掉`arthas.properties`里的默认值`arthas.telnetPort=3658`。
 
 如果想要 `arthas.properties`的优先级最高，则可以配置 `arthas.config.overrideAll=true` 。

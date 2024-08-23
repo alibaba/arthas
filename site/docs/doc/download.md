@@ -2,42 +2,34 @@
 
 ## 下载全量包
 
-### 从 Maven 仓库下载
-
-最新版本，点击下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version?mirror=aliyun)
-
 ### 从 Github Releases 页下载
 
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
-### 用 as.sh 启动
+### 用 as3.sh 启动
 
-解压后，在文件夹里有`as.sh`，直接用`./as.sh`的方式启动：
+解压后，在文件夹里有`as3.sh`，直接用`./as3.sh`的方式启动：
 
 ```bash
-./as.sh
+./as3.sh
 ```
 
 打印帮助信息：
 
 ```bash
-./as.sh -h
+./as3.sh -h
 ```
 
-### 用 arthas-boot 启动
+### 用 arthas-boot3 启动
 
-或者在解压后，在文件夹里有`arthas-boot.jar`，直接用`java -jar`的方式启动：
+或者在解压后，在文件夹里有`arthas-boot3.jar`，直接用`java -jar`的方式启动：
 
 ```bash
-java -jar arthas-boot.jar
+java -jar arthas-boot3.jar
 ```
 
 打印帮助信息：
 
 ```bash
-java -jar arthas-boot.jar -h
+java -jar arthas-boot3.jar -h
 ```
-
-## 下载离线文档
-
-下载文档：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/doc/latest_version?mirror=aliyun)

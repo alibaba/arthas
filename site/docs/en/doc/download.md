@@ -2,42 +2,34 @@
 
 ## Download full package
 
-### Download from maven central
-
-Latest Version, Click To Download: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)
-
 ### Download from Github Releases
 
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
-### Use as.sh
+### Use as3.sh
 
-Download and unzip, find `as.sh` in the directory. Start it in bash:
+Download and unzip, find `as3.sh` in the directory. Start it in bash:
 
 ```bash
-./as.sh
+./as3.sh
 ```
 
 Print usage:
 
 ```bash
-./as.sh -h
+./as3.sh -h
 ```
 
-### Use arthas-boot.jar
+### Use arthas-boot3.jar
 
-Download and unzip, find `arthas-boot.jar` in the directory. Start with `java` command:
+Download and unzip, find `arthas-boot3.jar` in the directory. Start with `java` command:
 
 ```bash
-java -jar arthas-boot.jar
+java -jar arthas-boot3.jar
 ```
 
 Print usage:
 
 ```bash
-java -jar arthas-boot.jar -h
+java -jar arthas-boot3.jar -h
 ```
-
-## Download Offline Help Documentation
-
-Latest Version Documentation, Click To Download:[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/doc/latest_version)

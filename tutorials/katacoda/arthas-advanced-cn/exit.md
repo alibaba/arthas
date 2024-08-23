@@ -8,7 +8,7 @@ Arthas在 watch/trace 等命令时，实际上是修改了应用的字节码，�
 
 用 `exit`{{execute interrupt}} 或者 `quit`{{execute interrupt}} 命令可以退出Arthas。
 
-退出Arthas之后，还可以再次用 `java -jar arthas-boot.jar`{{execute interrupt}} 来连接。
+退出Arthas之后，还可以再次用 `java -jar arthas-boot3.jar`{{execute interrupt}} 来连接。
 
 
 ## 彻底退出Arthas

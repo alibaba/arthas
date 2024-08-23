@@ -106,6 +106,6 @@ Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416]
 
 ### Why is the new version of Arthas downloaded, but the old version is connected?
 
-For example, the started version of `as.sh/arthas-boot.jar` is 3.5._, but after connecting, the printed arthas version is 3.4._.
+For example, the started version of `as3.sh/arthas-boot3.jar` is 3.5._, but after connecting, the printed arthas version is 3.4._.
 
 It may be that the target process has been diagnosed with the old version of arthas before. You can execute `stop` to stop the old version of arthas, and then reuse the new version to attach.

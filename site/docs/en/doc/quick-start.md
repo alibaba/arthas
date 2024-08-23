@@ -20,18 +20,18 @@ The source code of `math-game`: [View](https://github.com/alibaba/arthas/blob/ma
 Execute the following command in the command line:
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
-- The user to run this command _MUST_ have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
+- The user to run this command _MUST_ have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot3.jar` or `sudo -u admin -EH java -jar arthas-boot3.jar`
 - If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
-- `java -jar arthas-boot.jar -h` print usage.
+- `java -jar arthas-boot3.jar -h` print usage.
 
 Select the target Java process to attach:
 
 ```bash
-$ $ java -jar arthas-boot.jar
+$ $ java -jar arthas-boot3.jar
 * [1]: 35542
   [2]: 71560 math-game.jar
 ```

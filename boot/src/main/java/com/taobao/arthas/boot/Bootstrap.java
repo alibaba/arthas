@@ -45,20 +45,20 @@ import com.taobao.middleware.cli.annotations.Summary;
  */
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
-@Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
-                + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
-                + "  java -jar arthas-boot.jar --username admin --password <password>\n"
-                + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
-                + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
-                + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
-                + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
-                + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.7.2\n"
-                + "  java -jar arthas-boot.jar --versions\n"
-                + "  java -jar arthas-boot.jar --select math-game\n"
-                + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
-                + "  java -jar arthas-boot.jar --disabled-commands stop,dump\n"
-                + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
+@Description("EXAMPLES:\n" + "  java -jar arthas-boot3.jar <pid>\n"
+                + "  java -jar arthas-boot3.jar --telnet-port 9999 --http-port -1\n"
+                + "  java -jar arthas-boot3.jar --username admin --password <password>\n"
+                + "  java -jar arthas-boot3.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
+                + "  java -jar arthas-boot3.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
+                + "  java -jar arthas-boot3.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
+                + "  java -jar arthas-boot3.jar -c 'sysprop; thread' <pid>\n"
+                + "  java -jar arthas-boot3.jar -f batch.as <pid>\n"
+                + "  java -jar arthas-boot3.jar --use-version 3.7.2\n"
+                + "  java -jar arthas-boot3.jar --versions\n"
+                + "  java -jar arthas-boot3.jar --select math-game\n"
+                + "  java -jar arthas-boot3.jar --session-timeout 3600\n" + "  java -jar arthas-boot3.jar --attach-only\n"
+                + "  java -jar arthas-boot3.jar --disabled-commands stop,dump\n"
+                + "  java -jar arthas-boot3.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://arthas.aliyun.com/doc\n")
 public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
@@ -86,7 +86,7 @@ public class Bootstrap {
      * <pre>
      * The directory contains arthas-core.jar/arthas-client.jar/arthas-spy.jar.
      * 1. When use-version is not empty, try to find arthas home under ~/.arthas/lib
-     * 2. Try set the directory where arthas-boot.jar is located to arthas home
+     * 2. Try set the directory where arthas-boot3.jar is located to arthas home
      * 3. Try to download from remote repo
      * </pre>
      */
@@ -412,7 +412,7 @@ public class Bootstrap {
                             pid, bootstrap.getHttpPortOrDefault());
             AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
                             httpPortPid);
-            AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999");
+            AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot3.jar --telnet-port 9998 --http-port 9999");
             System.exit(1);
         }
 
@@ -440,7 +440,7 @@ public class Bootstrap {
             arthasHomeDir = specialVersionDir;
         }
 
-        // Try set the directory where arthas-boot.jar is located to arthas home
+        // Try set the directory where arthas-boot3.jar is located to arthas home
         if (arthasHomeDir == null) {
             CodeSource codeSource = Bootstrap.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
@@ -646,7 +646,7 @@ public class Bootstrap {
             AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
                             telnetPortPid);
             AnsiLog.error("2. Or try to stop the existing arthas instance: java -jar arthas-client.jar 127.0.0.1 {} -c \"stop\"", bootstrap.getTelnetPortOrDefault());
-            AnsiLog.error("3. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
+            AnsiLog.error("3. Or try to use different telnet port, for example: java -jar arthas-boot3.jar --telnet-port 9998 --http-port -1");
             System.exit(1);
         }
     }
@@ -677,7 +677,7 @@ public class Bootstrap {
             }
             if (error != null) {
                 AnsiLog.error("The telnet port {} is used, but process {}, you will connect to an unexpected process.", telnetPort, error);
-                AnsiLog.error("Try to use a different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
+                AnsiLog.error("Try to use a different telnet port, for example: java -jar arthas-boot3.jar --telnet-port 9998 --http-port -1");
                 System.exit(1);
             }
 

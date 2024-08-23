@@ -110,7 +110,7 @@
                                 </data>
 
                                 <data>
-                                    <src>${project.build.directory}/arthas-bin/as.sh </src>
+                                    <src>${project.build.directory}/arthas-bin/as3.sh </src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -206,7 +206,7 @@
                                     <groupname>root</groupname>
                                     <sources>
                                         <softlinkSource>
-                                            <location>/usr/share/arthas/as.sh</location>
+                                            <location>/usr/share/arthas/as3.sh</location>
                                         </softlinkSource>
                                     </sources>
                                 </mapping>

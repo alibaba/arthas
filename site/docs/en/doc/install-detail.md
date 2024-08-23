@@ -2,47 +2,49 @@
 
 ## Quick installation
 
-### Use `arthas-boot`(Recommended)
+### Use `arthas-boot3`(Recommended)
 
-Download`arthas-boot.jar`，Start with `java` command:
+Download`arthas-boot3.jar`，Start with `java` command:
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
 Print usage:
 
 ```bash
-java -jar arthas-boot.jar -h
+java -jar arthas-boot3.jar -h
 ```
 
-### Use `as.sh`
+### Use `as3.sh`
 
 You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press _Enter_ to run:
 
 ```bash
-curl -L https://arthas.aliyun.com/install.sh | sh
+curl -L https://arthas.aliyun.com/install3.sh | sh
 ```
 
-The command above will download the bootstrap script `as.sh` to the current directory. You can move it to any other place you want, or put its location in `$PATH`.
+The command above will download the bootstrap script `as3.sh` to the current directory. You can move it to any other place you want, or put its location in `$PATH`.
 
-You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
+You can enter its interactive interface by executing `as3.sh`, or execute `as3.sh -h` for more help information.
 
 ## Full installation
 
-Latest Version, Click To Download: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)
+Download from Github Releases
 
-Download and unzip, find `arthas-boot.jar` in the directory. Start with `java` command:
+[https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
+
+Download and unzip, find `arthas-boot3.jar` in the directory. Start with `java` command:
 
 ```bash
-java -jar arthas-boot.jar
+java -jar arthas-boot3.jar
 ```
 
 Print usage:
 
 ```bash
-java -jar arthas-boot.jar -h
+java -jar arthas-boot3.jar -h
 ```
 
 ## Manual Installation
@@ -71,7 +73,7 @@ sudo rpm -i arthas*.rpm
 After the installation of packages, execute
 
 ```bash
-as.sh
+as3.sh
 ```
 
 ## Offline Help Documentation

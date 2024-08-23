@@ -1,15 +1,15 @@
 
-In the new `Terminal 2`, download `arthas-boot.jar` and start with the `java -jar` command:
+In the new `Terminal 2`, download `arthas-boot3.jar` and start with the `java -jar` command:
 
-`wget https://arthas.aliyun.com/arthas-boot.jar`{{execute T2}}
+`wget https://arthas.aliyun.com/arthas-boot3.jar`{{execute T2}}
 
 `arthas-boot` is the launcher for `Arthas`. It lists all the Java processes, and the user can select the target process to be diagnosed.
 
-`arthas-boot.jar` supports many parameters and can be viewed by `java -jar arthas-boot.jar -h`{{execute T2}}.
+`arthas-boot3.jar` supports many parameters and can be viewed by `java -jar arthas-boot3.jar -h`{{execute T2}}.
 
 
 ```bash
-$ java -jar arthas-boot.jar -h
+$ java -jar arthas-boot3.jar -h
 [INFO] arthas-boot version: 3.3.6
 Usage: arthas-boot [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
@@ -21,21 +21,21 @@ Usage: arthas-boot [-h] [--target-ip <value>] [--telnet-port <value>]
 Bootstrap Arthas
 
 EXAMPLES:
-  java -jar arthas-boot.jar <pid>
-  java -jar arthas-boot.jar --target-ip 0.0.0.0
-  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1
-  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws'
-  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws'
+  java -jar arthas-boot3.jar <pid>
+  java -jar arthas-boot3.jar --target-ip 0.0.0.0
+  java -jar arthas-boot3.jar --telnet-port 9999 --http-port -1
+  java -jar arthas-boot3.jar --tunnel-server 'ws://192.168.10.11:7777/ws'
+  java -jar arthas-boot3.jar --tunnel-server 'ws://192.168.10.11:7777/ws'
 --agent-id bvDOe8XbTM2pQWjF4cfw
-  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'
-  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>
-  java -jar arthas-boot.jar -f batch.as <pid>
-  java -jar arthas-boot.jar --use-version 3.3.6
-  java -jar arthas-boot.jar --versions
-  java -jar arthas-boot.jar --select math-game
-  java -jar arthas-boot.jar --session-timeout 3600
-  java -jar arthas-boot.jar --attach-only
-  java -jar arthas-boot.jar --repo-mirror aliyun --use-http
+  java -jar arthas-boot3.jar --stat-url 'http://192.168.10.11:8080/api/stat'
+  java -jar arthas-boot3.jar -c 'sysprop; thread' <pid>
+  java -jar arthas-boot3.jar -f batch.as <pid>
+  java -jar arthas-boot3.jar --use-version 3.3.6
+  java -jar arthas-boot3.jar --versions
+  java -jar arthas-boot3.jar --select math-game
+  java -jar arthas-boot3.jar --session-timeout 3600
+  java -jar arthas-boot3.jar --attach-only
+  java -jar arthas-boot3.jar --repo-mirror aliyun --use-http
 WIKI:
   https://arthas.aliyun.com/doc
 

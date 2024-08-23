@@ -4,7 +4,7 @@
 
 Arthas can be exited with the `exit`{{execute interrupt}} or `quit`{{execute interrupt}} command.
 
-After exiting Arthas, you can also connect with `java -jar arthas-boot.jar`{{execute interrupt}} again.
+After exiting Arthas, you can also connect with `java -jar arthas-boot3.jar`{{execute interrupt}} again.
 
 ## Stop Arthas
 

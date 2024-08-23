@@ -36,36 +36,36 @@ English version goes [here](README.md).
 
 ### 快速开始
 
-#### 使用`arthas-boot`(推荐)
+#### 使用`arthas-boot3`(推荐)
 
-下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
+下载`arthas-boot3.jar`，然后用`java -jar`的方式启动：
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
 打印帮助信息：
 
 ```bash
-java -jar arthas-boot.jar -h
+java -jar arthas-boot3.jar -h
 ```
 
-* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot3.jar --repo-mirror aliyun --use-http`
 
-#### 使用`as.sh`
+#### 使用`as3.sh`
 
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
 
 ```bash
-curl -L https://arthas.aliyun.com/install.sh | sh
+curl -L https://arthas.aliyun.com/install3.sh | sh
 ```
 
-上述命令会下载启动脚本文件 `as.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
+上述命令会下载启动脚本文件 `as3.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
 
-直接在shell下面执行`./as.sh`，就会进入交互界面。
+直接在shell下面执行`./as3.sh`，就会进入交互界面。
 
-也可以执行`./as.sh -h`来获取更多参数信息。
+也可以执行`./as3.sh -h`来获取更多参数信息。
 
 ### 文档
 

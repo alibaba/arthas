@@ -26,7 +26,7 @@ if [[ ! -x ${ARTHAS_LIB_HOME} ]]; then
     cp *.jar ${ARTHAS_LIB_HOME}/
 
     # make it -x
-    chmod +x ./as.sh
+    chmod +x ./as3.sh
 
 fi
 

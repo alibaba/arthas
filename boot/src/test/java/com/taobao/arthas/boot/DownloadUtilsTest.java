@@ -38,7 +38,7 @@ public class DownloadUtilsTest {
             System.err.println(folder.getAbsolutePath());
             DownloadUtils.downArthasPackaging("aliyun", false, version, folder.getAbsolutePath());
 
-            File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
+            File as = new File(folder, version + File.separator + "arthas" + File.separator + "as3.sh");
             Assert.assertTrue(as.exists());
         }
     }
@@ -50,7 +50,7 @@ public class DownloadUtilsTest {
         System.err.println(folder.getAbsolutePath());
         DownloadUtils.downArthasPackaging("center", false, version, folder.getAbsolutePath());
 
-        File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
+        File as = new File(folder, version + File.separator + "arthas" + File.separator + "as3.sh");
         Assert.assertTrue(as.exists());
     }
 }

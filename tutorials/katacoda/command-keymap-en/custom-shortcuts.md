@@ -54,7 +54,7 @@ Vim user may want to map `ctrl+h` to moving the cursor forward one character. To
 
 Then reconnect to Arthas console to take effect.
 
-`java -jar arthas-boot.jar`{{execute interrupt}}
+`java -jar arthas-boot3.jar`{{execute interrupt}}
 
 `1`{{execute T2}}
 

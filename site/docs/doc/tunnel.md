@@ -15,8 +15,6 @@
 
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
-- 从 Maven 仓库下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/arthas-tunnel-server/latest_version?mirror=aliyun)
-
 - 从 Github Releases 页下载： [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
 Arthas tunnel server 是一个 spring boot fat jar 应用，直接`java -jar`启动：
@@ -42,13 +40,13 @@ Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
 在启动 arthas，可以传递`--tunnel-server`参数，比如：
 
 ```bash
-as.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
+as3.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
 ```
 
 也可以使用下面的测试地址（不保证一直可用）：
 
 ```bash
-as.sh --tunnel-server 'ws://47.75.156.201:80/ws'
+as3.sh --tunnel-server 'ws://47.75.156.201:80/ws'
 ```
 
 - 如果有特殊需求，可以通过`--agent-id`参数里指定 agentId。默认情况下，会生成随机 ID。
@@ -95,7 +93,7 @@ id        URJZ5L48RPBR2ALI5K4V
 
 如果 arthas agent 配置了 `appName`，则生成的 agentId 会带上`appName`的前缀。
 
-比如在加上启动参数：`as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name demoapp` ，则生成的 agentId 可能是`demoapp_URJZ5L48RPBR2ALI5K4V`。
+比如在加上启动参数：`as3.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name demoapp` ，则生成的 agentId 可能是`demoapp_URJZ5L48RPBR2ALI5K4V`。
 
 Tunnel server 会以`_`做分隔符，提取出`appName`，方便按应用进行管理。
 
@@ -111,10 +109,10 @@ Tunnel server 会以`_`做分隔符，提取出`appName`，方便按应用进行
 **注意，开放管理页面有风险！管理页面没有安全拦截功能，务必自行增加安全措施。**
 :::
 
-在本地启动 tunnel-server，然后使用`as.sh` attach，并且指定应用名`--app-name test`：
+在本地启动 tunnel-server，然后使用`as3.sh` attach，并且指定应用名`--app-name test`：
 
 ```
-$ as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name test
+$ as3.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name test
 telnet connecting to arthas server... current timestamp is 1627539688
 Trying 127.0.0.1...
 Connected to 127.0.0.1.

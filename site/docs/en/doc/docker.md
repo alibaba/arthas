@@ -67,10 +67,10 @@ RUN export JAVA_HOME
    $ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/math-game.jar"
    ```
 
-1. Start `arthas-boot` for diagnosis
+1. Start `arthas-boot3` for diagnosis
 
    ```sh
-   $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
+   $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot3.jar"
    * [1]: 9 jar
 
    [INFO] arthas home: /opt/arthas
@@ -93,13 +93,13 @@ RUN export JAVA_HOME
 ## Diagnose the Java process in Docker
 
 ```sh
-docker exec -it  ${containerId} /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot.jar && java -jar arthas-boot.jar"
+docker exec -it  ${containerId} /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot3.jar && java -jar arthas-boot3.jar"
 ```
 
 ## Diagnose the Java process in the container in k8s
 
 ```sh
-kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot.jar && java -jar arthas-boot.jar"
+kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot3.jar && java -jar arthas-boot3.jar"
 ```
 
 ## Install Arthas into the base Docker image

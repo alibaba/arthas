@@ -54,7 +54,7 @@
 
 然后重新连接即可。
 
-`java -jar arthas-boot.jar`{{execute interrupt}}
+`java -jar arthas-boot3.jar`{{execute interrupt}}
 
 `1`{{execute T2}}
 

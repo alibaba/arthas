@@ -69,11 +69,11 @@ Http API 提供结构化的数据，支持更复杂的交互功能，方便自�
 
 - [批处理功能](batch-support.md)
 
-## as.sh 和 arthas-boot 技巧
+## as3.sh 和 arthas-boot3 技巧
 
 - 通过`select`功能选择 attach 的进程。
 
-正常情况下，每次执行`as.sh`/`arthas-boot.jar`需要选择，或者指定 PID。这样会比较麻烦，因为每次启动应用，它的 PID 会变化。
+正常情况下，每次执行`as3.sh`/`arthas-boot3.jar`需要选择，或者指定 PID。这样会比较麻烦，因为每次启动应用，它的 PID 会变化。
 
 比如，已经启动了`math-game.jar`，使用`jps`命令查看：
 
@@ -86,7 +86,7 @@ $ jps
 通过`select`参数可以指定进程名字，非常方便。
 
 ```bash
-$ ./as.sh --select math-game
+$ ./as3.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas
@@ -118,7 +118,7 @@ pid       58883
 
 在`3.1.4`版本后，增加了用户数据回报功能，方便统一做安全或者历史数据统计。
 
-在启动时，指定`stat-url`，就会回报执行的每一行命令，比如： `./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'`
+在启动时，指定`stat-url`，就会回报执行的每一行命令，比如： `./as3.sh --stat-url 'http://192.168.10.11:8080/api/stat'`
 
 在 tunnel server 里有一个示例的回报代码，用户可以自己在服务器上实现。
 

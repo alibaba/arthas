@@ -2,13 +2,13 @@
 
 You can use`jps`{{execute T2}} to check target pid。
 
-`java -jar arthas-boot.jar 1`{{execute T2}}
+`java -jar arthas-boot3.jar 1`{{execute T2}}
 
 ## Allow external network access
 
 By default, the arthas server listens for the IP of `127.0.0.1`. If you want remote access, you can use the `--target-ip` option.
 
-`java -jar arthas-boot.jar --target-ip`{{execute T2}}
+`java -jar arthas-boot3.jar --target-ip`{{execute T2}}
 
 ## Specify listening port
 
@@ -16,65 +16,65 @@ By default, the arthas server listens for the telnet port `3658`，http port `85
 
 Only listens at the Telnet port and does not listen at the HTTP port:
 
-`java -jar arthas-boot.jar --telnet-port 9999 --http-port -1`{{execute T2}}
+`java -jar arthas-boot3.jar --telnet-port 9999 --http-port -1`{{execute T2}}
 
 ## Specify tunnel server
 
 Use `--tunnel-server` parameter to specify.
 
-`java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws'`{{execute T2}}
+`java -jar arthas-boot3.jar --tunnel-server 'ws://192.168.10.11:7777/ws'`{{execute T2}}
 
 If the tunnel server has registered with agent id，you can use `--agent-id` parameter to specify.
 
-`java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw'`{{execute T2}}
+`java -jar arthas-boot3.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw'`{{execute T2}}
 
 ## Specify report stat url
 
 Use `--stat-url` parameter to specify.
 
-`java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'`{{execute T2}}
+`java -jar arthas-boot3.jar --stat-url 'http://192.168.10.11:8080/api/stat'`{{execute T2}}
 
 ## List all versions
 
-`java -jar arthas-boot.jar --versions`{{execute T2}}
+`java -jar arthas-boot3.jar --versions`{{execute T2}}
 
 Use the specified version:
 
-`java -jar arthas-boot.jar --use-version 3.1.0`{{execute T2}}
+`java -jar arthas-boot3.jar --use-version 3.1.0`{{execute T2}}
 
 ## Print verbose information
 
 Use `-v` or `-verbose`:
 
-`java -jar arthas-boot.jar -v`{{execute T2}}
+`java -jar arthas-boot3.jar -v`{{execute T2}}
 
 ## Specify command to execute and target pid
 
 Use `--command` or `-c` to specify command to execute and target pid, multiple commands separated by `;`.
 
-`java -jar arthas-boot.jar -c 'sysprop; thread' 1`{{execute T2}}
+`java -jar arthas-boot3.jar -c 'sysprop; thread' 1`{{execute T2}}
 
 ## Specify batch file to execute and target pid
 
 Use `--batch-file` or `-f` to specify batch file to execute and target pid.
 
-`java -jar arthas-boot.jar -f batch.as 1`{{execute T2}}
+`java -jar arthas-boot3.jar -f batch.as 1`{{execute T2}}
 
 ## select target process by classname or JARfilename
 
 Use `--select` to select target process by classname or JARfilename.
 
-`java -jar arthas-boot.jar --select math-game`{{execute T2}}
+`java -jar arthas-boot3.jar --select math-game`{{execute T2}}
 
 ## Specify session timeout seconds
 
 Use `--session-timeout`parameter to specify，default value is 1800(30 min).
 
-`java -jar arthas-boot.jar --session-timeout 3600`{{execute T2}}
+`java -jar arthas-boot3.jar --session-timeout 3600`{{execute T2}}
 
 ## Attach target process only, do not connect
 
-`java -jar arthas-boot.jar --attach-only`{{execute T2}}
+`java -jar arthas-boot3.jar --attach-only`{{execute T2}}
 
 ## Use special maven repository mirror，Enforce use http
 
@@ -82,15 +82,15 @@ Use `--session-timeout`parameter to specify，default value is 1800(30 min).
 
 `--use-http` to enforce use http to download, default use https
 
-`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`{{execute T2}}
+`java -jar arthas-boot3.jar --repo-mirror aliyun --use-http`{{execute T2}}
 
 ## Specify arthas client terminal height and width
 
-`java -jar arthas-boot.jar --height 25 --width 80`{{execute T2}}
+`java -jar arthas-boot3.jar --height 25 --width 80`{{execute T2}}
 
 ## Specify arthas home
 
-`java -jar arthas-boot.jar --arthas-home .`{{execute T2}}
+`java -jar arthas-boot3.jar --arthas-home .`{{execute T2}}
 
 ## Start as a Java Agent
 

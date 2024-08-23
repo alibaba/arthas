@@ -32,13 +32,13 @@ sc -d org.apache.commons.lang.StringUtils
 通过`-f`执行脚本文件，批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。
 
 ```bash
-./as.sh -f /var/tmp/test.as <pid> > test.out # pid 可以通过 jps 命令查看
+./as3.sh -f /var/tmp/test.as <pid> > test.out # pid 可以通过 jps 命令查看
 ```
 
 也可以通过 `-c` 来指定指行的命令，比如
 
 ```bash
-./as.sh -c 'sysprop; thread' <pid> > test.out # pid 可以通过 jps 命令查看
+./as3.sh -c 'sysprop; thread' <pid> > test.out # pid 可以通过 jps 命令查看
 ```
 
 ### 第三步：查看运行结果

@@ -38,13 +38,13 @@ Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
 When starting arthas, you can use the `--tunnel-server` parameter, for example:
 
 ```bash
-as.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
+as3.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
 ```
 
 You can also use the following test address (not guaranteed to be available all the time):
 
 ```bash
-as.sh --tunnel-server 'ws://47.75.156.201:80/ws'
+as3.sh --tunnel-server 'ws://47.75.156.201:80/ws'
 ```
 
 - You can specify the agentId by the `--agent-id` parameter. By default, a random ID is generated.
@@ -91,7 +91,7 @@ Note that the agentId must be unique, otherwise it will conflict on the tunnel s
 
 If the arthas agent is configured with `appName`, the generated agentId will be prefixed with `appName`.
 
-For example, if you add the startup parameter `as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name demoapp`, the generated agentId might be `demoapp_URJZ5L48RPBR2ALI5K4V`.
+For example, if you add the startup parameter `as3.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name demoapp`, the generated agentId might be `demoapp_URJZ5L48RPBR2ALI5K4V`.
 
 Tunnel server will use `_` as a delimiter to extract `appName`, which is convenient to manage by application.
 
@@ -107,10 +107,10 @@ Need to configure `arthas.enable-detail-pages=true` in `application.properties` 
 **Attention, opening admin pages is risky! There is no security blocking function on the management page, you must add security measures by yourself.**
 :::
 
-Start the tunnel-server locally, then use `as.sh` attach, and specify the application name `--app-name test`:
+Start the tunnel-server locally, then use `as3.sh` attach, and specify the application name `--app-name test`:
 
 ```
-$ as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name test
+$ as3.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name test
 telnet connecting to arthas server... current timestamp is 1627539688
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
