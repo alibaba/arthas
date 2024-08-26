@@ -35,7 +35,7 @@ const NavbarBrandVersion = () =>
     {
       class: "navbar-version",
     },
-    "v3.7.2",
+    `v${version.value}`,
   );
 
 const NavbarBrandLogo = () => {
