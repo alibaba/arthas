@@ -34,7 +34,7 @@
       <destName>arthas-client.jar</destName>
     </file>
     <file>
-      <source>../boot/target/arthas-boot-jar-with-dependencies.jar</source>
+      <source>../boot/target/arthas-boot3-jar-with-dependencies.jar</source>
       <destName>arthas-boot3.jar</destName>
     </file>
     <file>
