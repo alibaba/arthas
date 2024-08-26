@@ -59,7 +59,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot3.jar --session-timeout 3600\n" + "  java -jar arthas-boot3.jar --attach-only\n"
                 + "  java -jar arthas-boot3.jar --disabled-commands stop,dump\n"
                 + "  java -jar arthas-boot3.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
-                + "  https://arthas.aliyun.com/doc\n")
+                + "  https://arthas.aliyun.com/3.x/doc\n")
 public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;

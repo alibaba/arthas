@@ -1,6 +1,6 @@
 # thread
 
-[`thread`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-thread)
+[`thread`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=command-thread)
 
 ::: tip
 查看当前线程信息，查看线程的堆栈

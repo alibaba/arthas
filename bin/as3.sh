@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# WIKI: https://arthas.aliyun.com/doc
+# WIKI: https://arthas.aliyun.com/3.x/doc
 # This script only supports bash, do not support posix sh.
 # If you have the problem like Syntax error: "(" unexpected (expecting "fi"),
 # Try to run "bash -version" to check the version.
@@ -481,7 +481,7 @@ EXAMPLES:
   ./as3.sh --select math-game
   ./as3.sh --repo-mirror aliyun --use-http
 WIKI:
-  https://arthas.aliyun.com/doc
+  https://arthas.aliyun.com/3.x/doc
 
 Here is the list of possible java process(es) to attatch:
 "

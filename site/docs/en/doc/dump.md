@@ -1,6 +1,6 @@
 # dump
 
-[`dump` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-dump)
+[`dump` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=en&id=command-dump)
 
 ::: tip
 Dump the bytecode for the particular classes to the specified directory.

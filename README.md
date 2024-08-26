@@ -4,7 +4,7 @@
 
 [![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
-[![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
+[![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging?versionPrefix=3)](https://search.maven.org/search?q=g:com.taobao.arthas)
 ![license](https://img.shields.io/github/license/alibaba/arthas.svg)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
@@ -43,10 +43,7 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports JDK 6+.
 * Supports Linux/Mac/Windows.
 
-
-### [Online Tutorials(Recommended)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
-
-* [Usages](tutorials/katacoda/README.md#online-tutorial-usages)
+### [Online Tutorials(Recommended)](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en)
 
 ### Quick start
 
@@ -80,18 +77,18 @@ You can enter its interactive interface by executing `as3.sh`, or execute `as3.s
 
 ### Documentation
 
-* [Online Tutorials(Recommended)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
-* [User manual](https://arthas.aliyun.com/doc/en)
-* [Installation](https://arthas.aliyun.com/doc/en/install-detail.html)
-* [Download](https://arthas.aliyun.com/doc/en/download.html)
-* [Quick start](https://arthas.aliyun.com/doc/en/quick-start.html)
-* [Advanced usage](https://arthas.aliyun.com/doc/en/advanced-use.html)
-* [Commands](https://arthas.aliyun.com/doc/en/commands.html)
-* [WebConsole](https://arthas.aliyun.com/doc/en/web-console.html)
-* [Docker](https://arthas.aliyun.com/doc/en/docker.html)
-* [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/en/spring-boot-starter.html)
+* [Online Tutorials(Recommended)](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en)
+* [User manual](https://arthas.aliyun.com/3.x/doc/en)
+* [Installation](https://arthas.aliyun.com/3.x/doc/en/install-detail.html)
+* [Download](https://arthas.aliyun.com/3.x/doc/en/download.html)
+* [Quick start](https://arthas.aliyun.com/3.x/doc/en/quick-start.html)
+* [Advanced usage](https://arthas.aliyun.com/3.x/doc/en/advanced-use.html)
+* [Commands](https://arthas.aliyun.com/3.x/doc/en/commands.html)
+* [WebConsole](https://arthas.aliyun.com/3.x/doc/en/web-console.html)
+* [Docker](https://arthas.aliyun.com/3.x/doc/en/docker.html)
+* [Arthas Spring Boot Starter](https://arthas.aliyun.com/3.x/doc/en/spring-boot-starter.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [FAQ](https://arthas.aliyun.com/doc/en/faq)
+* [FAQ](https://arthas.aliyun.com/3.x/doc/en/faq)
 * [Compile and debug/How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 
@@ -100,13 +97,13 @@ You can enter its interactive interface by executing `as3.sh`, or execute `as3.s
 
 #### Dashboard
 
-* https://arthas.aliyun.com/doc/en/dashboard
+* https://arthas.aliyun.com/3.x/doc/en/dashboard
 
 ![dashboard](site/docs/.vuepress/public/images/dashboard.png)
 
 #### Thread
 
-* https://arthas.aliyun.com/doc/en/thread
+* https://arthas.aliyun.com/3.x/doc/en/thread
 
 See what is eating your CPU (ranked by top CPU usage) and what is going on there in one glance:
 
@@ -139,7 +136,7 @@ $ thread -n 3
 
 #### jad
 
-* https://arthas.aliyun.com/doc/en/jad
+* https://arthas.aliyun.com/3.x/doc/en/jad
 
 Decompile your class with one shot:
 
@@ -179,7 +176,7 @@ public interface Servlet {
 ```
 
 #### mc
-* https://arthas.aliyun.com/doc/en/mc
+* https://arthas.aliyun.com/3.x/doc/en/mc
 
 Memory compiler, compiles `.java` files into `.class` files in memory.
 
@@ -189,7 +186,7 @@ $ mc /tmp/Test.java
 
 #### retransform
 
-* https://arthas.aliyun.com/doc/en/retransform
+* https://arthas.aliyun.com/3.x/doc/en/retransform
 
 Load the external `*.class` files to retransform/hotswap the loaded classes in JVM.
 
@@ -200,7 +197,7 @@ retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 
 #### sc
 
-* https://arthas.aliyun.com/doc/en/sc
+* https://arthas.aliyun.com/3.x/doc/en/sc
 
 Search any loaded class with detailed information.
 
@@ -239,7 +236,7 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 #### vmtool
 
-* https://arthas.aliyun.com/doc/en/vmtool
+* https://arthas.aliyun.com/3.x/doc/en/vmtool
 
 Get objects in the heap that are instances of the specified class.
 
@@ -261,7 +258,7 @@ $ vmtool --action getInstances --className java.lang.String --limit 10
 
 #### stack
 
-* https://arthas.aliyun.com/doc/en/stack
+* https://arthas.aliyun.com/3.x/doc/en/stack
 
 View the call stack of `test.arthas.TestStack#doGet`:
 
@@ -298,7 +295,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
-* https://arthas.aliyun.com/doc/en/trace
+* https://arthas.aliyun.com/3.x/doc/en/trace
 
 See what is slowing down your method invocation with trace command:
 
@@ -306,7 +303,7 @@ See what is slowing down your method invocation with trace command:
 
 #### Watch
 
-* https://arthas.aliyun.com/doc/en/watch
+* https://arthas.aliyun.com/3.x/doc/en/watch
 
 Watch the first parameter and thrown exception of `test.arthas.TestWatch#doGet` only if it throws exception.
 
@@ -322,7 +319,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 #### Monitor
 
-* https://arthas.aliyun.com/doc/en/monitor
+* https://arthas.aliyun.com/3.x/doc/en/monitor
 
 Monitor a specific method invocation statistics, including the total number of invocations, average response time, success rate, and every 5 seconds:
 
@@ -345,7 +342,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 #### Time Tunnel(tt)
 
-* https://arthas.aliyun.com/doc/en/tt
+* https://arthas.aliyun.com/3.x/doc/en/tt
 
 Record method invocation data, so that you can check the method invocation parameters, returned value, and thrown exceptions later. It works as if you could come back and replay the past method invocation via time tunnel.
 
@@ -368,7 +365,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 75 ms.
 
 #### Classloader
 
-* https://arthas.aliyun.com/doc/en/classloader
+* https://arthas.aliyun.com/3.x/doc/en/classloader
 
 ```bash
 $ classloader
@@ -387,14 +384,14 @@ $ classloader
 
 #### Web Console
 
-* https://arthas.aliyun.com/doc/en/web-console
+* https://arthas.aliyun.com/3.x/doc/en/web-console
 
 ![web console](site/docs/.vuepress/public/images/web-console-local.png)
 
 
 #### Profiler/FlameGraph
 
-* https://arthas.aliyun.com/doc/en/profiler
+* https://arthas.aliyun.com/3.x/doc/en/profiler
 
 ```bash
 $ profiler start
@@ -413,7 +410,7 @@ View profiler results under arthas-output via browser:
 
 #### Arthas Spring Boot Starter
 
-* [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/spring-boot-starter.html)
+* [Arthas Spring Boot Starter](https://arthas.aliyun.com/3.x/doc/spring-boot-starter.html)
 
 ### Known Users
 

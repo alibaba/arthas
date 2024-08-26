@@ -170,7 +170,7 @@ const toNext = (url: string) => {
           </li>
         </ul>
       </div>
-      <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/doc/commands.html"
+      <a class="flex items-center justify-center mx-2" href="https://arthas.aliyun.com/3.x/doc/commands.html"
         target="_blank">
         <img :src="pic" alt="logo" class="w-32" />
       </a>

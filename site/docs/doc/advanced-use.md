@@ -108,8 +108,8 @@ Escape character is '^]'.
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://arthas.aliyun.com/doc
-tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
+wiki      https://arthas.aliyun.com/3.x/doc
+tutorials https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html
 version   3.3.6
 pid       58883
 ```

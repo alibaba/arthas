@@ -1,6 +1,6 @@
 # Log command outputs
 
-[`Log command outputs` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=save-log)
+[`Log command outputs` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=save-log)
 
 ::: tip
 Log command outputs for later analysis

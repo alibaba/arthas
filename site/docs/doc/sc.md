@@ -1,6 +1,6 @@
 # sc
 
-[`sc`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sc)
+[`sc`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=cn&id=command-sc)
 
 ::: tip
 查看 JVM 已加载的类信息

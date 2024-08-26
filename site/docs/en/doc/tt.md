@@ -1,6 +1,6 @@
 # tt
 
-[`tt` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-tt)
+[`tt` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=command-tt)
 
 Check the `parameters`, `return values` and `exceptions` of the methods at different times.
 

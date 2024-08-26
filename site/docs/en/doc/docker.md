@@ -84,7 +84,7 @@ RUN export JAVA_HOME
    `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-   wiki: https://arthas.aliyun.com/doc
+   wiki: https://arthas.aliyun.com/3.x/doc
    version: 3.0.5
    pid: 9
    time: 2018-12-18 11:30:36

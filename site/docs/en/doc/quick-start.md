@@ -1,6 +1,6 @@
 # Quick Start
 
-You can practice it yourself by following the instructions below, or you can use our [online tutorials](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-basics) to get started quickly.
+You can practice it yourself by following the instructions below, or you can use our [online tutorials](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=arthas-basics) to get started quickly.
 
 ## 1. Start math-game
 
@@ -49,7 +49,7 @@ The `math-game` process is the second as shown above, press '2' then 'Enter'. Ar
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://arthas.aliyun.com/doc
+wiki: https://arthas.aliyun.com/3.x/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24
@@ -224,7 +224,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 ]
 ```
 
-Pls. refer to [Arthas advanced](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-advanced) for more information.
+Pls. refer to [Arthas advanced](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=arthas-advanced) for more information.
 
 ## 7. Exit Arthas
 

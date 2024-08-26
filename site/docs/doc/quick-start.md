@@ -1,6 +1,6 @@
 # 快速入门
 
-可以通过下面的方式自己动手实践，也可以通过我们的[在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-basics)，跟随教程快速入门。
+可以通过下面的方式自己动手实践，也可以通过我们的[在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=arthas-basics)，跟随教程快速入门。
 
 ## 1. 启动 math-game
 
@@ -48,7 +48,7 @@ $ $ java -jar arthas-boot3.jar
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://arthas.aliyun.com/doc
+wiki: https://arthas.aliyun.com/3.x/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24
@@ -223,7 +223,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 ]
 ```
 
-更多的功能可以查看[进阶教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)。
+更多的功能可以查看[进阶教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)。
 
 ## 7. 退出 arthas
 

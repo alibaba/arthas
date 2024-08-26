@@ -1,6 +1,6 @@
 # keymap
 
-[`keymap` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-keymap)
+[`keymap` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=command-keymap)
 
 Use `keymap` command to print the current keymap:
 

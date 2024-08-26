@@ -211,13 +211,13 @@ function requestFullScreen(element: HTMLElement) {
           </label>
           <ul tabindex="0" class="dropdown-content menu shadow bg-base-100">
             <li>
-              <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
+              <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/3.x/doc"
                 target="_blank">Documentation
                 <span class="sr-only">(current)</span></a>
             </li>
             <li>
               <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-                href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
+                href="https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html" target="_blank">Online
                 Tutorials</a>
             </li>
             <li>
@@ -231,13 +231,13 @@ function requestFullScreen(element: HTMLElement) {
 
         <ul class="menu menu-vertical 2xl:menu-horizontal hidden">
           <li>
-            <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/doc"
+            <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm" href="https://arthas.aliyun.com/3.x/doc"
               target="_blank">Documentation
               <span class="sr-only">(current)</span></a>
           </li>
           <li>
             <a class="hover:text-sky-500 dark:hover:text-sky-400 text-sm"
-              href="https://arthas.aliyun.com/doc/arthas-tutorials.html" target="_blank">Online
+              href="https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html" target="_blank">Online
               Tutorials</a>
           </li>
           <li>
