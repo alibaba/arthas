@@ -3,22 +3,19 @@ package com.taobao.arthas.h2;/**
  * @date: 2024/7/7 下午9:58
  */
 
-import com.baidu.bjf.remoting.protobuf.Codec;
 import com.taobao.arthas.protobuf.ProtobufCodec;
 import com.taobao.arthas.protobuf.ProtobufProxy;
-import com.taobao.arthas.service.ArthasSampleService;
 import com.taobao.arthas.service.req.ArthasSampleRequest;
 import com.taobao.arthas.service.res.ArthasSampleResponse;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http2.*;
-import io.netty.util.CharsetUtil;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
@@ -34,16 +31,22 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
      */
     private ConcurrentHashMap<Integer, ByteBuf> dataBuffer = new ConcurrentHashMap<>();
 
-    private final Http2FrameWriter frameWriter = new DefaultHttp2FrameWriter();
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Http2Frame frame) throws IOException {
-        if (frame instanceof Http2HeadersFrame) {
+        if (frame instanceof Http2SettingsFrame) {
+
+        } else if (frame instanceof Http2HeadersFrame) {
             handleGrpcRequest((Http2HeadersFrame) frame, ctx);
         } else if (frame instanceof Http2DataFrame) {
-            handleGrpcData((Http2DataFrame) frame,ctx);
+            handleGrpcData((Http2DataFrame) frame, ctx);
         }
     }
+
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -54,30 +57,11 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
     private void handleGrpcRequest(Http2HeadersFrame headersFrame, ChannelHandlerContext ctx) {
         int id = headersFrame.stream().id();
         dataBuffer.put(id, ctx.alloc().buffer());
-
         System.out.println("Received headers: " + headersFrame.headers());
-        System.out.println(headersFrame.headers().path().toString());
-
-        // Respond to the client with headers
-        Http2Headers responseHeaders = new DefaultHttp2Headers()
-                .status("200")
-                .set("content-type", "text/plain; charset=UTF-8");
-
-        // 创建响应数据
-        byte[] content = "Hello, HTTP/2 World!".getBytes();
-        Http2DataFrame dataFrame = new DefaultHttp2DataFrame(ctx.alloc().buffer().writeBytes(content), true);
-
-        // 发送响应头
-        ctx.write(new DefaultHttp2HeadersFrame(responseHeaders).stream(headersFrame.stream()));
-
-        // 发送响应数据
-        ctx.writeAndFlush(dataFrame.stream(headersFrame.stream()));
     }
 
-    private void handleGrpcData(Http2DataFrame dataFrame,ChannelHandlerContext ctx) throws IOException {
+    private void handleGrpcData(Http2DataFrame dataFrame, ChannelHandlerContext ctx) throws IOException {
         byte[] data = new byte[dataFrame.content().readableBytes()];
-        System.out.println(dataFrame.content().readableBytes());
-        System.out.println(dataFrame.isEndStream());
         dataFrame.content().readBytes(data);
 
 //          Decompress if needed
@@ -86,8 +70,11 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         byteBuf.writeBytes(decompressedData);
 
         if (dataFrame.isEndStream()) {
-            int length = byteBuf.readInt();
+
             boolean b = byteBuf.readBoolean();
+            int length = byteBuf.readInt();
+            System.out.println(b);
+            System.out.println(length);
 
             byte[] byteArray = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(byteArray);
@@ -99,26 +86,36 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
             System.out.println(decode);
 
             ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
-            arthasSampleResponse.setMessage(decode.getName());
+            arthasSampleResponse.setMessage("Hello ArthasSample!");
             byte[] responseData = responseCodec.encode(arthasSampleResponse);
 
-            // Send response
-            Http2Headers responseHeaders = new DefaultHttp2Headers()
+
+
+            Http2Headers endHeader = new DefaultHttp2Headers()
                     .status("200")
-                    .set("content-type", "application/grpc");
-            DefaultHttp2HeadersFrame headersFrame = new DefaultHttp2HeadersFrame(responseHeaders);
-            ctx.write(headersFrame);
+                    .set("content-type", "application/grpc")
+                    .set("grpc-encoding", "identity")
+                    .set("grpc-accept-encoding", "identity,deflate,gzip");
+            ctx.write(new DefaultHttp2HeadersFrame(endHeader).stream(dataFrame.stream()));
+
             ByteBuf buffer = ctx.alloc().buffer();
-            buffer.writeInt(responseData.length);
             buffer.writeBoolean(false);
+            buffer.writeInt(responseData.length);
             buffer.writeBytes(responseData);
             System.out.println(responseData.length);
-            DefaultHttp2DataFrame stream = new DefaultHttp2DataFrame(buffer, true).stream(dataFrame.stream());
-            ctx.writeAndFlush(stream);
+            DefaultHttp2DataFrame resDataFrame = new DefaultHttp2DataFrame(buffer).stream(dataFrame.stream());
+            ctx.write(resDataFrame);
+
+
+            Http2Headers endStream = new DefaultHttp2Headers()
+                    .set("grpc-status", "0");
+            DefaultHttp2HeadersFrame endStreamFrame = new DefaultHttp2HeadersFrame(endStream, true).stream(dataFrame.stream());
+            ctx.writeAndFlush(endStreamFrame);
         } else {
 
         }
     }
+
 
     private static byte[] decompressGzip(byte[] compressedData) throws IOException {
         boolean isGzip = (compressedData.length > 2 && (compressedData[0] & 0xff) == 0x1f && (compressedData[1] & 0xff) == 0x8b);
