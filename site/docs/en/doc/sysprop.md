@@ -1,6 +1,6 @@
 # sysprop
 
-[`sysprop` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-sysprop)
+[`sysprop` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=command-sysprop)
 
 ::: tip
 Examine the system properties from the target JVM
@@ -21,7 +21,7 @@ Examine the system properties from the target JVM
  sysprop production.mode true
 
  WIKI:
-   https://arthas.aliyun.com/doc/sysprop
+   https://arthas.aliyun.com/3.x/doc/sysprop
 
  OPTIONS:
  -h, --help                                  this help

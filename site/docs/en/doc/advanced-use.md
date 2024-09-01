@@ -69,11 +69,11 @@ It is convenient for running multiple commands in bulk with custom scripts. It c
 
 - [Batch Processing](batch-support.md)
 
-## as.sh and arthas-boot tips
+## as3.sh and arthas-boot3 tips
 
 - Select the process to be attached via the `select` option.
 
-Normally, `as.sh`/`arthas-boot.jar` needs to a pid, bacause the pid will change.
+Normally, `as3.sh`/`arthas-boot3.jar` needs to a pid, bacause the pid will change.
 
 For example, with `math-game.jar` already started, use the `jps` command to see.
 
@@ -86,7 +86,7 @@ $ jps
 The `select` option allows you to specify a process name, which is very convenient.
 
 ```bash
-$ ./as.sh --select math-game
+$ ./as3.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas
@@ -108,8 +108,8 @@ Escape character is '^]'.
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://arthas.aliyun.com/doc
-tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
+wiki      https://arthas.aliyun.com/3.x/doc
+tutorials https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html
 version   3.3.6
 pid       58883
 ```
@@ -118,7 +118,7 @@ pid       58883
 
 After the `3.1.4` version, arthas support user data report.
 
-At startup, use the `stat-url` option, such as: `./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'`
+At startup, use the `stat-url` option, such as: `./as3.sh --stat-url 'http://192.168.10.11:8080/api/stat'`
 
 There is a sample data report in the tunnel server that users can implement on their own.
 

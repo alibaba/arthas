@@ -1,6 +1,6 @@
 # monitor
 
-[`monitor`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-monitor)
+[`monitor`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=command-monitor)
 
 ::: tip
 方法执行监控

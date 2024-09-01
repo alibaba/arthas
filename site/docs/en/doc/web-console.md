@@ -1,6 +1,6 @@
 # Web Console
 
-[`Web Console` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=case-web-console)
+[`Web Console` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=case-web-console)
 
 ## Connect arthas through the browser
 

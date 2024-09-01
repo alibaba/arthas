@@ -1,6 +1,6 @@
 # Web Console
 
-[`Web Console`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=case-web-console)
+[`Web Console`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=case-web-console)
 
 ## 通过浏览器连接 arthas
 

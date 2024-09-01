@@ -1,6 +1,6 @@
 # sysenv
 
-[`sysenv` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-sysenv)
+[`sysenv` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=command-sysenv)
 
 ::: tip
 View the current JVM environment variables.
@@ -20,7 +20,7 @@ View the current JVM environment variables.
    sysenv USER
 
  WIKI:
-   https://arthas.aliyun.com/doc/sysenv
+   https://arthas.aliyun.com/3.x/doc/sysenv
 
  OPTIONS:
  -h, --help                                                 this help

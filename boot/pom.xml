@@ -7,8 +7,8 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>arthas-boot</artifactId>
-    <name>arthas-boot</name>
+    <artifactId>arthas-boot3</artifactId>
+    <name>arthas-boot3</name>
     <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
@@ -29,7 +29,7 @@
     </dependencies>
 
     <build>
-        <finalName>arthas-boot</finalName>
+        <finalName>arthas-boot3</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

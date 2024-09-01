@@ -2,7 +2,9 @@
 
 1. Download the latest version
 
-   **Latest version, Click To Download**: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)
+Download from Github Releases
+
+[https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
 2. Unzip zip file
 
@@ -18,7 +20,7 @@
    sudo su admin
    rm -rf /home/admin/.arthas/lib/* # remove all the leftover of the old outdated Arthas
    cd arthas
-   ./install-local.sh # switch the user based on the owner of the target Java process.
+   ./install-local3.sh # switch the user based on the owner of the target Java process.
    ```
 
 4. Start Arthas
@@ -26,22 +28,22 @@
    Make sure `stop` the old Arthas server before start.
 
    ```bash
-   ./as.sh
+   ./as3.sh
    ```
 
-## Startup with as.sh/as.bat
+## Startup with as3.sh/as.bat
 
 ### Linux/Unix/Mac
 
 You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press _Enter_ to run:
 
 ```bash
-curl -L https://arthas.aliyun.com/install.sh | sh
+curl -L https://arthas.aliyun.com/install3.sh | sh
 ```
 
-The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
+The command above will download the bootstrap script `as3.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
 
-You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
+You can enter its interactive interface by executing `as3.sh`, or execute `as3.sh -h` for more help information.
 
 ### Windows
 

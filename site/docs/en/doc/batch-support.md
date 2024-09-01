@@ -30,13 +30,13 @@ Note:
 Use `-f` to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:
 
 ```bash
-./as.sh -f /var/tmp/test.as 56328 > test.out
+./as3.sh -f /var/tmp/test.as 56328 > test.out
 ```
 
 Use `-c` also can specify the commands, like this:
 
 ```bash
-./as.sh -c 'sysprop; thread' 56328 > test.out
+./as3.sh -c 'sysprop; thread' 56328 > test.out
 ```
 
 ### Step 3: Check the output

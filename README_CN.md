@@ -6,7 +6,7 @@
 
 [![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
-[![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
+[![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging?versionPrefix=3)](https://search.maven.org/search?q=g:com.taobao.arthas)
 ![license](https://img.shields.io/github/license/alibaba/arthas.svg)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
@@ -29,73 +29,70 @@ English version goes [here](README.md).
 
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
-
-### [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
-
-* [使用方法](tutorials/katacoda/README_CN.md#在线教程使用方法)
+### [在线教程(推荐)](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn)
 
 ### 快速开始
 
-#### 使用`arthas-boot`(推荐)
+#### 使用`arthas-boot3`(推荐)
 
-下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
+下载`arthas-boot3.jar`，然后用`java -jar`的方式启动：
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
 打印帮助信息：
 
 ```bash
-java -jar arthas-boot.jar -h
+java -jar arthas-boot3.jar -h
 ```
 
-* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot3.jar --repo-mirror aliyun --use-http`
 
-#### 使用`as.sh`
+#### 使用`as3.sh`
 
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
 
 ```bash
-curl -L https://arthas.aliyun.com/install.sh | sh
+curl -L https://arthas.aliyun.com/install3.sh | sh
 ```
 
-上述命令会下载启动脚本文件 `as.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
+上述命令会下载启动脚本文件 `as3.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
 
-直接在shell下面执行`./as.sh`，就会进入交互界面。
+直接在shell下面执行`./as3.sh`，就会进入交互界面。
 
-也可以执行`./as.sh -h`来获取更多参数信息。
+也可以执行`./as3.sh -h`来获取更多参数信息。
 
 ### 文档
 
-* [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
-* [用户文档](https://arthas.aliyun.com/doc/)
-* [安装](https://arthas.aliyun.com/doc/install-detail.html)
-* [下载](https://arthas.aliyun.com/doc/download.html)
-* [快速入门](https://arthas.aliyun.com/doc/quick-start.html)
-* [进阶使用](https://arthas.aliyun.com/doc/advanced-use.html)
-* [命令列表](https://arthas.aliyun.com/doc/commands.html)
-* [WebConsole](https://arthas.aliyun.com/doc/web-console.html)
-* [Docker](https://arthas.aliyun.com/doc/docker.html)
-* [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/spring-boot-starter.html)
+* [在线教程(推荐)](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn)
+* [用户文档](https://arthas.aliyun.com/3.x/doc/)
+* [安装](https://arthas.aliyun.com/3.x/doc/install-detail.html)
+* [下载](https://arthas.aliyun.com/3.x/doc/download.html)
+* [快速入门](https://arthas.aliyun.com/3.x/doc/quick-start.html)
+* [进阶使用](https://arthas.aliyun.com/3.x/doc/advanced-use.html)
+* [命令列表](https://arthas.aliyun.com/3.x/doc/commands.html)
+* [WebConsole](https://arthas.aliyun.com/3.x/doc/web-console.html)
+* [Docker](https://arthas.aliyun.com/3.x/doc/docker.html)
+* [Arthas Spring Boot Starter](https://arthas.aliyun.com/3.x/doc/spring-boot-starter.html)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [FAQ/常见问题](https://arthas.aliyun.com/doc/faq)
+* [FAQ/常见问题](https://arthas.aliyun.com/3.x/doc/faq)
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
-* [QQ群/钉钉群](https://arthas.aliyun.com/doc/contact-us.html)
+* [QQ群/钉钉群](https://arthas.aliyun.com/3.x/doc/contact-us.html)
 
 ### 案例展示
 
 #### Dashboard
 
-* https://arthas.aliyun.com/doc/dashboard
+* https://arthas.aliyun.com/3.x/doc/dashboard
 
 ![dashboard](site/docs/.vuepress/public/images/dashboard.png)
 
 #### Thread
 
-* https://arthas.aliyun.com/doc/thread
+* https://arthas.aliyun.com/3.x/doc/thread
 
 一目了然的了解系统的状态，哪些线程比较占cpu？他们到底在做什么？
 
@@ -128,7 +125,7 @@ $ thread -n 3
 
 #### jad
 
-* https://arthas.aliyun.com/doc/jad
+* https://arthas.aliyun.com/3.x/doc/jad
 
 对类进行反编译:
 
@@ -168,7 +165,7 @@ public interface Servlet {
 ```
 
 #### mc
-* https://arthas.aliyun.com/doc/mc
+* https://arthas.aliyun.com/3.x/doc/mc
 
 Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 
@@ -177,7 +174,7 @@ mc /tmp/Test.java
 ```
 
 #### retransform
-* https://arthas.aliyun.com/doc/retransform
+* https://arthas.aliyun.com/3.x/doc/retransform
 
 加载外部的`.class`文件，retransform 热更新jvm已加载的类。
 
@@ -187,7 +184,7 @@ retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 #### sc
-* https://arthas.aliyun.com/doc/sc
+* https://arthas.aliyun.com/3.x/doc/sc
 
 查找JVM中已经加载的类
 
@@ -225,7 +222,7 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 #### vmtool
 
-* https://arthas.aliyun.com/doc/vmtool
+* https://arthas.aliyun.com/3.x/doc/vmtool
 
 从JVM heap中获取指定类的实例。
 
@@ -246,7 +243,7 @@ $ vmtool --action getInstances --className java.lang.String --limit 10
 ```
 #### stack
 
-* https://arthas.aliyun.com/doc/stack
+* https://arthas.aliyun.com/3.x/doc/stack
 
 查看方法 `test.arthas.TestStack#doGet` 的调用堆栈：
 
@@ -283,7 +280,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
-* https://arthas.aliyun.com/doc/trace
+* https://arthas.aliyun.com/3.x/doc/trace
 
 观察方法执行的时候哪个子调用比较慢:
 
@@ -291,7 +288,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Watch
 
-* https://arthas.aliyun.com/doc/watch
+* https://arthas.aliyun.com/3.x/doc/watch
 
 观察方法 `test.arthas.TestWatch#doGet` 执行的入参，仅当方法抛出异常时才输出。
 
@@ -307,7 +304,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 #### Monitor
 
-* https://arthas.aliyun.com/doc/monitor
+* https://arthas.aliyun.com/3.x/doc/monitor
 
 监控某个特殊方法的调用统计数据，包括总调用次数，平均rt，成功率等信息，每隔5秒输出一次。
 
@@ -331,7 +328,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 #### Time Tunnel(tt)
 
-* https://arthas.aliyun.com/doc/tt
+* https://arthas.aliyun.com/3.x/doc/tt
 
 记录方法调用信息，支持事后查看方法调用的参数，返回值，抛出的异常等信息，仿佛穿越时空隧道回到调用现场一般。
 
@@ -354,7 +351,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 75 ms.
 
 #### Classloader
 
-* https://arthas.aliyun.com/doc/classloader
+* https://arthas.aliyun.com/3.x/doc/classloader
 
 了解当前系统中有多少类加载器，以及每个加载器加载的类数量，帮助您判断是否有类加载器泄露。
 
@@ -375,13 +372,13 @@ $ classloader
 
 #### Web Console
 
-* https://arthas.aliyun.com/doc/web-console
+* https://arthas.aliyun.com/3.x/doc/web-console
 
 ![web console](site/docs/.vuepress/public/images/web-console-local.png)
 
 #### Profiler/FlameGraph/火焰图
 
-* https://arthas.aliyun.com/doc/profiler
+* https://arthas.aliyun.com/3.x/doc/profiler
 
 ```bash
 $ profiler start
@@ -400,7 +397,7 @@ OK
 
 #### Arthas Spring Boot Starter
 
-* [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/spring-boot-starter.html)
+* [Arthas Spring Boot Starter](https://arthas.aliyun.com/3.x/doc/spring-boot-starter.html)
 
 ### Known Users
 

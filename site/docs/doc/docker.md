@@ -67,10 +67,10 @@ RUN export JAVA_HOME
    $ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/math-game.jar"
    ```
 
-1. 启动`arthas-boot`来进行诊断
+1. 启动`arthas-boot3`来进行诊断
 
    ```sh
-   $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
+   $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot3.jar"
    * [1]: 9 jar
 
    [INFO] arthas home: /opt/arthas
@@ -84,7 +84,7 @@ RUN export JAVA_HOME
    `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-   wiki: https://arthas.aliyun.com/doc
+   wiki: https://arthas.aliyun.com/3.x/doc
    version: 3.0.5
    pid: 9
    time: 2018-12-18 11:30:36
@@ -93,13 +93,13 @@ RUN export JAVA_HOME
 ## 诊断 Docker 里的 Java 进程
 
 ```sh
-docker exec -it  ${containerId} /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot.jar && java -jar arthas-boot.jar"
+docker exec -it  ${containerId} /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot3.jar && java -jar arthas-boot3.jar"
 ```
 
 ## 诊断 k8s 里容器里的 Java 进程
 
 ```sh
-kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot.jar && java -jar arthas-boot.jar"
+kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot3.jar && java -jar arthas-boot3.jar"
 ```
 
 ## 把 Arthas 安装到基础镜像里

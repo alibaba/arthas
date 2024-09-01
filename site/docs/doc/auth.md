@@ -9,7 +9,7 @@
 在 attach 时，可以在命令行指定密码。比如：
 
 ```
-java -jar arthas-boot.jar --password ppp
+java -jar arthas-boot3.jar --password ppp
 ```
 
 - 可以通过 `--username` 选项来指定用户，默认值是`arthas`。

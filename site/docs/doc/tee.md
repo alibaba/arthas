@@ -1,6 +1,6 @@
 # tee
 
-[`tee`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-tee)
+[`tee`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=command-tee)
 
 ::: tip
 类似传统的`tee`命令, 用于读取标准输入的数据，并将其内容输出成文件。
@@ -22,7 +22,7 @@ tee 指令会从标准输入设备读取数据，将其内容输出到标准输�
   sysprop | tee -a /path/to/logfile | grep java
 
  WIKI:
-   https://arthas.aliyun.com/doc/tee
+   https://arthas.aliyun.com/3.x/doc/tee
 
  OPTIONS:
  -a, --append                              Append to file

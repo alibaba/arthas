@@ -59,7 +59,7 @@ public class ArthasAgent {
     }
 
     /**
-     * @see https://arthas.aliyun.com/doc/arthas-properties.html
+     * @see https://arthas.aliyun.com/3.x/doc/arthas-properties.html
      * @param configMap
      */
     public static void attach(Map<String, String> configMap) {

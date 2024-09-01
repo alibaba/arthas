@@ -1,6 +1,6 @@
 # Quick Start
 
-You can practice it yourself by following the instructions below, or you can use our [online tutorials](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-basics) to get started quickly.
+You can practice it yourself by following the instructions below, or you can use our [online tutorials](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=arthas-basics) to get started quickly.
 
 ## 1. Start math-game
 
@@ -20,18 +20,18 @@ The source code of `math-game`: [View](https://github.com/alibaba/arthas/blob/ma
 Execute the following command in the command line:
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
-- The user to run this command _MUST_ have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
+- The user to run this command _MUST_ have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot3.jar` or `sudo -u admin -EH java -jar arthas-boot3.jar`
 - If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
-- `java -jar arthas-boot.jar -h` print usage.
+- `java -jar arthas-boot3.jar -h` print usage.
 
 Select the target Java process to attach:
 
 ```bash
-$ $ java -jar arthas-boot.jar
+$ $ java -jar arthas-boot3.jar
 * [1]: 35542
   [2]: 71560 math-game.jar
 ```
@@ -49,7 +49,7 @@ The `math-game` process is the second as shown above, press '2' then 'Enter'. Ar
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://arthas.aliyun.com/doc
+wiki: https://arthas.aliyun.com/3.x/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24
@@ -224,7 +224,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 ]
 ```
 
-Pls. refer to [Arthas advanced](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-advanced) for more information.
+Pls. refer to [Arthas advanced](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=arthas-advanced) for more information.
 
 ## 7. Exit Arthas
 

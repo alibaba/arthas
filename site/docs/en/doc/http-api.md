@@ -1,6 +1,6 @@
 # Http API
 
-[`Http API` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=case-http-api)
+[`Http API` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=case-http-api)
 
 ## Overview
 
@@ -301,12 +301,12 @@ The response content is as follows:
         "message": "Welcome to arthas!"
       },
       {
-        "tutorials": "https://arthas.aliyun.com/doc/arthas-tutorials.html",
+        "tutorials": "https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html",
         "time": "2020-08-06 15:56:43",
         "type": "welcome",
         "jobId": 0,
         "pid": "7909",
-        "wiki": "https://arthas.aliyun.com/doc",
+        "wiki": "https://arthas.aliyun.com/3.x/doc",
         "version": "3.3.7"
       },
       {

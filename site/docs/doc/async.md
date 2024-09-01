@@ -1,6 +1,6 @@
 # Arthas 后台异步任务
 
-[`后台异步任务`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=case-async-jobs)
+[`后台异步任务`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=cn&id=case-async-jobs)
 
 arthas 中的后台异步任务，使用了仿 linux 系统任务相关的命令。[linux 任务相关介绍](https://ehlxr.me/2017/01/18/Linux-%E4%B8%AD-fg%E3%80%81bg%E3%80%81jobs%E3%80%81-%E6%8C%87%E4%BB%A4/)。
 

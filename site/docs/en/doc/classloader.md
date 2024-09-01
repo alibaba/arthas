@@ -1,6 +1,6 @@
 # classloader
 
-[`classloader` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-classloader)
+[`classloader` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=en&id=command-classloader)
 
 ::: tip
 View hierarchy, urls and classes-loading info for the class-loaders.

@@ -12,6 +12,7 @@ export default defineUserConfig({
   title: "arthas",
   description: "arthas user document",
   head,
+  base: "/3.x/",
   locales: {
     "/": {
       lang: "zh-CN",

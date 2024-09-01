@@ -78,7 +78,7 @@ $ help
    dashboard -i 2000
 
  WIKI:
-   https://arthas.aliyun.com/doc/dashboard
+   https://arthas.aliyun.com/3.x/doc/dashboard
 
  OPTIONS:
  -h, --help                              this help

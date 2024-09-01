@@ -1,6 +1,6 @@
 # sm
 
-[`sm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sm)
+[`sm`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=cn&id=command-sm)
 
 ::: tip
 查看已加载类的方法信息

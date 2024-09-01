@@ -1,6 +1,6 @@
 # profiler
 
-[`profiler` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-profiler)
+[`profiler` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=command-profiler)
 
 ::: tip
 Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)

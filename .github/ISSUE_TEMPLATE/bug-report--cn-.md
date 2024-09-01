@@ -8,7 +8,7 @@ about: 提交Arthas Bug/使用疑问，使用这个模板
 
 ### 环境信息
 
-* `arthas-boot.jar` 或者 `as.sh` 的版本： xxx
+* `arthas-boot3.jar` 或者 `as3.sh` 的版本： xxx
 * Arthas 版本: xxx
 * 操作系统版本: xxx
 * 目标进程的JVM版本: xxx

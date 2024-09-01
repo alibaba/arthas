@@ -1,6 +1,6 @@
 # options
 
-[`options`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-options)
+[`options`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=command-options)
 
 ::: tip
 全局开关

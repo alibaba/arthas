@@ -1,6 +1,6 @@
 # 执行结果存日志
 
-[`执行结果存日志`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=save-log)
+[`执行结果存日志`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=save-log)
 
 ::: tip
 将命令的结果完整保存在日志文件中，便于后续进行分析

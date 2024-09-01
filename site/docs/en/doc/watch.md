@@ -1,6 +1,6 @@
 # watch
 
-[`watch` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-watch)
+[`watch` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=en&id=command-watch)
 
 Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 

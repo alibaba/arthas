@@ -1,6 +1,6 @@
 # ognl
 
-[`ognl`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-ognl)
+[`ognl`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=cn&id=command-ognl)
 
 ::: tip
 执行 ognl 表达式

@@ -9,7 +9,7 @@ Authenticates the current session
 When attaching, you can specify a password on the command line. such as:
 
 ```
-java -jar arthas-boot.jar --password ppp
+java -jar arthas-boot3.jar --password ppp
 ```
 
 - The user can be specified by the `--username` option, the default value is `arthas`.

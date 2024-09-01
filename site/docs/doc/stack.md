@@ -1,6 +1,6 @@
 # stack
 
-[`stack`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-stack)
+[`stack`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=command-stack)
 
 ::: tip
 输出当前方法被调用的调用路径

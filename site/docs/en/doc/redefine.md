@@ -4,7 +4,7 @@
 Recommend to use the [retransform](retransform.md) command.
 :::
 
-[`mc-redefine` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-redefine)
+[`mc-redefine` online tutorial](https://arthas.aliyun.com/3.x/doc/arthas-tutorials?language=en&id=command-mc-redefine)
 
 ::: tip
 Load the external `*.class` files to re-define the loaded classes in JVM.

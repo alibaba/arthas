@@ -34,8 +34,8 @@
       <destName>arthas-client.jar</destName>
     </file>
     <file>
-      <source>../boot/target/arthas-boot-jar-with-dependencies.jar</source>
-      <destName>arthas-boot.jar</destName>
+      <source>../boot/target/arthas-boot3-jar-with-dependencies.jar</source>
+      <destName>arthas-boot3.jar</destName>
     </file>
     <file>
       <source>../math-game/target/math-game.jar</source>
@@ -43,12 +43,12 @@
     </file>
 
     <file>
-      <source>../bin/install-local.sh</source>
+      <source>../bin/install-local3.sh</source>
       <fileMode>0755</fileMode>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>../bin/as.sh </source>
+      <source>../bin/as3.sh </source>
       <fileMode>0755</fileMode>
     </file>
     <file>

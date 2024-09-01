@@ -1,6 +1,6 @@
 # 快速入门
 
-可以通过下面的方式自己动手实践，也可以通过我们的[在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-basics)，跟随教程快速入门。
+可以通过下面的方式自己动手实践，也可以通过我们的[在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=arthas-basics)，跟随教程快速入门。
 
 ## 1. 启动 math-game
 
@@ -18,19 +18,19 @@ java -jar math-game.jar
 在命令行下面执行（使用和目标进程一致的用户启动，否则可能 attach 失败）：
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-boot.jar
-java -jar arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot3.jar
+java -jar arthas-boot3.jar
 ```
 
-- 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。
+- 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot3.jar` 或 `sudo -u admin -EH java -jar arthas-boot3.jar`。
 - 如果 attach 不上目标进程，可以查看`~/logs/arthas/` 目录下的日志。
-- 如果下载速度比较慢，可以使用 aliyun 的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
-- `java -jar arthas-boot.jar -h` 打印更多参数信息。
+- 如果下载速度比较慢，可以使用 aliyun 的镜像：`java -jar arthas-boot3.jar --repo-mirror aliyun --use-http`
+- `java -jar arthas-boot3.jar -h` 打印更多参数信息。
 
 选择应用 java 进程：
 
 ```bash
-$ $ java -jar arthas-boot.jar
+$ $ java -jar arthas-boot3.jar
 * [1]: 35542
   [2]: 71560 math-game.jar
 ```
@@ -48,7 +48,7 @@ $ $ java -jar arthas-boot.jar
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://arthas.aliyun.com/doc
+wiki: https://arthas.aliyun.com/3.x/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24
@@ -223,7 +223,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 ]
 ```
 
-更多的功能可以查看[进阶教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)。
+更多的功能可以查看[进阶教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)。
 
 ## 7. 退出 arthas
 

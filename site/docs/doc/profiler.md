@@ -1,6 +1,6 @@
 # profiler
 
-[`profiler`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-profiler)
+[`profiler`在线教程](https://arthas.aliyun.com/3.x/doc/arthas-tutorials.html?language=cn&id=command-profiler)
 
 ::: tip
 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图

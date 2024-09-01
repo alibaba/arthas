@@ -3,11 +3,11 @@
 ## Interactive Mode
 
 ```bash
-./as.sh
+./as3.sh
 ```
 
 ```bash
-➜  bin git:(develop) ✗ ./as.sh
+➜  bin git:(develop) ✗ ./as3.sh
 Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.
   [1]: 3088 org.jetbrains.idea.maven.server.RemoteMavenServer
 * [2]: 12872 org.apache.catalina.startup.Bootstrap
@@ -26,7 +26,7 @@ $
 Startup script is as follows:
 
 ```bash
-./as.sh <PID>[@IP:PORT]
+./as3.sh <PID>[@IP:PORT]
 ```
 
 ### Parameter Description
@@ -39,11 +39,11 @@ Startup script is as follows:
 
 - If IP and PORT are not specified, then the default values are 127.0.0.1 and 3658
 
-  > ./as.sh 12345
+  > ./as3.sh 12345
 
   Equivalent to:
 
-  > ./as.sh 12356@127.0.0.1:3658
+  > ./as3.sh 12356@127.0.0.1:3658
 
 ### Remote Diagnosis
 
@@ -55,10 +55,10 @@ telnet 192.168.1.119 3658
 
 ### sudo Support
 
-Usually online environment will only grant users privilege as low as possible, instead, all advanced operations are through sudo-list. Since `as.sh` script takes into account the current effective user, it is possible to run the script in the other rule, by specifying `-H` option like this:
+Usually online environment will only grant users privilege as low as possible, instead, all advanced operations are through sudo-list. Since `as3.sh` script takes into account the current effective user, it is possible to run the script in the other rule, by specifying `-H` option like this:
 
 ```bash
-sudo -u admin -H ./as.sh 12345
+sudo -u admin -H ./as3.sh 12345
 ```
 
 ### Windows Support

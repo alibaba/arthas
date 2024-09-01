@@ -32,23 +32,23 @@ Recommend to use [`as-package.sh`](as-package.sh) to package, which will auto-in
 * windows need to install gcc
 
 F.Y.I
-1. when using [`as.sh`](https://github.com/alibaba/arthas/blob/master/bin/as.sh) to start Arthas, it will get the latest version under `~/.arthas/lib`;
+1. when using [`as3.sh`](https://github.com/alibaba/arthas/blob/master/bin/as3.sh) to start Arthas, it will get the latest version under `~/.arthas/lib`;
 2. when [`as-package.sh`](as-package.sh) packaging, it will get the version from `pom.xml` and suffix it with the current timestamp e.g. `3.0.5.20180917161808`. 
 
-You can also use `./mvnw clean package -DskipTests` to package and generate a `zip` under `packaging/target/` but remember when `as.sh` starts, it load the version under `~/.arthas/lib`.
+You can also use `./mvnw clean package -DskipTests` to package and generate a `zip` under `packaging/target/` but remember when `as3.sh` starts, it load the version under `~/.arthas/lib`.
 
 ### Start Arthas in specified version
 
 When there are several different version, you can use `--use-version` to specify the version of Arthas to start your debug.
 
 ```bash
-./as.sh --use-version 3.0.5.20180919185025
+./as3.sh --use-version 3.0.5.20180919185025
 ```
 
 Tip: you can use `--versions` to list all available versions.
 
 ```bash
-./as.sh --versions
+./as3.sh --versions
 ```
 
 ### Debug
@@ -97,22 +97,22 @@ Tip: you can use `--versions` to list all available versions.
 * windows需要安装gcc
 
 
-`as.sh`在启动时，会对`~/.arthas/lib`下面的目录排序，取最新的版本。`as-package.sh`在打包时，会取`pom.xml`里的版本号，再拼接上当前时间，比如： `3.0.5.20180917161808`，这样子排序时取的就是最新的版本。
+`as3.sh`在启动时，会对`~/.arthas/lib`下面的目录排序，取最新的版本。`as-package.sh`在打包时，会取`pom.xml`里的版本号，再拼接上当前时间，比如： `3.0.5.20180917161808`，这样子排序时取的就是最新的版本。
 
-也可以直接 `./mvnw clean package -DskipTests`打包，生成的zip在 `packaging/target/` 下面。但是注意`as.sh`启动加载的是`~/.arthas/lib`下面的版本。
+也可以直接 `./mvnw clean package -DskipTests`打包，生成的zip在 `packaging/target/` 下面。但是注意`as3.sh`启动加载的是`~/.arthas/lib`下面的版本。
 
 ### 启动指定版本的arthas
 
 本地开发时，可能会产生多个版本，可以用 `--use-version` 参数来指定版本，比如
 
 ```bash
-./as.sh --use-version 3.0.5.20180919185025
+./as3.sh --use-version 3.0.5.20180919185025
 ```
 
 可以用`--versions`参数来列出所有版本：
 
 ```bash
-./as.sh --versions
+./as3.sh --versions
 ```
 
 ### Debug
@@ -133,7 +133,7 @@ Tip: you can use `--versions` to list all available versions.
 发布release版本流程：
 
 * 如果 arthas-vmtool 有更新，则需要手动触发action，构建后会把新的动态库文件提交到 lib 目录。 https://github.com/alibaba/arthas/actions/workflows/build-vmtool.yaml
-* 修改`as.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
+* 修改`as3.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
 * mvn clean deploy -DskipTests -P full -P release
 
@@ -146,7 +146,7 @@ Tip: you can use `--versions` to list all available versions.
     版本号信息地址： https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/maven-metadata.xml
 
 * 打上tag，push tag到仓库上
-* 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
+* 需要更新 gh-pages 分支下面的 arthas-boot3.jar/math-game.jar/as3.sh ，下载 doc.zip，解压覆盖掉文档的更新
 * 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 
     以 3.6.5 版本为例：
