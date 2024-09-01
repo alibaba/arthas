@@ -1,5 +1,9 @@
 # Download
 
+:::warning
+The current version does not support JDK 6 and JDK 7. If you need to use JDK 6 or JDK 7 to start Arthas, please click [here to download version 3.x](https://arthas.aliyun.com/3.x/doc/download.html).
+:::
+
 ## Download full package
 
 ### Download from maven central

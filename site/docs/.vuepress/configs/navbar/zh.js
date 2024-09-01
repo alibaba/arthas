@@ -24,4 +24,13 @@ export const navbarZH = [
     text: "专家答疑",
     link: "/doc/expert/intro.md",
   },
+  {
+    text: "版本",
+    children: [
+      {
+        text: "v3.x",
+        link: "https://arthas.aliyun.com//3.x/",
+      },
+    ],
+  },
 ];
