@@ -29,7 +29,7 @@ export const navbarZH = [
     children: [
       {
         text: "v3.x",
-        link: "https://arthas.aliyun.com//3.x/",
+        link: "https://arthas.aliyun.com/3.x/",
       },
     ],
   },

@@ -1,5 +1,9 @@
 # Install Arthas
 
+::: warning
+The current version does not support JDK 6 and JDK 7. If you need to use JDK 6 or JDK 7, please click [here to Install Arthas](https://arthas.aliyun.com/3.x/en/doc/install-detail.html).
+:::
+
 ## Quick installation
 
 ### Use `arthas-boot`(Recommended)

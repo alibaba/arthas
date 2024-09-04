@@ -1,7 +1,7 @@
 # 下载
 
 ::: warning
-当前版本不支持 JDK 6 和 JDK 7，如需使用 JDK 6 或 JDK 7 启动 arthas，请点击[此处下载 3.x 版本](https://arthas.aliyun.com/3.x/doc/download.html)
+当前版本不支持 JDK 6 和 JDK 7，如需使用 JDK 6 或 JDK 7，请点击[此处下载 3.x 版本](https://arthas.aliyun.com/3.x/doc/download.html)。
 :::
 
 ## 下载全量包

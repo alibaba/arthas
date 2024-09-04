@@ -436,6 +436,8 @@ Usage:
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
+NOTE: This version no longer supports JDK 6 and JDK 7 by default.
+
 Options and Arguments:
  -h,--help                      Print usage
     --target-ip <value>         The target jvm listen ip, default 127.0.0.1
