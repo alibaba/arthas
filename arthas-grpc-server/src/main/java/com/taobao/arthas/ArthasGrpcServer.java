@@ -3,7 +3,7 @@ package com.taobao.arthas;/**
  * @date: 2024/7/3 上午12:30
  */
 
-import com.taobao.arthas.h2.Http2Handler;
+import com.taobao.arthas.grpc.Http2Handler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
