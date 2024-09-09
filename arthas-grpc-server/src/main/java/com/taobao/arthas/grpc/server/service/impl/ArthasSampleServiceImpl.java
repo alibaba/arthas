@@ -14,7 +14,7 @@ import com.taobao.arthas.grpc.server.service.res.ArthasSampleResponse;
  * @date: 2024/6/30 下午11:43
  * @description: ArthasSampleServiceImpl
  */
-@GrpcService(path = "arthasSample.ArthasTempService")
+@GrpcService("arthasSample.ArthasTempService")
 public class ArthasSampleServiceImpl implements ArthasSampleService {
 
     @Override

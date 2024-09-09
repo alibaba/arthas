@@ -25,12 +25,12 @@ public class GrpcRequest {
     private Integer streamId;
 
     /**
-     * 请求的 path
+     * 请求的 service
      */
-    private String path;
+    private String service;
 
     /**
-     * 请求的方法
+     * 请求的 method
      */
     private String method;
 
@@ -43,7 +43,7 @@ public class GrpcRequest {
 
     public GrpcRequest(Integer streamId, String path,String method) {
         this.streamId = streamId;
-        this.path = path;
+        this.service = path;
         this.method = method;
         this.data = ByteUtil.getByteBuf();
     }
@@ -93,5 +93,25 @@ public class GrpcRequest {
         } else {
             return compressedData;
         }
+    }
+
+    public Integer getStreamId() {
+        return streamId;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public ByteBuf getData() {
+        return data;
+    }
+
+    public int getDataLength() {
+        return dataLength;
     }
 }

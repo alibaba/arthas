@@ -6,6 +6,10 @@ import io.grpc.ServerBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +24,14 @@ public class Main {
 
     private static Server server;
 
-    public static void main(String[] args) throws Exception {
-//        Main service = new Main();
-//        service.start();
-//        service.blockUntilShutdown();
-        findClasses("com.taobao.arthas.grpc.server.service.impl").forEach(System.out::println);
+    public static void main(String[] args) throws Throwable {
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+        Method plus1 = Main.class.getDeclaredMethod("plus", int.class, int.class);
+
+        MethodHandle unreflect = lookup.unreflect(plus1);
+
+        System.out.println(unreflect.invoke(new Main(), 1, 2));
     }
 
     private static List<Class<?>> findClasses(String packageName) {
@@ -47,6 +54,10 @@ public class Main {
 
         }
         return classes;
+    }
+
+    public int plus(int a,int b){
+        return a+b;
     }
 
     public static void start() throws IOException {

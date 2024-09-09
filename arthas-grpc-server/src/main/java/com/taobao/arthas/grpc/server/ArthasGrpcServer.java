@@ -3,6 +3,7 @@ package com.taobao.arthas.grpc.server;/**
  * @date: 2024/7/3 上午12:30
  */
 
+import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
 import com.taobao.arthas.grpc.server.handler.Http2Handler;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
@@ -60,6 +61,9 @@ public class ArthasGrpcServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
+        GrpcDispatcher grpcDispatcher = new GrpcDispatcher();
+        grpcDispatcher.loadGrpcService();
+
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -70,7 +74,7 @@ public class ArthasGrpcServer {
                         public void initChannel(SocketChannel ch) {
 //                            ch.pipeline().addLast(sslCtx.newHandler(ch.alloc()));
                             ch.pipeline().addLast(Http2FrameCodecBuilder.forServer().build());
-                            ch.pipeline().addLast(new Http2Handler());
+                            ch.pipeline().addLast(new Http2Handler(grpcDispatcher));
                         }
                     });
 

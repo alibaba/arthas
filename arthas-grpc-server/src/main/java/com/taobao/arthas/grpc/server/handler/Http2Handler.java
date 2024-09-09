@@ -22,12 +22,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
+    private GrpcDispatcher grpcDispatcher;
+
     /**
      * 暂存收到的所有请求的数据
      */
     private ConcurrentHashMap<Integer, GrpcRequest> dataBuffer = new ConcurrentHashMap<>();
 
     private static final String HEADER_PATH = ":path";
+
+    public Http2Handler(GrpcDispatcher grpcDispatcher) {
+        this.grpcDispatcher = grpcDispatcher;
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -65,12 +71,8 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
         if (dataFrame.isEndStream()) {
 
-
-            try {
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            //TODO
+//            grpcDispatcher.execute()
 
             byte[] bytes = grpcRequest.readData();
             ProtobufCodec<ArthasSampleRequest> requestCodec = ProtobufProxy.create(ArthasSampleRequest.class);
