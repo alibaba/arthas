@@ -1,12 +1,8 @@
 package com.taobao.arthas.core.shell.command.internal;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import com.taobao.arthas.core.util.LogUtil;
+
+import java.io.*;
 
 /**
  * 重定向处理类
@@ -59,7 +55,15 @@ public class RedirectHandler extends PlainTextHandler implements CloseFunction {
         }
     }
 
+    /**
+     * 获取 job 重定向文件的地址
+     *
+     * @return
+     */
     public String getFilePath() {
-        return file.getAbsolutePath();
+        if (file != null) {
+            return file.getAbsolutePath();
+        }
+        return LogUtil.cacheDir() + File.separator + "result.log";
     }
 }
