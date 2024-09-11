@@ -1,9 +1,5 @@
 # Download
 
-:::warning
-The current version does not support JDK 6 and JDK 7. If you need to use JDK 6 or JDK 7, please click [here to download version 3.x](https://arthas.aliyun.com/3.x/en/doc/download.html).
-:::
-
 ## Download full package
 
 ### Download from maven central
@@ -45,3 +41,9 @@ java -jar arthas-boot.jar -h
 ## Download Offline Help Documentation
 
 Latest Version Documentation, Click To Download:[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/doc/latest_version)
+
+---
+
+:::warning
+If you need to diagnose applications running on JDK 6/7, please click [here to download arthas 3](https://arthas.aliyun.com/3.x/en/doc/download.html).
+:::

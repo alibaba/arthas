@@ -1,9 +1,5 @@
 # 下载
 
-::: warning
-当前版本不支持 JDK 6 和 JDK 7，如需使用 JDK 6 或 JDK 7，请点击[此处下载 3.x 版本](https://arthas.aliyun.com/3.x/doc/download.html)。
-:::
-
 ## 下载全量包
 
 ### 从 Maven 仓库下载
@@ -45,3 +41,9 @@ java -jar arthas-boot.jar -h
 ## 下载离线文档
 
 下载文档：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/doc/latest_version?mirror=aliyun)
+
+---
+
+::: warning
+如需诊断 jdk 6/7 应用，请点击[此处下载 arthas 3](https://arthas.aliyun.com/3.x/doc/download.html)。
+:::

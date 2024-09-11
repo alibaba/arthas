@@ -1,9 +1,5 @@
 # Quick Start
 
-:::warning
-The current version does not support JDK 6 and JDK 7. If you need to use JDK 6 or JDK 7, please click [here for quick start](https://arthas.aliyun.com/3.x/en/doc/quick-start.html).
-:::
-
 You can practice it yourself by following the instructions below, or you can use our [online tutorials](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-basics) to get started quickly.
 
 ## 1. Start math-game

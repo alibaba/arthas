@@ -1,9 +1,5 @@
 # 快速入门
 
-::: warning
-当前版本不支持 JDK 6 和 JDK 7，如需使用 JDK 6 或 JDK 7，请点击[此处快速入门](https://arthas.aliyun.com/3.x/doc/quick-start.html)。
-:::
-
 可以通过下面的方式自己动手实践，也可以通过我们的[在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-basics)，跟随教程快速入门。
 
 ## 1. 启动 math-game

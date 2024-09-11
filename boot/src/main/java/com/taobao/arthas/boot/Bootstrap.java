@@ -45,7 +45,7 @@ import com.taobao.middleware.cli.annotations.Summary;
  */
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
-@Description("NOTE: This version no longer supports JDK6 and JDK7 by default.\n\n"
+@Description("NOTE: Arthas 4 supports JDK 8+. If you need to diagnose applications running on JDK 6/7, you can use Arthas 3.\n\n"
                 +"EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
                 + "  java -jar arthas-boot.jar --username admin --password <password>\n"
