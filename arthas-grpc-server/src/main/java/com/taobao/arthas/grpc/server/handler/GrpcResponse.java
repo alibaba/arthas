@@ -15,13 +15,19 @@ import java.util.Map;
  * @date: 2024/9/5 02:05
  * @description: GrpcResponse
  */
-public class GrpcResponse<T> {
+public class GrpcResponse {
 
     private Map<String, String> headers;
 
-    private ByteBuf data;
+    /**
+     * 二进制数据
+     */
+    private ByteBuf byteData;
 
-    private T genericsData;
+    /**
+     * 响应类型
+     */
+    private Class<?> clazz;
 
     {
         headers = new HashMap<>();
@@ -38,5 +44,29 @@ public class GrpcResponse<T> {
 
     public Http2Headers getEndStreamHeader() {
         return new DefaultHttp2Headers().set("grpc-status", "0");
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public ByteBuf getByteData() {
+        return byteData;
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public void setByteData(ByteBuf byteData) {
+        this.byteData = byteData;
+    }
+
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
     }
 }

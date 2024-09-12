@@ -35,9 +35,14 @@ public class GrpcRequest {
     private String method;
 
     /**
-     * 数据
+     * 二进制数据
      */
-    private ByteBuf data;
+    private ByteBuf byteData;
+
+    /**
+     * 请求类型
+     */
+    private Class<?> clazz;
 
     private int dataLength;
 
@@ -45,7 +50,7 @@ public class GrpcRequest {
         this.streamId = streamId;
         this.service = path;
         this.method = method;
-        this.data = ByteUtil.getByteBuf();
+        this.byteData = ByteUtil.getByteBuf();
     }
 
     public void writeData(ByteBuf byteBuf) {
@@ -63,13 +68,13 @@ public class GrpcRequest {
         dataLength += length;
         System.out.println(length);
         System.out.println(operateByteBuf.readableBytes());
-        data.writeBytes(operateByteBuf);
+        byteData.writeBytes(operateByteBuf);
     }
 
     public byte[] readData() {
         System.out.println(dataLength);
         byte[] res = new byte[dataLength];
-        data.readBytes(res);
+        byteData.readBytes(res);
         return res;
     }
 
@@ -107,11 +112,19 @@ public class GrpcRequest {
         return method;
     }
 
-    public ByteBuf getData() {
-        return data;
+    public ByteBuf getByteData() {
+        return byteData;
     }
 
     public int getDataLength() {
         return dataLength;
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
     }
 }

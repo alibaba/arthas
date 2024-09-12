@@ -5,6 +5,9 @@ package com.taobao.arthas.grpc.server.handler;/**
 
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
+import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
+import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
+import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
 
 import java.lang.invoke.MethodHandle;
@@ -65,6 +68,17 @@ public class GrpcDispatcher {
     public GrpcResponse execute(GrpcRequest request) throws Throwable {
         String service = request.getService();
         String method = request.getMethod();
+        MethodType type = grpcMethodMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())).type();
+        // protobuf 规范只能有单入参
+        request.setClazz(type.parameterArray()[0]);
+        ProtobufCodec protobufCodec = ProtobufProxy.create(request.getClazz());
+        Object decode = protobufCodec.decode(ByteUtil.getBytes(request.getByteData()));
 
+        Object execute = this.execute(service, method, decode);
+
+        GrpcResponse grpcResponse = new GrpcResponse();
+        grpcResponse.setClazz(type.returnType());
+        grpcResponse.setByteData(ByteUtil.getByteBuf(protobufCodec.encode(execute)));
+        return grpcResponse;
     }
 }
