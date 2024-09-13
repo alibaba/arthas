@@ -88,3 +88,9 @@ Latest Version Documentation, Click To Download:[![](https://img.shields.io/mave
   ```
 
 - On Windows, delete `.arthas` and `logs/arthas` directory under user home.
+
+---
+
+::: warning
+If you need to diagnose applications running on JDK 6/7, please click [here to install arthas 3](https://arthas.aliyun.com/3.x/en/doc/install-detail.html).
+:::

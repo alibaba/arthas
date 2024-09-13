@@ -27,7 +27,7 @@ English version goes [here](README.md).
 0. 怎么快速定位应用的热点，生成火焰图？
 0. 怎样直接从JVM内查找某个类的实例？
 
-`Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+`Arthas`支持JDK 6+（4.x 版本不再支持 JDK 6 和 JDK 7），支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
 ### 在线教程(推荐)

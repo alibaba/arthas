@@ -40,7 +40,7 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports profiler/Flame Graph
 * Support get objects in the heap that are instances of the specified class. 
-* Supports JDK 6+.
+* Supports JDK 6+ (version 4.x no longer supports JDK 6 and JDK 7).
 * Supports Linux/Mac/Windows.
 
 
