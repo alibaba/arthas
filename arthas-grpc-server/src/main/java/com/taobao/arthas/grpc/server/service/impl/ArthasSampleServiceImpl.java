@@ -20,6 +20,16 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     @Override
     @GrpcMethod("trace")
     public ArthasSampleResponse trace(ArthasSampleRequest command) {
-        return new ArthasSampleResponse();
+        ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
+        arthasSampleResponse.setMessage("trace");
+        return arthasSampleResponse;
+    }
+
+    @Override
+    @GrpcMethod("watch")
+    public ArthasSampleResponse watch(ArthasSampleRequest command) {
+        ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
+        arthasSampleResponse.setMessage("watch");
+        return arthasSampleResponse;
     }
 }

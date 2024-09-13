@@ -13,4 +13,5 @@ import com.taobao.arthas.grpc.server.service.res.ArthasSampleResponse;
  */
 public interface ArthasSampleService {
     ArthasSampleResponse trace(ArthasSampleRequest command);
+    ArthasSampleResponse watch(ArthasSampleRequest command);
 }

@@ -43,10 +43,9 @@ public class GrpcDispatcher {
                     Method[] declaredMethods = clazz.getDeclaredMethods();
                     for (Method method : declaredMethods) {
                         if (method.isAnnotationPresent(GrpcMethod.class)) {
-                            GrpcMethod grpcMethod = clazz.getAnnotation(GrpcMethod.class);
+                            GrpcMethod grpcMethod = method.getAnnotation(GrpcMethod.class);
                             MethodHandle methodHandle = lookup.unreflect(method);
-                            methodHandle.bindTo(instance);
-                            grpcMethodMap.put(generateGrpcMethodKey(grpcService.value(),grpcMethod.value()), methodHandle);
+                            grpcMethodMap.put(generateGrpcMethodKey(grpcService.value(),grpcMethod.value()), methodHandle.bindTo(instance));
                         }
                     }
                 } catch (Exception e) {
@@ -60,9 +59,9 @@ public class GrpcDispatcher {
         return serviceName + "." + methodName;
     }
 
-    public Object execute(String serviceName, String methodName, Object... args) throws Throwable {
+    public Object execute(String serviceName, String methodName, Object arg) throws Throwable {
         MethodHandle methodHandle = grpcMethodMap.get(generateGrpcMethodKey(serviceName, methodName));
-        return methodHandle.invoke(args);
+        return methodHandle.invoke(arg);
     }
 
     public GrpcResponse execute(GrpcRequest request) throws Throwable {
@@ -71,14 +70,14 @@ public class GrpcDispatcher {
         MethodType type = grpcMethodMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())).type();
         // protobuf 规范只能有单入参
         request.setClazz(type.parameterArray()[0]);
-        ProtobufCodec protobufCodec = ProtobufProxy.create(request.getClazz());
+        ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(request.getClazz());
         Object decode = protobufCodec.decode(ByteUtil.getBytes(request.getByteData()));
 
         Object execute = this.execute(service, method, decode);
 
         GrpcResponse grpcResponse = new GrpcResponse();
         grpcResponse.setClazz(type.returnType());
-        grpcResponse.setByteData(ByteUtil.getByteBuf(protobufCodec.encode(execute)));
+        grpcResponse.writeResponseData(execute);
         return grpcResponse;
     }
 }

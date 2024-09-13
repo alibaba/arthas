@@ -3,10 +3,14 @@ package com.taobao.arthas.grpc.server.handler;/**
  * @date: 2024/9/5 02:05
  */
 
+import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
+import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
+import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http2.DefaultHttp2Headers;
 import io.netty.handler.codec.http2.Http2Headers;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,24 +50,18 @@ public class GrpcResponse {
         return new DefaultHttp2Headers().set("grpc-status", "0");
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public ByteBuf getByteData() {
+    public ByteBuf getResponseData(){
         return byteData;
     }
 
-    public Class<?> getClazz() {
-        return clazz;
-    }
+    public void writeResponseData(Object response) throws IOException {
+        ProtobufCodec codec = ProtobufProxy.getCodecCacheSide(clazz);
+        byte[] encode = codec.encode(response);
 
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-    }
-
-    public void setByteData(ByteBuf byteData) {
-        this.byteData = byteData;
+        this.byteData = ByteUtil.newByteBuf();
+        this.byteData.writeBoolean(false);
+        this.byteData.writeInt(encode.length);
+        this.byteData.writeBytes(encode);
     }
 
     public void setClazz(Class<?> clazz) {

@@ -9,7 +9,8 @@ enum StatusEnum {
 }
 
 service ArthasTempService {
-  rpc SayHello(ArthasSampleRequest) returns (ArthasSampleResponse);
+  rpc trace(ArthasSampleRequest) returns (ArthasSampleResponse);
+  rpc watch(ArthasSampleRequest) returns (ArthasSampleResponse);
 }
 
 message ArthasSampleRequest {

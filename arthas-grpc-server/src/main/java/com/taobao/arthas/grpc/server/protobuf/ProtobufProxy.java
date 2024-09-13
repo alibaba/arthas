@@ -32,11 +32,7 @@ public class ProtobufProxy {
 
     private static List<ProtobufField> protobufFields;
 
-    public ProtobufProxy(Class<?> clazz) {
-
-    }
-
-    public ProtobufCodec getCodecCacheSide(Class<?> clazz) {
+    public static ProtobufCodec getCodecCacheSide(Class<?> clazz) {
         ProtobufCodec codec = codecCache.get(clazz.getName());
         if (codec != null) {
             return codec;
@@ -101,9 +97,9 @@ public class ProtobufProxy {
         imports.add("java.util.*");
         imports.add("java.io.IOException");
         imports.add("java.lang.reflect.*");
-        imports.add("com.taobao.arthas.grpc.protobuf.*");
-        imports.add("com.taobao.arthas.grpc.protobuf.utils.*");
-        imports.add("com.taobao.arthas.grpc.protobuf.annotation.*");
+        imports.add("com.taobao.arthas.grpc.server.protobuf.*");
+        imports.add("com.taobao.arthas.grpc.server.protobuf.utils.*");
+        imports.add("com.taobao.arthas.grpc.server.protobuf.annotation.*");
         imports.add("com.google.protobuf.*");
         imports.add(clazz.getCanonicalName());
         for (String pkg : imports) {
@@ -368,9 +364,4 @@ public class ProtobufProxy {
                 clazz.getAnnotation(ProtobufEnableZigZap.class) != null
         );
     }
-
-    public static void main(String[] args) {
-        ProtobufCodec protobufCodec = ProtobufProxy.create(ArthasSampleRequest.class);
-    }
-
 }

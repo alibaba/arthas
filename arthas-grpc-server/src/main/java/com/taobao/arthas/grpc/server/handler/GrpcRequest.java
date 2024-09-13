@@ -50,7 +50,7 @@ public class GrpcRequest {
         this.streamId = streamId;
         this.service = path;
         this.method = method;
-        this.byteData = ByteUtil.getByteBuf();
+        this.byteData = ByteUtil.newByteBuf();
     }
 
     public void writeData(ByteBuf byteBuf) {
@@ -62,7 +62,7 @@ public class GrpcRequest {
         if (decompressedData == null) {
             return;
         }
-        ByteBuf operateByteBuf = ByteUtil.getByteBuf(decompressedData);
+        ByteBuf operateByteBuf = ByteUtil.newByteBuf(decompressedData);
         boolean compressed = operateByteBuf.readBoolean();
         int length = operateByteBuf.readInt();
         dataLength += length;

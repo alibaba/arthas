@@ -70,45 +70,22 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         grpcRequest.writeData(dataFrame.content());
 
         if (dataFrame.isEndStream()) {
+            try {
+                GrpcResponse response = grpcDispatcher.execute(grpcRequest);
+                ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
+                ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
+                ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
+            } catch (Throwable e) {
+                processError(ctx);
 
-            //TODO
-//            grpcDispatcher.execute()
-
-            byte[] bytes = grpcRequest.readData();
-            ProtobufCodec<ArthasSampleRequest> requestCodec = ProtobufProxy.create(ArthasSampleRequest.class);
-            ProtobufCodec<ArthasSampleResponse> responseCodec = ProtobufProxy.create(ArthasSampleResponse.class);
-
-            ArthasSampleRequest decode = requestCodec.decode(bytes);
-
-            System.out.println(decode);
-
-            ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
-            arthasSampleResponse.setMessage("Hello ArthasSample!");
-            byte[] responseData = responseCodec.encode(arthasSampleResponse);
-
-
-            Http2Headers endHeader = new DefaultHttp2Headers()
-                    .status("200");
-//                    .set("content-type", "application/grpc")
-//                    .set("grpc-encoding", "identity")
-//                    .set("grpc-accept-encoding", "identity,deflate,gzip");
-            ctx.write(new DefaultHttp2HeadersFrame(endHeader).stream(dataFrame.stream()));
-
-            ByteBuf buffer = ctx.alloc().buffer();
-            buffer.writeBoolean(false);
-            buffer.writeInt(responseData.length);
-            buffer.writeBytes(responseData);
-            System.out.println(responseData.length);
-            DefaultHttp2DataFrame resDataFrame = new DefaultHttp2DataFrame(buffer).stream(dataFrame.stream());
-            ctx.write(resDataFrame);
-
-
-            Http2Headers endStream = new DefaultHttp2Headers()
-                    .set("grpc-status", "0");
-            DefaultHttp2HeadersFrame endStreamFrame = new DefaultHttp2HeadersFrame(endStream, true).stream(dataFrame.stream());
-            ctx.writeAndFlush(endStreamFrame);
-        } else {
-
+            }
         }
+    }
+
+    private void processError(ChannelHandlerContext ctx){
+        // TODO
+//        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
+//        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
+//        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
     }
 }

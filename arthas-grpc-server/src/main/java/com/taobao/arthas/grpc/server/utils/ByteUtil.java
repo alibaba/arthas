@@ -13,11 +13,11 @@ import io.netty.buffer.PooledByteBufAllocator;
  */
 public class ByteUtil {
 
-    public static ByteBuf getByteBuf() {
+    public static ByteBuf newByteBuf() {
         return PooledByteBufAllocator.DEFAULT.buffer();
     }
 
-    public static ByteBuf getByteBuf(byte[] bytes) {
+    public static ByteBuf newByteBuf(byte[] bytes) {
         return PooledByteBufAllocator.DEFAULT.buffer(bytes.length).writeBytes(bytes);
     }
 
