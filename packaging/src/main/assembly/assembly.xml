@@ -1,6 +1,5 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
   <id>bin</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
@@ -38,6 +37,10 @@
       <destName>arthas-boot3.jar</destName>
     </file>
     <file>
+      <source>../boot/target/arthas-boot3-jar-with-dependencies.jar</source>
+      <destName>arthas-boot.jar</destName>
+    </file>
+    <file>
       <source>../math-game/target/math-game.jar</source>
       <destName>math-game.jar</destName>
     </file>
@@ -48,9 +51,22 @@
       <filtered>true</filtered>
     </file>
     <file>
+      <source>../bin/install-local3.sh</source>
+      <fileMode>0755</fileMode>
+      <filtered>true</filtered>
+      <destName>install-local.sh</destName>
+    </file>
+
+    <file>
       <source>../bin/as3.sh </source>
       <fileMode>0755</fileMode>
     </file>
+    <file>
+      <source>../bin/as3.sh </source>
+      <fileMode>0755</fileMode>
+      <destName>as.sh</destName>
+    </file>
+
     <file>
       <source>../bin/as.bat</source>
     </file>
