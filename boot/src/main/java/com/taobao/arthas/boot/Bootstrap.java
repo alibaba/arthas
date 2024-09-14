@@ -53,7 +53,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot3.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot3.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot3.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot3.jar --use-version 3.7.2\n"
+                + "  java -jar arthas-boot3.jar --use-version 3.7.3\n"
                 + "  java -jar arthas-boot3.jar --versions\n"
                 + "  java -jar arthas-boot3.jar --select math-game\n"
                 + "  java -jar arthas-boot3.jar --session-timeout 3600\n" + "  java -jar arthas-boot3.jar --attach-only\n"
