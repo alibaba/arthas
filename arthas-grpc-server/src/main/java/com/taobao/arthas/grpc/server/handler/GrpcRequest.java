@@ -40,11 +40,14 @@ public class GrpcRequest {
     private ByteBuf byteData;
 
     /**
-     * 请求类型
+     * 请求class
      */
     private Class<?> clazz;
 
-    private int dataLength;
+    /**
+     * 是否是 grpc 流式请求
+     */
+    private boolean stream;
 
     public GrpcRequest(Integer streamId, String path,String method) {
         this.streamId = streamId;
@@ -63,17 +66,15 @@ public class GrpcRequest {
             return;
         }
         ByteBuf operateByteBuf = ByteUtil.newByteBuf(decompressedData);
+
+        // 必须要先把这5个字节读出来，后续才是真正的data
         boolean compressed = operateByteBuf.readBoolean();
         int length = operateByteBuf.readInt();
-        dataLength += length;
-        System.out.println(length);
-        System.out.println(operateByteBuf.readableBytes());
         byteData.writeBytes(operateByteBuf);
     }
 
     public byte[] readData() {
-        System.out.println(dataLength);
-        byte[] res = new byte[dataLength];
+        byte[] res = new byte[byteData.readableBytes()];
         byteData.readBytes(res);
         return res;
     }
@@ -116,15 +117,19 @@ public class GrpcRequest {
         return byteData;
     }
 
-    public int getDataLength() {
-        return dataLength;
-    }
-
     public Class<?> getClazz() {
         return clazz;
     }
 
     public void setClazz(Class<?> clazz) {
         this.clazz = clazz;
+    }
+
+    public boolean isStream() {
+        return stream;
+    }
+
+    public void setStream(boolean stream) {
+        this.stream = stream;
     }
 }

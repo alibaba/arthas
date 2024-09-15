@@ -26,10 +26,11 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     }
 
     @Override
-    @GrpcMethod("watch")
+    @GrpcMethod(value = "watch", stream = true)
     public ArthasSampleResponse watch(ArthasSampleRequest command) {
+        String name = command.getName();
         ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
-        arthasSampleResponse.setMessage("watch");
+        arthasSampleResponse.setMessage(name);
         return arthasSampleResponse;
     }
 }

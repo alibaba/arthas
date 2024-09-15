@@ -10,12 +10,11 @@ enum StatusEnum {
 
 service ArthasTempService {
   rpc trace(ArthasSampleRequest) returns (ArthasSampleResponse);
-  rpc watch(ArthasSampleRequest) returns (ArthasSampleResponse);
+  rpc watch(stream ArthasSampleRequest) returns (stream ArthasSampleResponse);
 }
 
 message ArthasSampleRequest {
-  string name = 1;
-  double age = 2;
+  string name = 1;  double age = 2;
   int64 price = 3;
   StatusEnum status = 4;
   repeated TestClass testList = 5;

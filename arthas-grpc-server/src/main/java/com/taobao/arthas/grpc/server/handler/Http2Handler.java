@@ -61,7 +61,9 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         String path = headersFrame.headers().get(HEADER_PATH).toString();
         // 去掉前面的斜杠，然后按斜杠分割
         String[] parts = path.substring(1).split("/");
-        dataBuffer.put(id, new GrpcRequest(headersFrame.stream().id(), parts[0], parts[1]));
+        GrpcRequest grpcRequest = new GrpcRequest(headersFrame.stream().id(), parts[0], parts[1]);
+        grpcDispatcher.checkGrpcStream(grpcRequest);
+        dataBuffer.put(id, grpcRequest);
         System.out.println("Received headers: " + headersFrame.headers());
     }
 
@@ -69,17 +71,24 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         GrpcRequest grpcRequest = dataBuffer.get(dataFrame.stream().id());
         grpcRequest.writeData(dataFrame.content());
 
-        if (dataFrame.isEndStream()) {
-            try {
-                GrpcResponse response = grpcDispatcher.execute(grpcRequest);
-                ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
-                ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
-                ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
-            } catch (Throwable e) {
-                processError(ctx);
-
+        if (grpcRequest.isStream()) {
+            // 流式调用，即刻响应
+            // todo
+        } else {
+            // 非流式调用，等到 endStream 再响应
+            if (dataFrame.isEndStream()) {
+                try {
+                    GrpcResponse response = grpcDispatcher.execute(grpcRequest);
+                    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
+                    ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
+                    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
+                } catch (Throwable e) {
+                    processError(ctx);
+                }
             }
         }
+
+
     }
 
     private void processError(ChannelHandlerContext ctx){

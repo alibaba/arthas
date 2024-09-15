@@ -17,4 +17,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GrpcMethod {
     String value() default "";
+    boolean stream() default false;
 }

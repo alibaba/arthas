@@ -29,7 +29,7 @@ public class GrpcResponse {
     private ByteBuf byteData;
 
     /**
-     * 响应类型
+     * 响应class
      */
     private Class<?> clazz;
 
