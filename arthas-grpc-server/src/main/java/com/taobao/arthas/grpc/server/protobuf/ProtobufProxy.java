@@ -7,10 +7,9 @@ package com.taobao.arthas.grpc.server.protobuf;/**
 import com.google.protobuf.WireFormat;
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufEnableZigZap;
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
-import com.taobao.arthas.grpc.server.protobuf.utils.FieldUtil;
+import com.taobao.arthas.grpc.server.protobuf.utils.ProtoBufUtil;
 import com.taobao.arthas.grpc.server.protobuf.utils.MiniTemplator;
 import com.taobao.arthas.grpc.server.protobuf.utils.ProtoBufClassCompiler;
-import com.taobao.arthas.grpc.server.service.req.ArthasSampleRequest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -66,7 +65,7 @@ public class ProtobufProxy {
 
         processImportBlock();
 
-        miniTemplator.setVariable("className", FieldUtil.getClassName(clazz) + "$$ProxyClass");
+        miniTemplator.setVariable("className", ProtoBufUtil.getClassName(clazz) + "$$ProxyClass");
         miniTemplator.setVariable("codecClassName", ProtobufCodec.class.getName());
         miniTemplator.setVariable("targetProxyClassName", clazz.getCanonicalName());
         processEncodeBlock();
@@ -75,7 +74,7 @@ public class ProtobufProxy {
         String code = miniTemplator.generateOutput();
 
         ProtoBufClassCompiler protoBufClassCompiler = new ProtoBufClassCompiler(ProtoBufClassCompiler.class.getClassLoader());
-        String fullClassName = FieldUtil.getFullClassName(clazz) + "$$ProxyClass";
+        String fullClassName = ProtoBufUtil.getFullClassName(clazz) + "$$ProxyClass";
         Class<?> newClass = protoBufClassCompiler.compile(fullClassName, code, clazz.getClassLoader());
 
         try {
@@ -110,16 +109,16 @@ public class ProtobufProxy {
 
     private static void processEncodeBlock() {
         for (ProtobufField protobufField : protobufFields) {
-            String dynamicFieldGetter = FieldUtil.getGetterDynamicString(protobufField, clazz);
+            String dynamicFieldGetter = ProtoBufUtil.getGetterDynamicString(protobufField, clazz);
             String dynamicFieldType = protobufField.isList() ? "Collection" : protobufField.getProtobufFieldType().getJavaType();
-            String dynamicFieldName = FieldUtil.getDynamicFieldName(protobufField.getOrder());
+            String dynamicFieldName = ProtoBufUtil.getDynamicFieldName(protobufField.getOrder());
 
             miniTemplator.setVariable("dynamicFieldType", dynamicFieldType);
             miniTemplator.setVariable("dynamicFieldName", dynamicFieldName);
             miniTemplator.setVariable("dynamicFieldGetter", dynamicFieldGetter);
-            String sizeDynamicString = FieldUtil.getSizeDynamicString(protobufField);
+            String sizeDynamicString = ProtoBufUtil.getSizeDynamicString(protobufField);
             miniTemplator.setVariable("sizeDynamicString", sizeDynamicString);
-            miniTemplator.setVariable("encodeWriteFieldValue", FieldUtil.getWriteByteDynamicString(protobufField));
+            miniTemplator.setVariable("encodeWriteFieldValue", ProtoBufUtil.getWriteByteDynamicString(protobufField));
             miniTemplator.addBlock("encodeFields");
         }
     }
@@ -141,7 +140,7 @@ public class ProtobufProxy {
                 express = "new HashMap()";
             }
             if (isList || isMap) {
-                initListMapFields.append(FieldUtil.getInitListMapFieldDynamicString(protobufField, express));
+                initListMapFields.append(ProtoBufUtil.getInitListMapFieldDynamicString(protobufField, express));
             }
 
             if (protobufField.getProtobufFieldType() == ProtobufFieldTypeEnum.ENUM) {
@@ -149,7 +148,7 @@ public class ProtobufProxy {
                 if (!isList) {
                     express = "FieldUtil.getEnumValue(" + clsName + ".class, " + clsName + ".values()[0].name())";
                     // add set get method
-                    String setToField = FieldUtil.getSetFieldDynamicString(protobufField, clazz, express);
+                    String setToField = ProtoBufUtil.getSetFieldDynamicString(protobufField, clazz, express);
                     miniTemplator.setVariable("enumInitialize", setToField);
                     miniTemplator.addBlock("enumFields");
                 }
@@ -163,7 +162,7 @@ public class ProtobufProxy {
         for (ProtobufField protobufField : protobufFields) {
             boolean isList = protobufField.isList();
             String t = protobufField.getProtobufFieldType().getType();
-            t = FieldUtil.capitalize(t);
+            t = ProtoBufUtil.capitalize(t);
 
             boolean listTypeCheck = false;
             String express;
@@ -172,7 +171,7 @@ public class ProtobufProxy {
 
             String decodeOrder = "-1";
             if (protobufField.getProtobufFieldType() != ProtobufFieldTypeEnum.DEFAULT) {
-                decodeOrder = FieldUtil.makeTag(protobufField.getOrder(),
+                decodeOrder = ProtoBufUtil.makeTag(protobufField.getOrder(),
                         protobufField.getProtobufFieldType().getInternalFieldType().getWireType()) + "";
             } else {
                 decodeOrder = "FieldUtil.makeTag(" + protobufField.getOrder() + ",WireFormat."
@@ -209,12 +208,12 @@ public class ProtobufProxy {
                     checkObjectType(protobufField, cls);
 
                     code.append("codec = ProtobufProxy.create(").append(cls.getCanonicalName()).append(".class");
-                    code.append(")").append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(")").append(ProtoBufUtil.JAVA_LINE_BREAK);
                     objectDecodeExpress = code.toString();
                     code.setLength(0);
 
-                    objectDecodeExpress += "int length = input.readRawVarint32()" + FieldUtil.JAVA_LINE_BREAK;
-                    objectDecodeExpress += "final int oldLimit = input.pushLimit(length)" + FieldUtil.JAVA_LINE_BREAK;
+                    objectDecodeExpress += "int length = input.readRawVarint32()" + ProtoBufUtil.JAVA_LINE_BREAK;
+                    objectDecodeExpress += "final int oldLimit = input.pushLimit(length)" + ProtoBufUtil.JAVA_LINE_BREAK;
                     listTypeCheck = true;
                     express = "(" + cls.getCanonicalName() + ") codec.readFrom(input)";
 
@@ -228,16 +227,16 @@ public class ProtobufProxy {
                     code.append("EnumHandler<").append(enumClassName).append("> keyhandler");
                     code.append("= new EnumHandler");
                     code.append("<").append(enumClassName).append(">() {");
-                    code.append(FieldUtil.LINE_BREAK);
+                    code.append(ProtoBufUtil.LINE_BREAK);
                     code.append("public ").append(enumClassName).append(" handle(int value) {");
-                    code.append(FieldUtil.LINE_BREAK);
+                    code.append(ProtoBufUtil.LINE_BREAK);
                     code.append("String enumName = FieldUtil.getEnumName(").append(enumClassName)
                             .append(".values(), value)");
-                    code.append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                     code.append("return ").append(enumClassName).append(".valueOf(enumName)");
-                    code.append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                     code.append("}}");
-                    code.append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                 }
 
                 if (protobufField.isEnumValueType()) {
@@ -245,23 +244,23 @@ public class ProtobufProxy {
                     code.append("EnumHandler<").append(enumClassName).append("> handler");
                     code.append("= new EnumHandler");
                     code.append("<").append(enumClassName).append(">() {");
-                    code.append(FieldUtil.LINE_BREAK);
+                    code.append(ProtoBufUtil.LINE_BREAK);
                     code.append("public ").append(enumClassName).append(" handle(int value) {");
-                    code.append(FieldUtil.LINE_BREAK);
+                    code.append(ProtoBufUtil.LINE_BREAK);
                     code.append("String enumName = FieldUtil.getEnumName(").append(enumClassName)
                             .append(".values(), value)");
-                    code.append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                     code.append("return ").append(enumClassName).append(".valueOf(enumName)");
-                    code.append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                     code.append("}}");
-                    code.append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                 }
 
                 objectDecodeExpress = code.toString();
                 code.setLength(0);
 
                 express = "FieldUtil.putMapValue(input, " + getMapCommand + ",";
-                express += FieldUtil.getMapFieldGenericParameterString(protobufField);
+                express += ProtoBufUtil.getMapFieldGenericParameterString(protobufField);
                 if (protobufField.isEnumKeyType()) {
                     express += ", keyhandler";
                 } else {
@@ -286,12 +285,12 @@ public class ProtobufProxy {
                 // class
                 code.append("codec = ProtobufProxy.create(").append(name).append(".class");
 
-                code.append(")").append(FieldUtil.JAVA_LINE_BREAK);
+                code.append(")").append(ProtoBufUtil.JAVA_LINE_BREAK);
                 objectDecodeExpress = code.toString();
                 code.setLength(0);
 
-                objectDecodeExpress += "int length = input.readRawVarint32()" + FieldUtil.JAVA_LINE_BREAK;
-                objectDecodeExpress += "final int oldLimit = input.pushLimit(length)" + FieldUtil.JAVA_LINE_BREAK;
+                objectDecodeExpress += "int length = input.readRawVarint32()" + ProtoBufUtil.JAVA_LINE_BREAK;
+                objectDecodeExpress += "final int oldLimit = input.pushLimit(length)" + ProtoBufUtil.JAVA_LINE_BREAK;
 
                 listTypeCheck = true;
                 express = "(" + name + ") codec.readFrom(input)";
@@ -301,11 +300,11 @@ public class ProtobufProxy {
                 express += ".toByteArray()";
             }
 
-            String decodeFieldSetValue = FieldUtil.getSetFieldDynamicString(protobufField, clazz, express) + FieldUtil.JAVA_LINE_BREAK;
+            String decodeFieldSetValue = ProtoBufUtil.getSetFieldDynamicString(protobufField, clazz, express) + ProtoBufUtil.JAVA_LINE_BREAK;
 
             if (listTypeCheck) {
-                objectDecodeExpressSuffix += "input.checkLastTagWas(0)" + FieldUtil.JAVA_LINE_BREAK;
-                objectDecodeExpressSuffix += "input.popLimit(oldLimit)" + FieldUtil.JAVA_LINE_BREAK;
+                objectDecodeExpressSuffix += "input.checkLastTagWas(0)" + ProtoBufUtil.JAVA_LINE_BREAK;
+                objectDecodeExpressSuffix += "input.popLimit(oldLimit)" + ProtoBufUtil.JAVA_LINE_BREAK;
             }
 
             String objectPackedDecodeExpress = "";
@@ -314,18 +313,18 @@ public class ProtobufProxy {
                 ProtobufFieldTypeEnum protobufFieldType = protobufField.getProtobufFieldType();
                 if (protobufFieldType.isPrimitive() || protobufFieldType.isEnum()) {
                     code.append("if (tag == ")
-                            .append(FieldUtil.makeTag(protobufField.getOrder(), WireFormat.WIRETYPE_LENGTH_DELIMITED));
-                    code.append(") {").append(FieldUtil.LINE_BREAK);
+                            .append(ProtoBufUtil.makeTag(protobufField.getOrder(), WireFormat.WIRETYPE_LENGTH_DELIMITED));
+                    code.append(") {").append(ProtoBufUtil.LINE_BREAK);
 
-                    code.append("int length = input.readRawVarint32()").append(FieldUtil.JAVA_LINE_BREAK);
-                    code.append("int limit = input.pushLimit(length)").append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append("int length = input.readRawVarint32()").append(ProtoBufUtil.JAVA_LINE_BREAK);
+                    code.append("int limit = input.pushLimit(length)").append(ProtoBufUtil.JAVA_LINE_BREAK);
 
-                    code.append(FieldUtil.getSetFieldDynamicString(protobufField, clazz, express));
+                    code.append(ProtoBufUtil.getSetFieldDynamicString(protobufField, clazz, express));
 
-                    code.append("input.popLimit(limit)").append(FieldUtil.JAVA_LINE_BREAK);
+                    code.append("input.popLimit(limit)").append(ProtoBufUtil.JAVA_LINE_BREAK);
 
-                    code.append("continue").append(FieldUtil.JAVA_LINE_BREAK);
-                    code.append("}").append(FieldUtil.LINE_BREAK);
+                    code.append("continue").append(ProtoBufUtil.JAVA_LINE_BREAK);
+                    code.append("}").append(ProtoBufUtil.LINE_BREAK);
 
                     objectPackedDecodeExpress = code.toString();
                 }
@@ -355,12 +354,12 @@ public class ProtobufProxy {
         valueGeneric = protobufField.getGenericValueType().getCanonicalName();
         String getMapCommand = "(Map<" + keyGeneric;
         getMapCommand = getMapCommand + ", " + valueGeneric + ">)";
-        getMapCommand = getMapCommand + FieldUtil.getGetterDynamicString(protobufField, clazz);
+        getMapCommand = getMapCommand + ProtoBufUtil.getGetterDynamicString(protobufField, clazz);
         return getMapCommand;
     }
 
     private static void loadProtobufField() {
-        protobufFields = FieldUtil.getProtobufFieldList(clazz,
+        protobufFields = ProtoBufUtil.getProtobufFieldList(clazz,
                 clazz.getAnnotation(ProtobufEnableZigZap.class) != null
         );
     }

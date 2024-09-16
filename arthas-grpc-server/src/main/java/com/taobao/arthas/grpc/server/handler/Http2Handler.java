@@ -3,11 +3,6 @@ package com.taobao.arthas.grpc.server.handler;/**
  * @date: 2024/7/7 下午9:58
  */
 
-import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
-import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
-import com.taobao.arthas.grpc.server.service.req.ArthasSampleRequest;
-import com.taobao.arthas.grpc.server.service.res.ArthasSampleResponse;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http2.*;
@@ -73,7 +68,24 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
         if (grpcRequest.isStream()) {
             // 流式调用，即刻响应
-            // todo
+            try {
+                GrpcResponse response = grpcDispatcher.execute(grpcRequest);
+                grpcRequest.clearData();
+
+                // 针对第一个响应发送 header
+                if (grpcRequest.isStreamFirstData()) {
+                    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
+                    grpcRequest.setStreamFirstData(false);
+                }
+
+                ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
+
+                if (dataFrame.isEndStream()) {
+                    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
+                }
+            } catch (Throwable e) {
+                processError(ctx, e);
+            }
         } else {
             // 非流式调用，等到 endStream 再响应
             if (dataFrame.isEndStream()) {
@@ -83,18 +95,14 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
                     ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
                     ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
                 } catch (Throwable e) {
-                    processError(ctx);
+                    processError(ctx, e);
                 }
             }
         }
-
-
     }
 
-    private void processError(ChannelHandlerContext ctx){
-        // TODO
-//        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
-//        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
-//        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
+    private void processError(ChannelHandlerContext ctx, Throwable e) {
+        //todo
+        ctx.writeAndFlush(e.getMessage());
     }
 }

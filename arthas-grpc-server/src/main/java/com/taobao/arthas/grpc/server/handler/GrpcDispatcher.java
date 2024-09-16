@@ -76,7 +76,7 @@ public class GrpcDispatcher {
         // protobuf 规范只能有单入参
         request.setClazz(type.parameterArray()[0]);
         ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(request.getClazz());
-        Object decode = protobufCodec.decode(ByteUtil.getBytes(request.getByteData()));
+        Object decode = protobufCodec.decode(request.readData());
 
         Object execute = this.execute(service, method, decode);
 
@@ -91,5 +91,6 @@ public class GrpcDispatcher {
                 Optional.ofNullable(grpcMethodStreamMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())))
                         .orElse(false)
         );
+        request.setStreamFirstData(true);
     }
 }

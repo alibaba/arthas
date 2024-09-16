@@ -1,11 +1,5 @@
-package com.taobao.arthas.grpc.server.protobuf.utils;/**
- * @author: 風楪
- * @date: 2024/7/25 上午12:33
- */
+package com.taobao.arthas.grpc.server.protobuf.utils;
 
-
-import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
-import com.baidu.bjf.remoting.protobuf.utils.StringUtils;
 import com.google.protobuf.*;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufField;
@@ -15,13 +9,17 @@ import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufPacked;
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufCustomizedField;
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufIgnore;
 
-
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.Enum;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -29,12 +27,15 @@ import java.util.*;
  * @date: 2024/7/25 上午12:33
  * @description: FieldUtil
  */
-public class FieldUtil {
-
+public class ProtoBufUtil {
 
     public static final Map<Class<?>, ProtobufFieldTypeEnum> TYPE_MAPPER;
 
     public static final Map<String, String> PRIMITIVE_TYPE_MAPPING;
+
+    private static final Map<String, Class<?>> PRIMIIIVE_TYPE_CLASS_MAPPING = new HashMap<String, Class<?>>(16);
+
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new HashMap<Class<?>, Class<?>>(8);
 
     public static final String DYNAMIC_TARGET = "target";
 
@@ -48,6 +49,14 @@ public class FieldUtil {
 
     public static final String WIREFORMAT_CLSNAME = com.google.protobuf.WireFormat.FieldType.class.getCanonicalName();
 
+    public static final String ARRAY_SUFFIX = "[]";
+
+    private static final String INTERNAL_ARRAY_PREFIX = "[L";
+
+    public static final String JAVA_EXTENSION = ".java";
+
+    public static final String CLASS_EXTENSION = ".class";
+
     static {
 
         PRIMITIVE_TYPE_MAPPING = new HashMap<String, String>();
@@ -60,6 +69,24 @@ public class FieldUtil {
         PRIMITIVE_TYPE_MAPPING.put(float.class.getSimpleName(), Float.class.getSimpleName());
         PRIMITIVE_TYPE_MAPPING.put(char.class.getSimpleName(), Character.class.getSimpleName());
         PRIMITIVE_TYPE_MAPPING.put(byte.class.getSimpleName(), Byte.class.getSimpleName());
+
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Float.class, float.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
+
+        Set<Class<?>> primitiveTypeNames = new HashSet<Class<?>>(16);
+        primitiveTypeNames.addAll(PRIMITIVE_WRAPPER_TYPE_MAP.values());
+        primitiveTypeNames.addAll(Arrays.asList(new Class<?>[] { boolean[].class, byte[].class, char[].class,
+                double[].class, float[].class, int[].class, long[].class, short[].class }));
+        for (Iterator<Class<?>> it = primitiveTypeNames.iterator(); it.hasNext();) {
+            Class<?> primitiveClass = (Class<?>) it.next();
+            PRIMIIIVE_TYPE_CLASS_MAPPING.put(primitiveClass.getName(), primitiveClass);
+        }
     }
 
     static {
@@ -617,9 +644,9 @@ public class FieldUtil {
             }
         } else if (type == ProtobufFieldTypeEnum.STRING) {
             if (withTag) {
-                out.writeBytes(order, ByteString.copyFromUtf8(String.valueOf(o)));
+                out.writeBytes(order, ByteString.copyFromUtf8(java.lang.String.valueOf(o)));
             } else {
-                out.writeBytesNoTag(ByteString.copyFromUtf8(String.valueOf(o)));
+                out.writeBytesNoTag(ByteString.copyFromUtf8(java.lang.String.valueOf(o)));
             }
         } else if (type == ProtobufFieldTypeEnum.UINT32) {
             if (withTag) {
@@ -880,7 +907,7 @@ public class FieldUtil {
     }
 
     public static <T extends Enum<T>> T getEnumValue(Class<T> enumType, String name) {
-        if (StringUtils.isEmpty(name)) {
+        if (isEmpty(name)) {
             return null;
         }
 
@@ -982,9 +1009,9 @@ public class FieldUtil {
         }
 
         if (type == ProtobufFieldTypeEnum.STRING) {
-            size = CodedOutputStream.computeStringSizeNoTag(String.valueOf(object));
+            size = CodedOutputStream.computeStringSizeNoTag(java.lang.String.valueOf(object));
         } else if (type == ProtobufFieldTypeEnum.BOOL) {
-            size = CodedOutputStream.computeBoolSizeNoTag(Boolean.valueOf(String.valueOf(object)));
+            size = CodedOutputStream.computeBoolSizeNoTag(Boolean.valueOf(java.lang.String.valueOf(object)));
         } else if (type == ProtobufFieldTypeEnum.BYTES) {
             byte[] bb = (byte[]) object;
             size = CodedOutputStream.computeBytesSizeNoTag(ByteString.copyFrom(bb));
@@ -1044,11 +1071,11 @@ public class FieldUtil {
     }
 
     public static String getFullClassName(Class<?> cls) {
-        if (StringUtils.isEmpty(getPackage(cls))) {
+        if (isEmpty(getPackage(cls))) {
             return getClassName(cls);
         }
 
-        return getPackage(cls) + ClassHelper.PACKAGE_SEPARATOR + getClassName(cls);
+        return getPackage(cls) + PACKAGE_SEPARATOR + getClassName(cls);
     }
 
     public static String getPackage(Class<?> cls) {
@@ -1069,11 +1096,118 @@ public class FieldUtil {
     public static String getClassName(Class<?> cls) {
         if (cls.isMemberClass()) {
             String name = cls.getName();
-            name = StringUtils.substringAfterLast(name, PACKAGE_SEPARATOR);
+            name = substringAfterLast(name, PACKAGE_SEPARATOR);
             return name;
         }
 
         return cls.getSimpleName();
+    }
+
+    public static boolean isEmpty(String s){
+        return s == null || s.isEmpty();
+    }
+
+    public static String substringAfterLast(String str, String separator) {
+        if (isEmpty(str)) {
+            return str;
+        } else if (isEmpty(separator)) {
+            return "";
+        } else {
+            int pos = str.lastIndexOf(separator);
+            return pos != -1 && pos != str.length() - separator.length() ? str.substring(pos + separator.length()) : "";
+        }
+    }
+
+    public static Class<?> forNameWithCallerClassLoader(String name, Class<?> caller) throws ClassNotFoundException {
+        return forName(name, caller.getClassLoader());
+    }
+
+    public static Class<?> forName(String name, ClassLoader classLoader) throws ClassNotFoundException, LinkageError {
+
+        Class<?> clazz = resolvePrimitiveClassName(name);
+        if (clazz != null) {
+            return clazz;
+        }
+
+        // "java.lang.String[]" style arrays
+        if (name.endsWith(ARRAY_SUFFIX)) {
+            String elementClassName = name.substring(0, name.length() - ARRAY_SUFFIX.length());
+            Class<?> elementClass = forName(elementClassName, classLoader);
+            return Array.newInstance(elementClass, 0).getClass();
+        }
+
+        // "[Ljava.lang.String;" style arrays
+        int internalArrayMarker = name.indexOf(INTERNAL_ARRAY_PREFIX);
+        if (internalArrayMarker != -1 && name.endsWith(";")) {
+            String elementClassName = null;
+            if (internalArrayMarker == 0) {
+                elementClassName = name.substring(INTERNAL_ARRAY_PREFIX.length(), name.length() - 1);
+            } else if (name.startsWith("[")) {
+                elementClassName = name.substring(1);
+            }
+            Class<?> elementClass = forName(elementClassName, classLoader);
+            return Array.newInstance(elementClass, 0).getClass();
+        }
+
+        ClassLoader classLoaderToUse = classLoader;
+        if (classLoaderToUse == null) {
+            classLoaderToUse = getClassLoader();
+        }
+        return classLoaderToUse.loadClass(name);
+    }
+
+    public static Class<?> resolvePrimitiveClassName(String name) {
+        Class<?> result = null;
+        // Most class names will be quite long, considering that they
+        // SHOULD sit in a package, so a length check is worthwhile.
+        if (name != null && name.length() <= 8) {
+            // Could be a primitive - likely.
+            result = (Class<?>) PRIMIIIVE_TYPE_CLASS_MAPPING.get(name);
+        }
+        return result;
+    }
+
+    public static ClassLoader getClassLoader() {
+        return getClassLoader(ProtoBufUtil.class);
+    }
+
+    public static ClassLoader getClassLoader(Class<?> cls) {
+        ClassLoader cl = null;
+        try {
+            cl = Thread.currentThread().getContextClassLoader();
+        } catch (Throwable ex) {
+            // Cannot access thread context ClassLoader - falling back to system
+            // class loader...
+        }
+        if (cl == null) {
+            // No thread context class loader -> use class loader of this class.
+            cl = cls.getClassLoader();
+        }
+        return cl;
+    }
+
+    public static URI toURI(String name) {
+        try {
+            return new URI(name);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String toString(Throwable e) {
+        StringWriter w = new StringWriter();
+        PrintWriter p = new PrintWriter(w);
+        p.print(e.getClass().getName() + ": ");
+        if (e.getMessage() != null) {
+            p.print(e.getMessage() + "\n");
+        }
+        p.println();
+        try {
+            e.printStackTrace(p);
+            return w.toString();
+        } finally {
+            p.close();
+        }
     }
 
     public static boolean isNull(Object o) {

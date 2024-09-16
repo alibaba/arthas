@@ -1,10 +1,4 @@
-package com.taobao.arthas.grpc.server.protobuf.utils;/**
- * @author: 風楪
- * @date: 2024/8/9 01:21
- */
-
-import com.baidu.bjf.remoting.protobuf.utils.ClassHelper;
-import com.baidu.bjf.remoting.protobuf.utils.compiler.ClassUtils;
+package com.taobao.arthas.grpc.server.protobuf.utils;
 
 import javax.tools.*;
 import java.io.*;
@@ -70,7 +64,7 @@ public class ProtoBufClassCompiler {
                 throw t;
             } catch (Throwable t) {
                 throw new IllegalStateException("Failed to compile class, cause: " + t.getMessage() + ", class: "
-                        + className + ", code: \n" + code + "\n, stack: " + ClassUtils.toString(t));
+                        + className + ", code: \n" + code + "\n, stack: " + ProtoBufUtil.toString(t));
             }
         }
     }
@@ -82,7 +76,7 @@ public class ProtoBufClassCompiler {
         JavaFileObjectImpl javaFileObject = new JavaFileObjectImpl(className, sourceCode);
         fileObjects.put(new URI(StandardLocation.SOURCE_PATH.getName() + "/" + packageName + "/" + className + ".java"), javaFileObject);
         javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName,
-                className + ClassUtils.JAVA_EXTENSION, javaFileObject);
+                className + ProtoBufUtil.JAVA_EXTENSION, javaFileObject);
 
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
         Boolean result = compiler.getTask(null, javaFileManager, diagnosticCollector, options, null,
@@ -124,7 +118,7 @@ public class ProtoBufClassCompiler {
         }
 
         private URI uri(Location location, String packageName, String relativeName) {
-            return ClassUtils.toURI(location.getName() + '/' + packageName + '/' + relativeName);
+            return ProtoBufUtil.toURI(location.getName() + '/' + packageName + '/' + relativeName);
         }
 
         @Override
@@ -209,7 +203,7 @@ public class ProtoBufClassCompiler {
                 return defineClass(qualifiedClassName, bytes, 0, bytes.length);
             }
             try {
-                return ClassHelper.forNameWithCallerClassLoader(qualifiedClassName, getClass());
+                return ProtoBufUtil.forNameWithCallerClassLoader(qualifiedClassName, getClass());
             } catch (ClassNotFoundException nf) {
                 return super.findClass(qualifiedClassName);
             }
@@ -227,9 +221,9 @@ public class ProtoBufClassCompiler {
 
         @Override
         public InputStream getResourceAsStream(final String name) {
-            if (name.endsWith(ClassUtils.CLASS_EXTENSION)) {
+            if (name.endsWith(ProtoBufUtil.CLASS_EXTENSION)) {
                 String qualifiedClassName =
-                        name.substring(0, name.length() - ClassUtils.CLASS_EXTENSION.length()).replace('/', '.');
+                        name.substring(0, name.length() - ProtoBufUtil.CLASS_EXTENSION.length()).replace('/', '.');
                 JavaFileObjectImpl file = (JavaFileObjectImpl) classes.get(qualifiedClassName);
                 if (file != null) {
                     return new ByteArrayInputStream(file.getByteCode());
@@ -247,12 +241,12 @@ public class ProtoBufClassCompiler {
         private final CharSequence source;
 
         public JavaFileObjectImpl(final String baseName, final CharSequence source) throws URISyntaxException {
-            super(new URI(baseName + ClassUtils.JAVA_EXTENSION), Kind.SOURCE);
+            super(new URI(baseName + ProtoBufUtil.JAVA_EXTENSION), Kind.SOURCE);
             this.source = source;
         }
 
         JavaFileObjectImpl(final String name, final Kind kind) {
-            super(ClassUtils.toURI(name), kind);
+            super(ProtoBufUtil.toURI(name), kind);
             source = null;
         }
 

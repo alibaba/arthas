@@ -49,6 +49,11 @@ public class GrpcRequest {
      */
     private boolean stream;
 
+    /**
+     * 是否是 grpc 流式请求的第一个data
+     */
+    private boolean streamFirstData;
+
     public GrpcRequest(Integer streamId, String path,String method) {
         this.streamId = streamId;
         this.service = path;
@@ -73,10 +78,16 @@ public class GrpcRequest {
         byteData.writeBytes(operateByteBuf);
     }
 
+    /**
+     * 只读取数据而不操作 byteData
+     * @return
+     */
     public byte[] readData() {
-        byte[] res = new byte[byteData.readableBytes()];
-        byteData.readBytes(res);
-        return res;
+        return ByteUtil.getBytes(byteData);
+    }
+
+    public void clearData(){
+        byteData.clear();
     }
 
     private byte[] decompressGzip(byte[] compressedData) {
@@ -131,5 +142,13 @@ public class GrpcRequest {
 
     public void setStream(boolean stream) {
         this.stream = stream;
+    }
+
+    public boolean isStreamFirstData() {
+        return streamFirstData;
+    }
+
+    public void setStreamFirstData(boolean streamFirstData) {
+        this.streamFirstData = streamFirstData;
     }
 }
