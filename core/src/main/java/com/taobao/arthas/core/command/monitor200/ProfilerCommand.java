@@ -118,6 +118,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Integer jstackdepth;
 
     /**
+     * Automatically classify execution samples into categories
+     */
+    private boolean classify;
+
+    /**
      * profile different threads separately
      */
     private boolean threads;
@@ -337,6 +342,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("start Java Flight Recording with the given config along with the profiler")
     public void setJfrsync(String jfrsync) {
         this.jfrsync = jfrsync;
+    }
+
+    @Option(longName = "classify", flag = true)
+    @Description("Automatically classify execution samples into categories")
+    public void setClassify(boolean classify) {
+        this.classify = classify;
     }
 
     @Option(shortName = "t", longName = "threads", flag = true)
@@ -578,6 +589,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.jstackdepth != null) {
             sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
+        }
+        if (this.classify) {
+            sb.append("classify").append(COMMA);
         }
         if (this.threads) {
             sb.append("threads").append(COMMA);
