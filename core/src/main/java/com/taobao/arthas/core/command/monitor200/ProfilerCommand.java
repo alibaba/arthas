@@ -118,6 +118,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Integer jstackdepth;
 
     /**
+     * Enable wall clock profiling in addition to CPU profiling
+     */
+    private boolean wall;
+
+    /**
      * profile different threads separately
      */
     private boolean threads;
@@ -337,6 +342,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("start Java Flight Recording with the given config along with the profiler")
     public void setJfrsync(String jfrsync) {
         this.jfrsync = jfrsync;
+    }
+
+    @Option(longName = "wall", flag = true)
+    @Description("Enable wall clock profiling in addition to CPU profiling")
+    public void setWall(boolean wall) {
+        this.wall = wall;
     }
 
     @Option(shortName = "t", longName = "threads", flag = true)
@@ -581,6 +592,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.threads) {
             sb.append("threads").append(COMMA);
+        }
+        if (this.wall) {
+            sb.append("wall").append(COMMA);
         }
         if (this.sched) {
             sb.append("sched").append(COMMA);
