@@ -146,7 +146,7 @@ public class ProtobufProxy {
             if (protobufField.getProtobufFieldType() == ProtobufFieldTypeEnum.ENUM) {
                 String clsName = protobufField.getJavaField().getType().getCanonicalName();
                 if (!isList) {
-                    express = "FieldUtil.getEnumValue(" + clsName + ".class, " + clsName + ".values()[0].name())";
+                    express = "ProtoBufUtil.getEnumValue(" + clsName + ".class, " + clsName + ".values()[0].name())";
                     // add set get method
                     String setToField = ProtoBufUtil.getSetFieldDynamicString(protobufField, clazz, express);
                     miniTemplator.setVariable("enumInitialize", setToField);
@@ -174,7 +174,7 @@ public class ProtobufProxy {
                 decodeOrder = ProtoBufUtil.makeTag(protobufField.getOrder(),
                         protobufField.getProtobufFieldType().getInternalFieldType().getWireType()) + "";
             } else {
-                decodeOrder = "FieldUtil.makeTag(" + protobufField.getOrder() + ",WireFormat."
+                decodeOrder = "ProtoBufUtil.makeTag(" + protobufField.getOrder() + ",WireFormat."
                         + protobufField.getProtobufFieldType().getWireFormat() + ")";
             }
             miniTemplator.setVariable("decodeOrder", decodeOrder);
@@ -188,7 +188,7 @@ public class ProtobufProxy {
                         clsName = cls.getCanonicalName();
                     }
                 }
-                express = "FieldUtil.getEnumValue(" + clsName + ".class, FieldUtil.getEnumName(" + clsName
+                express = "ProtoBufUtil.getEnumValue(" + clsName + ".class, ProtoBufUtil.getEnumName(" + clsName
                         + ".values()," + "input.read" + t + "()))";
             } else {
                 // here is the trick way to process BigDecimal and BigInteger
@@ -230,7 +230,7 @@ public class ProtobufProxy {
                     code.append(ProtoBufUtil.LINE_BREAK);
                     code.append("public ").append(enumClassName).append(" handle(int value) {");
                     code.append(ProtoBufUtil.LINE_BREAK);
-                    code.append("String enumName = FieldUtil.getEnumName(").append(enumClassName)
+                    code.append("String enumName = ProtoBufUtil.getEnumName(").append(enumClassName)
                             .append(".values(), value)");
                     code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                     code.append("return ").append(enumClassName).append(".valueOf(enumName)");
@@ -247,7 +247,7 @@ public class ProtobufProxy {
                     code.append(ProtoBufUtil.LINE_BREAK);
                     code.append("public ").append(enumClassName).append(" handle(int value) {");
                     code.append(ProtoBufUtil.LINE_BREAK);
-                    code.append("String enumName = FieldUtil.getEnumName(").append(enumClassName)
+                    code.append("String enumName = ProtoBufUtil.getEnumName(").append(enumClassName)
                             .append(".values(), value)");
                     code.append(ProtoBufUtil.JAVA_LINE_BREAK);
                     code.append("return ").append(enumClassName).append(".valueOf(enumName)");
@@ -259,7 +259,7 @@ public class ProtobufProxy {
                 objectDecodeExpress = code.toString();
                 code.setLength(0);
 
-                express = "FieldUtil.putMapValue(input, " + getMapCommand + ",";
+                express = "ProtoBufUtil.putMapValue(input, " + getMapCommand + ",";
                 express += ProtoBufUtil.getMapFieldGenericParameterString(protobufField);
                 if (protobufField.isEnumKeyType()) {
                     express += ", keyhandler";

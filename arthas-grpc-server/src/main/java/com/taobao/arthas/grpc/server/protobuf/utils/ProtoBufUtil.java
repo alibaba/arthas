@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * @author: FengYe
  * @date: 2024/7/25 上午12:33
- * @description: FieldUtil
+ * @description: ProtoBufUtil
  */
 public class ProtoBufUtil {
 
@@ -385,7 +385,7 @@ public class ProtoBufUtil {
         }
 
         String code = "(" + toObjectType(type) + ") ";
-        code += "FieldUtil.getField(" + DYNAMIC_TARGET + ", \"" + field.getName() + "\")";
+        code += "ProtoBufUtil.getField(" + DYNAMIC_TARGET + ", \"" + field.getName() + "\")";
 
         return code;
     }
@@ -406,14 +406,14 @@ public class ProtoBufUtil {
 
 
         if (isList) {
-            return "FieldUtil.getListSize(" + order + "," + dynamicFieldName + "," + ProtobufFieldTypeEnum.class.getName() + "." + typeName
+            return "ProtoBufUtil.getListSize(" + order + "," + dynamicFieldName + "," + ProtobufFieldTypeEnum.class.getName() + "." + typeName
                     + "," + field.isPacked() + ");" + LINE_BREAK;
         } else if (isMap) {
-            return "FieldUtil.getMapSize(" + order + "," + dynamicFieldName + "," + getMapFieldGenericParameterString(field) + ");" + LINE_BREAK;
+            return "ProtoBufUtil.getMapSize(" + order + "," + dynamicFieldName + "," + getMapFieldGenericParameterString(field) + ");" + LINE_BREAK;
         }
 
         if (protobufFieldType == ProtobufFieldTypeEnum.OBJECT) {
-            return "FieldUtil.getObjectSize(" + order + "," + dynamicFieldName + ", " + ProtobufFieldTypeEnum.class.getName() + "."
+            return "ProtoBufUtil.getObjectSize(" + order + "," + dynamicFieldName + ", " + ProtobufFieldTypeEnum.class.getName() + "."
                     + typeName + ");" + LINE_BREAK;
         }
 
@@ -447,7 +447,7 @@ public class ProtoBufUtil {
 
         if (protobufField.isList()) {
             String typeString = protobufFieldType.getType().toUpperCase();
-            sb.append("FieldUtil.writeList(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
+            sb.append("ProtoBufUtil.writeList(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
             sb.append(order).append(",").append(ProtobufFieldTypeEnum.class.getName()).append(".").append(typeString);
             sb.append(",").append(dynamicFieldName).append(",").append(Boolean.valueOf(protobufField.isPacked())).append(")")
                     .append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
@@ -865,7 +865,7 @@ public class ProtoBufUtil {
         if (isList) {
             sb.append(collectionType).append(" __list = ").append(collectionTypetoCreate)
                     .append(JAVA_LINE_BREAK);
-            sb.append("FieldUtil.setField(").append(DYNAMIC_TARGET).append(", \"").append(javaField.getName())
+            sb.append("ProtoBufUtil.setField(").append(DYNAMIC_TARGET).append(", \"").append(javaField.getName())
                     .append("\", __list)").append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
             if (express != null) {
                 if (isPacked) {
@@ -880,7 +880,7 @@ public class ProtoBufUtil {
             return sb.toString();
         } else if (isMap) {
             sb.append("Map __map = new HashMap()").append(JAVA_LINE_BREAK);
-            sb.append("FieldUtil.setField(").append(DYNAMIC_TARGET).append(", \"").append(javaField.getName())
+            sb.append("ProtoBufUtil.setField(").append(DYNAMIC_TARGET).append(", \"").append(javaField.getName())
                     .append("\", __map)").append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
             return sb + express;
         }
@@ -893,7 +893,7 @@ public class ProtoBufUtil {
                 express = "new Date(" + express + ")";
             }
 
-            code = "FieldUtil.setField(" + DYNAMIC_TARGET + ", \"" + javaField.getName() + "\", " + express + ")"
+            code = "ProtoBufUtil.setField(" + DYNAMIC_TARGET + ", \"" + javaField.getName() + "\", " + express + ")"
                     + LINE_BREAK;
         }
         return code;
@@ -939,7 +939,7 @@ public class ProtoBufUtil {
      * @return
      */
     public static String getInitListMapFieldDynamicString(ProtobufField protobufField, String express) {
-        return "FieldUtil.setField(" + DYNAMIC_TARGET + ", \"" + protobufField.getJavaField().getName() + "\", " + express + ");"
+        return "ProtoBufUtil.setField(" + DYNAMIC_TARGET + ", \"" + protobufField.getJavaField().getName() + "\", " + express + ");"
                 + LINE_BREAK;
     }
 

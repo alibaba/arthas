@@ -3,6 +3,8 @@ package com.taobao.arthas.grpc.server.handler;/**
  * @date: 2024/7/7 下午9:58
  */
 
+import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
+import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http2.*;
@@ -66,19 +68,28 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         GrpcRequest grpcRequest = dataBuffer.get(dataFrame.stream().id());
         grpcRequest.writeData(dataFrame.content());
 
+        System.out.println(dataFrame.stream().id());
         if (grpcRequest.isStream()) {
             // 流式调用，即刻响应
             try {
-                GrpcResponse response = grpcDispatcher.execute(grpcRequest);
-                grpcRequest.clearData();
+                GrpcResponse response = new GrpcResponse();
+                byte[] bytes = grpcRequest.readData();
+                while (bytes != null) {
+                    ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(grpcDispatcher.getRequestClass(grpcRequest.getService(),grpcRequest.getMethod()));
+                    Object decode = protobufCodec.decode(bytes);
+                    response = grpcDispatcher.execute(grpcRequest.getService(), grpcRequest.getMethod(), decode);
 
-                // 针对第一个响应发送 header
-                if (grpcRequest.isStreamFirstData()) {
-                    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
-                    grpcRequest.setStreamFirstData(false);
+                    // 针对第一个响应发送 header
+                    if (grpcRequest.isStreamFirstData()) {
+                        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
+                        grpcRequest.setStreamFirstData(false);
+                    }
+                    ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
+
+                    bytes = grpcRequest.readData();
                 }
 
-                ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
+                grpcRequest.clearData();
 
                 if (dataFrame.isEndStream()) {
                     ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));

@@ -64,29 +64,39 @@ public class GrpcDispatcher {
         return serviceName + "." + methodName;
     }
 
-    public Object execute(String serviceName, String methodName, Object arg) throws Throwable {
+    public GrpcResponse execute(String serviceName, String methodName, Object arg) throws Throwable {
         MethodHandle methodHandle = grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName));
-        return methodHandle.invoke(arg);
-    }
-
-    public GrpcResponse execute(GrpcRequest request) throws Throwable {
-        String service = request.getService();
-        String method = request.getMethod();
-        MethodType type = grpcMethodInvokeMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())).type();
-        // protobuf 规范只能有单入参
-        request.setClazz(type.parameterArray()[0]);
-        ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(request.getClazz());
-        Object decode = protobufCodec.decode(request.readData());
-
-        Object execute = this.execute(service, method, decode);
-
+        MethodType type = grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName)).type();
+        Object execute = methodHandle.invoke(arg);
         GrpcResponse grpcResponse = new GrpcResponse();
         grpcResponse.setClazz(type.returnType());
         grpcResponse.writeResponseData(execute);
         return grpcResponse;
     }
 
-    public void checkGrpcStream(GrpcRequest request){
+    public GrpcResponse execute(GrpcRequest request) throws Throwable {
+        String service = request.getService();
+        String method = request.getMethod();
+        // protobuf 规范只能有单入参
+        request.setClazz(getRequestClass(request.getService(), request.getMethod()));
+        ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(request.getClazz());
+        Object decode = protobufCodec.decode(request.readData());
+        return this.execute(service, method, decode);
+    }
+
+    /**
+     * 获取指定 service method 对应的入参类型
+     *
+     * @param serviceName
+     * @param methodName
+     * @return
+     */
+    public Class<?> getRequestClass(String serviceName, String methodName) {
+        //protobuf 规范只能有单入参
+        return grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName)).type().parameterArray()[0];
+    }
+
+    public void checkGrpcStream(GrpcRequest request) {
         request.setStream(
                 Optional.ofNullable(grpcMethodStreamMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())))
                         .orElse(false)

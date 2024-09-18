@@ -18,7 +18,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
             throws IOException {
         <!-- $BeginBlock encodeFields -->
         ${dynamicFieldType} ${dynamicFieldName} = null;
-        if (!FieldUtil.isNull(${dynamicFieldGetter})) {
+        if (!ProtoBufUtil.isNull(${dynamicFieldGetter})) {
             ${dynamicFieldName} = ${dynamicFieldGetter};
             ${encodeWriteFieldValue}
         }
@@ -34,7 +34,7 @@ public class ${className} implements ${codecClassName}<${targetProxyClassName}>,
         int size = 0;
         <!-- $BeginBlock encodeFields -->
         ${dynamicFieldType} ${dynamicFieldName} = null;
-        if (!FieldUtil.isNull(${dynamicFieldGetter})) {
+        if (!ProtoBufUtil.isNull(${dynamicFieldGetter})) {
             ${dynamicFieldName} = ${dynamicFieldGetter};
             size += ${sizeDynamicString}
         }
