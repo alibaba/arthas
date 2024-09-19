@@ -4,7 +4,6 @@ package com.taobao.arthas.grpc.server.service.req;/**
  */
 
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
-import lombok.ToString;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ import java.util.List;
  */
 
 @ProtobufClass
-@ToString
 public class ArthasSampleRequest {
 
     private String name;

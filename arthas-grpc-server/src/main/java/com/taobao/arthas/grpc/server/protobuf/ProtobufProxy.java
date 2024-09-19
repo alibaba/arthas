@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProtobufProxy {
     private static final String TEMPLATE_FILE = "/class_template.tpl";
 
-    private static final Map<String, ProtobufCodec> codecCache = new ConcurrentHashMap<String, ProtobufCodec>();
+    private static final Map<String, ProtobufCodec> codecCache = new ConcurrentHashMap<>();
 
     private static Class<?> clazz;
 
@@ -31,8 +31,8 @@ public class ProtobufProxy {
 
     private static List<ProtobufField> protobufFields;
 
-    public static ProtobufCodec getCodecCacheSide(Class<?> clazz) {
-        ProtobufCodec codec = codecCache.get(clazz.getName());
+    public static <T> ProtobufCodec<T> getCodecCacheSide(Class<T> clazz) {
+        ProtobufCodec<T> codec = codecCache.get(clazz.getName());
         if (codec != null) {
             return codec;
         }
@@ -46,7 +46,7 @@ public class ProtobufProxy {
         }
     }
 
-    public static <T> ProtobufCodec create(Class<T> clazz) {
+    public static <T> ProtobufCodec<T> create(Class<T> clazz) {
         Objects.requireNonNull(clazz);
         if (clazz.getAnnotation(ProtobufClass.class) == null) {
             throw new IllegalArgumentException(clazz + "class is not annotated with @ProtobufClass");

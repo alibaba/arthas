@@ -453,7 +453,7 @@ public class ProtoBufUtil {
                     .append(JAVA_LINE_BREAK).append("}").append(LINE_BREAK);
             return sb.toString();
         } else if (protobufField.isMap()) {
-            sb.append("Field.writeMap(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
+            sb.append("ProtoBufUtil.writeMap(").append(CODE_OUTPUT_STREAM_OBJ_NAME).append(",");
             sb.append(order).append(",").append(dynamicFieldName);
 
             String joinedSentence = getMapFieldGenericParameterString(protobufField);
