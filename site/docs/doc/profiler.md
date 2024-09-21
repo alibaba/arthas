@@ -350,3 +350,18 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 ## `--timeout` 选项
 
 这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
+
+## `--wall` 选项
+
+这个选项允许同时进行 CPU 和 Wall clock 的分析。
+通过设置输出格式为 jfr，可以记录每个执行样本的线程状态（STATE_RUNNABLE 或 STATE_SLEEPING）。
+可使用以下命令（可以独立设置 CPU 和 Wall clock 分析的间隔）：
+```bash
+profiler start -e cpu -i 10ms --wall 200ms -f out.jfr
+```
+
+需要注意：
+* Linux 平台: 这个新功能仅在 Linux 平台上有效。macOS 上的 CPU 分析引擎已经基于 Wall clock 模式，因此没有额外的收益。
+* 性能开销: 启用 Wall clock 分析会增加性能开销，因此在同时分析 CPU 和 Wall clock 时，建议增加 Wall clock 的间隔。
+
+可参考 [async-profiler pr#740](https://github.com/async-profiler/async-profiler/issues/740) 了解更多信息。
