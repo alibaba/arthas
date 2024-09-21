@@ -322,7 +322,7 @@ public class JFRCommand extends AnnotatedCommand {
                 try {
                     r.setDestination(Paths.get(getFilename()));
                 } catch (IOException e) {
-                    process.end(-1, "Failed to stop" + r.getName() + ". Could not set destination for " + filename + "to file" + e.getMessage());
+                    process.end(-1, "Failed to stop " + r.getName() + ". Could not set destination for " + filename + "to file" + e.getMessage());
                 }
 
                 r.stop();
@@ -353,7 +353,7 @@ public class JFRCommand extends AnnotatedCommand {
             try {
                 return Long.parseLong(s);
             } catch (Exception e) {
-                throw new NumberFormatException("'" + s + "' is not a valid size. Shoule be numeric value followed by a unit, i.e. 20M. Valid units k, M, G");
+                throw new NumberFormatException("'" + s + "' is not a valid size. Should be numeric value followed by a unit, i.e. 20M. Valid units k, M, G");
             }
         }
     }
