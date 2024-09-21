@@ -241,16 +241,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         String profilerSoPath = null;
         if (OSUtils.isMac()) {
             // FAT_BINARY support both x86_64/arm64
-            profilerSoPath = "async-profiler/libasyncProfiler-mac.so";
+            profilerSoPath = "async-profiler/libasyncProfiler-mac.dylib";
         }
         if (OSUtils.isLinux()) {
-            if (OSUtils.isX86_64() && OSUtils.isMuslLibc()) {
-                profilerSoPath = "async-profiler/libasyncProfiler-linux-musl-x64.so";
-            } else if(OSUtils.isX86_64()){
+            if (OSUtils.isX86_64()) {
                 profilerSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
-            } else if (OSUtils.isArm64() && OSUtils.isMuslLibc()) {
-                profilerSoPath = "async-profiler/libasyncProfiler-linux-musl-arm64.so";
-            } else if (OSUtils.isArm64()) {
+            }  else if (OSUtils.isArm64()) {
                 profilerSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
             }
         }
