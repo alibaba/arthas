@@ -350,3 +350,17 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 ## `--timeout` 选项
 
 这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
+
+
+## `--classify` 选项
+这个选项用于自动将执行样本分类到不同的类别中。
+这些类别包括垃圾回收、JIT 编译、类加载等。
+这个功能可以帮助你在分析火焰图时更容易地回答以下问题：
+* 总共花了多少时间在类加载上？
+* Java 代码在解释器和 C1/C2 编译方法中运行的时间百分比是多少？
+* Lambda 对启动时间的影响是什么？
+
+（推荐使用 --cstack dwarf 选项以提高准确性，可参考[async profiler pr#719](https://github.com/async-profiler/async-profiler/issues/719)）
+```bash
+profiler start -e cpu -f /tmp/profile.jfr --cstack dwarf
+```

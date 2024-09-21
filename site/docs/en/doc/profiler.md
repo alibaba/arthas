@@ -352,3 +352,16 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 This option specifies the time when profiling will automatically stop. The format is the same as in loop: it is either a wall clock time (12:34:56) or a relative time interval (2h).
 
 Both `--loop` and `--timeout` are used for `start` action but not for `collect` action, for further information refer to [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789).
+
+## --classify Option
+This option is used to automatically classify execution samples into different categories.
+These categories include garbage collection, JIT compilation, class loading, etc.
+Specifically, this feature can help you more easily answer the following questions when analyzing flame graphs:
+* How much time was spent on class loading?
+* What percentage of Java code runs in the interpreter and C1/C2 compiled methods?
+* What is the impact of Lambda on startup time?
+
+(It is recommended to use the --cstack dwarf option to improve accuracy,, for further information refer to [async profiler pr#719](https://github.com/async-profiler/async-profiler/issues/719).)
+```bash
+profiler start -e cpu -f /tmp/profile.jfr --cstack dwarf
+```
