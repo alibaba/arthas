@@ -46,7 +46,7 @@ public class OgnlCommand extends AnnotatedCommand {
     private String classLoaderClass;
     private int expand = 1;
 
-    @Argument(argName = "express", index = 0, required = true)
+    @Argument(argName = "express", index = 0)
     @Description("The ognl expression.")
     public void setExpress(String express) {
         this.express = express;
