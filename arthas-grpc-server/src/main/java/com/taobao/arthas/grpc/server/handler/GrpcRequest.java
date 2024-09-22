@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.handler;/**
- * @author: 風楪
- * @date: 2024/9/4 23:07
- */
+package com.taobao.arthas.grpc.server.handler;
 
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;

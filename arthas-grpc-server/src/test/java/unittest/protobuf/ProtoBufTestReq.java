@@ -1,14 +1,11 @@
-package protobuf;/**
- * @author: 風楪
- * @date: 2024/9/19 22:38
- */
+package unittest.protobuf;
 
+import com.taobao.arthas.grpc.server.protobuf.ProtobufField;
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
-import com.taobao.arthas.grpc.server.service.req.ArthasSampleRequest;
+import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author: FengYe
@@ -20,7 +17,7 @@ public class ProtoBufTestReq {
     private String name;
     private double age;
     private long price;
-    private ArthasSampleRequest.StatusEnum status;
+    private ProtoBufTestReq.StatusEnum status;
     private List<TestClass> testList;
     private Map<String, String> testMap;
 
@@ -74,11 +71,11 @@ public class ProtoBufTestReq {
         this.testList = testList;
     }
 
-    public ArthasSampleRequest.StatusEnum getStatus() {
+    public ProtoBufTestReq.StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(ArthasSampleRequest.StatusEnum status) {
+    public void setStatus(ProtoBufTestReq.StatusEnum status) {
         this.status = status;
     }
 

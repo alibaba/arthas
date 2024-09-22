@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.utils;/**
- * @author: 風楪
- * @date: 2024/9/6 02:20
- */
+package com.taobao.arthas.grpc.server.utils;
 
 import java.io.File;
 import java.net.URL;

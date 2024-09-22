@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.service.res;/**
- * @author: 風楪
- * @date: 2024/8/11 22:11
- */
+package com.taobao.arthas.grpc.server.service.res;
 
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
 
@@ -11,7 +8,7 @@ import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
  * @description: ArthasSampleResponse
  */
 @ProtobufClass
-public class ArthasSampleResponse {
+public class ArthasUnittestResponse {
     private String message;
 
     public String getMessage() {

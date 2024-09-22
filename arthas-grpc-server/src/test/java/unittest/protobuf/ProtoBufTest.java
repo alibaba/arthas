@@ -1,11 +1,8 @@
-package protobuf; /**
- * @author: 風楪
- * @date: 2024/9/19 22:35
- */
+package unittest.protobuf;
 
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
-import com.taobao.arthas.grpc.server.service.req.ArthasSampleRequest;
+import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +24,7 @@ public class ProtoBufTest {
         protoBufTestReq.setName("test");
         protoBufTestReq.setAge(18);
         protoBufTestReq.setPrice(100L);
-        protoBufTestReq.setStatus(ArthasSampleRequest.StatusEnum.START);
+        protoBufTestReq.setStatus(ProtoBufTestReq.StatusEnum.START);
         List<ProtoBufTestReq.TestClass> list = new ArrayList<>();
         list.add(new ProtoBufTestReq.TestClass("test1"));
         list.add(new ProtoBufTestReq.TestClass("test2"));

@@ -1,36 +1,33 @@
-package com.taobao.arthas.grpc.server.service.impl;/**
- * @author: 風楪
- * @date: 2024/6/30 下午11:43
- */
+package com.taobao.arthas.grpc.server.service.impl;
 
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
 import com.taobao.arthas.grpc.server.service.ArthasSampleService;
-import com.taobao.arthas.grpc.server.service.req.ArthasSampleRequest;
-import com.taobao.arthas.grpc.server.service.res.ArthasSampleResponse;
+import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
+import com.taobao.arthas.grpc.server.service.res.ArthasUnittestResponse;
 
 /**
  * @author: FengYe
  * @date: 2024/6/30 下午11:43
  * @description: ArthasSampleServiceImpl
  */
-@GrpcService("arthasSample.ArthasTempService")
+@GrpcService("arthas.sample.ArthasTempService")
 public class ArthasSampleServiceImpl implements ArthasSampleService {
 
     @Override
     @GrpcMethod("trace")
-    public ArthasSampleResponse trace(ArthasSampleRequest command) {
-        ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
-        arthasSampleResponse.setMessage("trace");
-        return arthasSampleResponse;
+    public ArthasUnittestResponse trace(ArthasUnittestRequest command) {
+        ArthasUnittestResponse arthasUnittestResponse = new ArthasUnittestResponse();
+        arthasUnittestResponse.setMessage("trace");
+        return arthasUnittestResponse;
     }
 
     @Override
     @GrpcMethod(value = "watch", stream = true)
-    public ArthasSampleResponse watch(ArthasSampleRequest command) {
-        String name = command.getName();
-        ArthasSampleResponse arthasSampleResponse = new ArthasSampleResponse();
-        arthasSampleResponse.setMessage(name);
-        return arthasSampleResponse;
+    public ArthasUnittestResponse watch(ArthasUnittestRequest command) {
+        String message = command.getMessage();
+        ArthasUnittestResponse arthasUnittestResponse = new ArthasUnittestResponse();
+        arthasUnittestResponse.setMessage(message);
+        return arthasUnittestResponse;
     }
 }

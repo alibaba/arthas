@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.handler;/**
- * @author: 風楪
- * @date: 2024/9/5 02:05
- */
+package com.taobao.arthas.grpc.server.handler;
 
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
@@ -50,7 +47,7 @@ public class GrpcResponse {
         return new DefaultHttp2Headers().set("grpc-status", "0");
     }
 
-    public ByteBuf getResponseData(){
+    public ByteBuf getResponseData() {
         return byteData;
     }
 

@@ -1,10 +1,7 @@
-package com.taobao.arthas.grpc.server.service;/**
- * @author: 風楪
- * @date: 2024/6/30 下午11:42
- */
+package com.taobao.arthas.grpc.server.service;
 
-import com.taobao.arthas.grpc.server.service.req.ArthasSampleRequest;
-import com.taobao.arthas.grpc.server.service.res.ArthasSampleResponse;
+import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
+import com.taobao.arthas.grpc.server.service.res.ArthasUnittestResponse;
 
 /**
  * @author: FengYe
@@ -12,6 +9,6 @@ import com.taobao.arthas.grpc.server.service.res.ArthasSampleResponse;
  * @description: ArthasSampleService
  */
 public interface ArthasSampleService {
-    ArthasSampleResponse trace(ArthasSampleRequest command);
-    ArthasSampleResponse watch(ArthasSampleRequest command);
+    ArthasUnittestResponse trace(ArthasUnittestRequest command);
+    ArthasUnittestResponse watch(ArthasUnittestRequest command);
 }

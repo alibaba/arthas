@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.protobuf;/**
- * @author: 風楪
- * @date: 2024/7/17 下午10:02
- */
+package com.taobao.arthas.grpc.server.protobuf;
 
 import com.google.protobuf.WireFormat;
 

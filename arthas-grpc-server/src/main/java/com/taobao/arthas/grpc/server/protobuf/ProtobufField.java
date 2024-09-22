@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.protobuf;/**
- * @author: 風楪
- * @date: 2024/7/25 上午12:14
- */
+package com.taobao.arthas.grpc.server.protobuf;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

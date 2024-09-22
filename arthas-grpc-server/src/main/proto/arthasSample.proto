@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package arthasSample;
+package arthas.sample;
 
 
 enum StatusEnum {
@@ -8,9 +8,9 @@ enum StatusEnum {
     STOP = 1;
 }
 
-service ArthasTempService {
-  rpc trace(ArthasSampleRequest) returns (ArthasSampleResponse);
-  rpc watch(stream ArthasSampleRequest) returns (stream ArthasSampleResponse);
+service ArthasSampleService {
+  rpc testUnary(ArthasSampleRequest) returns (ArthasSampleResponse);
+  rpc testBiStream(stream ArthasSampleRequest) returns (stream ArthasSampleResponse);
 }
 
 message ArthasSampleRequest {

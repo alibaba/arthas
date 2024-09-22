@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.protobuf.annotation;/**
- * @author: 風楪
- * @date: 2024/7/30 上午2:01
- */
+package com.taobao.arthas.grpc.server.protobuf.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

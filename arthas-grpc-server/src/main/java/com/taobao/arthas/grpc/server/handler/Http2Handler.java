@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server.handler;/**
- * @author: 風楪
- * @date: 2024/7/7 下午9:58
- */
+package com.taobao.arthas.grpc.server.handler;
 
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
@@ -75,7 +72,7 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
                 GrpcResponse response = new GrpcResponse();
                 byte[] bytes = grpcRequest.readData();
                 while (bytes != null) {
-                    ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(grpcDispatcher.getRequestClass(grpcRequest.getService(),grpcRequest.getMethod()));
+                    ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(grpcDispatcher.getRequestClass(grpcRequest.getService(), grpcRequest.getMethod()));
                     Object decode = protobufCodec.decode(bytes);
                     response = grpcDispatcher.execute(grpcRequest.getService(), grpcRequest.getMethod(), decode);
 

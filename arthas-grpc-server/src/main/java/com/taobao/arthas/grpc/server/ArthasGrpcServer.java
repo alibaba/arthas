@@ -1,7 +1,4 @@
-package com.taobao.arthas.grpc.server;/**
- * @author: 風楪
- * @date: 2024/7/3 上午12:30
- */
+package com.taobao.arthas.grpc.server;
 
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
 import com.taobao.arthas.grpc.server.handler.Http2Handler;
@@ -65,7 +62,6 @@ public class ArthasGrpcServer {
                         }
                     });
 
-            // Bind and start to accept incoming connections.
             b.bind(9090).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
