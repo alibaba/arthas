@@ -11,23 +11,22 @@ import com.taobao.arthas.grpc.server.service.res.ArthasUnittestResponse;
  * @date: 2024/6/30 下午11:43
  * @description: ArthasSampleServiceImpl
  */
-@GrpcService("arthas.sample.ArthasTempService")
+@GrpcService("arthas.unittest.ArthasUnittestService")
 public class ArthasSampleServiceImpl implements ArthasSampleService {
 
     @Override
     @GrpcMethod("trace")
     public ArthasUnittestResponse trace(ArthasUnittestRequest command) {
         ArthasUnittestResponse arthasUnittestResponse = new ArthasUnittestResponse();
-        arthasUnittestResponse.setMessage("trace");
+        arthasUnittestResponse.setMessage(command.getMessage());
         return arthasUnittestResponse;
     }
 
     @Override
     @GrpcMethod(value = "watch", stream = true)
     public ArthasUnittestResponse watch(ArthasUnittestRequest command) {
-        String message = command.getMessage();
         ArthasUnittestResponse arthasUnittestResponse = new ArthasUnittestResponse();
-        arthasUnittestResponse.setMessage(message);
+        arthasUnittestResponse.setMessage(command.getMessage());
         return arthasUnittestResponse;
     }
 }

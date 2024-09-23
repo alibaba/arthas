@@ -2,6 +2,8 @@ package com.taobao.arthas.grpc.server.handler;
 
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
+import com.taobao.arthas.grpc.server.utils.ByteUtil;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http2.*;
@@ -43,7 +45,6 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         }
     }
 
-
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
@@ -65,7 +66,6 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         GrpcRequest grpcRequest = dataBuffer.get(dataFrame.stream().id());
         grpcRequest.writeData(dataFrame.content());
 
-        System.out.println(dataFrame.stream().id());
         if (grpcRequest.isStream()) {
             // 流式调用，即刻响应
             try {
@@ -92,7 +92,7 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
                     ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
                 }
             } catch (Throwable e) {
-                processError(ctx, e);
+                processError(ctx, e, dataFrame.stream());
             }
         } else {
             // 非流式调用，等到 endStream 再响应
@@ -103,14 +103,20 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
                     ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
                     ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
                 } catch (Throwable e) {
-                    processError(ctx, e);
+                    processError(ctx, e, dataFrame.stream());
                 }
             }
         }
     }
 
-    private void processError(ChannelHandlerContext ctx, Throwable e) {
-        //todo
-        ctx.writeAndFlush(e.getMessage());
+    private void processError(ChannelHandlerContext ctx, Throwable e, Http2FrameStream stream) {
+        GrpcResponse response = new GrpcResponse();
+        ErrorRes errorRes = new ErrorRes();
+        errorRes.setErrorMsg(e.getMessage());
+        response.setClazz(ErrorRes.class);
+        response.writeResponseData(errorRes);
+        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(stream));
+        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(stream));
+        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(stream));
     }
 }

@@ -51,10 +51,14 @@ public class GrpcResponse {
         return byteData;
     }
 
-    public void writeResponseData(Object response) throws IOException {
+    public void writeResponseData(Object response) {
         ProtobufCodec codec = ProtobufProxy.getCodecCacheSide(clazz);
-        byte[] encode = codec.encode(response);
-
+        byte[] encode = null;
+        try {
+            encode = codec.encode(response);
+        } catch (IOException e) {
+            throw new RuntimeException("ProtobufCodec encode error");
+        }
         this.byteData = ByteUtil.newByteBuf();
         this.byteData.writeBoolean(false);
         this.byteData.writeInt(encode.length);

@@ -89,7 +89,7 @@ public class GrpcDispatcher {
      */
     public Class<?> getRequestClass(String serviceName, String methodName) {
         //protobuf 规范只能有单入参
-        return grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName)).type().parameterArray()[0];
+        return Optional.ofNullable(grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName))).orElseThrow(() -> new RuntimeException("The specified grpc method does not exist")).type().parameterArray()[0];
     }
 
     public void checkGrpcStream(GrpcRequest request) {
