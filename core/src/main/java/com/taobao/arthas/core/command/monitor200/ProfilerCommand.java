@@ -118,9 +118,9 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Integer jstackdepth;
 
     /**
-     * Enable wall clock profiling in addition to CPU profiling
+     * wall clock profiling interval
      */
-    private boolean wall;
+    private Long wall;
 
     /**
      * profile different threads separately
@@ -341,8 +341,9 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "wall", flag = true)
-    @Description("Enable wall clock profiling in addition to CPU profiling")
-    public void setWall(boolean wall) {
+    @Description("wall clock profiling interval")
+    @DefaultValue("10000000")
+    public void setWall(Long wall) {
         this.wall = wall;
     }
 
@@ -589,9 +590,6 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.threads) {
             sb.append("threads").append(COMMA);
         }
-        if (this.wall) {
-            sb.append("wall").append(COMMA);
-        }
         if (this.sched) {
             sb.append("sched").append(COMMA);
         }
@@ -633,7 +631,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.end != null) {
             sb.append("end=").append(this.end).append(COMMA);
         }
-
+        if (this.wall != null) {
+            sb.append("wall=").append(this.wall).append(COMMA);
+        }
         if (this.title != null) {
             sb.append("title=").append(this.title).append(COMMA);
         }

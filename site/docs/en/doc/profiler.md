@@ -352,3 +352,17 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 This option specifies the time when profiling will automatically stop. The format is the same as in loop: it is either a wall clock time (12:34:56) or a relative time interval (2h).
 
 Both `--loop` and `--timeout` are used for `start` action but not for `collect` action, for further information refer to [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789).
+
+## `--wall` option
+
+The -- wall option allows for simultaneous performance analysis of both CPU and Wall Clock. This joint analysis helps to more comprehensively identify and understand performance bottlenecks in applications.
+--The wall option allows users to set the sampling interval for Wall Clock analysis independently of CPU analysis. For example, by setting - e cpu-i 10-- wall 200, the CPU sampling interval can be set to 10 milliseconds, and the wall clock sampling interval can be set to 200 milliseconds.
+When conducting joint CPU and Wall Clock analysis, the output format must be set to jfr. This format supports recording the state information of threads (such as State_SUNNABLE or State_SLEEPING) to distinguish between different types of sampling events.
+
+influence
+Linux platform: This new feature is only available on the Linux platform. The CPU analysis engine on macOS is already based on Wall clock mode, so there are no additional benefits.
+Performance overhead: Enabling Wall clock analysis will increase performance overhead, so when analyzing both CPU and Wall clock simultaneously, it is recommended to increase the interval between Wall clocks.
+
+```bash
+profiler start -e cpu -i 10 --wall 100 -f out.jfr
+```
