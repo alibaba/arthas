@@ -351,8 +351,6 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 
 这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
 
-
-
 ## `--wall` 选项
 
 通过 --wall 选项，可以同时进行 CPU 和 Wall Clock 的性能分析。
