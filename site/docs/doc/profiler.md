@@ -354,6 +354,7 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 ## `--wall` 选项
 
 通过 --wall 选项，可以同时进行 CPU 和 Wall Clock 的性能分析。
+
 1. 这种联合分析有助于更全面地识别和理解应用程序的性能瓶颈。
 2. 允许用户独立于 CPU 分析设置 Wall Clock 分析的采样间隔。比如，可以通过设置 -e cpu -i 10 --wall 200，将 CPU 采样间隔设为 10 毫秒，墙钟采样间隔设为 200 毫秒。
 3. 联合进行 CPU 和 Wall Clock 分析时，输出格式必须设置为 jfr。这一格式支持记录线程的状态信息（如 STATE_RUNNABLE 或 STATE_SLEEPING），从而区分不同类型的采样事件。
