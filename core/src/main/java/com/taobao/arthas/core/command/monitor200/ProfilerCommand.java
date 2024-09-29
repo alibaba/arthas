@@ -229,6 +229,16 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String timeout;
 
+    /**
+     * Features enabled for profiling
+     */
+    private String features;
+
+    /**
+     * Profiling signal to use
+     */
+    private String signal;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -339,6 +349,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(shortName = "F", longName = "features")
+    @Description("Features enabled for profiling")
+    public void setFeatures(String features) {
+        this.features = features;
+    }
+
+    @Option(longName = "signal")
+    @Description("Set the profiling signal to use")
+    public void setSignal(String signal) {
+        this.signal = signal;
     }
 
     @Option(longName = "sched", flag = true)
@@ -571,6 +593,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(COMMA);
+        }
+        if (this.features != null) {
+            sb.append("features=").append(this.features).append(COMMA);
+        }
+        if (this.signal != null) {
+            sb.append("signal=").append(this.signal).append(COMMA);
         }
         if (this.jstackdepth != null) {
             sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
