@@ -315,28 +315,31 @@ profiler --cstack fp
 The command above will collection Frame Pointer of C stacks.
 
 ## Start/Stop Profiling When a Specified Native Function is Executed
+
 Using the `--begin function` and `--end function` options, you can start or stop profiling when a specified native function is executed. The main use is to analyze specific JVM phases, such as GC and Safepoint. You need to use the native function names in the specific JVM implementation, such as SafepointSynchronize::begin and SafepointSynchronize::end in HotSpot JVM.
 
 ### Time-to-Safepoint Profiling
+
 The option `--ttsp` is actually an alias for `--begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized`. It is a constraint, not a separate event type. The Profiler will work regardless of which event is selected, but only events between VM operations and Safepoint requests will be recorded.
 
 `profiler` now automatically includes profiler.Window events in the generated JFR file when the `--ttsp` option is used and a JFR output format is specified. These events represent the time interval of each Time-to-Safepoint pause, allowing you to analyze these pauses without relying on JVM logs.
 
 Example
+
 ```bash
 profiler start --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
 profiler start --ttsp --format jfr
 ```
+
 The generated JFR file will contain profiler.Window events, which can be viewed and analyzed using tools such as JDK Mission Control.
 
 **Notes:**
 
-* profiler.Window events are generic events that apply to any time window using the --begin and --end triggers, not just Safepoint pauses.
+- profiler.Window events are generic events that apply to any time window using the --begin and --end triggers, not just Safepoint pauses.
 
-* When analyzing long Safepoint pauses, profiler.Window events can help you identify the cause of delays.
+- When analyzing long Safepoint pauses, profiler.Window events can help you identify the cause of delays.
 
-* When using the --ttsp option, make sure to use the JFR output format so that profiler.Window events can be generated and viewed.
-
+- When using the --ttsp option, make sure to use the JFR output format so that profiler.Window events can be generated and viewed.
 
 ## Generate JFR file using events recorded by profiler
 
@@ -344,11 +347,11 @@ Use `--jfrsync CONFIG` option to specify configuration to start Java Flight Reco
 
 CONFIG parameters:
 
-* Preset configuration: CONFIG can be profile, which means to use the preset profile configuration in the $JAVA_HOME/lib/jfr directory.
+- Preset configuration: CONFIG can be profile, which means to use the preset profile configuration in the $JAVA_HOME/lib/jfr directory.
 
-* Custom configuration file: CONFIG can also be a custom JFR configuration file (.jfc). The value of this option uses the same format as the settings option of the jcmd JFR.start command.
+- Custom configuration file: CONFIG can also be a custom JFR configuration file (.jfc). The value of this option uses the same format as the settings option of the jcmd JFR.start command.
 
-* Specify a list of JFR events: Now, you can directly specify the list of JFR events to be enabled in --jfrsync without creating a .jfc file. To specify a list of events, start with + and separate multiple events with +.
+- Specify a list of JFR events: Now, you can directly specify the list of JFR events to be enabled in --jfrsync without creating a .jfc file. To specify a list of events, start with + and separate multiple events with +.
 
 Example:
 
@@ -357,16 +360,18 @@ Start JFR with a preset profile configuration:
 ```bash
 profiler start -e cpu --jfrsync profile -f combined.jfr
 ```
+
 Directly specify a list of JFR events, for example, to enable jdk.YoungGarbageCollection and jdk.OldGarbageCollection events:
 
 ```bash
 profiler start -e cpu --jfrsync +jdk.YoungGarbageCollection+jdk.OldGarbageCollection -f combined.jfr
 ```
+
 **Notes**
 
-* When specifying a list of events, events are separated by a plus sign + because commas , are used to separate different options.
-* If the --jfrsync parameter does not start with +, it is treated as a preset profile name or a path to a .jfc configuration file.
-* Directly specifying a list of events is particularly useful when the target application is running in a container, without additional file operations.
+- When specifying a list of events, events are separated by a plus sign + because commas , are used to separate different options.
+- If the --jfrsync parameter does not start with +, it is treated as a preset profile name or a path to a .jfc configuration file.
+- Directly specifying a list of events is particularly useful when the target application is running in a container, without additional file operations.
 
 ## Run profiler in a loop
 
@@ -383,27 +388,30 @@ This option specifies the time when profiling will automatically stop. The forma
 Both `--loop` and `--timeout` are used for `start` action but not for `collect` action, for further information refer to [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789).
 
 ## `ctimer` events
+
 `ctimer` events are a new CPU sampling mode based on `timer_create`, providing accurate CPU sampling without `perf_events`.
 
 In some cases, `perf_events` may not be available, for example due to `perf_event_paranoid` settings or `seccomp` restrictions, or in container environments. Although itimer events can work in containers, there may be sampling inaccuracies.
 
 `ctimer` events combine the advantages of `cpu` and `itimer`:
 
-* High accuracy: provides accurate CPU sampling.
+- High accuracy: provides accurate CPU sampling.
 
-* Container-friendly: available in containers by default.
+- Container-friendly: available in containers by default.
 
-* Low resource consumption: does not consume file descriptors.
+- Low resource consumption: does not consume file descriptors.
 
 **Note that `ctimer` events are currently only supported on `Linux`, not `macOS`. **
 See [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/855) for more information.
 
 Example:
+
 ```bash
 profiler start -e ctimer
 ```
 
 ## `vtable` Feature
+
 In some applications, a lot of CPU time is spent in calling `megamorphic` virtual or interface methods, which is shown as `vtable stub` or `itable stub` in performance analysis. This does not help us understand why a specific call site is `megamorphic` and how to optimize it.
 
 The vtable feature can add a pseudo frame on top of the `vtable stub` or `itable stub`, showing the actual object type being called. This helps to clearly understand the ratio of different receivers at a specific call site.
@@ -418,6 +426,7 @@ profiler start -F vtable
 ```
 
 ## `comptask` feature
+
 `profiler` samples the JIT compiler threads as well as the Java threads, and can show the percentage of CPU consumed by JIT compilation. However, the compilation resource consumption of Java methods varies, and it is useful to know which specific Java methods consume the most CPU time when compiling.
 
 The `comptask` feature adds a virtual frame to the stack trace of `C1/C2`, showing the current task being compiled, that is, the Java method being compiled.
@@ -426,11 +435,13 @@ This feature is disabled by default and can be enabled with the `-F comptask` op
 See [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/777) for more information.
 
 Example:
+
 ```bash
 profiler start -F comptask
 ```
 
 ## Configuring Alternative Profiling Signals
+
 `profiler` uses `POSIX` signals for performance profiling. By default, `SIGPROF` is used for `CPU` profiling and `SIGVTALRM` is used for `Wall-Clock` profiling. However, this can lead to signal conflicts if your application also uses these signals or if you want to run multiple `profiler` instances simultaneously.
 
 You can now use the `signal` parameter to configure the signal used for profiling to avoid conflicts.
@@ -438,9 +449,11 @@ You can now use the `signal` parameter to configure the signal used for profilin
 See [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/759) for more information.
 
 Syntax
+
 ```bash
 profiler start --signal <signal number>
 ```
+
 If you need to specify the signal for CPU and Wall-Clock analysis separately, you can use the following syntax:
 
 ```bash
@@ -448,17 +461,20 @@ profiler start --signal <CPU signal number>/<Wall signal number>
 ```
 
 ## `--clock` option
+
 The `--clock` option allows the user to control the clock source used for sampling timestamps. This is useful for scenarios where you need to align the timestamps of `profiler` data with data from other tools.
 
 Usage
+
 ```bash
 profiler start --clock <tsc|monotonic>
-````
+```
+
 Parameters
 
-* `tsc`: Use the CPU's timestamp counter (`RDTSC`). This is the default option and provides high-precision timestamps.
+- `tsc`: Use the CPU's timestamp counter (`RDTSC`). This is the default option and provides high-precision timestamps.
 
-* `monotonic`: Use the operating system's monotonic clock (`CLOCK_MONOTONIC`). This helps align timestamps between multiple data sources.
+- `monotonic`: Use the operating system's monotonic clock (`CLOCK_MONOTONIC`). This helps align timestamps between multiple data sources.
   See [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/723) for more information.
 
 Example:
@@ -471,11 +487,12 @@ profiler start --clock monotonic
 
 **Notes:**
 
-* Use `--clock monotonic` when you need to align `profiler` data with data from other tools that use `CLOCK_MONOTONIC` (e.g. `perf`).
+- Use `--clock monotonic` when you need to align `profiler` data with data from other tools that use `CLOCK_MONOTONIC` (e.g. `perf`).
 
-* Use `--clock` option with caution when using `jfrsync` mode, as the JVM and `profiler` may use different timestamp sources, which may lead to inconsistent results.
+- Use `--clock` option with caution when using `jfrsync` mode, as the JVM and `profiler` may use different timestamp sources, which may lead to inconsistent results.
 
 ## `--normalize` option
+
 In Java 20 and earlier, the method names generated by the compiler for `lambda` expressions contain a unique numeric suffix. For example, a `lambda` expression defined in the same code location may generate multiple different frame names, because each `lambda` method name is appended with a unique numeric suffix (such as `lambda$method$0`, `lambda$method$1`, etc.). This causes logically identical stacks to not be merged in the flame graph, increasing the complexity of performance analysis.
 
 To solve this problem, `profiler` has added a `--normalize` option that automatically normalizes method names when generating output, removes these numeric suffixes, and enables identical stacks to be merged correctly.
@@ -484,6 +501,7 @@ Please refer to [async-profiler Github Issues](https://github.com/async-profiler
 **Example:**
 
 Generate a normalized flame graph:
+
 ```bash
 profiler stop --format flamegraph --normalize -o flamegraph.html
 ```
