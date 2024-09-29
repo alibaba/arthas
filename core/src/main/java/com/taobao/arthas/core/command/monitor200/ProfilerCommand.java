@@ -239,6 +239,16 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String signal;
 
+    /*
+     * Clock source for sampling timestamps: monotonic or tsc
+     */
+    private String clock;
+
+    /*
+     * Normalize method names by removing unique numerical suffixes from lambda classes.
+     */
+    private boolean normalize;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -340,7 +350,8 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "jfrsync")
-    @Description("start Java Flight Recording with the given config along with the profiler")
+    @Description("Start Java Flight Recording with the given config along with the profiler. "
+            + "Accepts a predefined profile name, a path to a .jfc file, or a list of JFR events starting with '+'. ")
     public void setJfrsync(String jfrsync) {
         this.jfrsync = jfrsync;
     }
@@ -361,6 +372,18 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("Set the profiling signal to use")
     public void setSignal(String signal) {
         this.signal = signal;
+    }
+
+    @Option(longName = "clock")
+    @Description("Clock source for sampling timestamps: monotonic or tsc")
+    public void setClock(String clock) {
+        this.clock = clock;
+    }
+
+    @Option(longName = "normalize", flag = true)
+    @Description("Normalize method names by removing unique numerical suffixes from lambda classes.")
+    public void setNormalize(boolean normalize) {
+        this.normalize = normalize;
     }
 
     @Option(longName = "sched", flag = true)
@@ -600,6 +623,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.signal != null) {
             sb.append("signal=").append(this.signal).append(COMMA);
         }
+        if (this.clock != null) {
+            sb.append("clock=").append(this.clock).append(COMMA);
+        }
         if (this.jstackdepth != null) {
             sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
         }
@@ -626,6 +652,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.alluser) {
             sb.append("alluser").append(COMMA);
+        }
+        if (this.normalize) {
+            sb.append("normalize").append(COMMA);
         }
         if (this.includes != null) {
             for (String include : includes) {
