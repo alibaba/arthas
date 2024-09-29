@@ -484,11 +484,11 @@ profiler start --clock monotonic
 - 当需要将 `profiler` 的数据与其他使用 `CLOCK_MONOTONIC` 的工具（例如 `perf`）的数据进行对齐时，使用 `--clock monotonic`。
 - 在使用 `jfrsync` 模式时，请谨慎使用 `--clock` 选项，因为 JVM 和 `profiler` 可能使用不同的时间戳源，这可能导致结果不一致。
 
-## `--normalize` 选项
+## `--norm` 选项
 
 在 Java 20 及更早的版本中，编译器为 `lambda` 表达式生成的方法名称包含唯一的数字后缀。例如，同一代码位置定义的 `lambda` 表达式，可能会生成多个不同的帧名称，因为每个 `lambda` 方法的名称都会附加一个唯一的数字后缀（如 `lambda$method$0`、`lambda$method$1` 等）。这会导致逻辑上相同的堆栈无法在火焰图中合并，增加了性能分析的复杂性。
 
-为了解决这个问题，`profiler` 新增了 `--normalize` 选项，可以在生成输出时自动规范化方法名称，去除这些数字后缀，使相同的堆栈能够正确地合并。
+为了解决这个问题，`profiler` 新增了 `--norm` 选项，可以在生成输出时自动规范化方法名称，去除这些数字后缀，使相同的堆栈能够正确地合并。
 可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/832) 了解更多信息。
 
 **示例:**
@@ -496,5 +496,5 @@ profiler start --clock monotonic
 生成规范化的火焰图:
 
 ```bash
-profiler stop --format flamegraph --normalize -o flamegraph.html
+profiler start --norm
 ```

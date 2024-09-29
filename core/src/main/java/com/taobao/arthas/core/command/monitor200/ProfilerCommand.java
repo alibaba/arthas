@@ -247,7 +247,7 @@ public class ProfilerCommand extends AnnotatedCommand {
     /*
      * Normalize method names by removing unique numerical suffixes from lambda classes.
      */
-    private boolean normalize;
+    private boolean norm;
 
     private static String libPath;
     private static AsyncProfiler profiler = null;
@@ -380,10 +380,10 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.clock = clock;
     }
 
-    @Option(longName = "normalize", flag = true)
+    @Option(longName = "norm", flag = true)
     @Description("Normalize method names by removing unique numerical suffixes from lambda classes.")
-    public void setNormalize(boolean normalize) {
-        this.normalize = normalize;
+    public void setNorm(boolean norm) {
+        this.norm = norm;
     }
 
     @Option(longName = "sched", flag = true)
@@ -653,8 +653,8 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.alluser) {
             sb.append("alluser").append(COMMA);
         }
-        if (this.normalize) {
-            sb.append("normalize").append(COMMA);
+        if (this.norm) {
+            sb.append("norm").append(COMMA);
         }
         if (this.includes != null) {
             for (String include : includes) {
