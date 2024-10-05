@@ -1,11 +1,5 @@
 package com.taobao.arthas.core.advisor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.concurrent.ConcurrentWeakKeyHashMap;
@@ -13,6 +7,12 @@ import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -111,6 +111,14 @@ public class AdviceListenerManager {
             return className + owner + methodName + methodDesc;
         }
 
+        /**
+         * 获取行观测对应的key
+         * @param line line 行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+         */
+        private String keyForLine(String className, String line, String methodName, String methodDesc) {
+            return className + line + methodName + methodDesc;
+        }
+
         public void registerAdviceListener(String className, String methodName, String methodDesc,
                 AdviceListener listener) {
             synchronized (this) {
@@ -157,6 +165,40 @@ public class AdviceListenerManager {
                 String methodDesc) {
             className = className.replace('/', '.');
             String key = keyForTrace(className, owner, methodName, methodDesc);
+
+            List<AdviceListener> listeners = map.get(key);
+
+            return listeners;
+        }
+
+        /**
+         * 注册对应行的Listener
+         * @param line line 行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+         */
+        public void registerLineAdviceListener(String className, String line, String methodName, String methodDesc,
+                                               AdviceListener listener) {
+
+            className = className.replace('/', '.');
+            String key = keyForLine(className, line, methodName, methodDesc);
+
+            List<AdviceListener> listeners = map.get(key);
+            if (listeners == null) {
+                listeners = new ArrayList<AdviceListener>();
+                map.put(key, listeners);
+            }
+            if (!listeners.contains(listener)) {
+                listeners.add(listener);
+            }
+        }
+
+        /**
+         * 查询对应行的Listener
+         * @param line line 行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+         */
+        public List<AdviceListener> queryLineAdviceListeners(String className, String line, String methodName,
+                                                             String methodDesc) {
+            className = className.replace('/', '.');
+            String key = keyForLine(className, line, methodName, methodDesc);
 
             List<AdviceListener> listeners = map.get(key);
 
@@ -217,6 +259,41 @@ public class AdviceListenerManager {
 
         if (manager != null) {
             return manager.queryTraceAdviceListeners(className, owner, methodName, methodDesc);
+        }
+
+        return null;
+    }
+
+    /**
+     * 注册对应行的Listener
+     * @param line line 行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+     */
+    public static void registerLineAdviceListener(ClassLoader classLoader, String className, String line,
+                                                  String methodName, String methodDesc, AdviceListener listener) {
+        classLoader = wrap(classLoader);
+        className = className.replace('/', '.');
+
+        ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
+
+        if (manager == null) {
+            manager = new ClassLoaderAdviceListenerManager();
+            adviceListenerMap.put(classLoader, manager);
+        }
+        manager.registerLineAdviceListener(className, line, methodName, methodDesc, listener);
+    }
+
+    /**
+     * 查询对应行的Listener
+     * @param line line 行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+     */
+    public static List<AdviceListener> queryLineAdviceListeners(ClassLoader classLoader, String className,
+                                                                String line, String methodName, String methodDesc) {
+        classLoader = wrap(classLoader);
+        className = className.replace('/', '.');
+        ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
+
+        if (manager != null) {
+            return manager.queryLineAdviceListeners(className, line, methodName, methodDesc);
         }
 
         return null;
