@@ -1,10 +1,15 @@
 package com.taobao.arthas.core.shell.term.impl;
 
+import java.io.File;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.term.CloseHandlerWrapper;
 import com.taobao.arthas.core.shell.handlers.term.DefaultTermStdinHandler;
 import com.taobao.arthas.core.shell.handlers.term.EventHandler;
-import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.term.RequestHandler;
 import com.taobao.arthas.core.shell.handlers.term.SizeHandlerWrapper;
 import com.taobao.arthas.core.shell.handlers.term.StdinHandlerWrapper;
@@ -13,16 +18,14 @@ import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
+
 import io.termd.core.function.Consumer;
 import io.termd.core.readline.Function;
 import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
+import io.termd.core.readline.functions.HistorySearchForward;
 import io.termd.core.tty.TtyConnection;
 import io.termd.core.util.Helper;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -50,6 +53,18 @@ public class TermImpl implements Term {
         readline = new Readline(keymap);
         readline.setHistory(FileUtils.loadCommandHistory(new File(Constants.CMD_HISTORY_FILE)));
         for (Function function : readlineFunctions) {
+            /**
+             * 防止没有鉴权时，查看历史命令
+             * 
+             * @see io.termd.core.readline.functions.HistorySearchForward
+             */
+            if (function.name().contains("history")) {
+                FunctionInvocationHandler funcHandler = new FunctionInvocationHandler(this, function);
+                function = (Function) Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                        HistorySearchForward.class.getInterfaces(), funcHandler);
+
+            }
+
             readline.addFunction(function);
         }
 
@@ -62,6 +77,10 @@ public class TermImpl implements Term {
     public Term setSession(Session session) {
         this.session = session;
         return this;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     @Override

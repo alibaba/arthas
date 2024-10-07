@@ -6,7 +6,7 @@
 Decompile the specified classes.
 :::
 
-`jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
+`jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better. If you need to download the bytecode of classes in a specific package directory in bulk, you can refer to the [dump](/en/doc/dump.md) tool for assistance.
 
 - The decompiled code is syntax highlighted for better readability in Arthas console.
 - It is possible that there's grammar error in the decompiled code, but it should not affect your interpretation.
@@ -176,3 +176,11 @@ Affect(row-cnt:1) cost in 190 ms.
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+
+### Decompile with specified directory for dumpping class
+
+Decompile class with `jad` need to dump corresponding classes into files. The default directory for dumpping classes is the directory of log file specified in logback.xml, we can use `-d/--directory` to specify the directory for dummping class.
+
+```java
+$ jad demo.MathGame -d /tmp/jad/dump
+```

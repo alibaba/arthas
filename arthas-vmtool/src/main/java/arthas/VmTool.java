@@ -1,5 +1,7 @@
 package arthas;
 
+import java.util.Map;
+
 /**
  * @author ZhangZiCheng 2021-02-12
  * @author hengyunabc 2021-04-26
@@ -68,6 +70,17 @@ public class VmTool implements VmToolMXBean {
     @Override
     public void forceGc() {
         forceGc0();
+    }
+
+    @Override
+    public void interruptSpecialThread(int threadId) {
+        Map<Thread, StackTraceElement[]> allThread = Thread.getAllStackTraces();
+        for (Map.Entry<Thread, StackTraceElement[]> entry : allThread.entrySet()) {
+            if (entry.getKey().getId() == threadId) {
+                entry.getKey().interrupt();
+                return;
+            }
+        }
     }
 
     @Override

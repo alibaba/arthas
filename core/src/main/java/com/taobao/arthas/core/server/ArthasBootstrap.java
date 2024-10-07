@@ -34,8 +34,8 @@ import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
 import com.alibaba.bytekit.utils.AsmUtils;
 import com.alibaba.bytekit.utils.IOUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
@@ -69,6 +69,7 @@ import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.IPUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
@@ -177,14 +178,9 @@ public class ArthasBootstrap {
     }
 
     private void initFastjson() {
-        // disable  fastjson circular reference feature
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
-        // add date format option for  fastjson
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
         // ignore getter error #1661
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
         // #2081
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteNonStringKeyAsString.getMask();
+        JSON.config(JSONWriter.Feature.IgnoreErrorGetter, JSONWriter.Feature.WriteNonStringKeyAsString);
     }
 
     private void initBeans() {
@@ -398,6 +394,19 @@ public class ArthasBootstrap {
             }
 
             this.httpSessionManager = new HttpSessionManager();
+            if (IPUtils.isAllZeroIP(configure.getIp()) && StringUtils.isBlank(configure.getPassword())) {
+                // 当 listen 0.0.0.0 时，强制生成密码，防止被远程连接
+                String errorMsg = "Listening on 0.0.0.0 is very dangerous! External users can connect to your machine! "
+                        + "No password is currently configured. " + "Therefore, a default password is generated, "
+                        + "and clients need to use the password to connect!";
+                AnsiLog.error(errorMsg);
+                configure.setPassword(StringUtils.randomString(64));
+                AnsiLog.error("Generated arthas password: " + configure.getPassword());
+
+                logger().error(errorMsg);
+                logger().info("Generated arthas password: " + configure.getPassword());
+            }
+
             this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
 
             shellServer = new ShellServerImpl(options);
@@ -461,6 +470,7 @@ public class ArthasBootstrap {
                 logger().info("arthas stat url: {}", configure.getStatUrl());
             }
             UserStatUtil.setStatUrl(configure.getStatUrl());
+            UserStatUtil.setAgentId(configure.getAgentId());
             UserStatUtil.arthasStart();
 
             try {

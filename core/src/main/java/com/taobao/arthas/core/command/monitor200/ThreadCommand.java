@@ -96,7 +96,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "state")
-    @Description("Display the thead filter by the state. NEW, RUNNABLE, TIMED_WAITING, WAITING, BLOCKED, TERMINATED is optional.")
+    @Description("Display the thread filter by the state. NEW, RUNNABLE, TIMED_WAITING, WAITING, BLOCKED, TERMINATED is optional.")
     public void setState(String state) {
         this.state = state;
     }
@@ -212,8 +212,10 @@ public class ThreadCommand extends AnnotatedCommand {
         List<BusyThreadInfo> busyThreadInfos = new ArrayList<BusyThreadInfo>(topNThreads.size());
         for (ThreadVO thread : topNThreads) {
             ThreadInfo threadInfo = findThreadInfoById(threadInfos, thread.getId());
-            BusyThreadInfo busyThread = new BusyThreadInfo(thread, threadInfo);
-            busyThreadInfos.add(busyThread);
+            if (threadInfo != null) {
+                BusyThreadInfo busyThread = new BusyThreadInfo(thread, threadInfo);
+                busyThreadInfos.add(busyThread);
+            }
         }
         process.appendResult(new ThreadModel(busyThreadInfos));
         return ExitStatus.success();

@@ -11,6 +11,9 @@ import java.util.List;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class CliTokenImpl implements CliToken {
+    private static final String PIPE = "|";
+    private static final String REDIRECT = ">";
+    private static final String REDIRECT_APPEND = ">>";
 
     final boolean text;
     final String raw;
@@ -71,7 +74,7 @@ public class CliTokenImpl implements CliToken {
 
         tokenize(s, 0, tokens);
 
-        tokens = correctPipeChar(tokens);
+        tokens = adjustTokensForSpecialSymbols(tokens);
         return tokens;
 
     }
@@ -87,35 +90,53 @@ public class CliTokenImpl implements CliToken {
      * unsupported:
      * 3) thread|grep xxx
      * 4) trace -E  classA|classB methodA|methodB|grep classA
-     * @param tokens
-     * @return
+     *
+     * Also handles redirection of '>' and '>>' in the similar way
+     *
+     * @param tokens original tokens
+     * @return adjusted tokens
      */
-    private static List<CliToken> correctPipeChar(List<CliToken> tokens) {
-        List<CliToken> newTokens = new ArrayList<CliToken>(tokens.size()+4);
-        for (CliToken token : tokens) {
-            String tokenValue = token.value();
-            if (tokenValue.length()>1 && tokenValue.endsWith("|")) {
-                //split last char '|'
-                tokenValue = tokenValue.substring(0, tokenValue.length()-1);
-                String rawValue = token.raw();
-                rawValue = rawValue.substring(0, rawValue.length()-1);
-                newTokens.add(new CliTokenImpl(token.isText(), rawValue, tokenValue));
-                //add '|' char
-                newTokens.add(new CliTokenImpl(true, "|", "|"));
+    private static List<CliToken> adjustTokensForSpecialSymbols(List<CliToken> tokens) {
+        return separateLeadingAndTailingSymbol(tokens, PIPE, REDIRECT_APPEND, REDIRECT);
+    }
 
-            } else if (tokenValue.length()>1 && tokenValue.startsWith("|")) {
-                //add '|' char
-                newTokens.add(new CliTokenImpl(true, "|", "|"));
-                //remove first char '|'
-                tokenValue = tokenValue.substring(1);
-                String rawValue = token.raw();
-                rawValue = rawValue.substring(1);
-                newTokens.add(new CliTokenImpl(token.isText(), rawValue, tokenValue));
-            } else {
-                newTokens.add(token);
+    private static List<CliToken> separateLeadingAndTailingSymbol(List<CliToken> tokens, String... symbols) {
+        List<CliToken> adjustedTokens = new ArrayList<>();
+        for (CliToken token : tokens) {
+            String value = token.value();
+            String raw = token.raw();
+            boolean handled = false;
+            for (String symbol : symbols) {
+                if (value.equals(symbol)) {
+                    break;
+                } else if (value.endsWith(symbol)) {
+                    handled = true;
+                    int lastIndexOfSymbol = raw.lastIndexOf(symbol);
+                    adjustedTokens.add(new CliTokenImpl(
+                            token.isText(),
+                            raw.substring(0, lastIndexOfSymbol),
+                            value.substring(0, value.length() - symbol.length())
+                    ));
+                    adjustedTokens.add(new CliTokenImpl(true, raw.substring(lastIndexOfSymbol), symbol));
+                    break;
+                } else if (value.startsWith(symbol)) {
+                    handled = true;
+                    int firstIndexOfSymbol = raw.indexOf(symbol);
+                    adjustedTokens.add(new CliTokenImpl(true,
+                            raw.substring(0, firstIndexOfSymbol + symbol.length()), symbol));
+                    adjustedTokens.add(new CliTokenImpl(
+                            token.isText(),
+                            raw.substring(firstIndexOfSymbol + symbol.length()),
+                            value.substring(symbol.length())
+                    ));
+                    break;
+                }
+            }
+            if (!handled) {
+                adjustedTokens.add(token);
             }
         }
-        return newTokens;
+        return adjustedTokens;
     }
 
     private static void tokenize(String s, int index, List<CliToken> builder) {

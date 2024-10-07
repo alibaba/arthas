@@ -215,14 +215,15 @@ public class JobControllerImpl implements JobController {
         injectHandler(stdoutHandlerChain, pipelineTokens);
         if (redirectHandler != null) {
             stdoutHandlerChain.add(redirectHandler);
+            term.write("redirect output file will be: " + redirectHandler.getFilePath()+"\n");
         } else {
             stdoutHandlerChain.add(new TermHandler(term));
             if (GlobalOptions.isSaveResult) {
                 stdoutHandlerChain.add(new RedirectHandler());
             }
         }
-        ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
-        ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput, resultDistributor);
+        ProcessOutput processOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
+        ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), processOutput, resultDistributor);
         process.setTty(term);
         return process;
     }

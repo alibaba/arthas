@@ -14,7 +14,7 @@ Welcome to use [issue tracker](https://github.com/alibaba/arthas/issues) to give
 
 ## Online Tutorials
 
-Please refer to [README.MD at tutorials/katacoda](tutorials/katacoda/README.md#contribution-guide)
+Please refer to [README.MD at killercoda branch](https://github.com/alibaba/arthas/tree/killercoda/README.md#contribution-guide)
 
 ## Developer
 
@@ -79,7 +79,7 @@ Tip: you can use `--versions` to list all available versions.
 
 ## 改进在线教程
 
-请参考[tutorials/katacoda下的说明](tutorials/katacoda/README_CN.md#贡献指南)
+请参考[killercoda 分支下的说明](https://github.com/alibaba/arthas/tree/killercoda/README_CN.md#贡献指南)
 
 ## 开发者相关
 
@@ -132,8 +132,10 @@ Tip: you can use `--versions` to list all available versions.
 
 发布release版本流程：
 
+* 如果 arthas-vmtool 有更新，则需要手动触发action，构建后会把新的动态库文件提交到 lib 目录。 https://github.com/alibaba/arthas/actions/workflows/build-vmtool.yaml
 * 修改`as.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
+* 执行一次 gpg --sign /tmp/2.txt ，让 gpg 后台进程启动，否则打包可能失败
 * mvn clean deploy -DskipTests -P full -P release
 
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release

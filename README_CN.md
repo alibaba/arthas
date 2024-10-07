@@ -27,12 +27,12 @@ English version goes [here](README.md).
 0. 怎么快速定位应用的热点，生成火焰图？
 0. 怎样直接从JVM内查找某个类的实例？
 
-`Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+`Arthas`支持JDK 6+（4.x 版本不再支持 JDK 6 和 JDK 7），支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
-### [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
+### 在线教程(推荐)
 
-* [使用方法](tutorials/katacoda/README_CN.md#在线教程使用方法)
+* [查看](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 
 ### 快速开始
 
@@ -179,7 +179,7 @@ mc /tmp/Test.java
 #### retransform
 * https://arthas.aliyun.com/doc/retransform
 
-加载外部的`.class`文件，retransform 热更新jvm已加载的类。
+加载外部的`.class`文件，retransform 热更新jvm已加载的类。
 
 ```bash
 retransform /tmp/Test.class
@@ -421,7 +421,8 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![有赞](static/youzan.png)
 ![科大讯飞](static/iflytek.png)
 ![智联招聘](static/zhaopin.png)
-
+![高德红外](static/guideir.jpg)
+![达美盛](static/dms.png)
 
 ### 衍生项目
 

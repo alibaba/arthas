@@ -44,14 +44,14 @@ $ getstatic -c 3d4eac69 demo.MathGame random
 
 `getstatic --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame random`
 
-- 注: 这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda 目前环境是 java8。
+- 注: 这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，killercoda 目前环境是 java11。
 
 `--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 如果该静态属性是一个复杂对象，还可以支持在该属性上通过 ognl 表示进行遍历，过滤，访问对象的内部属性等操作。
 
 - OGNL 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-- OGNL 表达式官方指南：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- OGNL 表达式官方指南：[https://commons.apache.org/dormant/commons-ognl/language-guide.html](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 例如，假设 n 是一个 Map，Map 的 Key 是一个 Enum，我们想过滤出 Map 中 Key 为某个 Enum 的值，可以写如下命令
 

@@ -71,7 +71,7 @@ public class ArthasAgent {
      * @param arthasHome arthas directory
      */
     public static void attach(String arthasHome) {
-        new ArthasAgent().init();
+        new ArthasAgent(arthasHome).init();
     }
 
     public void init() throws IllegalStateException {

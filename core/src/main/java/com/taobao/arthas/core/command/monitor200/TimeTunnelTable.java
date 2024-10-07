@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.TimeFragmentVO;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.text.Decoration;
@@ -12,8 +13,7 @@ import com.taobao.text.ui.TableElement;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +81,7 @@ public class TimeTunnelTable {
     static TableElement fillTableRow(TableElement table, TimeFragmentVO tf) {
         return table.row(
                 "" + tf.getIndex(),
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(tf.getTimestamp()),
+                DateUtils.formatDateTime(tf.getTimestamp()),
                 "" + tf.getCost(),
                 "" + tf.isReturn(),
                 "" + tf.isThrow(),
@@ -92,9 +92,8 @@ public class TimeTunnelTable {
     }
 
     public static void drawTimeTunnel(TableElement table, TimeFragmentVO tf) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         table.row("INDEX", "" + tf.getIndex())
-                .row("GMT-CREATE", sdf.format(tf.getTimestamp()))
+                .row("GMT-CREATE", DateUtils.formatDateTime(tf.getTimestamp()))
                 .row("COST(ms)", "" + tf.getCost())
                 .row("OBJECT", tf.getObject())
                 .row("CLASS", tf.getClassName())
@@ -160,9 +159,8 @@ public class TimeTunnelTable {
 
     public static TableElement drawPlayHeader(String className, String methodName, String objectAddress, int index,
                                        TableElement table) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return table.row("RE-INDEX", "" + index)
-                .row("GMT-REPLAY", sdf.format(new Date()))
+                .row("GMT-REPLAY", DateUtils.formatDateTime(LocalDateTime.now()))
                 .row("OBJECT", objectAddress)
                 .row("CLASS", className)
                 .row("METHOD", methodName);

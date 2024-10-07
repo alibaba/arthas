@@ -35,6 +35,8 @@ public class UserStatUtil {
 
     private static volatile String statUrl = null;
 
+    private static volatile String agentId = null;
+
     public static String getStatUrl() {
         return statUrl;
     }
@@ -43,10 +45,24 @@ public class UserStatUtil {
         statUrl = url;
     }
 
+    public static String getAgentId() {
+        return agentId;
+    }
+
+    public static void setAgentId(String id) {
+        agentId = id;
+    }
+
     public static void arthasStart() {
+        if (statUrl == null) {
+            return;
+        }
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
+        if (agentId != null) {
+            job.appendQueryData("agentId", agentId);
+        }
         job.appendQueryData("command", "start");
 
         try {
@@ -56,10 +72,13 @@ public class UserStatUtil {
         }
     }
 
-    public static void arthasUsage(String cmd, String detail) {
+    private static void arthasUsage(String cmd, String detail) {
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
+        if (agentId != null) {
+            job.appendQueryData("agentId", agentId);
+        }
         job.appendQueryData("command", URLEncoder.encode(cmd));
         if (detail != null) {
             job.appendQueryData("arguments", URLEncoder.encode(detail));
@@ -73,6 +92,9 @@ public class UserStatUtil {
     }
 
     public static void arthasUsageSuccess(String cmd, List<String> args) {
+        if (statUrl == null) {
+            return;
+        }
         StringBuilder commandString = new StringBuilder(cmd);
         for (String arg : args) {
             commandString.append(" ").append(arg);

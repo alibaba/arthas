@@ -101,3 +101,9 @@ as.sh
   ```
 
 - Windows 平台直接删除 user home 下面的`.arthas`和`logs/arthas`目录
+
+---
+
+::: warning
+如需诊断 jdk 6/7 应用，请点击[此处下载 arthas 3](https://arthas.aliyun.com/3.x/doc/install-detail.html)。
+:::

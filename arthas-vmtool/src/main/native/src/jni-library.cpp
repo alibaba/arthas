@@ -1,4 +1,4 @@
-#include <iostream>
+#include <stdio.h>
 #include <jni.h>
 #include <jni_md.h>
 #include <jvmti.h>

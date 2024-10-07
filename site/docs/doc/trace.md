@@ -16,7 +16,7 @@
 |    _method-pattern_ | 方法名表达式匹配                                                   |
 | _condition-express_ | 条件表达式                                                         |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配                               |
-|              `[n:]` | 命令执行次数                                                       |
+|              `[n:]` | 命令执行次数，默认值为 100。                                       |
 |             `#cost` | 方法执行耗时                                                       |
 |         `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为`[maxMatch <arg>]`。 |
 
@@ -25,7 +25,7 @@
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
 - 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-- OGNL 表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- OGNL 表达式官网：[https://commons.apache.org/dormant/commons-ognl/language-guide.html](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 很多时候我们只想看到某个方法的 rt 大于某个时间之后的 trace 结果，现在 Arthas 可以按照方法执行的耗时来进行过滤了，例如`trace *StringUtils isBlank '#cost>100'`表示当执行时间超过 100ms 的时候，才会输出 trace 的结果。
 
@@ -134,7 +134,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
 
-### 据调用耗时过滤
+### 根据调用耗时过滤
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'

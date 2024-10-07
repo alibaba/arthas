@@ -20,7 +20,7 @@ Since 3.0.5.
 ## Usage
 
 - [Special usages](https://github.com/alibaba/arthas/issues/71)
-- [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- [OGNL official guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 Call static method:
 

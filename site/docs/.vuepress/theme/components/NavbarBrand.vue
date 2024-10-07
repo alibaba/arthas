@@ -19,7 +19,7 @@ const themeLocale = useThemeLocaleData();
 const version = ref(pageData.value.version);
 
 const navbarBrandLink = computed(
-  () => themeLocale.value.home || routeLocale.value
+  () => themeLocale.value.home || routeLocale.value,
 );
 const navbarBrandTitle = computed(() => siteLocale.value.title);
 const navbarBrandLogo = computed(() => {
@@ -35,7 +35,7 @@ const NavbarBrandVersion = () =>
     {
       class: "navbar-version",
     },
-    `v${version.value}`
+    `v${version.value}`,
   );
 
 const NavbarBrandLogo = () => {

@@ -175,7 +175,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
 
         if (all) {
-            processAllClasses(process, inst);
+            String hashCode = this.hashCode;
+            if (StringUtils.isBlank(hashCode) && targetClassLoader != null) {
+                hashCode = "" + Integer.toHexString(targetClassLoader.hashCode());
+            }
+            processAllClasses(process, inst, hashCode);
         } else if (classLoaderSpecified && resource != null) {
             processResources(process, inst, targetClassLoader);
         } else if (classLoaderSpecified && this.loadClass != null) {
@@ -305,7 +309,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         process.end();
     }
 
-    private void processAllClasses(CommandProcess process, Instrumentation inst) {
+    private void processAllClasses(CommandProcess process, Instrumentation inst,String hashCode) {
         RowAffect affect = new RowAffect();
         getAllClasses(hashCode, inst, affect, process);
         if (checkInterrupted(process)) {
@@ -445,30 +449,36 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
     // 以树状列出ClassLoader的继承结构
     private static List<ClassLoaderVO> processClassLoaderTree(List<ClassLoaderVO> classLoaders) {
-        List<ClassLoaderVO> rootClassLoaders = new ArrayList<ClassLoaderVO>();
-        List<ClassLoaderVO> parentNotNullClassLoaders = new ArrayList<ClassLoaderVO>();
+        List<ClassLoaderVO> rootClassLoaders = new ArrayList<>();
+        Map<String, List<ClassLoaderVO>> childMap = new HashMap<>();
+
+        // 分离根节点和非根节点，并构建父子关系映射
         for (ClassLoaderVO classLoaderVO : classLoaders) {
             if (classLoaderVO.getParent() == null) {
                 rootClassLoaders.add(classLoaderVO);
             } else {
-                parentNotNullClassLoaders.add(classLoaderVO);
+                childMap.computeIfAbsent(classLoaderVO.getParent(), k -> new ArrayList<>()).add(classLoaderVO);
             }
         }
 
-        for (ClassLoaderVO classLoaderVO : rootClassLoaders) {
-            buildTree(classLoaderVO, parentNotNullClassLoaders);
+        // 构建树
+        for (ClassLoaderVO root : rootClassLoaders) {
+            buildTree(root, childMap);
         }
+
         return rootClassLoaders;
     }
 
-    private static void buildTree(ClassLoaderVO parent, List<ClassLoaderVO> parentNotNullClassLoaders) {
-        for (ClassLoaderVO classLoaderVO : parentNotNullClassLoaders) {
-            if (parent.getName().equals(classLoaderVO.getParent())){
-                parent.addChild(classLoaderVO);
-                buildTree(classLoaderVO, parentNotNullClassLoaders);
+    private static void buildTree(ClassLoaderVO parent, Map<String, List<ClassLoaderVO>> childMap) {
+        List<ClassLoaderVO> children = childMap.get(parent.getName());
+        if (children != null) {
+            for (ClassLoaderVO child : children) {
+                parent.addChild(child);
+                buildTree(child, childMap);
             }
         }
     }
+
 
     private static Set<ClassLoader> getAllClassLoaders(Instrumentation inst, Filter... filters) {
         Set<ClassLoader> classLoaderSet = new HashSet<ClassLoader>();

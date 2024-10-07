@@ -1,26 +1,24 @@
 package com.taobao.arthas.core.util;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author diecui1202 on 2017/10/25.
  */
-public class DateUtils {
+public final class DateUtils {
 
-    private static final ThreadLocal<SimpleDateFormat> dataFormat = new ThreadLocal<SimpleDateFormat>() {
-
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        }
-    };
-
-    public static String getCurrentDate() {
-        return dataFormat.get().format(new Date());
+    private DateUtils() {
+        throw new AssertionError();
     }
 
-    public static String formatDate(Date date) {
-        return dataFormat.get().format(date);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+    public static String getCurrentDateTime() {
+        return DATE_TIME_FORMATTER.format(LocalDateTime.now());
+    }
+
+    public static String formatDateTime(LocalDateTime dateTime) {
+        return DATE_TIME_FORMATTER.format(dateTime);
     }
 }

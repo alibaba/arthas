@@ -9,11 +9,7 @@ import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
-import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.ObjectVO;
-import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.TimeFragmentVO;
-import com.taobao.arthas.core.command.model.TimeTunnelModel;
+import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
 import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
@@ -22,14 +18,10 @@ import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
-import com.taobao.middleware.cli.annotations.Description;
-import com.taobao.middleware.cli.annotations.Name;
-import com.taobao.middleware.cli.annotations.Option;
-import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,7 +168,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "n", longName = "limits")
-    @Description("Threshold of execution times")
+    @Description("Threshold of execution times, default value 100")
     public void setNumberOfLimit(int numberOfLimit) {
         this.numberOfLimit = numberOfLimit;
     }
@@ -513,7 +505,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
                 //copy from tt record
                 TimeFragmentVO replayResult = createTimeFragmentVO(index, tf, expand);
-                replayResult.setTimestamp(new Date())
+                replayResult.setTimestamp(LocalDateTime.now())
                         .setCost(0)
                         .setReturn(false)
                         .setReturnObj(null)

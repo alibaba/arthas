@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -20,7 +21,7 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -74,19 +75,20 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <module>arthas-grpc-web-proxy</module>
     </modules>
 
     <properties>
-        <revision>3.6.7</revision>
+        <revision>4.0.1</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <spring-boot.version>2.7.0</spring-boot.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot3.version>3.1.7</spring-boot3.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
-        <jacoco.skip>${skipTests}</jacoco.skip>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-        <netty.version>4.1.77.Final</netty.version>
+        <netty.version>4.1.113.Final</netty.version>
     </properties>
 
     <dependencyManagement>
@@ -94,7 +96,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.7</version>
+                <version>0.1.3</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
@@ -104,7 +106,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.12</version>
+                <version>1.1.7.13</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -119,27 +121,27 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.2.11</version>
+                <version>1.2.13</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.2.11</version>
+                <version>1.2.13</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.12</version>
+                <version>0.0.16</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>repackage-asm</artifactId>
-                <version>0.0.12</version>
+                <version>0.0.16</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.83_noneautotype</version>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>2.0.52</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
@@ -149,34 +151,30 @@
             <dependency>
                 <groupId>com.fifesoft</groupId>
                 <artifactId>rsyntaxtextarea</artifactId>
-                <version>2.5.8</version>
+                <version>3.3.4</version>
             </dependency>
             <dependency>
                 <groupId>ognl</groupId>
                 <artifactId>ognl</artifactId>
-                <version>3.1.19</version>
+                <version>3.4.2</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>QLExpress4</artifactId>
-                <version>4.0.0-beta</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.1</version>
-                <scope>test</scope>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.10.0</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>2.9.1</version>
+                <version>3.24.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.28.2</version>
+                <version>4.11.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -215,19 +213,19 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.11.6</version>
+                <version>1.14.11</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.11.6</version>
+                <version>1.14.11</version>
             </dependency>
 
             <dependency>
                 <groupId>org.zeroturnaround</groupId>
                 <artifactId>zt-zip</artifactId>
-                <version>1.14</version>
+                <version>1.16</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -454,7 +452,7 @@
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                  <flattenMode>minimum</flattenMode>
+                    <flattenMode>minimum</flattenMode>
                 </configuration>
                 <executions>
                     <execution>
@@ -474,31 +472,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report-aggregate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

@@ -8,7 +8,7 @@ export function loadVersionPlugin() {
 
   const getVersionByMaven = async () => {
     return await fetch(
-      "https://search.maven.org/solrsearch/select?q=arthas&rows=1&wt=json"
+      "https://search.maven.org/solrsearch/select?q=arthas-site&rows=1&wt=json",
     )
       .then((res) => res.json())
       .then((res) => res.response.docs[0].latestVersion);

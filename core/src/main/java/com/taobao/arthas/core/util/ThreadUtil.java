@@ -266,6 +266,9 @@ abstract public class ThreadUtil {
     }
 
     public static String getFullStacktrace(BusyThreadInfo threadInfo, int lockIdentityHashCode, int blockingThreadCount) {
+        if (threadInfo == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder("\"" + threadInfo.getName() + "\"");
         if (threadInfo.getId() > 0) {
             sb.append(" Id=").append(threadInfo.getId());
@@ -399,7 +402,7 @@ abstract public class ThreadUtil {
     public static StackModel getThreadStackModel(ClassLoader loader, Thread currentThread) {
         StackModel stackModel = new StackModel();
         stackModel.setThreadName(currentThread.getName());
-        stackModel.setThreadId(Long.toHexString(currentThread.getId()));
+        stackModel.setThreadId(Long.toString(currentThread.getId()));
         stackModel.setDaemon(currentThread.isDaemon());
         stackModel.setPriority(currentThread.getPriority());
         stackModel.setClassloader(getTCCL(currentThread));

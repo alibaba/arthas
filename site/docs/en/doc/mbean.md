@@ -66,3 +66,9 @@ Real-time monitoring using `-i` command:
 ```bash
 mbean -i 1000 java.lang:type=Threading *Count
 ```
+
+Real-time monitoring using `-i` with number of times the command will be executed using `-n` command (100 times by default):
+
+```bash
+mbean -i 1000 -n 50 java.lang:type=Threading *Count
+```

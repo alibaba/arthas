@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2022-11-15
+#    date : 2024-09-14
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.6.7
+ARTHAS_SCRIPT_VERSION=4.0.1
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -260,7 +260,7 @@ reset_for_env()
         JAVA_HOME=$(echo "$JAVA_COMMAND_PATH" | sed -n 's/\/bin\/java$//p')
     fi
 
-    # iterater throught candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
+    # iterater through candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
     if [ ! -d "${JAVA_HOME}" ]; then
         JAVA_HOME_CANDIDATES=($(ps aux | grep java | grep -v 'grep java' | awk '{print $11}' | sed -n 's/\/bin\/java$//p'))
         for JAVA_HOME_TEMP in ${JAVA_HOME_CANDIDATES[@]}; do
@@ -393,12 +393,32 @@ update_if_necessary()
     fi
 }
 
+# jps command may crash, so need to check it
+check_jps() {
+    "${JAVA_HOME}/bin/jps" > /dev/null 2>&1
+    local exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo "jps command failed with exit code ${exit_code}" >&2
+    fi
+    return $exit_code
+}
+
 call_jps()
 {
-    if [ "${VERBOSE}" = true ] ; then
-        "${JAVA_HOME}"/bin/jps -l -v
+    check_jps
+    local exit_code=$?
+    if [[ "$exit_code" -eq 0 ]]; then
+        # jps command is ok
+        local jps_command=("${JAVA_HOME}/bin/jps" "-l")
+        if [ "${VERBOSE}" = true ] ; then
+            jps_command=("${JAVA_HOME}/bin/jps" "-l" "-v")
+        fi
+        local jps_output=$("${jps_command[@]}")
+        echo "$jps_output"
     else
-        "${JAVA_HOME}"/bin/jps -l
+        # jps command failed, use ps and grep
+        ps_output=$(ps aux | grep java | grep -v grep | awk '{print $2" "$11}')
+        echo "$ps_output"
     fi
 }
 
@@ -415,6 +435,8 @@ Usage:
        [--disabled-commands <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
+
+NOTE: Arthas 4 supports JDK 8+. If you need to diagnose applications running on JDK 6/7, you can use Arthas 3.
 
 Options and Arguments:
  -h,--help                      Print usage
@@ -447,7 +469,6 @@ Options and Arguments:
 
 EXAMPLES:
   ./as.sh <pid>
-  ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh --username admin --password <password>
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
@@ -455,7 +476,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.6.7
+  ./as.sh --use-version 4.0.1
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump

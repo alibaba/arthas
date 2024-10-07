@@ -3,7 +3,7 @@
 ![arthas](site/docs/.vuepress/public/images/arthas.png)
 
 [![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
-[![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
+[![download](https://img.shields.io/github/downloads/alibaba/arthas/total?label=Downloads)](https://github.com/alibaba/arthas/releases/latest)
 [![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
 ![license](https://img.shields.io/github/license/alibaba/arthas.svg)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
@@ -40,13 +40,13 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports profiler/Flame Graph
 * Support get objects in the heap that are instances of the specified class. 
-* Supports JDK 6+.
+* Supports JDK 6+ (version 4.x no longer supports JDK 6 and JDK 7).
 * Supports Linux/Mac/Windows.
 
 
-### [Online Tutorials(Recommended)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
+### Online Tutorials(Recommended)
 
-* [Usages](tutorials/katacoda/README.md#online-tutorial-usages)
+* [View](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
 
 ### Quick start
 
@@ -434,6 +434,8 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![有赞](static/youzan.png)
 ![科大讯飞](static/iflytek.png)
 ![智联招聘](static/zhaopin.png)
+![达美盛](static/dms.png)
+
 
 ### Derivative Projects
 

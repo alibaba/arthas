@@ -118,7 +118,7 @@ public class ArthasBanner {
                         .row("version", version())
                         .row("main_class", PidUtils.mainClass())
                         .row("pid", PidUtils.currentPid())
-                        .row("time", DateUtils.getCurrentDate());
+                        .row("time", DateUtils.getCurrentDateTime());
         for (Entry<String, String> entry : infos.entrySet()) {
             table.row(entry.getKey(), entry.getValue());
         }

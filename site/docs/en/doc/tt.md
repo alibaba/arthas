@@ -10,6 +10,11 @@ In such difficulties, `tt` comes into play.
 
 With the help of `tt` (_TimeTunnel_), you can check the contexts of the methods at different times in execution history.
 
+## Precautions
+
+- The implementation of the tt command is to save the input parameters/return values of the function into a `Map<Integer, TimeFragment>`. The default size is 100.
+- After using tt related functions, you need to manually release the memory, otherwise OOM may occur for a long time. Exiting arthas will not automatically clear tt's cache map.
+
 ## Usage
 
 ### Start Demo
@@ -80,7 +85,7 @@ Advanced:
 
 - [Critical fields in expression](advice-class.md)
 - [Special usage](https://github.com/alibaba/arthas/issues/71)
-- [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- [OGNL official guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
 ### List all records
 
@@ -210,3 +215,15 @@ F.Y.I
 2. params may be modified
 
    Arthas save params into an array, they are object references. The Objects may be modified by other code.
+
+### Delete the specified tt record by index
+
+```
+tt -d 1001
+```
+
+### Clear all tt records
+
+```
+tt --delete-all
+```

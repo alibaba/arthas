@@ -102,7 +102,8 @@ public class OgnlCommand extends AnnotatedCommand {
 
         Express unpooledExpress = ExpressFactory.unpooledExpressByOGNL(classLoader);
         try {
-            Object value = unpooledExpress.get(express);
+            // https://github.com/alibaba/arthas/issues/2892
+            Object value = unpooledExpress.bind(new Object()).get(express);
             OgnlModel ognlModel = new OgnlModel()
                     .setValue(new ObjectVO(value, expand));
             process.appendResult(ognlModel);

@@ -8,6 +8,24 @@
 
 日志文件路径： `~/logs/arthas/arthas.log`
 
+### telnet: connect to address 127.0.0.1: Connection refused
+
+1. 检查日志 `~/logs/arthas/arthas.log`
+2. 检查`as.sh`/`arthas-boot.jar` 的启动参数，是否指定了特定的`port`
+3. 用`netstat` 检查`LISTEN 3658` 端口的进程，确认它是`java`进程，并且是想要诊断的进程
+4. 如果`LISTEN 3658` 端口的进程不是 `java` 进程，则`3658`端口已经被占用。需要在`as.sh`/`arthas-boot.jar` 的启动参数指定其它端口。
+5. 确认进程和端口后，尝试用`telnet 127.0.0.1 3658`去连接
+
+本质上`arthas`会在应用java进程内启动一个`tcp server`，然后使用`telnet`去连接它。
+
+1. 可能端口不匹配
+2. 可能进程本身已经挂起，不能接受新连接
+
+如果Arthas 日志里有 `Arthas server already bind.`
+
+1. 说明`Arthas server`曾经启动过，检查目标进程打开的文件描述符。如果是`linux`环境，可以去 `/proc/$pid/fd` 下面，使用`ls -alh | grep arthas`，检查进程是否已加载`arthas`相关的 jar 包。
+2. 如果没有，那么可能已启动`arthas`的是其它进程，也可能应用已经重启过了。
+
 ### Arthas attach 之后对原进程性能有多大的影响
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
@@ -78,6 +96,12 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 watch OuterClass$InnerClass
 ```
 
+### 是否支持 watch、trace lambda 类？
+
+对于lambda生成的类，会跳过处理，因为 JVM 本身限制对 lambda 生成的类做增强。
+
+- [https://github.com/alibaba/arthas/issues/1225](https://github.com/alibaba/arthas/issues/1225)
+
 ### 输入中文/Unicode 字符
 
 把中文/Unicode 字符转为`\u`表示方法：
@@ -100,6 +124,11 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 
 可以。下载全量包解压即可，参考: [下载](download.md)。
 
+### Arthas 怎么使用指定版本，不使用自动升级版本
+
+1. 启动 `as.sh`/`arthas-boot.jar`时，可以用 `--use-version` 参数指定。
+2. 下载全量包，解压后，`cd`到arthas目录启动，这种情况会使用当前目录下的版本。
+
 ### Attach docker/k8s 里的 pid 为 1 的进程失败
 
 参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
@@ -109,3 +138,10 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 比如启动的 `as.sh/arthas-boot.jar` 版本是 3.5._ 的，但是连接上之后，打印的 arthas 版本是 3.4._ 的。
 
 可能是之前使用旧版本的 arthas 诊断过目标进程。可以先执行`stop`停止掉旧版本的 arthas，再重新使用新版本 attach。
+
+### 在ognl表达式中获取到 spring bean cglib 对象，但是 field 是 null
+
+参考：
+
+- [https://github.com/alibaba/arthas/issues/1802](https://github.com/alibaba/arthas/issues/1802)
+- [https://github.com/alibaba/arthas/issues/1424](https://github.com/alibaba/arthas/issues/1424)

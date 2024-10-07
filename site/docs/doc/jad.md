@@ -6,7 +6,7 @@
 反编译指定已加载类的源码
 :::
 
-`jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；
+`jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；如需批量下载指定包的目录的 class 字节码可以参考 [dump](/doc/dump.md)。
 
 - 在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便
 - 当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解
@@ -176,3 +176,11 @@ Affect(row-cnt:1) cost in 190 ms.
 对于只有唯一实例的 ClassLoader 还可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
 
 `--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+
+### 反编译时指定dump class文件目录
+
+`jad`反编译需要将class dump到文件，默认会dump到logback.xml中配置的log目录下，使用`-d/--directory`可以将文件dump到指定目录。
+
+```java
+$ jad demo.MathGame -d /tmp/jad/dump
+```

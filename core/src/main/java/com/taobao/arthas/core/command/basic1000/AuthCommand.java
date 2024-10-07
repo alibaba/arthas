@@ -32,7 +32,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name(ArthasConstants.AUTH)
 @Summary("Authenticates the current session")
 @Description(Constants.EXAMPLE +
-        "  auth" +
+        "  auth\n" +
         "  auth <password>\n" +
         "  auth --username <username> <password>\n"
         + Constants.WIKI + Constants.WIKI_HOME + ArthasConstants.AUTH)
@@ -68,7 +68,7 @@ public class AuthCommand extends AnnotatedCommand {
                 message = "username can not be empty!";
                 return;
             }
-            if (password == null) { // 没有传入passowrd参数时，打印当前结果
+            if (password == null) { // 没有传入password参数时，打印当前结果
                 boolean authenticated = session.get(ArthasConstants.SUBJECT_KEY) != null;
                 boolean needLogin = this.authenticator.needLogin();
 
