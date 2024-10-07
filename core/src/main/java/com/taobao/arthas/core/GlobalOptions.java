@@ -11,6 +11,8 @@ public class GlobalOptions {
             + "not allowed to set object properties. "
             + "Want to set object properties, execute `options strict false`";
 
+    public static final String QLEXPRESS_CONFIG = "qlexpress-config";
+
     /**
      * 是否支持系统类<br/>
      * 这个开关打开之后将能代理到来自JVM的部分类，由于有非常强的安全风险可能会引起系统崩溃<br/>
@@ -136,4 +138,26 @@ public class GlobalOptions {
             description = STRICT_MESSAGE
     )
     public static volatile boolean strict = true;
+
+
+    /**
+     * 是否切换使用表达式ognl/qlexpress开关
+     */
+    @Option(level = 1,
+            name = "express-type",
+            summary = "Option to use ognl/qlExpress",
+            description = "Option to use ognl/qlExpress in commands, default ognl"
+    )
+    public static volatile String ExpressType = "ognl";
+
+
+    /**
+     * qlexpress使用参数
+     */
+    @Option(level = 1,
+            name = QLEXPRESS_CONFIG,
+            summary = "config init when use qlExpress, example: {\"\": \"\"} ",
+            description = ""
+    )
+    public static volatile String QLExpressConfig = "";
 }
