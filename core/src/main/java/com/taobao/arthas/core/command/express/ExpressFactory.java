@@ -1,9 +1,7 @@
 package com.taobao.arthas.core.command.express;
 
-import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.ExpressTypeEnum;
-import com.taobao.arthas.core.command.model.QLExpressConfigModel;
 
 /**
  * ExpressFactory
@@ -41,17 +39,5 @@ public class ExpressFactory {
             classloader = ClassLoader.getSystemClassLoader();
         }
         return new OgnlExpress(new ClassLoaderClassResolver(classloader));
-    }
-
-    public static boolean checkQLExpressConfig(String configValue) {
-        try {
-            if ("".equals(configValue)) {
-                return true;
-            }
-            JSON.parseObject(configValue, QLExpressConfigModel.class);
-            return true;
-        }catch (Throwable t){
-            return false;
-        }
     }
 }
