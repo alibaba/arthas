@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package io.arthas.api;
+
+message BasicValue {
+  oneof value {
+    int32 int = 1;
+    int64 long = 2;
+    float float = 3;
+    double double = 4;
+    bool boolean = 5;
+    string string = 6;
+  }
+}
+
+message ArrayElement {
+  oneof element {
+    BasicValue basicValue = 1;
+    JavaObject objectValue = 2;
+    ArrayValue arrayValue = 3;
+    NullValue nullValue = 4;
+    UnexpandedObject unexpandedObject = 5;
+  }
+}
+
+message ArrayValue {
+  string className = 1;
+  repeated ArrayElement elements = 2;
+}
+
+message NullValue {
+  string className = 1;
+}
+
+message UnexpandedObject {
+  string className = 1;
+}
+
+message CollectionValue {
+  string className = 1;
+  repeated JavaObject elements = 2;
+}
+
+message MapEntry {
+  JavaObject key = 1;
+  JavaObject value = 2;
+}
+
+message MapValue {
+  string className = 1;
+  repeated MapEntry entries = 2;
+}
+
+message JavaField {
+  string name = 1;
+
+ oneof value {
+   JavaObject objectValue = 2;
+   BasicValue basicValue = 3;
+   ArrayValue arrayValue = 4;
+   NullValue nullValue = 5;
+   CollectionValue collection = 6;
+   MapValue map = 7;
+   UnexpandedObject unexpandedObject = 8;
+ }
+}
+
+
+message JavaFields {
+  repeated JavaField fields = 1;
+}
+
+message JavaObject {
+  string className = 1;
+
+  oneof value {
+    JavaObject objectValue = 2;
+    BasicValue basicValue = 3;
+    ArrayValue arrayValue = 4;
+    NullValue nullValue = 5;
+    CollectionValue collection = 6;
+    MapValue map = 7;
+    UnexpandedObject unexpandedObject = 8;
+    JavaFields fields = 9;
+  }
+}
+
+
+message ObjectQuery {
+  string className = 1;
+  string express = 2;
+  string ClassLoaderHash = 3;
+  string classLoaderClass = 4;
+  int32 limit = 5;
+  int32 depth = 6;
+}
+
+message ObjectQueryResult {
+  bool success = 1;
+  string message = 2;
+  repeated JavaObject objects = 3;
+}
+
+service ObjectService {
+  rpc query(ObjectQuery) returns (ObjectQueryResult);
+}
