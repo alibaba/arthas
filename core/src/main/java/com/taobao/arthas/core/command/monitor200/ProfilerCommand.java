@@ -118,6 +118,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Integer jstackdepth;
 
     /**
+     * wall clock profiling interval
+     */
+    private Long wall;
+
+    /**
      * profile different threads separately
      */
     private boolean threads;
@@ -354,6 +359,13 @@ public class ProfilerCommand extends AnnotatedCommand {
             + "Accepts a predefined profile name, a path to a .jfc file, or a list of JFR events starting with '+'. ")
     public void setJfrsync(String jfrsync) {
         this.jfrsync = jfrsync;
+    }
+
+    @Option(longName = "wall", flag = true)
+    @Description("wall clock profiling interval")
+    @DefaultValue("10000000")
+    public void setWall(Long wall) {
+        this.wall = wall;
     }
 
     @Option(shortName = "t", longName = "threads", flag = true)
@@ -676,7 +688,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.end != null) {
             sb.append("end=").append(this.end).append(COMMA);
         }
-
+        if (this.wall != null) {
+            sb.append("wall=").append(this.wall).append(COMMA);
+        }
         if (this.title != null) {
             sb.append("title=").append(this.title).append(COMMA);
         }

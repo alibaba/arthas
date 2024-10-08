@@ -385,6 +385,25 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 
 这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
 
+## `--wall` 选项
+
+通过 --wall 选项，可以同时进行 CPU 和 Wall Clock 的性能分析。
+
+1. 这种联合分析有助于更全面地识别和理解应用程序的性能瓶颈。
+2. 允许用户独立于 CPU 分析设置 Wall Clock 分析的采样间隔。比如，可以通过设置 -e cpu -i 10 --wall 200，将 CPU 采样间隔设为 10 毫秒，墙钟采样间隔设为 200 毫秒。
+3. 联合进行 CPU 和 Wall Clock 分析时，输出格式必须设置为 jfr。这一格式支持记录线程的状态信息（如 STATE_RUNNABLE 或 STATE_SLEEPING），从而区分不同类型的采样事件。
+
+可参考 [async-profiler Github pr#740](https://github.com/async-profiler/async-profiler/issues/740) 了解更多信息。
+
+影响：
+
+Linux 平台: 这个新功能仅在 Linux 平台上有效。macOS 上的 CPU 分析引擎已经基于 Wall clock 模式，因此没有额外的收益。
+性能开销: 启用 Wall clock 分析会增加性能开销，因此在同时分析 CPU 和 Wall clock 时，建议增加 Wall clock 的间隔。
+
+```bash
+profiler start -e cpu -i 10 --wall 100 -f out.jfr
+```
+
 ## `ctimer`事件
 
 `ctimer` 事件是一种新的 CPU 采样模式，基于 `timer_create`，提供了无需 `perf_events` 的精确 CPU 采样。
