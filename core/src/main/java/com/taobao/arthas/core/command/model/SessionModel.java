@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Map;
+
 /**
  * Session command result model
  *
@@ -14,6 +16,8 @@ public class SessionModel extends ResultModel {
     private String statUrl;
 
     private boolean tunnelConnected;
+
+    private Map<String, Object> sessionData;
 
     @Override
     public String getType() {
@@ -66,5 +70,13 @@ public class SessionModel extends ResultModel {
 
     public void setTunnelConnected(boolean tunnelConnected) {
         this.tunnelConnected = tunnelConnected;
+    }
+
+    public Map<String, Object> getSessionData() {
+        return this.sessionData;
+    }
+
+    public void setSessionData(Map<String, Object> env) {
+        this.sessionData = env;
     }
 }
