@@ -101,6 +101,7 @@ Basic events:
   lock
   wall
   itimer
+  ctimer
 ```
 
 Under linux
@@ -113,6 +114,7 @@ Basic events:
   lock
   wall
   itimer
+  ctimer
 Java method calls:
   ClassName.methodName
 Perf events:
@@ -421,7 +423,7 @@ See [async-profiler Github Issues](https://github.com/async-profiler/async-profi
 Example:
 
 ```bash
-profiler start -e ctimer
+profiler start -e ctimer -o jfr -f ./out-test.jfr
 ```
 
 ## `vtable` Feature

@@ -422,7 +422,7 @@ profiler start -e cpu -i 10 --wall 100 -f out.jfr
 示例：
 
 ```bash
-profiler start -e ctimer
+profiler start -e ctimer -o jfr -f ./out-test.jfr
 ```
 
 ## `vtable`特性
