@@ -1,5 +1,7 @@
 package com.taobao.arthas.grpc.server.protobuf.utils;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.google.protobuf.*;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufField;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Enum;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -28,6 +31,8 @@ import java.util.*;
  * @description: ProtoBufUtil
  */
 public class ProtoBufUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
 
     public static final Map<Class<?>, ProtobufFieldTypeEnum> TYPE_MAPPER;
 
@@ -81,9 +86,9 @@ public class ProtoBufUtil {
 
         Set<Class<?>> primitiveTypeNames = new HashSet<Class<?>>(16);
         primitiveTypeNames.addAll(PRIMITIVE_WRAPPER_TYPE_MAP.values());
-        primitiveTypeNames.addAll(Arrays.asList(new Class<?>[] { boolean[].class, byte[].class, char[].class,
-                double[].class, float[].class, int[].class, long[].class, short[].class }));
-        for (Iterator<Class<?>> it = primitiveTypeNames.iterator(); it.hasNext();) {
+        primitiveTypeNames.addAll(Arrays.asList(new Class<?>[]{boolean[].class, byte[].class, char[].class,
+                double[].class, float[].class, int[].class, long[].class, short[].class}));
+        for (Iterator<Class<?>> it = primitiveTypeNames.iterator(); it.hasNext(); ) {
             Class<?> primitiveClass = (Class<?>) it.next();
             PRIMIIIVE_TYPE_CLASS_MAPPING.put(primitiveClass.getName(), primitiveClass);
         }
@@ -289,7 +294,7 @@ public class ProtoBufUtil {
         try {
             return field.get(t);
         } catch (Exception e) {
-            //todo log
+            logger.error("ProtoBufUtil getFiled error, t:{}, name:{}", t, name, e);
         }
         return null;
     }
@@ -303,7 +308,7 @@ public class ProtoBufUtil {
         try {
             field.set(t, value);
         } catch (Exception e) {
-            //todo log
+            logger.error("ProtoBufUtil setFiled error, t:{}, name:{}, value:{}", t, name, value, e);
         }
     }
 
@@ -376,7 +381,7 @@ public class ProtoBufUtil {
             dynamicTargetClass.getMethod(getter, new Class<?>[0]);
             return DYNAMIC_TARGET + PACKAGE_SEPARATOR + getter + "()";
         } catch (Exception e) {
-            //todo log
+            logger.error("ProtoBufUtil getGetterDynamicString error, protobufField:{}, dynamicTargetClass:{}", protobufField, dynamicTargetClass, e);
         }
 
         String type = field.getType().getCanonicalName();
@@ -427,7 +432,6 @@ public class ProtoBufUtil {
         }
         javaType = capitalize(javaType);
         dynamicFieldName = dynamicFieldName + protobufFieldType.getToPrimitiveType();
-        //todo check 感觉上面这个有点问题，测试的时候看下
         return "com.google.protobuf.CodedOutputStream.compute" + javaType + "Size(" + order + "," + dynamicFieldName
                 + ");" + LINE_BREAK;
     }
@@ -859,7 +863,7 @@ public class ProtoBufUtil {
 
             return DYNAMIC_TARGET + PACKAGE_SEPARATOR + setter + "(" + express + ")\n";
         } catch (Exception e) {
-            //todo log
+            logger.error("ProtoBufUtil getSetFieldDynamicString error, protobufField:{}, dynamicTargetClass:{}, express:{}", protobufField, dynamicTargetClass, express, e);
         }
 
         if (isList) {
@@ -1103,7 +1107,7 @@ public class ProtoBufUtil {
         return cls.getSimpleName();
     }
 
-    public static boolean isEmpty(String s){
+    public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
 

@@ -22,14 +22,14 @@ import java.util.Optional;
  */
 public class GrpcDispatcher {
 
-    private static final String GRPC_SERVICE_PACKAGE_NAME = "com.taobao.arthas.grpc.server.service.impl";
+    private static final String DEFAULT_GRPC_SERVICE_PACKAGE_NAME = "com.taobao.arthas.grpc.server.service.impl";
 
     private Map<String, MethodHandle> grpcMethodInvokeMap = new HashMap<>();
 
     private Map<String, Boolean> grpcMethodStreamMap = new HashMap<>();
 
-    public void loadGrpcService() {
-        List<Class<?>> classes = ReflectUtil.findClasses(GRPC_SERVICE_PACKAGE_NAME);
+    public void loadGrpcService(String grpcServicePackageName) {
+        List<Class<?>> classes = ReflectUtil.findClasses(Optional.ofNullable(grpcServicePackageName).orElse(DEFAULT_GRPC_SERVICE_PACKAGE_NAME));
         for (Class<?> clazz : classes) {
             if (clazz.isAnnotationPresent(GrpcService.class)) {
                 try {

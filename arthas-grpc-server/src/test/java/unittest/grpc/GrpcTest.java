@@ -2,11 +2,15 @@ package unittest.grpc;
 
 import arthas.unittest.ArthasUnittest;
 import arthas.unittest.ArthasUnittestServiceGrpc;
+import com.taobao.arthas.grpc.server.ArthasGrpcServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 
 import java.util.concurrent.CountDownLatch;
@@ -17,14 +21,25 @@ import java.util.concurrent.CountDownLatch;
  * @description: GrpcUnaryTest
  */
 public class GrpcTest {
-    private static final String target = "localhost:9090";
+    private static final String HOST = "localhost";
+    private static final int PORT = 9090;
+    private static final String HOST_PORT = HOST + ":" + PORT;
+    private static final String UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME = "unittest.grpc.service.impl";
     private ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub blockingStub = null;
     private ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = null;
 
-    @Disabled("跳过启动测试")
+    @Before
+    public void startServer() {
+        Thread grpcWebProxyStart = new Thread(() -> {
+            ArthasGrpcServer arthasGrpcServer = new ArthasGrpcServer(PORT, UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME);
+            arthasGrpcServer.start();
+        });
+        grpcWebProxyStart.start();
+    }
+
     @Test
     public void testUnary() {
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(target)
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
 
@@ -37,10 +52,9 @@ public class GrpcTest {
         }
     }
 
-    @Disabled("跳过启动测试")
     @Test
     public void testStream() {
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(target)
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
 
@@ -55,16 +69,11 @@ public class GrpcTest {
 
     private void trace(String name) {
         ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage(name).build();
-        try {
-            ArthasUnittest.ArthasUnittestResponse res = blockingStub.trace(request);
-            System.out.println(res.getMessage());
-        } catch (StatusRuntimeException e) {
-            e.printStackTrace();
-            System.out.println("RPC failed: " + e.getStatus());
-        }
+        ArthasUnittest.ArthasUnittestResponse res = blockingStub.trace(request);
+        System.out.println(res.getMessage());
     }
 
-    private void watch(String... names) {
+    private void watch(String... names){
         // 使用 CountDownLatch 来等待所有响应
         CountDownLatch finishLatch = new CountDownLatch(1);
 
@@ -92,17 +101,18 @@ public class GrpcTest {
                 Thread.sleep(1000L);
                 watch.onNext(request);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             watch.onCompleted();
+            finishLatch.countDown();
         }
 
         // 等待服务器的响应
         try {
             finishLatch.await(); // 等待完成
         } catch (InterruptedException e) {
-            System.out.println("Client interrupted: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

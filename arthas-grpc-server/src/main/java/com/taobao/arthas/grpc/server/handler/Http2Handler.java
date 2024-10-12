@@ -1,5 +1,7 @@
 package com.taobao.arthas.grpc.server.handler;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
@@ -9,6 +11,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http2.*;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description: Http2Handler
  */
 public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
 
     private GrpcDispatcher grpcDispatcher;
 
