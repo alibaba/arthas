@@ -186,9 +186,15 @@ public class DirectoryBrowser {
                     } finally {
                         IOUtils.close(fileInputStream);
                     }
-                    ctx.write(fullResp);
-                    ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-                    future.addListener(ChannelFutureListener.CLOSE);
+                    ChannelFuture channelFuture = ctx.writeAndFlush(fullResp);
+                    channelFuture.addListener((ChannelFutureListener) future -> {
+                        if (future.isSuccess()) {
+                            ChannelFuture lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                            lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+                        } else {
+                            future.channel().close();
+                        }
+                    });
                     return fullResp;
                 }
                 logger.info("file {} size bigger than {}, send by future.",file.getName(), MIN_NETTY_DIRECT_SEND_SIZE);
