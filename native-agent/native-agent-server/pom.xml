@@ -54,8 +54,7 @@
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>native-agent-common</artifactId>
-            <version>4.0.1</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

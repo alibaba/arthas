@@ -21,9 +21,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.alibaba.arthas</groupId>
+            <groupId>com.taobao.arthas</groupId>
             <artifactId>native-agent-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
