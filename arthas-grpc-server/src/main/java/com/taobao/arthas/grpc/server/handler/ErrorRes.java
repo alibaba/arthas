@@ -8,6 +8,7 @@ import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
  * @description: ErrorRes
  */
 @ProtobufClass
+@Deprecated
 public class ErrorRes {
     private String errorMsg;
 

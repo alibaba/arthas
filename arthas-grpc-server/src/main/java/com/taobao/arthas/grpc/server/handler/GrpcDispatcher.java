@@ -1,9 +1,9 @@
 package com.taobao.arthas.grpc.server.handler;
 
+
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
-import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
-import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
+import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
 
 import java.lang.invoke.MethodHandle;
@@ -22,11 +22,17 @@ import java.util.Optional;
  */
 public class GrpcDispatcher {
 
-    private static final String DEFAULT_GRPC_SERVICE_PACKAGE_NAME = "com.taobao.arthas.grpc.server.service.impl";
+    public static final String DEFAULT_GRPC_SERVICE_PACKAGE_NAME = "com.taobao.arthas.grpc.server.service.impl";
 
-    private Map<String, MethodHandle> grpcMethodInvokeMap = new HashMap<>();
+    public static Map<String, MethodHandle> grpcMethodInvokeMap = new HashMap<>();
 
-    private Map<String, Boolean> grpcMethodStreamMap = new HashMap<>();
+    public static Map<String, MethodHandle> requestParseFromMap = new HashMap<>();
+    public static Map<String, MethodHandle> requestToByteArrayMap = new HashMap<>();
+
+    public static Map<String, MethodHandle> responseParseFromMap = new HashMap<>();
+    public static Map<String, MethodHandle> responseToByteArrayMap = new HashMap<>();
+
+    public static Map<String, Boolean> grpcMethodStreamMap = new HashMap<>();
 
     public void loadGrpcService(String grpcServicePackageName) {
         List<Class<?>> classes = ReflectUtil.findClasses(Optional.ofNullable(grpcServicePackageName).orElse(DEFAULT_GRPC_SERVICE_PACKAGE_NAME));
@@ -43,10 +49,20 @@ public class GrpcDispatcher {
                     for (Method method : declaredMethods) {
                         if (method.isAnnotationPresent(GrpcMethod.class)) {
                             GrpcMethod grpcMethod = method.getAnnotation(GrpcMethod.class);
-                            MethodHandle methodHandle = lookup.unreflect(method);
+                            MethodHandle grpcInvoke = lookup.unreflect(method);
+                            Class<?> requestClass = grpcInvoke.type().parameterType(1);
+                            Class<?> responseClass = grpcInvoke.type().returnType();
+                            MethodHandle requestParseFrom = lookup.findStatic(requestClass, "parseFrom", MethodType.methodType(requestClass, byte[].class));
+                            MethodHandle responseParseFrom = lookup.findStatic(responseClass, "parseFrom", MethodType.methodType(responseClass, byte[].class));
+                            MethodHandle requestToByteArray = lookup.findVirtual(requestClass, "toByteArray", MethodType.methodType(byte[].class));
+                            MethodHandle responseToByteArray = lookup.findVirtual(responseClass, "toByteArray", MethodType.methodType(byte[].class));
                             String grpcMethodKey = generateGrpcMethodKey(grpcService.value(), grpcMethod.value());
-                            grpcMethodInvokeMap.put(grpcMethodKey, methodHandle.bindTo(instance));
+                            grpcMethodInvokeMap.put(grpcMethodKey, grpcInvoke.bindTo(instance));
                             grpcMethodStreamMap.put(grpcMethodKey, grpcMethod.stream());
+                            requestParseFromMap.put(grpcMethodKey, requestParseFrom);
+                            responseParseFromMap.put(grpcMethodKey, responseParseFrom);
+                            requestToByteArrayMap.put(grpcMethodKey, requestToByteArray);
+                            responseToByteArrayMap.put(grpcMethodKey, responseToByteArray);
                         }
                     }
                 } catch (Exception e) {
@@ -56,16 +72,15 @@ public class GrpcDispatcher {
         }
     }
 
-    private String generateGrpcMethodKey(String serviceName, String methodName) {
-        return serviceName + "." + methodName;
-    }
-
-    public GrpcResponse execute(String serviceName, String methodName, Object arg) throws Throwable {
-        MethodHandle methodHandle = grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName));
-        MethodType type = grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName)).type();
-        Object execute = methodHandle.invoke(arg);
+    public GrpcResponse execute(String service, String method, byte[] arg) throws Throwable {
+        MethodHandle methodHandle = grpcMethodInvokeMap.get(generateGrpcMethodKey(service, method));
+        MethodType type = grpcMethodInvokeMap.get(generateGrpcMethodKey(service, method)).type();
+        Object req = requestParseFromMap.get(generateGrpcMethodKey(service, method)).invoke(arg);
+        Object execute = methodHandle.invoke(req);
         GrpcResponse grpcResponse = new GrpcResponse();
         grpcResponse.setClazz(type.returnType());
+        grpcResponse.setService(service);
+        grpcResponse.setMethod(method);
         grpcResponse.writeResponseData(execute);
         return grpcResponse;
     }
@@ -73,11 +88,7 @@ public class GrpcDispatcher {
     public GrpcResponse execute(GrpcRequest request) throws Throwable {
         String service = request.getService();
         String method = request.getMethod();
-        // protobuf 规范只能有单入参
-        request.setClazz(getRequestClass(request.getService(), request.getMethod()));
-        ProtobufCodec protobufCodec = ProtobufProxy.getCodecCacheSide(request.getClazz());
-        Object decode = protobufCodec.decode(request.readData());
-        return this.execute(service, method, decode);
+        return this.execute(service, method, request.readData());
     }
 
     /**
@@ -87,12 +98,16 @@ public class GrpcDispatcher {
      * @param methodName
      * @return
      */
-    public Class<?> getRequestClass(String serviceName, String methodName) {
+    public static Class<?> getRequestClass(String serviceName, String methodName) {
         //protobuf 规范只能有单入参
         return Optional.ofNullable(grpcMethodInvokeMap.get(generateGrpcMethodKey(serviceName, methodName))).orElseThrow(() -> new RuntimeException("The specified grpc method does not exist")).type().parameterArray()[0];
     }
 
-    public void checkGrpcStream(GrpcRequest request) {
+    public static String generateGrpcMethodKey(String serviceName, String methodName) {
+        return serviceName + "." + methodName;
+    }
+
+    public static void checkGrpcStream(GrpcRequest request) {
         request.setStream(
                 Optional.ofNullable(grpcMethodStreamMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())))
                         .orElse(false)

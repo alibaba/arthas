@@ -1,13 +1,12 @@
 package com.taobao.arthas.grpc.server.handler;
 
-import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
-import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
+
+import arthas.grpc.common.ArthasGrpc;
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http2.DefaultHttp2Headers;
 import io.netty.handler.codec.http2.Http2Headers;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +18,16 @@ import java.util.Map;
 public class GrpcResponse {
 
     private Map<String, String> headers;
+
+    /**
+     * 请求的 service
+     */
+    private String service;
+
+    /**
+     * 请求的 method
+     */
+    private String method;
 
     /**
      * 二进制数据
@@ -52,12 +61,15 @@ public class GrpcResponse {
     }
 
     public void writeResponseData(Object response) {
-        ProtobufCodec codec = ProtobufProxy.getCodecCacheSide(clazz);
         byte[] encode = null;
         try {
-            encode = codec.encode(response);
-        } catch (IOException e) {
-            throw new RuntimeException("ProtobufCodec encode error");
+            if (ArthasGrpc.ErrorRes.class.equals(clazz)) {
+                encode = ((ArthasGrpc.ErrorRes) response).toByteArray();
+            } else {
+                encode = (byte[]) GrpcDispatcher.responseToByteArrayMap.get(GrpcDispatcher.generateGrpcMethodKey(service, method)).invoke(response);
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
         this.byteData = ByteUtil.newByteBuf();
         this.byteData.writeBoolean(false);
@@ -67,5 +79,21 @@ public class GrpcResponse {
 
     public void setClazz(Class<?> clazz) {
         this.clazz = clazz;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 }

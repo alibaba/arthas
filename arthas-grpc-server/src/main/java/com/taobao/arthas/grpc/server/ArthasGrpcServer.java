@@ -15,6 +15,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http2.Http2FrameCodecBuilder;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.lang.invoke.MethodHandles;
 
@@ -38,7 +40,7 @@ public class ArthasGrpcServer {
 
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(10);
 
         GrpcDispatcher grpcDispatcher = new GrpcDispatcher();
         grpcDispatcher.loadGrpcService(grpcServicePackageName);

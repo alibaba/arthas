@@ -13,6 +13,7 @@ import java.util.Set;
  * @date: 2024/7/25 上午12:14
  * @description: ProtobufField
  */
+@Deprecated
 public class ProtobufField {
 
     /**

@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date: 2024/7/17 下午9:57
  * @description: ProtoBufProxy
  */
+@Deprecated
 public class ProtobufProxy {
     private static final String TEMPLATE_FILE = "/class_template.tpl";
 

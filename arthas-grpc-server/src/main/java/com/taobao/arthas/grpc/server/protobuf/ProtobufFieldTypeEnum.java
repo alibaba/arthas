@@ -7,6 +7,7 @@ import com.google.protobuf.WireFormat;
  * @date: 2024/7/17 下午10:02
  * @description: ProtoBufFieldType
  */
+@Deprecated
 public enum ProtobufFieldTypeEnum {
     /**
      * types defined in .proto file.

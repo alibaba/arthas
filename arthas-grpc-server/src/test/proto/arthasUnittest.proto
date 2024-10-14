@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package arthas.unittest;
+package arthas.grpc.unittest;
 
 service ArthasUnittestService {
   rpc trace(ArthasUnittestRequest) returns (ArthasUnittestResponse);

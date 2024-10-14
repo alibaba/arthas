@@ -1,7 +1,6 @@
 package com.taobao.arthas.grpc.server.service;
 
-import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
-import com.taobao.arthas.grpc.server.service.res.ArthasUnittestResponse;
+import arthas.grpc.unittest.ArthasUnittest;
 
 /**
  * @author: FengYe
@@ -9,6 +8,6 @@ import com.taobao.arthas.grpc.server.service.res.ArthasUnittestResponse;
  * @description: ArthasSampleService
  */
 public interface ArthasSampleService {
-    ArthasUnittestResponse trace(ArthasUnittestRequest command);
-    ArthasUnittestResponse watch(ArthasUnittestRequest command);
+    ArthasUnittest.ArthasUnittestResponse trace(ArthasUnittest.ArthasUnittestRequest command);
+    ArthasUnittest.ArthasUnittestResponse watch(ArthasUnittest.ArthasUnittestRequest command);
 }

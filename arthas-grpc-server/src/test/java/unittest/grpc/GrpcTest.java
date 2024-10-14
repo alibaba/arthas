@@ -1,7 +1,7 @@
 package unittest.grpc;
 
-import arthas.unittest.ArthasUnittest;
-import arthas.unittest.ArthasUnittestServiceGrpc;
+import arthas.grpc.unittest.ArthasUnittest;
+import arthas.grpc.unittest.ArthasUnittestServiceGrpc;
 import com.taobao.arthas.grpc.server.ArthasGrpcServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

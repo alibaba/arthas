@@ -9,6 +9,7 @@ import java.io.IOException;
  * @date: 2024/7/17 下午9:44
  * @description: Codec
  */
+@Deprecated
 public interface ProtobufCodec<T> {
     byte[] encode(T t) throws IOException;
 

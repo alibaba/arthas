@@ -1,7 +1,6 @@
 package unittest.grpc.service;
 
-import unittest.grpc.service.req.ArthasUnittestRequest;
-import unittest.grpc.service.res.ArthasUnittestResponse;
+import arthas.grpc.unittest.ArthasUnittest;
 
 /**
  * @author: FengYe
@@ -9,6 +8,6 @@ import unittest.grpc.service.res.ArthasUnittestResponse;
  * @description: ArthasSampleService
  */
 public interface ArthasSampleService {
-    ArthasUnittestResponse trace(ArthasUnittestRequest command);
-    ArthasUnittestResponse watch(ArthasUnittestRequest command);
+    ArthasUnittest.ArthasUnittestResponse trace(ArthasUnittest.ArthasUnittestRequest command);
+    ArthasUnittest.ArthasUnittestResponse watch(ArthasUnittest.ArthasUnittestRequest command);
 }

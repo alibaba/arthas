@@ -2,6 +2,7 @@ package com.taobao.arthas.grpc.server.handler;
 
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http2.Http2Headers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,6 +56,11 @@ public class GrpcRequest {
      * 是否是 grpc 流式请求的第一个data
      */
     private boolean streamFirstData;
+
+    /**
+     * http2 headers
+     */
+    private Http2Headers headers;
 
 
     public GrpcRequest(Integer streamId, String path, String method) {
@@ -157,5 +163,13 @@ public class GrpcRequest {
 
     public void setStreamFirstData(boolean streamFirstData) {
         this.streamFirstData = streamFirstData;
+    }
+
+    public Http2Headers getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Http2Headers headers) {
+        this.headers = headers;
     }
 }
