@@ -33,12 +33,7 @@
             <artifactId>jetcd-core</artifactId>
             <version>0.7.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.alibaba.arthas</groupId>
-            <artifactId>native-agent-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
+        
         <!-- log -->
         <dependency>
             <groupId>org.slf4j</groupId>
