@@ -19,11 +19,8 @@ public class HttpResourcesHandler {
     private static final Logger logger = LoggerFactory.getLogger(HttpResourcesHandler.class);
 
     private static final String RESOURCES_PATH = "native-agent";
-    public FullHttpResponse handlerResources (String path) {
+    public FullHttpResponse handlerResources (FullHttpRequest request, String path) {
         FullHttpResponse resp = null;
-        if ("/".equals(path)) {
-            path = "/index.html";
-        }
         if (path.contains(".html") || path.contains(".css") || path.contains(".js") || path.contains(".ico") || path.contains(".png")) {
             if (path.contains("?")) {
                 path = path.split("\\?")[0];
@@ -32,7 +29,7 @@ public class HttpResourcesHandler {
             if (is != null) {
                 try {
                     ByteBuf content = readInputStream(is);
-                    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
+                    FullHttpResponse response = new DefaultFullHttpResponse(request.getProtocolVersion(), HttpResponseStatus.OK, content);
                     HttpHeaders headers = response.headers();
                     headers.set(HttpHeaderNames.CONTENT_TYPE, getContentType(path));
                     headers.set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
@@ -40,7 +37,7 @@ public class HttpResourcesHandler {
                     resp = response;
                 } catch (IOException e) {
                     logger.error("find resources error:" + e.getMessage());
-                    resp = new DefaultFullHttpResponse(resp.getProtocolVersion(), HttpResponseStatus.NOT_FOUND);
+                    resp = new DefaultFullHttpResponse(request.getProtocolVersion(), HttpResponseStatus.NOT_FOUND);
                     resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
                 } finally {
                     if (is != null) {

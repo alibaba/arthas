@@ -6,6 +6,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 /**
  * @description: HttpRequestHandler
  * @author：flzjkl
@@ -18,8 +21,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
-        String uri = request.uri();
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+        String path = new URI(request.uri()).getPath();;
         HttpMethod method = request.method();
         FullHttpResponse resp = null;
 
@@ -28,7 +31,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         }
 
         if (HttpMethod.POST.equals(method)) {
-            if ("/api/native-agent".equals(uri)) {
+            if ("/api/native-agent".equals(path)) {
                 resp = httpNativeAgentHandler.handle(ctx, request);
             }
         }

@@ -8,6 +8,8 @@ import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+
 /**
  * @description: HttpRequestHandler
  * @author：flzjkl
@@ -25,13 +27,16 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
-        String path = request.uri();
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+        String path = new URI(request.uri()).getPath();
         HttpMethod method = request.method();
         FullHttpResponse resp = null;
 
         if (HttpMethod.GET.equals(method)) {
-            resp = httpResourcesHandler.handlerResources(path);
+            if ("/".equals(path)) {
+                path = "/index.html";
+            }
+            resp = httpResourcesHandler.handlerResources(request, path);
         }
 
         if (HttpMethod.OPTIONS.equals(method)) {
