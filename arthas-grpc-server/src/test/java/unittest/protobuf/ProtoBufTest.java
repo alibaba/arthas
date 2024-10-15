@@ -2,7 +2,6 @@ package unittest.protobuf;
 
 import com.taobao.arthas.grpc.server.protobuf.ProtobufCodec;
 import com.taobao.arthas.grpc.server.protobuf.ProtobufProxy;
-import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
 import org.junit.Assert;
 import org.junit.Test;
 

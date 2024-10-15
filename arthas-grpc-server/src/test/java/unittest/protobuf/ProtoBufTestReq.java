@@ -1,8 +1,6 @@
 package unittest.protobuf;
 
-import com.taobao.arthas.grpc.server.protobuf.ProtobufField;
 import com.taobao.arthas.grpc.server.protobuf.annotation.ProtobufClass;
-import com.taobao.arthas.grpc.server.service.req.ArthasUnittestRequest;
 
 import java.util.List;
 import java.util.Map;
