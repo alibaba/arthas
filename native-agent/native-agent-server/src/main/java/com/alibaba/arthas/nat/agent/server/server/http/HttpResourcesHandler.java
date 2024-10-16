@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @description: HttpResourcesHandler
@@ -17,61 +20,82 @@ import java.io.InputStream;
 public class HttpResourcesHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpResourcesHandler.class);
+    private static final String RESOURCES_BASE_PATH = "native-agent/";
+    private static final Set<String> ALLOWED_EXTENSIONS;
 
-    private static final String RESOURCES_PATH = "native-agent";
-    public FullHttpResponse handlerResources (FullHttpRequest request, String path) {
-        FullHttpResponse resp = null;
-        if (path.contains(".html") || path.contains(".css") || path.contains(".js") || path.contains(".ico") || path.contains(".png")) {
-            if (path.contains("?")) {
-                path = path.split("\\?")[0];
-            }
-            InputStream is = getClass().getClassLoader().getResourceAsStream(RESOURCES_PATH + path);
-            if (is != null) {
-                try {
-                    ByteBuf content = readInputStream(is);
-                    FullHttpResponse response = new DefaultFullHttpResponse(request.getProtocolVersion(), HttpResponseStatus.OK, content);
-                    HttpHeaders headers = response.headers();
-                    headers.set(HttpHeaderNames.CONTENT_TYPE, getContentType(path));
-                    headers.set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
-                    headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-                    resp = response;
-                } catch (IOException e) {
-                    logger.error("find resources error:" + e.getMessage());
-                    resp = new DefaultFullHttpResponse(request.getProtocolVersion(), HttpResponseStatus.NOT_FOUND);
-                    resp.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
-                } finally {
-                    if (is != null) {
-                        try {
-                            is.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-            }
-        }
-        return resp;
+    static {
+        Set<String> tempSet = new HashSet<>();
+        tempSet.add(".html");
+        tempSet.add(".css");
+        tempSet.add(".js");
+        tempSet.add(".ico");
+        tempSet.add(".png");
+        ALLOWED_EXTENSIONS = Collections.unmodifiableSet(tempSet);
     }
 
+    public FullHttpResponse handlerResources(FullHttpRequest request, String path) {
+        try {
+            if (request == null || path == null) {
+                return null;
+            }
+            String normalizedPath = normalizePath(path);
+            if (normalizedPath == null) {
+                return null;
+            }
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream(normalizedPath)) {
+                if (is == null) {
+                    return null;
+                }
 
-    private String getContentType(String fileName) {
-        if (fileName.endsWith(".htm") || fileName.endsWith(".html")) {
-            return "text/html";
-        } else if (fileName.endsWith(".css")) {
-            return "text/css";
-        } else if (fileName.endsWith(".js")) {
-            return "application/javascript";
-        } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
-            return "image/jpeg";
-        } else if (fileName.endsWith(".png")) {
-            return "image/png";
-        } else if (fileName.endsWith(".gif")) {
-            return "image/gif";
-        } else if (fileName.endsWith(".json")) {
-            return "application/json";
-        } else {
-            return "application/octet-stream";
+                ByteBuf content = readInputStream(is);
+                FullHttpResponse response = new DefaultFullHttpResponse(
+                        request.protocolVersion(), HttpResponseStatus.OK, content);
+
+                HttpHeaders headers = response.headers();
+                headers.set(HttpHeaderNames.CONTENT_TYPE, getContentType(normalizedPath));
+                headers.setInt(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
+                headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+
+                return response;
+            }
+        } catch (Exception e) {
+            logger.error("");
+            return null;
         }
+    }
+
+    private String normalizePath(String path) {
+        if (path == null) {
+            return null;
+        }
+
+        path = path.replaceAll("\\.\\./", "").replaceAll("\\./", "");
+
+
+        path = path.startsWith("/") ? path : "/" + path;
+
+
+        path = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
+
+
+        String finalPath = path;
+        boolean hasAllowedExtension = ALLOWED_EXTENSIONS.stream()
+                .anyMatch(finalPath::endsWith);
+
+        if (!hasAllowedExtension) {
+            return null;
+        }
+
+        return RESOURCES_BASE_PATH + path;
+    }
+
+    private String getContentType(String path) {
+        if (path.endsWith(".html")) return "text/html";
+        if (path.endsWith(".css")) return "text/css";
+        if (path.endsWith(".js")) return "application/javascript";
+        if (path.endsWith(".ico")) return "image/x-icon";
+        if (path.endsWith(".png")) return "image/png";
+        return "application/octet-stream";
     }
 
     private ByteBuf readInputStream(InputStream is) throws IOException {

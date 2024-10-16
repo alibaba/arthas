@@ -1,9 +1,6 @@
 package com.alibaba.arthas.nat.agent.server.server;
 
 import com.alibaba.arthas.nat.agent.common.utils.WelcomeUtil;
-import com.alibaba.arthas.nat.agent.server.cluster.NativeAgentDiscovery;
-import com.alibaba.arthas.nat.agent.server.cluster.NativeAgentDiscoveryFactory;
-import com.alibaba.arthas.nat.agent.server.cluster.ZookeeperNativeAgentDiscovery;
 import com.alibaba.arthas.nat.agent.server.server.http.HttpRequestHandler;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.middleware.cli.CLI;
