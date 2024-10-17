@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package arthas.grpc.common;
+
+message ErrorRes {
+  string errorMsg = 1;
+}
