@@ -361,9 +361,8 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.jfrsync = jfrsync;
     }
 
-    @Option(longName = "wall", flag = true)
-    @Description("wall clock profiling interval")
-    @DefaultValue("10000000")
+    @Option(longName = "wall")
+    @Description("wall clock profiling interval in milliseconds(recommended: 200)")
     public void setWall(Long wall) {
         this.wall = wall;
     }
