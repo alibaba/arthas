@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
+import java.util.Map;
+
 /**
  * 通知点 Created by vlinux on 15/5/20.
  */
@@ -12,6 +14,7 @@ public class Advice {
     private final Object[] params;
     private final Object returnObj;
     private final Throwable throwExp;
+    private final Map<String,Object> varMap;
     private final boolean isBefore;
     private final boolean isThrow;
     private final boolean isReturn;
@@ -66,6 +69,7 @@ public class Advice {
      * @param params    调用参数
      * @param returnObj 返回值
      * @param throwExp  抛出异常
+     * @param varMap    变量的Map
      * @param access    进入场景
      */
     private Advice(
@@ -76,6 +80,7 @@ public class Advice {
             Object[] params,
             Object returnObj,
             Throwable throwExp,
+            Map<String, Object> varMap,
             int access) {
         this.loader = loader;
         this.clazz = clazz;
@@ -84,6 +89,7 @@ public class Advice {
         this.params = params;
         this.returnObj = returnObj;
         this.throwExp = throwExp;
+        this.varMap = varMap;
         isBefore = (access & AccessPoint.ACCESS_BEFORE.getValue()) == AccessPoint.ACCESS_BEFORE.getValue();
         isThrow = (access & AccessPoint.ACCESS_AFTER_THROWING.getValue()) == AccessPoint.ACCESS_AFTER_THROWING.getValue();
         isReturn = (access & AccessPoint.ACCESS_AFTER_RETUNING.getValue()) == AccessPoint.ACCESS_AFTER_RETUNING.getValue();
@@ -102,6 +108,7 @@ public class Advice {
                 params,
                 null, //returnObj
                 null, //throwExp
+                null, //varMap
                 AccessPoint.ACCESS_BEFORE.getValue()
         );
     }
@@ -120,6 +127,7 @@ public class Advice {
                 params,
                 returnObj,
                 null, //throwExp
+                null, //varMap
                 AccessPoint.ACCESS_AFTER_RETUNING.getValue()
         );
     }
@@ -138,7 +146,28 @@ public class Advice {
                 params,
                 null, //returnObj
                 throwExp,
+                null, //varMap
                 AccessPoint.ACCESS_AFTER_THROWING.getValue()
+        );
+
+    }
+
+    public static Advice newForLine(ClassLoader loader,
+                                    Class<?> clazz,
+                                    ArthasMethod method,
+                                    Object target,
+                                    Object[] params,
+                                    Map<String, Object> varMap) {
+        return new Advice(
+                loader,
+                clazz,
+                method,
+                target,
+                params,
+                null, //returnObj
+                null, //throwExp
+                varMap,
+                AccessPoint.ACCESS_AT_LINE.getValue()
         );
 
     }

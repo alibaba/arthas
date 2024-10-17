@@ -28,7 +28,7 @@
 - [sc](sc.md) - check the info for the classes loaded by JVM
 - [sm](sm.md) - check methods info for the loaded classes
 
-## monitor/watch/trace - related
+## monitor/watch/trace/line - related
 
 ::: warning
 **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore, when using it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `stop` or `reset`.
@@ -39,6 +39,7 @@
 - [trace](trace.md) - trace the execution time of specified method invocation
 - [tt](tt.md) - time tunnel, record the arguments and returned value for the methods and replay
 - [watch](watch.md) - display the input/output parameter, return object, and thrown exception of specified method invocation
+- [line](line.md) - Observe the data when the method executes to a specified position (supports local variables).
 
 ## profiler/flame graph
 

@@ -166,8 +166,12 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             if(listener instanceof AbstractTraceAdviceListener) {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
+            String line = null;
+            if(listener instanceof LineAdviceListener) {
+                line = ((LineAdviceListener) listener).getCommand().getLine();
+            }
 
-            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, line, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst, this.maxNumOfMatchedClass);
@@ -193,15 +197,17 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 String optionsCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("options unsafe true").reset().toString();
                 String javaPackage = Ansi.ansi().fg(Ansi.Color.GREEN).a("java.*").reset().toString();
                 String resetCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("reset CLASS_NAME").reset().toString();
+                String jadCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("jad CLASS_NAME METHOD_NAME --lineCode").reset().toString();
                 String logStr = Ansi.ansi().fg(Ansi.Color.GREEN).a(LogUtil.loggingFile()).reset().toString();
                 String issueStr = Ansi.ansi().fg(Ansi.Color.GREEN).a("https://github.com/alibaba/arthas/issues/47").reset().toString();
-                String msg = "No class or method is affected, try:\n"
+                String msg = "No class or method or line is affected, try:\n"
                         + "1. Execute `" + smCommand + "` to make sure the method you are tracing actually exists (it might be in your parent class).\n"
                         + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
                         + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
-                        + "4. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
-                        + "5. Check arthas log: " + logStr + "\n"
-                        + "6. Visit " + issueStr + " for more details.";
+                        + "4. Execute `" + jadCommand + "` to make sure the lineNumber or lineCode you are watching actually exists.\n"
+                        + "5. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
+                        + "6. Check arthas log: " + logStr + "\n"
+                        + "7. Visit " + issueStr + " for more details.";
                 process.end(-1, msg);
                 return;
             }

@@ -39,7 +39,7 @@ public class EnhancerTest {
         EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
         EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
 
-        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, null, methodNameMatcher);
+        Enhancer enhancer = new Enhancer(listener, true, false, null, classNameMatcher, null, methodNameMatcher);
 
         ClassLoader inClassLoader = MathGame.class.getClassLoader();
         String className = MathGame.class.getName();
@@ -85,6 +85,158 @@ public class EnhancerTest {
                 .findMethodInsnNode(resultMethodNode1, Type.getInternalName(SpyAPI.class), "atInvokeException").size())
                 .isEqualTo(AsmUtils
                         .findMethodInsnNode(resultMethodNode2, Type.getInternalName(SpyAPI.class), "atInvokeException")
+                        .size());
+
+        String string = Decompiler.decompile(result);
+
+        System.err.println(string);
+    }
+
+    /**
+     * 测试line命令使用的LineNumber的增强
+     */
+    @Test
+    public void testLineWithLineNumber() throws Throwable {
+        Instrumentation instrumentation = ByteBuddyAgent.install();
+
+        TestHelper.appendSpyJar(instrumentation);
+
+        ArthasBootstrap.getInstance(instrumentation, "ip=127.0.0.1");
+
+        AdviceListener listener = Mockito.mock(AdviceListener.class);
+
+        EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("run");
+        EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
+
+        //第25行
+        String line = "25";
+        Enhancer enhancer = new Enhancer(listener, true, false, line, classNameMatcher, null, methodNameMatcher);
+
+        ClassLoader inClassLoader = MathGame.class.getClassLoader();
+        String className = MathGame.class.getName();
+        Class<?> classBeingRedefined = MathGame.class;
+
+        ClassNode classNode = AsmUtils.loadClass(MathGame.class);
+
+        byte[] classfileBuffer = AsmUtils.toBytes(classNode);
+
+        byte[] result = enhancer.transform(inClassLoader, className, classBeingRedefined, null, classfileBuffer);
+
+        ClassNode resultClassNode1 = AsmUtils.toClassNode(result);
+
+        result = enhancer.transform(inClassLoader, className, classBeingRedefined, null, result);
+
+        ClassNode resultClassNode2 = AsmUtils.toClassNode(result);
+
+        MethodNode resultMethodNode1 = AsmUtils.findMethods(resultClassNode1.methods, "run").get(0);
+        MethodNode resultMethodNode2 = AsmUtils.findMethods(resultClassNode2.methods, "run").get(0);
+
+        Assertions
+                .assertThat(AsmUtils
+                        .findMethodInsnNode(resultMethodNode1, Type.getInternalName(SpyAPI.class), "atLineNumber").size())
+                .isEqualTo(AsmUtils.findMethodInsnNode(resultMethodNode2, Type.getInternalName(SpyAPI.class), "atLineNumber")
+                        .size());
+
+        String string = Decompiler.decompile(result);
+
+        System.err.println(string);
+    }
+
+
+    /**
+     * 测试line命令使用的LineNumber的增强
+     * (方法退出前)
+     */
+    @Test
+    public void testLineWithLineNumberBeforeMethodExit() throws Throwable {
+        Instrumentation instrumentation = ByteBuddyAgent.install();
+
+        TestHelper.appendSpyJar(instrumentation);
+
+        ArthasBootstrap.getInstance(instrumentation, "ip=127.0.0.1");
+
+        AdviceListener listener = Mockito.mock(AdviceListener.class);
+
+        EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("run");
+        EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
+
+        //方法退出前
+        String line = "-1";
+        Enhancer enhancer = new Enhancer(listener, true, false, line, classNameMatcher, null, methodNameMatcher);
+
+        ClassLoader inClassLoader = MathGame.class.getClassLoader();
+        String className = MathGame.class.getName();
+        Class<?> classBeingRedefined = MathGame.class;
+
+        ClassNode classNode = AsmUtils.loadClass(MathGame.class);
+
+        byte[] classfileBuffer = AsmUtils.toBytes(classNode);
+
+        byte[] result = enhancer.transform(inClassLoader, className, classBeingRedefined, null, classfileBuffer);
+
+        ClassNode resultClassNode1 = AsmUtils.toClassNode(result);
+
+        result = enhancer.transform(inClassLoader, className, classBeingRedefined, null, result);
+
+        ClassNode resultClassNode2 = AsmUtils.toClassNode(result);
+
+        MethodNode resultMethodNode1 = AsmUtils.findMethods(resultClassNode1.methods, "run").get(0);
+        MethodNode resultMethodNode2 = AsmUtils.findMethods(resultClassNode2.methods, "run").get(0);
+
+        Assertions
+                .assertThat(AsmUtils
+                        .findMethodInsnNode(resultMethodNode1, Type.getInternalName(SpyAPI.class), "atLineNumber").size())
+                .isEqualTo(AsmUtils.findMethodInsnNode(resultMethodNode2, Type.getInternalName(SpyAPI.class), "atLineNumber")
+                        .size());
+
+        String string = Decompiler.decompile(result);
+
+        System.err.println(string);
+    }
+
+    /**
+     * 测试line命令使用的LineCode的增强
+     */
+    @Test
+    public void testLineWithLine() throws Throwable {
+        Instrumentation instrumentation = ByteBuddyAgent.install();
+
+        TestHelper.appendSpyJar(instrumentation);
+
+        ArthasBootstrap.getInstance(instrumentation, "ip=127.0.0.1");
+
+        AdviceListener listener = Mockito.mock(AdviceListener.class);
+
+        EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("run");
+        EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
+
+        // 通过 jad --lineCode demo.MathGame run 找到
+        String lineCode = "fbea-1";
+        Enhancer enhancer = new Enhancer(listener, true, false, lineCode, classNameMatcher, null, methodNameMatcher);
+
+        ClassLoader inClassLoader = MathGame.class.getClassLoader();
+        String className = MathGame.class.getName();
+        Class<?> classBeingRedefined = MathGame.class;
+
+        ClassNode classNode = AsmUtils.loadClass(MathGame.class);
+
+        byte[] classfileBuffer = AsmUtils.toBytes(classNode);
+
+        byte[] result = enhancer.transform(inClassLoader, className, classBeingRedefined, null, classfileBuffer);
+
+        ClassNode resultClassNode1 = AsmUtils.toClassNode(result);
+
+        result = enhancer.transform(inClassLoader, className, classBeingRedefined, null, result);
+
+        ClassNode resultClassNode2 = AsmUtils.toClassNode(result);
+
+        MethodNode resultMethodNode1 = AsmUtils.findMethods(resultClassNode1.methods, "run").get(0);
+        MethodNode resultMethodNode2 = AsmUtils.findMethods(resultClassNode2.methods, "run").get(0);
+
+        Assertions
+                .assertThat(AsmUtils
+                        .findMethodInsnNode(resultMethodNode1, Type.getInternalName(SpyAPI.class), "atLineCode").size())
+                .isEqualTo(AsmUtils.findMethodInsnNode(resultMethodNode2, Type.getInternalName(SpyAPI.class), "atLineCode")
                         .size());
 
         String string = Decompiler.decompile(result);

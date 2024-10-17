@@ -305,6 +305,28 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 ]
 ```
 
+#### line
+
+* https://arthas.aliyun.com/doc/line
+
+观察方法 `demo.MathGame#run` 执行到第25行之前时的局部变量。
+
+```bash
+$ line demo.MathGame run 25 -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 17 ms, listenerId: 2
+method=demo.MathGame.run line=25
+ts=2024-06-21 09:57:34.452; result=@HashMap[
+    @String[primeFactors]:@ArrayList[
+        @Integer[2],
+        @Integer[7],
+        @Integer[7],
+        @Integer[991],
+    ],
+    @String[number]:@Integer[97118],
+]
+```
+
 #### Monitor
 
 * https://arthas.aliyun.com/doc/monitor
