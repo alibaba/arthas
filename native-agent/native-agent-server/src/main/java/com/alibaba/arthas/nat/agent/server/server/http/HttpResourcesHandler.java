@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ import java.util.Set;
 public class HttpResourcesHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpResourcesHandler.class);
-    private static final String RESOURCES_BASE_PATH = "native-agent/";
+    private static final String RESOURCES_BASE_PATH = "/native-agent";
     private static final Set<String> ALLOWED_EXTENSIONS;
 
     static {
@@ -42,7 +43,11 @@ public class HttpResourcesHandler {
             if (normalizedPath == null) {
                 return null;
             }
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream(normalizedPath)) {
+            URL resourceUrl = getClass().getResource(RESOURCES_BASE_PATH + normalizedPath);
+            if (resourceUrl == null) {
+                return null;
+            }
+            try (InputStream is = resourceUrl.openStream()) {
                 if (is == null) {
                     return null;
                 }
@@ -86,7 +91,7 @@ public class HttpResourcesHandler {
             return null;
         }
 
-        return RESOURCES_BASE_PATH + path;
+        return path;
     }
 
     private String getContentType(String path) {
