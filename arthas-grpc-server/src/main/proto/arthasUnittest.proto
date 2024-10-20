@@ -5,12 +5,18 @@ package arthas.grpc.unittest;
 service ArthasUnittestService {
   rpc trace(ArthasUnittestRequest) returns (ArthasUnittestResponse);
   rpc watch(stream ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
+  rpc addSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc getSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
 }
 
 message ArthasUnittestRequest {
-  string message = 1;
+  int32 id = 1;
+  string message = 2;
+  int32 num = 3;
 }
 
 message ArthasUnittestResponse{
-  string message = 1;
+  int32 id = 1;
+  string message = 2;
+  int32 num = 3;
 }

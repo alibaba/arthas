@@ -14,6 +14,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author: FengYe
@@ -74,7 +75,8 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
     }
 
     private void handleGrpcData(Http2DataFrame dataFrame, ChannelHandlerContext ctx) throws IOException {
-        GrpcRequest grpcRequest = dataBuffer.get(dataFrame.stream().id());
+        int streamId = dataFrame.stream().id();
+        GrpcRequest grpcRequest = dataBuffer.get(streamId);
         ByteBuf content = dataFrame.content();
         grpcRequest.writeData(content);
 

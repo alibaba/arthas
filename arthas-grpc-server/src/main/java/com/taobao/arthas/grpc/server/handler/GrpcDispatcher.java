@@ -3,7 +3,6 @@ package com.taobao.arthas.grpc.server.handler;
 
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
-import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
 
 import java.lang.invoke.MethodHandle;
