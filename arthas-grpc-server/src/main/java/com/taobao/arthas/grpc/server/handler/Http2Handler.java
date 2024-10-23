@@ -89,23 +89,23 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
             } catch (Throwable e) {
                 processError(ctx, e, dataFrame.stream());
             }
-    });
-}
+        });
+    }
 
-private void handleResetStream(Http2ResetFrame resetFrame, ChannelHandlerContext ctx) {
-    int id = resetFrame.stream().id();
-    System.out.println("handleResetStream");
-    dataBuffer.remove(id);
-}
+    private void handleResetStream(Http2ResetFrame resetFrame, ChannelHandlerContext ctx) {
+        int id = resetFrame.stream().id();
+        System.out.println("handleResetStream");
+        dataBuffer.remove(id);
+    }
 
-private void processError(ChannelHandlerContext ctx, Throwable e, Http2FrameStream stream) {
-    GrpcResponse response = new GrpcResponse();
-    ArthasGrpc.ErrorRes.Builder builder = ArthasGrpc.ErrorRes.newBuilder();
-    ArthasGrpc.ErrorRes errorRes = builder.setErrorMsg(e.getMessage()).build();
-    response.setClazz(ArthasGrpc.ErrorRes.class);
-    response.writeResponseData(errorRes);
-    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(stream));
-    ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(stream));
-    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(stream));
-}
+    private void processError(ChannelHandlerContext ctx, Throwable e, Http2FrameStream stream) {
+        GrpcResponse response = new GrpcResponse();
+        ArthasGrpc.ErrorRes.Builder builder = ArthasGrpc.ErrorRes.newBuilder();
+        ArthasGrpc.ErrorRes errorRes = builder.setErrorMsg(e.getMessage()).build();
+        response.setClazz(ArthasGrpc.ErrorRes.class);
+        response.writeResponseData(errorRes);
+        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(stream));
+        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(stream));
+        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(stream));
+    }
 }
