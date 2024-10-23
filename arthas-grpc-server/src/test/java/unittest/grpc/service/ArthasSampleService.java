@@ -10,6 +10,6 @@ import arthas.grpc.unittest.ArthasUnittest;
 public interface ArthasSampleService {
     ArthasUnittest.ArthasUnittestResponse trace(ArthasUnittest.ArthasUnittestRequest command);
     ArthasUnittest.ArthasUnittestResponse watch(ArthasUnittest.ArthasUnittestRequest command);
-    ArthasUnittest.ArthasUnittestResponse addSum(ArthasUnittest.ArthasUnittestRequest command);
-    ArthasUnittest.ArthasUnittestResponse getSum(ArthasUnittest.ArthasUnittestRequest command);
+    ArthasUnittest.ArthasUnittestResponse unaryAddSum(ArthasUnittest.ArthasUnittestRequest command);
+    ArthasUnittest.ArthasUnittestResponse unaryGetSum(ArthasUnittest.ArthasUnittestRequest command);
 }

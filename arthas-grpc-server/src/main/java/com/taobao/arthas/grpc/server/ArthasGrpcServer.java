@@ -6,6 +6,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
 import com.taobao.arthas.grpc.server.handler.Http2Handler;
+import com.taobao.arthas.grpc.server.handler.executor.GrpcExecutorFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -44,6 +45,8 @@ public class ArthasGrpcServer {
 
         GrpcDispatcher grpcDispatcher = new GrpcDispatcher();
         grpcDispatcher.loadGrpcService(grpcServicePackageName);
+        GrpcExecutorFactory grpcExecutorFactory = new GrpcExecutorFactory();
+        grpcExecutorFactory.loadExecutor(grpcDispatcher);
 
         try {
             ServerBootstrap b = new ServerBootstrap();
@@ -54,7 +57,7 @@ public class ArthasGrpcServer {
                         @Override
                         public void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(Http2FrameCodecBuilder.forServer().build());
-                            ch.pipeline().addLast(new Http2Handler(grpcDispatcher));
+                            ch.pipeline().addLast(new Http2Handler(grpcDispatcher, grpcExecutorFactory));
                         }
                     });
             Channel channel = b.bind(port).sync().channel();

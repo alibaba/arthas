@@ -5,8 +5,10 @@ package arthas.grpc.unittest;
 service ArthasUnittestService {
   rpc trace(ArthasUnittestRequest) returns (ArthasUnittestResponse);
   rpc watch(stream ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
-  rpc addSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
-  rpc getSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc unaryAddSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc unaryGetSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc clientStreamSum(stream ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc serverStreamSum(ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
 }
 
 message ArthasUnittestRequest {

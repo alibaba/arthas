@@ -1,8 +1,11 @@
 package com.taobao.arthas.grpc.server.handler;
 
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
 
 import java.lang.invoke.MethodHandle;
@@ -21,6 +24,8 @@ import java.util.Optional;
  */
 public class GrpcDispatcher {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
+
     public static final String DEFAULT_GRPC_SERVICE_PACKAGE_NAME = "com.taobao.arthas.grpc.server.service.impl";
 
     public static Map<String, MethodHandle> grpcMethodInvokeMap = new HashMap<>();
@@ -31,7 +36,7 @@ public class GrpcDispatcher {
     public static Map<String, MethodHandle> responseParseFromMap = new HashMap<>();
     public static Map<String, MethodHandle> responseToByteArrayMap = new HashMap<>();
 
-    public static Map<String, Boolean> grpcMethodStreamMap = new HashMap<>();
+    public static Map<String, GrpcCallTypeEnum> grpcMethodStreamMap = new HashMap<>();
 
     public void loadGrpcService(String grpcServicePackageName) {
         List<Class<?>> classes = ReflectUtil.findClasses(Optional.ofNullable(grpcServicePackageName).orElse(DEFAULT_GRPC_SERVICE_PACKAGE_NAME));
@@ -57,7 +62,7 @@ public class GrpcDispatcher {
                             MethodHandle responseToByteArray = lookup.findVirtual(responseClass, "toByteArray", MethodType.methodType(byte[].class));
                             String grpcMethodKey = generateGrpcMethodKey(grpcService.value(), grpcMethod.value());
                             grpcMethodInvokeMap.put(grpcMethodKey, grpcInvoke.bindTo(instance));
-                            grpcMethodStreamMap.put(grpcMethodKey, grpcMethod.stream());
+                            grpcMethodStreamMap.put(grpcMethodKey, grpcMethod.grpcType());
                             requestParseFromMap.put(grpcMethodKey, requestParseFrom);
                             responseParseFromMap.put(grpcMethodKey, responseParseFrom);
                             requestToByteArrayMap.put(grpcMethodKey, requestToByteArray);
@@ -65,7 +70,7 @@ public class GrpcDispatcher {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("GrpcDispatcher loadGrpcService error.", e);
                 }
             }
         }
@@ -106,10 +111,10 @@ public class GrpcDispatcher {
         return serviceName + "." + methodName;
     }
 
-    public static void checkGrpcStream(GrpcRequest request) {
-        request.setStream(
+    public static void checkGrpcType(GrpcRequest request) {
+        request.setGrpcType(
                 Optional.ofNullable(grpcMethodStreamMap.get(generateGrpcMethodKey(request.getService(), request.getMethod())))
-                        .orElse(false)
+                        .orElse(GrpcCallTypeEnum.UNARY)
         );
         request.setStreamFirstData(true);
     }

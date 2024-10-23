@@ -4,6 +4,7 @@ package com.taobao.arthas.grpc.server.handler;
 import arthas.grpc.common.ArthasGrpc;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.grpc.server.handler.executor.GrpcExecutorFactory;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,7 +15,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author: FengYe
@@ -27,6 +27,8 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
     private GrpcDispatcher grpcDispatcher;
 
+    private GrpcExecutorFactory grpcExecutorFactory;
+
     private final EventExecutorGroup executorGroup = new NioEventLoopGroup();
 
     /**
@@ -36,8 +38,9 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
 
     private static final String HEADER_PATH = ":path";
 
-    public Http2Handler(GrpcDispatcher grpcDispatcher) {
+    public Http2Handler(GrpcDispatcher grpcDispatcher, GrpcExecutorFactory grpcExecutorFactory) {
         this.grpcDispatcher = grpcDispatcher;
+        this.grpcExecutorFactory = grpcExecutorFactory;
     }
 
     @Override
@@ -69,7 +72,7 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         String[] parts = path.substring(1).split("/");
         GrpcRequest grpcRequest = new GrpcRequest(headersFrame.stream().id(), parts[0], parts[1]);
         grpcRequest.setHeaders(headersFrame.headers());
-        GrpcDispatcher.checkGrpcStream(grpcRequest);
+        GrpcDispatcher.checkGrpcType(grpcRequest);
         dataBuffer.put(id, grpcRequest);
         System.out.println("Received headers: " + headersFrame.headers());
     }
@@ -81,62 +84,28 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
         grpcRequest.writeData(content);
 
         executorGroup.execute(() -> {
-            if (grpcRequest.isStream()) {
-                // 流式调用，即刻响应
-                try {
-                    GrpcResponse response = new GrpcResponse();
-                    byte[] bytes = grpcRequest.readData();
-                    while (bytes != null) {
-                        response = grpcDispatcher.execute(grpcRequest.getService(), grpcRequest.getMethod(), bytes);
-
-                        // 针对第一个响应发送 header
-                        if (grpcRequest.isStreamFirstData()) {
-                            ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
-                            grpcRequest.setStreamFirstData(false);
-                        }
-                        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
-
-                        bytes = grpcRequest.readData();
-                    }
-
-                    grpcRequest.clearData();
-
-                    if (dataFrame.isEndStream()) {
-                        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
-                    }
-                } catch (Throwable e) {
-                    processError(ctx, e, dataFrame.stream());
-                }
-            } else {
-                // 非流式调用，等到 endStream 再响应
-                if (dataFrame.isEndStream()) {
-                    try {
-                        GrpcResponse response = grpcDispatcher.execute(grpcRequest);
-                        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(dataFrame.stream()));
-                        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(dataFrame.stream()));
-                        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(dataFrame.stream()));
-                    } catch (Throwable e) {
-                        processError(ctx, e, dataFrame.stream());
-                    }
-                }
+            try {
+                grpcExecutorFactory.getExecutor(grpcRequest.getGrpcType()).execute(grpcRequest, dataFrame, ctx);
+            } catch (Throwable e) {
+                processError(ctx, e, dataFrame.stream());
             }
-        });
-    }
+    });
+}
 
-    private void handleResetStream(Http2ResetFrame resetFrame, ChannelHandlerContext ctx) {
-        int id = resetFrame.stream().id();
-        System.out.println("handleResetStream");
-        dataBuffer.remove(id);
-    }
+private void handleResetStream(Http2ResetFrame resetFrame, ChannelHandlerContext ctx) {
+    int id = resetFrame.stream().id();
+    System.out.println("handleResetStream");
+    dataBuffer.remove(id);
+}
 
-    private void processError(ChannelHandlerContext ctx, Throwable e, Http2FrameStream stream) {
-        GrpcResponse response = new GrpcResponse();
-        ArthasGrpc.ErrorRes.Builder builder = ArthasGrpc.ErrorRes.newBuilder();
-        ArthasGrpc.ErrorRes errorRes = builder.setErrorMsg(e.getMessage()).build();
-        response.setClazz(ArthasGrpc.ErrorRes.class);
-        response.writeResponseData(errorRes);
-        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(stream));
-        ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(stream));
-        ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(stream));
-    }
+private void processError(ChannelHandlerContext ctx, Throwable e, Http2FrameStream stream) {
+    GrpcResponse response = new GrpcResponse();
+    ArthasGrpc.ErrorRes.Builder builder = ArthasGrpc.ErrorRes.newBuilder();
+    ArthasGrpc.ErrorRes errorRes = builder.setErrorMsg(e.getMessage()).build();
+    response.setClazz(ArthasGrpc.ErrorRes.class);
+    response.writeResponseData(errorRes);
+    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(stream));
+    ctx.writeAndFlush(new DefaultHttp2DataFrame(response.getResponseData()).stream(stream));
+    ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndStreamHeader(), true).stream(stream));
+}
 }

@@ -3,6 +3,7 @@ package com.taobao.arthas.grpc.server.service.impl;
 import arthas.grpc.unittest.ArthasUnittest;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
 import com.taobao.arthas.grpc.server.service.ArthasSampleService;
 
 /**
@@ -27,7 +28,7 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     }
 
     @Override
-    @GrpcMethod(value = "watch", stream = true)
+    @GrpcMethod(value = "watch", grpcType = GrpcCallTypeEnum.BI_STREAM)
     public ArthasUnittest.ArthasUnittestResponse watch(ArthasUnittest.ArthasUnittestRequest command) {
         ArthasUnittest.ArthasUnittestResponse.Builder builder = ArthasUnittest.ArthasUnittestResponse.newBuilder();
         builder.setMessage(command.getMessage());

@@ -1,5 +1,6 @@
 package com.taobao.arthas.grpc.server.handler;
 
+import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http2.Http2Headers;
@@ -61,6 +62,11 @@ public class GrpcRequest {
      * http2 headers
      */
     private Http2Headers headers;
+
+    /**
+     * grpc 调用类型
+     */
+    private GrpcCallTypeEnum grpcType;
 
 
     public GrpcRequest(Integer streamId, String path, String method) {
@@ -171,5 +177,13 @@ public class GrpcRequest {
 
     public void setHeaders(Http2Headers headers) {
         this.headers = headers;
+    }
+
+    public GrpcCallTypeEnum getGrpcType() {
+        return grpcType;
+    }
+
+    public void setGrpcType(GrpcCallTypeEnum grpcType) {
+        this.grpcType = grpcType;
     }
 }

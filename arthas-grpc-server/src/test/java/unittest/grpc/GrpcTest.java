@@ -151,12 +151,12 @@ public class GrpcTest {
 
     private void addSum(int id, int num) {
         ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setId(id).setNum(num).build();
-        ArthasUnittest.ArthasUnittestResponse res = blockingStub.addSum(request);
+        ArthasUnittest.ArthasUnittestResponse res = blockingStub.unaryAddSum(request);
     }
 
     private int getSum(int id) {
         ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setId(id).build();
-        ArthasUnittest.ArthasUnittestResponse res = blockingStub.getSum(request);
+        ArthasUnittest.ArthasUnittestResponse res = blockingStub.unaryGetSum(request);
         return res.getNum();
     }
 }

@@ -3,6 +3,7 @@ package unittest.grpc.service.impl;
 import arthas.grpc.unittest.ArthasUnittest;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
 import unittest.grpc.service.ArthasSampleService;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +33,7 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     }
 
     @Override
-    @GrpcMethod(value = "watch", stream = true)
+    @GrpcMethod(value = "watch", grpcType = GrpcCallTypeEnum.BI_STREAM)
     public ArthasUnittest.ArthasUnittestResponse watch(ArthasUnittest.ArthasUnittestRequest command) {
         ArthasUnittest.ArthasUnittestResponse.Builder builder = ArthasUnittest.ArthasUnittestResponse.newBuilder();
         builder.setMessage(command.getMessage());
@@ -40,8 +41,8 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     }
 
     @Override
-    @GrpcMethod(value = "addSum")
-    public ArthasUnittest.ArthasUnittestResponse addSum(ArthasUnittest.ArthasUnittestRequest command) {
+    @GrpcMethod(value = "unaryAddSum")
+    public ArthasUnittest.ArthasUnittestResponse unaryAddSum(ArthasUnittest.ArthasUnittestRequest command) {
         ArthasUnittest.ArthasUnittestResponse.Builder builder = ArthasUnittest.ArthasUnittestResponse.newBuilder();
         builder.setMessage(command.getMessage());
         map.merge(command.getId(), command.getNum(), Integer::sum);
@@ -49,8 +50,8 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     }
 
     @Override
-    @GrpcMethod(value = "getSum")
-    public ArthasUnittest.ArthasUnittestResponse getSum(ArthasUnittest.ArthasUnittestRequest command) {
+    @GrpcMethod(value = "unaryGetSum")
+    public ArthasUnittest.ArthasUnittestResponse unaryGetSum(ArthasUnittest.ArthasUnittestRequest command) {
         ArthasUnittest.ArthasUnittestResponse.Builder builder = ArthasUnittest.ArthasUnittestResponse.newBuilder();
         builder.setMessage(command.getMessage());
         Integer sum = map.getOrDefault(command.getId(), 0);
