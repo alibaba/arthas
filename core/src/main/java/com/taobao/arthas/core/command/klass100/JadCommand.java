@@ -2,13 +2,13 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 import com.taobao.arthas.common.Pair;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.ClassVO;
-import com.taobao.arthas.core.command.model.ClassLoaderVO;
-import com.taobao.arthas.core.command.model.JadModel;
-import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.command.monitor200.LineHelper;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -65,6 +65,11 @@ public class JadCommand extends AnnotatedCommand {
      */
     private boolean sourceOnly = false;
 
+    /**
+     * 是否展示用于line命令的渲染视图（LineCode信息）
+     */
+    private boolean lineCode = false;
+
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
     public void setClassPattern(String classPattern) {
@@ -119,6 +124,12 @@ public class JadCommand extends AnnotatedCommand {
     @Description("Sets the destination directory for dumped class files required by cfr decompiler")
     public void setDirectory(String directory) {
         this.directory = directory;
+    }
+
+    @Option(longName = "lineCode", flag = true)
+    @Description("Output the lineCode list, default value false")
+    public void setLineCode(boolean lineCode) {
+        this.lineCode = lineCode;
     }
 
     @Override
@@ -208,6 +219,17 @@ public class JadCommand extends AnnotatedCommand {
                 jadModel.setLocation(ClassUtils.getCodeSource(c.getProtectionDomain().getCodeSource()));
             }
             process.appendResult(jadModel);
+
+            //追加line命令用到的LineCode视图
+            if (lineCode){
+                ClassNode classNode = AsmUtils.toClassNode(com.taobao.arthas.common.FileUtils.readFileToByteArray(classFile));
+                for (MethodNode methodNode : classNode.methods) {
+                    if (methodNode.name.equals(methodName)){
+                        process.appendResult(new EchoModel(LineHelper.renderMethodLineCodeView(methodNode)));
+                    }
+                }
+            }
+
             affect.rCnt(classFiles.keySet().size());
             return ExitStatus.success();
         } catch (Throwable t) {

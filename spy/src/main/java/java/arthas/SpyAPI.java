@@ -81,6 +81,34 @@ public class SpyAPI {
         spyInstance.atInvokeException(clazz, invokeInfo, target, throwable);
     }
 
+    /**
+     * 使用 LineCode 进行观测的入口
+     * 至于为何需要分成 atLineCode 和 atLineNumber ，参见 {@link com.taobao.arthas.core.advisor.SpyInterceptors.SpyLineInterceptor} 的类注释
+     * @param lineCode 一个生成的特殊的行标识，可以理解为一种特殊的自己生成的行号
+     */
+    public static void atLineCode(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                          String lineCode, Object[] vars, String[] varNames) {
+        try{
+            spyInstance.atLine(clazz, methodInfo, target, args, lineCode, vars, varNames);
+        }catch (Throwable t){
+            //ignore 通常情况下不会抛出到外层,但是会有一些新旧版本混用可能会导致报错（先启动了旧版本，再启动新版本）,这里做一下保护
+        }
+    }
+
+    /**
+     * 使用 LineNumber 进行观测的入口
+     * 至于为何需要分成 atLineCode 和 atLineNumber ，参见 {@link com.taobao.arthas.core.advisor.SpyInterceptors.SpyLineInterceptor} 的类注释
+     * @param lineNumber 行号
+     */
+    public static void atLineNumber(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                          String lineNumber, Object[] vars, String[] varNames) {
+        try{
+            spyInstance.atLine(clazz, methodInfo, target, args, lineNumber, vars, varNames);
+        }catch (Throwable t){
+            //ignore 通常情况下不会抛出到外层,但是会有一些新旧版本混用可能会导致报错（先启动了旧版本，再启动新版本）,这里做一下保护
+        }
+    }
+
     public static abstract class AbstractSpy {
         public abstract void atEnter(Class<?> clazz, String methodInfo, Object target,
                 Object[] args);
@@ -96,6 +124,13 @@ public class SpyAPI {
         public abstract void atAfterInvoke(Class<?> clazz, String invokeInfo, Object target);
 
         public abstract void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable);
+
+        /**
+         * 在某行进行观测
+         * @param line 行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+         */
+        public abstract void atLine(Class<?> clazz, String methodInfo, Object target, Object[] args,
+                                    String line, Object[] vars, String[] varNames);
     }
 
     static class NopSpy extends AbstractSpy {
@@ -126,6 +161,11 @@ public class SpyAPI {
 
         @Override
         public void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable) {
+
+        }
+
+        @Override
+        public void atLine(Class<?> clazz, String methodInfo, Object target, Object[] args, String line, Object[] vars, String[] varNames) {
 
         }
 

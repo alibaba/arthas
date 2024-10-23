@@ -1,14 +1,16 @@
 package com.taobao.arthas.core.advisor;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.monitor200.LineHelper;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.StringUtils;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 
@@ -105,6 +107,38 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
      */
     public abstract void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
             Object[] args, Throwable throwable) throws Throwable;
+
+
+    /**
+     * 行观测的监听回调方法
+     * line 命令中使用，查看本地变量等
+     *
+     * @param clazz      类
+     * @param methodName 方法名
+     * @param methodDesc 方法描述
+     * @param target     目标类实例，若目标为静态方法,则为null
+     * @param args       参数列表
+     * @param line       行标识，可能是行号(LineNumber)，也可能是行的特殊标号(LineCode)
+     * @param vars       本地变量数组
+     * @param varNames   本地变量名数组
+     * @throws Throwable 通知过程出错
+     */
+    @Override
+    public void atLine(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args, String line, Object[] vars, String[] varNames) throws Throwable {
+        Map<String, Object> varMap = LineHelper.buildVarMap(vars, varNames);
+        Advice advice = Advice.newForLine(clazz.getClassLoader(), clazz, new ArthasMethod(clazz, methodName, methodDesc), target, args, varMap);
+        atLine(advice, line);
+    }
+
+
+    /**
+     * line命令中使用，在行间观测
+     * 主要用于查看本地变量
+     */
+    public void atLine(Advice advice, String line) throws Throwable {
+        //doing nothing by default
+
+    }
 
     /**
      * 判断条件是否满足，满足的情况下需要输出结果
