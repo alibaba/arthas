@@ -40,6 +40,22 @@ export default defineConfig(({ mode }) => {
         changeOrigin: true,
       },
     };
+  } else if (mode === "native-agent") {
+    outDir = path.resolve(__dirname, `dist/native-agent`);
+    root = "./all/native-agent";
+    base = "./"
+    input = {
+      nativeAgent: path.resolve(__dirname, "all/native-agent/index.html"),
+      agents: path.resolve(__dirname, "all/native-agent/agents.html"),
+      processes: path.resolve(__dirname, "all/native-agent/processes.html"),
+      console: path.resolve(__dirname, "all/native-agent/console.html")
+    };
+    proxy = {
+      "/api": {
+        target: `http://${proxyTarget}`,
+        changeOrigin: true,
+      },
+    };
   }
 
   return {

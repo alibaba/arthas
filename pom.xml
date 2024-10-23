@@ -76,6 +76,10 @@
         <module>site</module>
         <module>packaging</module>
         <module>arthas-grpc-web-proxy</module>
+        <module>cluster-management/native-agent</module>
+        <module>cluster-management/native-agent-management-web</module>
+        <module>cluster-management/native-agent-proxy</module>
+        <module>cluster-management/native-agent-common</module>
     </modules>
 
     <properties>
