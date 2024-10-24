@@ -62,6 +62,12 @@
             <version>1.5.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <!--   测试用    -->
         <dependency>
@@ -90,6 +96,7 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>

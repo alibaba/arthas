@@ -87,6 +87,7 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
             try {
                 grpcExecutorFactory.getExecutor(grpcRequest.getGrpcType()).execute(grpcRequest, dataFrame, ctx);
             } catch (Throwable e) {
+                logger.error("handleGrpcData error", e);
                 processError(ctx, e, dataFrame.stream());
             }
         });

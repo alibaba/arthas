@@ -7,9 +7,7 @@ package com.taobao.arthas.grpc.server.handler;
  */
 public interface StreamObserver<V>  {
 
-    void onNext(V value);
-
-    void onError(Throwable t);
+    void onNext(V req);
 
     void onCompleted();
 }

@@ -1,6 +1,11 @@
 package unittest.grpc.service;
 
 import arthas.grpc.unittest.ArthasUnittest;
+import arthas.grpc.unittest.ArthasUnittest.ArthasUnittestRequest;
+import arthas.grpc.unittest.ArthasUnittest.ArthasUnittestResponse;
+import com.taobao.arthas.grpc.server.handler.GrpcRequest;
+import com.taobao.arthas.grpc.server.handler.GrpcResponse;
+import com.taobao.arthas.grpc.server.handler.StreamObserver;
 
 /**
  * @author: FengYe
@@ -8,8 +13,13 @@ import arthas.grpc.unittest.ArthasUnittest;
  * @description: ArthasSampleService
  */
 public interface ArthasSampleService {
-    ArthasUnittest.ArthasUnittestResponse trace(ArthasUnittest.ArthasUnittestRequest command);
-    ArthasUnittest.ArthasUnittestResponse watch(ArthasUnittest.ArthasUnittestRequest command);
-    ArthasUnittest.ArthasUnittestResponse unaryAddSum(ArthasUnittest.ArthasUnittestRequest command);
-    ArthasUnittest.ArthasUnittestResponse unaryGetSum(ArthasUnittest.ArthasUnittestRequest command);
+    ArthasUnittestResponse trace(ArthasUnittestRequest command);
+
+    ArthasUnittestResponse watch(ArthasUnittestRequest command);
+
+    ArthasUnittestResponse unaryAddSum(ArthasUnittestRequest command);
+
+    ArthasUnittestResponse unaryGetSum(ArthasUnittestRequest command);
+
+    StreamObserver<GrpcRequest<ArthasUnittestRequest>> clientStreamSum(StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer);
 }

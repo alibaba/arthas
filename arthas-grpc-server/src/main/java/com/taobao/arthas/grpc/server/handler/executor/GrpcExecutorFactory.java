@@ -3,7 +3,7 @@ package com.taobao.arthas.grpc.server.handler.executor;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
-import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
 
 import java.lang.invoke.MethodHandles;
@@ -23,14 +23,14 @@ public class GrpcExecutorFactory {
 
     public static final String DEFAULT_GRPC_EXECUTOR_PACKAGE_NAME = "com.taobao.arthas.grpc.server.handler.executor";
 
-    private final Map<GrpcCallTypeEnum, GrpcExecutor> map = new HashMap<>();
+    private final Map<GrpcInvokeTypeEnum, GrpcExecutor> map = new HashMap<>();
 
     public void loadExecutor(GrpcDispatcher dispatcher) {
         List<Class<?>> classes = ReflectUtil.findClasses(DEFAULT_GRPC_EXECUTOR_PACKAGE_NAME);
         for (Class<?> clazz : classes) {
             if (GrpcExecutor.class.isAssignableFrom(clazz)) {
                 try {
-                    if (AbstractGrpcExecutor.class.equals(clazz)) {
+                    if (AbstractGrpcExecutor.class.equals(clazz) || GrpcExecutor.class.equals(clazz)) {
                         continue;
                     }
                     if (AbstractGrpcExecutor.class.isAssignableFrom(clazz)) {
@@ -49,7 +49,7 @@ public class GrpcExecutorFactory {
         }
     }
 
-    public GrpcExecutor getExecutor(GrpcCallTypeEnum grpcType) {
+    public GrpcExecutor getExecutor(GrpcInvokeTypeEnum grpcType) {
         return map.get(grpcType);
     }
 }

@@ -2,7 +2,7 @@ package com.taobao.arthas.grpc.server.handler.executor;
 
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
 import com.taobao.arthas.grpc.server.handler.GrpcRequest;
-import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http2.Http2DataFrame;
 
@@ -18,8 +18,8 @@ public class ServerStreamExecutor extends AbstractGrpcExecutor {
     }
 
     @Override
-    public GrpcCallTypeEnum supportGrpcType() {
-        return GrpcCallTypeEnum.SERVER_STREAM;
+    public GrpcInvokeTypeEnum supportGrpcType() {
+        return GrpcInvokeTypeEnum.SERVER_STREAM;
     }
 
     @Override

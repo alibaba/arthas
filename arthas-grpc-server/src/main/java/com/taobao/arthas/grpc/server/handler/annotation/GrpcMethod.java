@@ -1,6 +1,6 @@
 package com.taobao.arthas.grpc.server.handler.annotation;
 
-import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,5 +19,5 @@ public @interface GrpcMethod {
 
     boolean stream() default false;
 
-    GrpcCallTypeEnum grpcType() default GrpcCallTypeEnum.UNARY;
+    GrpcInvokeTypeEnum grpcType() default GrpcInvokeTypeEnum.UNARY;
 }

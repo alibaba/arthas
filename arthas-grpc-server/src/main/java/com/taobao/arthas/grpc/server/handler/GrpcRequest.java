@@ -1,6 +1,6 @@
 package com.taobao.arthas.grpc.server.handler;
 
-import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http2.Http2Headers;
@@ -16,7 +16,7 @@ import java.util.zip.GZIPInputStream;
  * @date: 2024/9/4 23:07
  * @description: GrpcRequest grpc 请求体
  */
-public class GrpcRequest {
+public class GrpcRequest<T> {
 
     /**
      * 请求对应的 streamId
@@ -66,7 +66,7 @@ public class GrpcRequest {
     /**
      * grpc 调用类型
      */
-    private GrpcCallTypeEnum grpcType;
+    private GrpcInvokeTypeEnum grpcType;
 
 
     public GrpcRequest(Integer streamId, String path, String method) {
@@ -93,7 +93,7 @@ public class GrpcRequest {
      *
      * @return
      */
-    public byte[] readData() {
+    public synchronized byte[] readData() {
         if (byteData.readableBytes() == 0) {
             return null;
         }
@@ -129,6 +129,10 @@ public class GrpcRequest {
         } else {
             return compressedData;
         }
+    }
+
+    public String getGrpcMethodKey() {
+        return service + "." + method;
     }
 
     public Integer getStreamId() {
@@ -179,11 +183,11 @@ public class GrpcRequest {
         this.headers = headers;
     }
 
-    public GrpcCallTypeEnum getGrpcType() {
+    public GrpcInvokeTypeEnum getGrpcType() {
         return grpcType;
     }
 
-    public void setGrpcType(GrpcCallTypeEnum grpcType) {
+    public void setGrpcType(GrpcInvokeTypeEnum grpcType) {
         this.grpcType = grpcType;
     }
 }

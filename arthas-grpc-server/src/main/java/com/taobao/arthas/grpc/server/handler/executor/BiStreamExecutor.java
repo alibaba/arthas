@@ -3,7 +3,7 @@ package com.taobao.arthas.grpc.server.handler.executor;
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
 import com.taobao.arthas.grpc.server.handler.GrpcRequest;
 import com.taobao.arthas.grpc.server.handler.GrpcResponse;
-import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http2.DefaultHttp2DataFrame;
 import io.netty.handler.codec.http2.DefaultHttp2HeadersFrame;
@@ -21,8 +21,8 @@ public class BiStreamExecutor extends AbstractGrpcExecutor {
     }
 
     @Override
-    public GrpcCallTypeEnum supportGrpcType() {
-        return GrpcCallTypeEnum.BI_STREAM;
+    public GrpcInvokeTypeEnum supportGrpcType() {
+        return GrpcInvokeTypeEnum.BI_STREAM;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BiStreamExecutor extends AbstractGrpcExecutor {
         GrpcResponse response = new GrpcResponse();
         byte[] bytes = request.readData();
         while (bytes != null) {
-            response = dispatcher.execute(request.getService(), request.getMethod(), bytes);
+            response = dispatcher.doUnaryExecute(request.getService(), request.getMethod(), bytes);
 
             // 针对第一个响应发送 header
             if (request.isStreamFirstData()) {

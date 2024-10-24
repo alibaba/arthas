@@ -15,7 +15,7 @@ import java.util.Map;
  * @date: 2024/9/5 02:05
  * @description: GrpcResponse
  */
-public class GrpcResponse {
+public class GrpcResponse<T> {
 
     private Map<String, String> headers;
 
@@ -53,6 +53,10 @@ public class GrpcResponse {
     }
 
     public Http2Headers getEndStreamHeader() {
+        return new DefaultHttp2Headers().set("grpc-status", "0");
+    }
+
+    public static Http2Headers getDefaultEndStreamHeader() {
         return new DefaultHttp2Headers().set("grpc-status", "0");
     }
 

@@ -1,7 +1,7 @@
 package com.taobao.arthas.grpc.server.handler.executor;
 
 import com.taobao.arthas.grpc.server.handler.GrpcRequest;
-import com.taobao.arthas.grpc.server.handler.constant.GrpcCallTypeEnum;
+import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http2.Http2DataFrame;
 
@@ -11,7 +11,7 @@ import io.netty.handler.codec.http2.Http2DataFrame;
  * @description: GrpcProcessor
  */
 public interface GrpcExecutor {
-    GrpcCallTypeEnum supportGrpcType();
+    GrpcInvokeTypeEnum supportGrpcType();
 
     void execute(GrpcRequest request, Http2DataFrame frame, ChannelHandlerContext context) throws Throwable;
 }
