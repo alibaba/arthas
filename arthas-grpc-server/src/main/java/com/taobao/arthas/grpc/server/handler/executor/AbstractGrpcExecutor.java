@@ -1,6 +1,10 @@
 package com.taobao.arthas.grpc.server.handler.executor;
 
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
+import com.taobao.arthas.grpc.server.handler.GrpcRequest;
+import com.taobao.arthas.grpc.server.handler.StreamObserver;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author: FengYe
@@ -9,6 +13,8 @@ import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
  */
 public abstract class AbstractGrpcExecutor implements GrpcExecutor{
     protected GrpcDispatcher dispatcher;
+
+    protected ConcurrentHashMap<Integer, StreamObserver<GrpcRequest>> streamObserverMap = new ConcurrentHashMap<>();
 
     public AbstractGrpcExecutor(GrpcDispatcher dispatcher) {
         this.dispatcher = dispatcher;

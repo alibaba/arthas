@@ -1,6 +1,5 @@
 package unittest.grpc.service.impl;
 
-import arthas.grpc.unittest.ArthasUnittest;
 import arthas.grpc.unittest.ArthasUnittest.ArthasUnittestRequest;
 import arthas.grpc.unittest.ArthasUnittest.ArthasUnittestResponse;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -10,13 +9,8 @@ import com.taobao.arthas.grpc.server.handler.StreamObserver;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
 import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
-import com.taobao.arthas.grpc.server.utils.ByteUtil;
-import io.netty.handler.codec.http2.DefaultHttp2DataFrame;
-import io.netty.handler.codec.http2.DefaultHttp2HeadersFrame;
-import org.junit.platform.commons.util.CollectionUtils;
-import unittest.grpc.service.ArthasSampleService;
+import unittest.grpc.service.ArthasUnittestService;
 
-import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,11 +20,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @description: ArthasSampleServiceImpl
  */
 @GrpcService("arthas.grpc.unittest.ArthasUnittestService")
-public class ArthasSampleServiceImpl implements ArthasSampleService {
+public class ArthasUnittestServiceImpl implements ArthasUnittestService {
 
-    private AtomicInteger sum = new AtomicInteger(0);
+    private AtomicInteger atomicInteger = new AtomicInteger();
 
-    private AtomicInteger num = new AtomicInteger(0);
+//    private AtomicInteger sum = new AtomicInteger(0);
 
     private ConcurrentHashMap<Integer, Integer> map = new ConcurrentHashMap<>();
 
@@ -78,6 +72,8 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
     @GrpcMethod(value = "clientStreamSum", grpcType = GrpcInvokeTypeEnum.CLIENT_STREAM)
     public StreamObserver<GrpcRequest<ArthasUnittestRequest>> clientStreamSum(StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer) {
         return new StreamObserver<GrpcRequest<ArthasUnittestRequest>>() {
+            AtomicInteger sum = new AtomicInteger(0);
+
             @Override
             public void onNext(GrpcRequest<ArthasUnittestRequest> req) {
                 try {
@@ -86,7 +82,7 @@ public class ArthasSampleServiceImpl implements ArthasSampleService {
                         ArthasUnittestRequest request = ArthasUnittestRequest.parseFrom(bytes);
                         sum.addAndGet(request.getNum());
                         bytes = req.readData();
-//                        System.out.println(num.addAndGet(1));
+//                        System.out.println(atomicInteger.addAndGet(1));
                     }
                 } catch (InvalidProtocolBufferException e) {
                     throw new RuntimeException(e);

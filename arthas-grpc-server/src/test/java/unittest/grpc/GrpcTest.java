@@ -133,7 +133,7 @@ public class GrpcTest {
                 .build();
 
         ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
             threadPool.submit(() -> {
                 AtomicInteger sum = new AtomicInteger(0);
                 CountDownLatch latch = new CountDownLatch(1);

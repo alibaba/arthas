@@ -31,19 +31,27 @@ public class ClientStreamExecutor extends AbstractGrpcExecutor {
 
     @Override
     public void execute(GrpcRequest request, Http2DataFrame frame, ChannelHandlerContext context) throws Throwable {
-        StreamObserver<GrpcResponse> responseObserver = new StreamObserver<GrpcResponse>() {
-            @Override
-            public void onNext(GrpcResponse res) {
-                context.writeAndFlush(new DefaultHttp2HeadersFrame(res.getEndHeader()).stream(frame.stream()));
-                context.writeAndFlush(new DefaultHttp2DataFrame(res.getResponseData()).stream(frame.stream()));
-            }
+        Integer streamId = request.getStreamId();
 
-            @Override
-            public void onCompleted() {
-                context.writeAndFlush(new DefaultHttp2HeadersFrame(GrpcResponse.getDefaultEndStreamHeader(), true).stream(frame.stream()));
+        StreamObserver<GrpcRequest> requestObserver = streamObserverMap.computeIfAbsent(streamId,id->{
+            StreamObserver<GrpcResponse> responseObserver = new StreamObserver<GrpcResponse>() {
+                @Override
+                public void onNext(GrpcResponse res) {
+                    context.writeAndFlush(new DefaultHttp2HeadersFrame(res.getEndHeader()).stream(frame.stream()));
+                    context.writeAndFlush(new DefaultHttp2DataFrame(res.getResponseData()).stream(frame.stream()));
+                }
+
+                @Override
+                public void onCompleted() {
+                    context.writeAndFlush(new DefaultHttp2HeadersFrame(GrpcResponse.getDefaultEndStreamHeader(), true).stream(frame.stream()));
+                }
+            };
+            try {
+                return dispatcher.clientStreamExecute(request, responseObserver);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
             }
-        };
-        StreamObserver<GrpcRequest> requestObserver = dispatcher.clientStreamExecute(request, responseObserver);
+        });
 
         requestObserver.onNext(request);
         if (frame.isEndStream()) {
