@@ -2,11 +2,14 @@ package com.taobao.arthas.grpc.server.handler;
 
 
 import arthas.grpc.common.ArthasGrpc;
+import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
+import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
 import com.taobao.arthas.grpc.server.utils.ByteUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http2.DefaultHttp2Headers;
 import io.netty.handler.codec.http2.Http2Headers;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +47,14 @@ public class GrpcResponse<T> {
         headers.put("content-type", "application/grpc");
         headers.put("grpc-encoding", "identity");
         headers.put("grpc-accept-encoding", "identity,deflate,gzip");
+    }
+
+    public GrpcResponse() {
+    }
+
+    public GrpcResponse(Method method) {
+        this.service = method.getDeclaringClass().getAnnotation(GrpcService.class).value();
+        this.method = method.getAnnotation(GrpcMethod.class).value();
     }
 
     public Http2Headers getEndHeader() {

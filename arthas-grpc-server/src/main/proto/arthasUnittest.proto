@@ -3,12 +3,12 @@ syntax = "proto3";
 package arthas.grpc.unittest;
 
 service ArthasUnittestService {
-  rpc trace(ArthasUnittestRequest) returns (ArthasUnittestResponse);
-  rpc watch(stream ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
+  rpc unary(ArthasUnittestRequest) returns (ArthasUnittestResponse);
   rpc unaryAddSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
   rpc unaryGetSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
   rpc clientStreamSum(stream ArthasUnittestRequest) returns (ArthasUnittestResponse);
-  rpc serverStreamSum(ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
+  rpc serverStream(ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
+  rpc biStream(stream ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
 }
 
 message ArthasUnittestRequest {

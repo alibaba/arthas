@@ -1,5 +1,6 @@
 package unittest.grpc.service.impl;
 
+import arthas.grpc.unittest.ArthasUnittest;
 import arthas.grpc.unittest.ArthasUnittest.ArthasUnittestRequest;
 import arthas.grpc.unittest.ArthasUnittest.ArthasUnittestResponse;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -22,28 +23,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @GrpcService("arthas.grpc.unittest.ArthasUnittestService")
 public class ArthasUnittestServiceImpl implements ArthasUnittestService {
 
-    private AtomicInteger atomicInteger = new AtomicInteger();
-
-//    private AtomicInteger sum = new AtomicInteger(0);
-
     private ConcurrentHashMap<Integer, Integer> map = new ConcurrentHashMap<>();
 
     @Override
-    @GrpcMethod("trace")
-    public ArthasUnittestResponse trace(ArthasUnittestRequest command) {
-        try {
-            Thread.sleep(5000L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        ArthasUnittestResponse.Builder builder = ArthasUnittestResponse.newBuilder();
-        builder.setMessage(command.getMessage());
-        return builder.build();
-    }
-
-    @Override
-//    @GrpcMethod(value = "watch", grpcType = GrpcInvokeTypeEnum.BI_STREAM)
-    public ArthasUnittestResponse watch(ArthasUnittestRequest command) {
+    @GrpcMethod(value = "unary")
+    public ArthasUnittestResponse unary(ArthasUnittestRequest command) {
         ArthasUnittestResponse.Builder builder = ArthasUnittestResponse.newBuilder();
         builder.setMessage(command.getMessage());
         return builder.build();
@@ -82,7 +66,6 @@ public class ArthasUnittestServiceImpl implements ArthasUnittestService {
                         ArthasUnittestRequest request = ArthasUnittestRequest.parseFrom(bytes);
                         sum.addAndGet(request.getNum());
                         bytes = req.readData();
-//                        System.out.println(atomicInteger.addAndGet(1));
                     }
                 } catch (InvalidProtocolBufferException e) {
                     throw new RuntimeException(e);
@@ -95,11 +78,55 @@ public class ArthasUnittestServiceImpl implements ArthasUnittestService {
                         .setNum(sum.get())
                         .build();
                 GrpcResponse<ArthasUnittestResponse> grpcResponse = new GrpcResponse<>();
-                //todo 待优化
                 grpcResponse.setService("arthas.grpc.unittest.ArthasUnittestService");
                 grpcResponse.setMethod("clientStreamSum");
                 grpcResponse.writeResponseData(response);
                 observer.onNext(grpcResponse);
+                observer.onCompleted();
+            }
+        };
+    }
+
+    @Override
+    @GrpcMethod(value = "serverStream", grpcType = GrpcInvokeTypeEnum.SERVER_STREAM)
+    public void serverStream(ArthasUnittestRequest request, StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer) {
+
+        for (int i = 0; i < 5; i++) {
+            ArthasUnittest.ArthasUnittestResponse response = ArthasUnittest.ArthasUnittestResponse.newBuilder()
+                    .setMessage("Server response " + i + " to " + request.getMessage())
+                    .build();
+            GrpcResponse<ArthasUnittestResponse> grpcResponse = new GrpcResponse<>();
+            grpcResponse.setService("arthas.grpc.unittest.ArthasUnittestService");
+            grpcResponse.setMethod("serverStream");
+            grpcResponse.writeResponseData(response);
+            observer.onNext(grpcResponse);
+        }
+        observer.onCompleted();
+    }
+
+    @Override
+    @GrpcMethod(value = "biStream", grpcType = GrpcInvokeTypeEnum.BI_STREAM)
+    public StreamObserver<GrpcRequest<ArthasUnittestRequest>> biStream(StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer) {
+        return new StreamObserver<GrpcRequest<ArthasUnittestRequest>>() {
+            @Override
+            public void onNext(GrpcRequest<ArthasUnittestRequest> req) {
+                try {
+                    byte[] bytes = req.readData();
+                    while (bytes != null && bytes.length != 0) {
+                        GrpcResponse<ArthasUnittestResponse> grpcResponse = new GrpcResponse<>();
+                        grpcResponse.setService("arthas.grpc.unittest.ArthasUnittestService");
+                        grpcResponse.setMethod("biStream");
+                        grpcResponse.writeResponseData(ArthasUnittestResponse.parseFrom(bytes));
+                        observer.onNext(grpcResponse);
+                        bytes = req.readData();
+                    }
+                } catch (InvalidProtocolBufferException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public void onCompleted() {
                 observer.onCompleted();
             }
         };

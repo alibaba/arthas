@@ -1,6 +1,5 @@
 package com.taobao.arthas.grpc.server.handler.executor;
 
-import arthas.grpc.unittest.ArthasUnittest;
 import com.taobao.arthas.grpc.server.handler.GrpcDispatcher;
 import com.taobao.arthas.grpc.server.handler.GrpcRequest;
 import com.taobao.arthas.grpc.server.handler.GrpcResponse;
@@ -11,7 +10,7 @@ import io.netty.handler.codec.http2.DefaultHttp2DataFrame;
 import io.netty.handler.codec.http2.DefaultHttp2HeadersFrame;
 import io.netty.handler.codec.http2.Http2DataFrame;
 
-import java.util.Observer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: FengYe
@@ -33,11 +32,17 @@ public class ClientStreamExecutor extends AbstractGrpcExecutor {
     public void execute(GrpcRequest request, Http2DataFrame frame, ChannelHandlerContext context) throws Throwable {
         Integer streamId = request.getStreamId();
 
-        StreamObserver<GrpcRequest> requestObserver = streamObserverMap.computeIfAbsent(streamId,id->{
+        StreamObserver<GrpcRequest> requestObserver = requestStreamObserverMap.computeIfAbsent(streamId, id->{
             StreamObserver<GrpcResponse> responseObserver = new StreamObserver<GrpcResponse>() {
+                AtomicBoolean sendHeader = new AtomicBoolean(false);
+
                 @Override
                 public void onNext(GrpcResponse res) {
-                    context.writeAndFlush(new DefaultHttp2HeadersFrame(res.getEndHeader()).stream(frame.stream()));
+                    // 控制流只能响应一次header
+                    if (!sendHeader.get()) {
+                        sendHeader.compareAndSet(false, true);
+                        context.writeAndFlush(new DefaultHttp2HeadersFrame(res.getEndHeader()).stream(frame.stream()));
+                    }
                     context.writeAndFlush(new DefaultHttp2DataFrame(res.getResponseData()).stream(frame.stream()));
                 }
 

@@ -49,10 +49,12 @@ public class GrpcTest {
                 .usePlaintext()
                 .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub blockingStub = ArthasUnittestServiceGrpc.newBlockingStub(channel);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub = ArthasUnittestServiceGrpc.newBlockingStub(channel);
 
         try {
-            trace(blockingStub, "trace");
+            ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage("unaryInvoke").build();
+            ArthasUnittest.ArthasUnittestResponse res = stub.unary(request);
+            System.out.println(res.getMessage());
         } finally {
             channel.shutdownNow();
         }
@@ -108,7 +110,7 @@ public class GrpcTest {
 
             @Override
             public void onCompleted() {
-                System.out.println("Client streaming completed.");
+                System.out.println("testClientStreamSum completed.");
                 latch.countDown();
             }
         });
@@ -127,7 +129,6 @@ public class GrpcTest {
     // 用于测试请求数据隔离性
     @Test
     public void testDataIsolation() throws InterruptedException {
-        //todo 待完善
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
                 .usePlaintext()
                 .build();
@@ -151,7 +152,7 @@ public class GrpcTest {
 
                     @Override
                     public void onCompleted() {
-                        System.out.println("Client streaming completed.");
+                        System.out.println("testDataIsolation completed.");
                         latch.countDown();
                     }
                 });
@@ -179,53 +180,79 @@ public class GrpcTest {
         Thread.sleep(7000L);
     }
 
-    private void trace(ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub, String name) {
-        ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage(name).build();
-        ArthasUnittest.ArthasUnittestResponse res = stub.trace(request);
-        System.out.println(res.getMessage());
-    }
+    @Test
+    public void testServerStream() throws InterruptedException {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+                .usePlaintext()
+                .build();
 
-    private void watch(ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub, String... names) {
-        // 使用 CountDownLatch 来等待所有响应
-        CountDownLatch finishLatch = new CountDownLatch(1);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
 
-        StreamObserver<ArthasUnittest.ArthasUnittestRequest> watch = stub.watch(new StreamObserver<ArthasUnittest.ArthasUnittestResponse>() {
+        ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage("serverStream").build();
+
+        stub.serverStream(request, new StreamObserver<ArthasUnittest.ArthasUnittestResponse>() {
             @Override
             public void onNext(ArthasUnittest.ArthasUnittestResponse value) {
-                System.out.println("watch: " + value.getMessage());
+                System.out.println("testServerStream client receive: " + value.getMessage());
             }
 
             @Override
             public void onError(Throwable t) {
-
             }
 
             @Override
             public void onCompleted() {
-                System.out.println("Finished sending watch.");
+                System.out.println("testServerStream completed");
             }
         });
 
-
         try {
-            for (String name : names) {
-                ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage(name).build();
-                Thread.sleep(1000L);
-                watch.onNext(request);
-            }
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            watch.onCompleted();
-            finishLatch.countDown();
+            channel.shutdown();
+        }
+    }
+
+    // 用于测试双向流
+    @Test
+    public void testBiStream() throws Throwable {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+                .usePlaintext()
+                .build();
+
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
+
+        CountDownLatch latch = new CountDownLatch(1);
+        StreamObserver<ArthasUnittest.ArthasUnittestRequest> biStreamObserver = stub.biStream(new StreamObserver<ArthasUnittest.ArthasUnittestResponse>() {
+            @Override
+            public void onNext(ArthasUnittest.ArthasUnittestResponse response) {
+                System.out.println("testBiStream receive: "+response.getMessage());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                System.err.println("Error: " + t);
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("testBiStream completed.");
+                latch.countDown();
+            }
+        });
+
+        String[] messages = new String[]{"testBiStream1","testBiStream2","testBiStream3"};
+        for (String msg : messages) {
+            ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage(msg).build();
+            biStreamObserver.onNext(request);
         }
 
-        // 等待服务器的响应
-        try {
-            finishLatch.await(); // 等待完成
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Thread.sleep(2000);
+        biStreamObserver.onCompleted();
+        latch.await();
+        channel.shutdown();
     }
 
     private void addSum(ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub, int id, int num) {

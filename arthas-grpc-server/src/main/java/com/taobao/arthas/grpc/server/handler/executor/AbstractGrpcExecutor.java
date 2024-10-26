@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractGrpcExecutor implements GrpcExecutor{
     protected GrpcDispatcher dispatcher;
 
-    protected ConcurrentHashMap<Integer, StreamObserver<GrpcRequest>> streamObserverMap = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Integer, StreamObserver<GrpcRequest>> requestStreamObserverMap = new ConcurrentHashMap<>();
 
     public AbstractGrpcExecutor(GrpcDispatcher dispatcher) {
         this.dispatcher = dispatcher;

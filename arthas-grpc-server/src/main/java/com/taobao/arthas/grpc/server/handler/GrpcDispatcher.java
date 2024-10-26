@@ -7,7 +7,6 @@ import com.taobao.arthas.grpc.server.handler.annotation.GrpcMethod;
 import com.taobao.arthas.grpc.server.handler.annotation.GrpcService;
 import com.taobao.arthas.grpc.server.handler.constant.GrpcInvokeTypeEnum;
 import com.taobao.arthas.grpc.server.utils.ReflectUtil;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -70,9 +69,12 @@ public class GrpcDispatcher {
                             if (GrpcInvokeTypeEnum.UNARY.equals(grpcMethod.grpcType())) {
                                 requestClass = grpcInvoke.type().parameterType(1);
                                 responseClass = grpcInvoke.type().returnType();
-                            } else {
+                            } else if (GrpcInvokeTypeEnum.CLIENT_STREAM.equals(grpcMethod.grpcType()) || GrpcInvokeTypeEnum.BI_STREAM.equals(grpcMethod.grpcType())) {
                                 responseClass = getInnerGenericClass(method.getGenericParameterTypes()[0]);
                                 requestClass = getInnerGenericClass(method.getGenericReturnType());
+                            } else if (GrpcInvokeTypeEnum.SERVER_STREAM.equals(grpcMethod.grpcType())) {
+                                requestClass = getInnerGenericClass(method.getGenericParameterTypes()[0]);
+                                responseClass = getInnerGenericClass(method.getGenericParameterTypes()[1]);
                             }
                             MethodHandle requestParseFrom = lookup.findStatic(requestClass, "parseFrom", MethodType.methodType(requestClass, byte[].class));
                             MethodHandle responseParseFrom = lookup.findStatic(responseClass, "parseFrom", MethodType.methodType(responseClass, byte[].class));
@@ -140,6 +142,17 @@ public class GrpcDispatcher {
         return (StreamObserver<GrpcRequest>) methodHandle.invoke(responseObserver);
     }
 
+    public void serverStreamExecute(GrpcRequest request, StreamObserver<GrpcResponse> responseObserver) throws Throwable {
+        MethodHandle methodHandle = grpcInvokeMap.get(request.getGrpcMethodKey());
+        Object req = requestParseFromMap.get(request.getGrpcMethodKey()).invoke(request.readData());
+        methodHandle.invoke(req, responseObserver);
+    }
+
+    public StreamObserver<GrpcRequest> biStreamExecute(GrpcRequest request, StreamObserver<GrpcResponse> responseObserver) throws Throwable {
+        MethodHandle methodHandle = grpcInvokeMap.get(request.getGrpcMethodKey());
+        return (StreamObserver<GrpcRequest>) methodHandle.invoke(responseObserver);
+    }
+
     /**
      * 获取指定 service method 对应的入参类型
      *
@@ -165,6 +178,9 @@ public class GrpcDispatcher {
     }
 
     public static Class<?> getInnerGenericClass(Type type) {
+        if (type instanceof Class<?>) {
+            return (Class<?>) type;
+        }
         if (type instanceof ParameterizedType) {
             ParameterizedType paramType = (ParameterizedType) type;
             Type[] actualTypeArguments = paramType.getActualTypeArguments();

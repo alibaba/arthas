@@ -14,6 +14,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -102,7 +103,7 @@ public class Http2Handler extends SimpleChannelInboundHandler<Http2Frame> {
     private void processError(ChannelHandlerContext ctx, Throwable e, Http2FrameStream stream) {
         GrpcResponse response = new GrpcResponse();
         ArthasGrpc.ErrorRes.Builder builder = ArthasGrpc.ErrorRes.newBuilder();
-        ArthasGrpc.ErrorRes errorRes = builder.setErrorMsg(e.getMessage()).build();
+        ArthasGrpc.ErrorRes errorRes = builder.setErrorMsg(Optional.ofNullable(e.getMessage()).orElse("")).build();
         response.setClazz(ArthasGrpc.ErrorRes.class);
         response.writeResponseData(errorRes);
         ctx.writeAndFlush(new DefaultHttp2HeadersFrame(response.getEndHeader()).stream(stream));

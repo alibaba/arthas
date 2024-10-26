@@ -12,13 +12,15 @@ import com.taobao.arthas.grpc.server.handler.StreamObserver;
  * @description: ArthasSampleService
  */
 public interface ArthasUnittestService {
-    ArthasUnittestResponse trace(ArthasUnittestRequest command);
-
-    ArthasUnittestResponse watch(ArthasUnittestRequest command);
+    ArthasUnittestResponse unary(ArthasUnittestRequest command);
 
     ArthasUnittestResponse unaryAddSum(ArthasUnittestRequest command);
 
     ArthasUnittestResponse unaryGetSum(ArthasUnittestRequest command);
 
     StreamObserver<GrpcRequest<ArthasUnittestRequest>> clientStreamSum(StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer);
+
+    void serverStream(ArthasUnittestRequest request, StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer);
+
+    StreamObserver<GrpcRequest<ArthasUnittestRequest>> biStream(StreamObserver<GrpcResponse<ArthasUnittestResponse>> observer);
 }
