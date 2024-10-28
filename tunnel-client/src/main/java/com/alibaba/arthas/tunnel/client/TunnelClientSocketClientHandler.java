@@ -120,17 +120,24 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                     String targetUrl = targetUrls.get(0);
                     SimpleHttpResponse simpleHttpResponse = proxyClient.query(targetUrl);
 
-                    ByteBuf byteBuf = Base64
-                            .encode(Unpooled.wrappedBuffer(SimpleHttpResponse.toBytes(simpleHttpResponse)));
-                    String requestData = byteBuf.toString(CharsetUtil.UTF_8);
+                    ByteBuf byteBuf = null;
+                    try{
+                        byteBuf = Base64
+                                .encode(Unpooled.wrappedBuffer(SimpleHttpResponse.toBytes(simpleHttpResponse)));
+                        String requestData = byteBuf.toString(CharsetUtil.UTF_8);
 
-                    QueryStringEncoder queryEncoder = new QueryStringEncoder("");
-                    queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY);
-                    queryEncoder.addParam(URIConstans.PROXY_REQUEST_ID, id);
-                    queryEncoder.addParam(URIConstans.PROXY_RESPONSE_DATA, requestData);
+                        QueryStringEncoder queryEncoder = new QueryStringEncoder("");
+                        queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY);
+                        queryEncoder.addParam(URIConstans.PROXY_REQUEST_ID, id);
+                        queryEncoder.addParam(URIConstans.PROXY_RESPONSE_DATA, requestData);
 
-                    String url = queryEncoder.toString();
-                    ctx.writeAndFlush(new TextWebSocketFrame(url));
+                        String url = queryEncoder.toString();
+                        ctx.writeAndFlush(new TextWebSocketFrame(url));
+                    }finally {
+                        if (byteBuf != null) {
+                            byteBuf.release();
+                        }
+                    }
                 }
             }
 

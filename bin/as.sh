@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2023-04-19
+#    date : 2024-10-17
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.6.8
+ARTHAS_SCRIPT_VERSION=4.0.2
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -436,6 +436,8 @@ Usage:
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
+NOTE: Arthas 4 supports JDK 8+. If you need to diagnose applications running on JDK 6/7, you can use Arthas 3.
+
 Options and Arguments:
  -h,--help                      Print usage
     --target-ip <value>         The target jvm listen ip, default 127.0.0.1
@@ -474,7 +476,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.6.8
+  ./as.sh --use-version 4.0.2
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump

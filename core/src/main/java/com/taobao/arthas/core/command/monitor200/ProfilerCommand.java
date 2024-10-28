@@ -118,6 +118,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     private Integer jstackdepth;
 
     /**
+     * wall clock profiling interval
+     */
+    private Long wall;
+
+    /**
      * profile different threads separately
      */
     private boolean threads;
@@ -229,6 +234,26 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String timeout;
 
+    /**
+     * Features enabled for profiling
+     */
+    private String features;
+
+    /**
+     * Profiling signal to use
+     */
+    private String signal;
+
+    /*
+     * Clock source for sampling timestamps: monotonic or tsc
+     */
+    private String clock;
+
+    /*
+     * Normalize method names by removing unique numerical suffixes from lambda classes.
+     */
+    private boolean norm;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -236,16 +261,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         String profilerSoPath = null;
         if (OSUtils.isMac()) {
             // FAT_BINARY support both x86_64/arm64
-            profilerSoPath = "async-profiler/libasyncProfiler-mac.so";
+            profilerSoPath = "async-profiler/libasyncProfiler-mac.dylib";
         }
         if (OSUtils.isLinux()) {
-            if (OSUtils.isX86_64() && OSUtils.isMuslLibc()) {
-                profilerSoPath = "async-profiler/libasyncProfiler-linux-musl-x64.so";
-            } else if(OSUtils.isX86_64()){
+            if (OSUtils.isX86_64()) {
                 profilerSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
-            } else if (OSUtils.isArm64() && OSUtils.isMuslLibc()) {
-                profilerSoPath = "async-profiler/libasyncProfiler-linux-musl-arm64.so";
-            } else if (OSUtils.isArm64()) {
+            }  else if (OSUtils.isArm64()) {
                 profilerSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
             }
         }
@@ -334,15 +355,46 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "jfrsync")
-    @Description("start Java Flight Recording with the given config along with the profiler")
+    @Description("Start Java Flight Recording with the given config along with the profiler. "
+            + "Accepts a predefined profile name, a path to a .jfc file, or a list of JFR events starting with '+'. ")
     public void setJfrsync(String jfrsync) {
         this.jfrsync = jfrsync;
+    }
+
+    @Option(longName = "wall")
+    @Description("wall clock profiling interval in milliseconds(recommended: 200)")
+    public void setWall(Long wall) {
+        this.wall = wall;
     }
 
     @Option(shortName = "t", longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(shortName = "F", longName = "features")
+    @Description("Features enabled for profiling")
+    public void setFeatures(String features) {
+        this.features = features;
+    }
+
+    @Option(longName = "signal")
+    @Description("Set the profiling signal to use")
+    public void setSignal(String signal) {
+        this.signal = signal;
+    }
+
+    @Option(longName = "clock")
+    @Description("Clock source for sampling timestamps: monotonic or tsc")
+    public void setClock(String clock) {
+        this.clock = clock;
+    }
+
+    @Option(longName = "norm", flag = true)
+    @Description("Normalize method names by removing unique numerical suffixes from lambda classes.")
+    public void setNorm(boolean norm) {
+        this.norm = norm;
     }
 
     @Option(longName = "sched", flag = true)
@@ -576,6 +628,15 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(COMMA);
         }
+        if (this.features != null) {
+            sb.append("features=").append(this.features).append(COMMA);
+        }
+        if (this.signal != null) {
+            sb.append("signal=").append(this.signal).append(COMMA);
+        }
+        if (this.clock != null) {
+            sb.append("clock=").append(this.clock).append(COMMA);
+        }
         if (this.jstackdepth != null) {
             sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
         }
@@ -603,6 +664,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.alluser) {
             sb.append("alluser").append(COMMA);
         }
+        if (this.norm) {
+            sb.append("norm").append(COMMA);
+        }
         if (this.includes != null) {
             for (String include : includes) {
                 sb.append("include=").append(include).append(COMMA);
@@ -623,7 +687,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.end != null) {
             sb.append("end=").append(this.end).append(COMMA);
         }
-
+        if (this.wall != null) {
+            sb.append("wall=").append(this.wall).append(COMMA);
+        }
         if (this.title != null) {
             sb.append("title=").append(this.title).append(COMMA);
         }

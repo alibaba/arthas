@@ -112,12 +112,12 @@ public class Base64Command extends AnnotatedCommand {
         }
 
         InputStream input = null;
+        ByteBuf convertResult = null;
 
         try {
             input = new FileInputStream(f);
             byte[] bytes = IOUtils.getBytes(input);
 
-            ByteBuf convertResult = null;
             if (this.decode) {
                 convertResult = Base64.decode(Unpooled.wrappedBuffer(bytes));
             } else {
@@ -138,6 +138,9 @@ public class Base64Command extends AnnotatedCommand {
             process.end(1, "read file error: " + e.getMessage());
             return;
         } finally {
+            if (convertResult != null) {
+                convertResult.release();
+            }
             IOUtils.close(input);
         }
 

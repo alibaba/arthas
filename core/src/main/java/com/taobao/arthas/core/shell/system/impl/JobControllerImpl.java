@@ -222,8 +222,8 @@ public class JobControllerImpl implements JobController {
                 stdoutHandlerChain.add(new RedirectHandler());
             }
         }
-        ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
-        ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput, resultDistributor);
+        ProcessOutput processOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
+        ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), processOutput, resultDistributor);
         process.setTty(term);
         return process;
     }
