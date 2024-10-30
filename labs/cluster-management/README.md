@@ -1,18 +1,65 @@
 
 ## Arthas Native Agent - 集群管理
- 
-![](images/cluster_management.png)
 
-# 快速开始
+
+
+# 快速开始 - 单体模式(适用快速体验)
+
+![](asserts/cluster_management_single.png)
+## 单体模式启动native-agent-management-web
+native-agent的管理页面
+启动参数
+
+| 参数                   | 必填  | 解释                                  |
+|----------------------|-----|-------------------------------------|
+| port                 | N   | http端口 ，默认3939                      |
+
+example：
+```shell
+java -jar native-agent-management-web.jar 
+```
+
+## 单体模式启动native-agent-proxy
+proxy会向native-agent-management-web注册自己
+
+| 参数                 | 必填  | 解释                                   |
+|--------------------|-----|--------------------------------------|
+| port               | N   | http/ws端口 ，默认2233                    |
+| ip                 | Y   | proxy的ip                             |
+| management-address | Y   | native-agent-manangement-web的地址，用于注册 |
+```shell
+java -jar native-agent-proxy.jar --ip 127.0.0.1 --management-address 127.0.0.1:3939
+```
+
+## 单体模式启动native-agent
+native-agent，启动在需要动态attach的服务器上。同时需要依赖arthas-agent。请把arthas-agent、arthas-core、arthas-spy放在和native-agent同一个目录下。
+
+| 参数            | 必填  | 解释                         |
+|---------------|-----|----------------------------|
+| http-port     | N   | http端口 ，默认2671             |
+| ws-port       | N   | ws端口，默认2672                |
+| ip            | Y   | native-agent的ip            | 
+| proxy-address | Y   | native-agent-proxy的地址，用于注册 |
+```shell
+java -jar native-agent.jar --ip 127.0.0.1 --proxy-address 127.0.0.1 :2233
+```
+
+
+
+
+# 集群模式
+![](asserts/cluster_management.png)
 
 ## 启动native-agent
-native-agent，启动在需要动态attach的服务器上
+native-agent，启动在需要动态attach的服务器上。同时需要依赖arthas-agent。请把arthas-agent、arthas-core、arthas-spy放在和native-agent同一个目录下。
+
 启动参数
 
 | 参数                   | 必填  | 解释                                  |
 |----------------------|-----|-------------------------------------|
 | http-port            | N   | http端口 ，默认2671                      |
 | ws-port              | N   | ws端口，默认2672                         |
+| ip                   | Y   | native-agent的ip地址                   |
 | registration-typ     | Y   | 注册中心类型（目前实现的有etcd和zookeeper,推荐etcd） |
 | registration-address | Y   | 注册中心的地址                             |
 
@@ -57,11 +104,11 @@ java -jar native-agent-management-web.jar  --registration-type etcd --registrati
 
 ## 监控指定JVM
 进入native-agent-server管理页面，点击VIEW JAVA PROCESS INFO 按钮，可以查看到当前服务器上的Java进程
-![](images/native_agent_list.png)
+![](asserts/native_agent_list.png)
 进入到Java进程页后，我们可以点击Monitor按钮，Monitor目标Java进程
-![](images/native_agent_java_process_page.png)
+![](asserts/native_agent_java_process_page.png)
 之后点击MONITOR按钮就可以进入到监控界面了
-![](images/native_agent_moniotr_page.png)
+![](asserts/native_agent_moniotr_page.png)
 
 # 扩展注册中心
 目前实现的有zookeeper和etcd，如果想要扩展注册中心，可以看看下面的实现。下面演示的是native-agent-management-web的扩展，其他也是同样的道理。

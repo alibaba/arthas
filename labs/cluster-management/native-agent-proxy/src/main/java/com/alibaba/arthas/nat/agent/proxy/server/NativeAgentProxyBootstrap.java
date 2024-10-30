@@ -2,6 +2,7 @@ package com.alibaba.arthas.nat.agent.proxy.server;
 
 import com.alibaba.arthas.nat.agent.common.constants.NativeAgentConstants;
 import com.alibaba.arthas.nat.agent.common.utils.WelcomeUtil;
+import com.alibaba.arthas.nat.agent.proxy.discovery.impl.NativeAgentProxyNativeAgentDiscovery;
 import com.alibaba.arthas.nat.agent.proxy.factory.NativeAgentProxyRegistryFactory;
 import com.alibaba.arthas.nat.agent.proxy.registry.NativeAgentProxyRegistry;
 import com.alibaba.arthas.nat.agent.proxy.server.handler.RequestHandler;
@@ -31,7 +32,8 @@ import java.util.Arrays;
  */
 @Name("arthas-native-agent-proxy")
 @Summary("Bootstrap Arthas Native Agent Proxy")
-@Description("EXAMPLES:\n" + "java -jar native-agent-proxy.jar --ip 151.159.27.114 --management-registration-type etcd --management-registration-address 161.169.97.114:2379 --agent-registration-type etcd --agent-registration-address 161.169.97.114:2379\n"
+@Description("EXAMPLES:\n" + "java -jar native-agent-proxy.jar --ip 127.0.0.1 --management-address 127.0.0.1:3939\n"
+        + "java -jar native-agent-proxy.jar --ip 151.159.27.114 --management-registration-type etcd --management-registration-address 161.169.97.114:2379 --agent-registration-type etcd --agent-registration-address 161.169.97.114:2379\n"
         + "java -jar native-agent-proxy.jar --ip 151.159.27.114 --port 2233 --management-registration-type etcd --management-registration-address 161.169.97.114:2379 --agent-registration-type etcd --agent-registration-address 161.169.97.114:2379\n"
         + "https://arthas.aliyun.com/doc\n")
 public class NativeAgentProxyBootstrap {
@@ -46,6 +48,7 @@ public class NativeAgentProxyBootstrap {
     public static String agentRegistrationType;
     public static String managementRegistrationAddress;
     public static String agentRegistrationAddress;
+    private static String managementAddress;
 
     @Option(longName = "port")
     @Description("native agent proxy http/ws port, default 2233")
@@ -59,28 +62,34 @@ public class NativeAgentProxyBootstrap {
         this.ip = ip;
     }
 
-    @Option(longName = "management-registration-type", required = true)
+    @Option(longName = "management-registration-type")
     @Description("management registration type")
     public void setManagementRegistrationType(String managementRegistrationType) {
         this.managementRegistrationType = managementRegistrationType;
     }
 
-    @Option(longName = "agent-registration-type", required = true)
+    @Option(longName = "agent-registration-type")
     @Description("agent registration type")
     public void setAgentRegistrationType(String agentRegistrationType) {
         this.agentRegistrationType = agentRegistrationType;
     }
 
-    @Option(longName = "management-registration-address", required = true)
+    @Option(longName = "management-registration-address")
     @Description("management registration address")
     public void setManagementRegistrationAddress(String managementRegistrationAddress) {
         this.managementRegistrationAddress = managementRegistrationAddress;
     }
 
-    @Option(longName = "agent-registration-address", required = true)
+    @Option(longName = "agent-registration-address")
     @Description("agent registration address")
     public void setAgentRegistrationAddress(String agentRegistrationAddress) {
         this.agentRegistrationAddress = agentRegistrationAddress;
+    }
+
+    @Option(longName = "management-address")
+    @Description("native agent management address")
+    public void setManagementAddress(String managementAddress) {
+        this.managementAddress = managementAddress;
     }
 
     public static void main(String[] args) {
@@ -102,6 +111,19 @@ public class NativeAgentProxyBootstrap {
 
 
         // Register native agent proxy
+        logger.info("check register params ...");
+        boolean checkRegisterParamsRes = checkRegisterParams(nativeAgentProxyBootstrap);
+        if (!checkRegisterParamsRes) {
+            throw new RuntimeException("Failed to verify the registration parameters. " +
+                    "Please read the documentation and check the parameters you entered");
+        }
+        if (nativeAgentProxyBootstrap.getManagementAddress() != null) {
+            nativeAgentProxyBootstrap.setAgentRegistrationType("native-agent-proxy");
+            nativeAgentProxyBootstrap.setManagementRegistrationType("native-agent-management");
+            nativeAgentProxyBootstrap.setAgentRegistrationAddress("127.0.0.1:" + nativeAgentProxyBootstrap.getPortOrDefault());
+            nativeAgentProxyBootstrap.setManagementRegistrationAddress(nativeAgentProxyBootstrap.getManagementAddress());
+            NativeAgentProxyNativeAgentDiscovery.nativeAgentCheckScheduled();
+        }
         try {
             logger.info("register native agent proxy...");
             NativeAgentProxyRegistryFactory registerFactory = NativeAgentProxyRegistryFactory.getNativeAgentProxyRegistryFactory();
@@ -150,6 +172,27 @@ public class NativeAgentProxyBootstrap {
 
     }
 
+    private static boolean checkRegisterParams(NativeAgentProxyBootstrap nativeAgentProxyBootstrap) {
+        String managementRegistrationType = nativeAgentProxyBootstrap.getManagementRegistrationType();
+        String managementRegistrationAddress = nativeAgentProxyBootstrap.getManagementRegistrationAddress();
+        String agentRegistrationType = nativeAgentProxyBootstrap.getAgentRegistrationType();
+        String agentRegistrationAddress = nativeAgentProxyBootstrap.getAgentRegistrationAddress();
+        String managementAddress = nativeAgentProxyBootstrap.getManagementAddress();
+        if (managementAddress != null
+                && (managementRegistrationType == null && managementRegistrationAddress == null
+                && agentRegistrationType == null && agentRegistrationAddress ==null)) {
+            return true;
+        }
+
+        if (managementAddress == null
+                && (managementRegistrationType != null && managementRegistrationAddress != null
+                && agentRegistrationType != null && agentRegistrationAddress != null)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public int getPortOrDefault() {
         if (this.port == null) {
             return DEFAULT_NATIVE_AGENT_PROXY_PORT;
@@ -172,6 +215,10 @@ public class NativeAgentProxyBootstrap {
 
     public String getAgentRegistrationAddress() {
         return agentRegistrationAddress;
+    }
+
+    public String getManagementAddress() {
+        return managementAddress;
     }
 
     public String getIp() {
