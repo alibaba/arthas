@@ -156,7 +156,7 @@ public class GlobalOptions {
      */
     @Option(level = 1,
             name = QLEXPRESS_CONFIG,
-            summary = "config init when use qlExpress, example: {\"precise\": true }",
+            summary = "config init when use qlExpress, with json-simple, for example: {\"precise\": true }",
             description = ""
     )
     public static volatile String QLExpressConfig = "";
