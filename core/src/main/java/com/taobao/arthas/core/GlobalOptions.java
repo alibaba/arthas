@@ -145,8 +145,8 @@ public class GlobalOptions {
      */
     @Option(level = 1,
             name = "express-type",
-            summary = "Option to use ognl/qlExpress",
-            description = "Option to use ognl/qlExpress in commands, default ognl"
+            summary = "Option to use ognl/qlexpress",
+            description = "Option to use ognl/qlexpress in commands, default ognl, can change to qlexpress"
     )
     public static volatile String ExpressType = "ognl";
 

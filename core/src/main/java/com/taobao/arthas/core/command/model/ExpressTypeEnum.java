@@ -7,7 +7,7 @@ package com.taobao.arthas.core.command.model;
 public enum ExpressTypeEnum
 {
     OGNL("ognl"),
-    QLEXPRESS("QLExpress");
+    QLEXPRESS("qlexpress");
 
     private String expressType;
 
