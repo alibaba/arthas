@@ -34,25 +34,8 @@ public class HttpNativeAgentProxyHandler {
             return responseFindAvailableProxyAddress(ctx, request);
         }
 
-        if ("register".equals(operation)) {
-            String addressInfo = (String) bodyMap.get("nativeAgentProxyAddress");
-            String expirationTimeStr = (String) bodyMap.get("expirationTime");
-            return doRegisterNativeAgentProxy(request, addressInfo, expirationTimeStr);
-        }
 
         return null;
-    }
-
-    private FullHttpResponse doRegisterNativeAgentProxy(FullHttpRequest request, String addressInfo, String expirationTimeStr) {
-        LocalDateTime expirationTime = LocalDateTime.parse(expirationTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
-        NativeAgentManagementNativeAgentProxyDiscovery.storageNativeAgent(addressInfo, expirationTime);
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(
-                request.getProtocolVersion(),
-                HttpResponseStatus.OK,
-                Unpooled.copiedBuffer("success", StandardCharsets.UTF_8)
-        );
-        fillCorsHead(response);
-        return response;
     }
 
 

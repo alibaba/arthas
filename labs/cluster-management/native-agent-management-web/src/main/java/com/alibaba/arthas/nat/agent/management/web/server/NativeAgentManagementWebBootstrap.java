@@ -30,7 +30,7 @@ import java.util.Arrays;
  */
 @Name("arthas-native-agent-management-web")
 @Summary("Bootstrap Arthas Native Management Web")
-@Description("EXAMPLES:\n" + "java -jar native-agent-management-web.jar\n"
+@Description("EXAMPLES:\n" + "java -jar native-agent-management-web.jar --proxy-address 161.169.97.114:2233\n"
         + "java -jar native-agent-management-web.jar  --registration-type etcd --registration-address 161.169.97.114:2379\n"
         + "java -jar native-agent-management-web.jar  --port 3939  --registration-type etcd --registration-address 161.169.97.114:2379\n"
         + "https://arthas.aliyun.com/doc\n")
@@ -38,6 +38,7 @@ public class NativeAgentManagementWebBootstrap {
     private static final Logger logger = LoggerFactory.getLogger(NativeAgentManagementWebBootstrap.class);
     private static final int DEFAULT_NATIVE_AGENT_MANAGEMENT_WEB_PORT = 3939;
     private Integer port;
+    private String proxyAddress;
     public static String registrationType;
     public static String registrationAddress;
 
@@ -45,6 +46,12 @@ public class NativeAgentManagementWebBootstrap {
     @Description("native agent management port, default 3939")
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    @Option(longName = "proxy-address")
+    @Description("native agent proxy address")
+    public void setProxyAddress(String proxyAddress) {
+        this.proxyAddress = proxyAddress;
     }
 
     @Option(longName = "registration-type")
@@ -82,10 +89,12 @@ public class NativeAgentManagementWebBootstrap {
             throw new RuntimeException("Failed to verify the bootstrap parameters. " +
                     "Please read the documentation and check the parameters you entered");
         }
-        if (nativeAgentManagementWebBootstrap.getRegistrationType() == null && nativeAgentManagementWebBootstrap.getRegistrationAddress() == null) {
+        if (nativeAgentManagementWebBootstrap.getRegistrationType() == null
+                && nativeAgentManagementWebBootstrap.getRegistrationAddress() == null
+                && nativeAgentManagementWebBootstrap.getProxyAddress() != null) {
             nativeAgentManagementWebBootstrap.setRegistrationType("native-agent-management");
             nativeAgentManagementWebBootstrap.setRegistrationAddress("127.0.0,1:" + nativeAgentManagementWebBootstrap.getPortOrDefault());
-            NativeAgentManagementNativeAgentProxyDiscovery.nativeAgentProxyCheckScheduled();
+            NativeAgentManagementNativeAgentProxyDiscovery.proxyAddress = nativeAgentManagementWebBootstrap.getProxyAddress();
         }
         // Start the http server
         logger.info("start the http server... httPort:{}", nativeAgentManagementWebBootstrap.getPortOrDefault());
@@ -121,12 +130,13 @@ public class NativeAgentManagementWebBootstrap {
     private static boolean checkBootstrapParams(NativeAgentManagementWebBootstrap managementBootstrap) {
         String address = managementBootstrap.getRegistrationAddress();
         String type = managementBootstrap.getRegistrationType();
+        String proxyAddress = managementBootstrap.getProxyAddress();
         // single
-        if (address == null && type == null) {
+        if (address == null && type == null && proxyAddress != null) {
             return true;
         }
         // cluster
-        if (address != null && type != null) {
+        if (address != null && type != null && proxyAddress == null) {
             return true;
         }
         return false;
@@ -146,6 +156,10 @@ public class NativeAgentManagementWebBootstrap {
 
     public String getRegistrationAddress() {
         return registrationAddress;
+    }
+
+    public String getProxyAddress() {
+        return proxyAddress;
     }
 
     public Integer getPort() {

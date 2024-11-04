@@ -7,28 +7,26 @@
 
 ![](asserts/cluster_management_single.png)
 ## 单体模式启动native-agent-management-web
-native-agent的管理页面
-启动参数
+native-agent的管理页面，启动需要指定prxoy地址，启动参数
 
-| 参数                   | 必填  | 解释                                  |
-|----------------------|-----|-------------------------------------|
-| port                 | N   | http端口 ，默认3939                      |
-
+| 参数            | 必填  | 解释                    |
+|---------------|-----|-----------------------|
+| port          | N   | http端口 ，默认3939        |
+| proxy-address | Y   | native-agent-proxy的地址 |
 example：
 ```shell
-java -jar native-agent-management-web.jar 
+java -jar native-agent-management-web.jar --proxy-address 161.169.97.114:2233
 ```
 
 ## 单体模式启动native-agent-proxy
-proxy会向native-agent-management-web注册自己
+proxy启动参数
 
 | 参数                 | 必填  | 解释                                   |
 |--------------------|-----|--------------------------------------|
 | port               | N   | http/ws端口 ，默认2233                    |
-| ip                 | Y   | proxy的ip                             |
-| management-address | Y   | native-agent-manangement-web的地址，用于注册 |
+
 ```shell
-java -jar native-agent-proxy.jar --ip 127.0.0.1 --management-address 127.0.0.1:3939
+java -jar native-agent-proxy.jar
 ```
 
 ## 单体模式启动native-agent
