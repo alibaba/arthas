@@ -43,7 +43,6 @@ public class QLExpress implements Express {
             QLOptions.Builder qlOptionsBuilder = QLOptions.builder();
             if (GlobalOptions.QLExpressConfig.length() > 0) {
                 QLExpressConfigModel qlExpressConfigModel = JSON.parseObject(GlobalOptions.QLExpressConfig, QLExpressConfigModel.class);
-                this.qlExpressConfigModel = qlExpressConfigModel;
                 qlOptionsBuilder.cache(qlExpressConfigModel.isCache());
                 qlOptionsBuilder.avoidNullPointer(qlExpressConfigModel.isAvoidNullPointer());
                 qlOptionsBuilder.maxArrLength(qlExpressConfigModel.getMaxArrLength());
@@ -52,12 +51,6 @@ public class QLExpress implements Express {
                 qlOptionsBuilder.timeoutMillis(qlExpressConfigModel.getTimeoutMillis());
             }
             qlOptions = qlOptionsBuilder.build();
-
-            InitOptions.Builder initOptionsBuilder = InitOptions.builder();
-            initOptionsBuilder.allowPrivateAccess(qlExpressConfigModel.isAllowPrivateAccess());
-            initOptionsBuilder.debug(qlExpressConfigModel.isDebug());
-            initOptionsBuilder.useCacheClear(qlExpressConfigModel.isUseCacheClear());
-            initOptions = initOptionsBuilder.build();
 
             //4.0设置InitOptions
         }catch (Throwable t){
