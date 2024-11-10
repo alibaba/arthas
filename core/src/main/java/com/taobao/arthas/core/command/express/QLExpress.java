@@ -28,27 +28,29 @@ public class QLExpress implements Express {
 
     public QLExpress() {
         initQLExpress();
-        initConfig(null);
+        initConfig();
         initContext();
     }
 
     public QLExpress(ClassLoader classloader) {
         initQLExpress();
-        initConfig(classloader);
+        initConfig();
         initContext();
     }
 
-    private void initConfig(ClassLoader classloader) {
+    private void initConfig() {
         try {
-            QLExpressConfigModel qlExpressConfigModel = JSON.parseObject(GlobalOptions.QLExpressConfig, QLExpressConfigModel.class);
-            this.qlExpressConfigModel = qlExpressConfigModel;
             QLOptions.Builder qlOptionsBuilder = QLOptions.builder();
-            qlOptionsBuilder.cache(qlExpressConfigModel.isCache());
-            qlOptionsBuilder.avoidNullPointer(qlExpressConfigModel.isAvoidNullPointer());
-            qlOptionsBuilder.maxArrLength(qlExpressConfigModel.getMaxArrLength());
-            qlOptionsBuilder.polluteUserContext(qlExpressConfigModel.isPolluteUserContext());
-            qlOptionsBuilder.precise(qlExpressConfigModel.isPrecise());
-            qlOptionsBuilder.timeoutMillis(qlExpressConfigModel.getTimeoutMillis());
+            if (GlobalOptions.QLExpressConfig.length() > 0) {
+                QLExpressConfigModel qlExpressConfigModel = JSON.parseObject(GlobalOptions.QLExpressConfig, QLExpressConfigModel.class);
+                this.qlExpressConfigModel = qlExpressConfigModel;
+                qlOptionsBuilder.cache(qlExpressConfigModel.isCache());
+                qlOptionsBuilder.avoidNullPointer(qlExpressConfigModel.isAvoidNullPointer());
+                qlOptionsBuilder.maxArrLength(qlExpressConfigModel.getMaxArrLength());
+                qlOptionsBuilder.polluteUserContext(qlExpressConfigModel.isPolluteUserContext());
+                qlOptionsBuilder.precise(qlExpressConfigModel.isPrecise());
+                qlOptionsBuilder.timeoutMillis(qlExpressConfigModel.getTimeoutMillis());
+            }
             qlOptions = qlOptionsBuilder.build();
 
             InitOptions.Builder initOptionsBuilder = InitOptions.builder();
@@ -74,6 +76,7 @@ public class QLExpress implements Express {
     @Override
     public Object get(String express) throws ExpressException {
         try {
+            logger.info("exp:"+express+ " "+ JSON.toJSONString(qlGlobalContext) + " "+JSON.toJSONString(qlOptions));
             Object result = expressRunner.execute(express, qlGlobalContext, qlOptions);
             return result;
         } catch (Exception e) {
