@@ -1,7 +1,11 @@
 package com.taobao.arthas.core.command.express;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.command.klass100.OgnlCommand;
 import com.taobao.arthas.core.command.model.ExpressTypeEnum;
+
 
 /**
  * ExpressFactory
@@ -9,6 +13,8 @@ import com.taobao.arthas.core.command.model.ExpressTypeEnum;
  * @author hengyunabc 2018-10-08
  */
 public class ExpressFactory {
+    private static final Logger logger = LoggerFactory.getLogger(ExpressFactory.class);
+
     private static final ThreadLocal<Express> expressRef = ThreadLocal.withInitial(() -> new OgnlExpress());
     private static final ThreadLocal<Express> expressRefQLExpress = ThreadLocal.withInitial(() -> new QLExpress());
 
@@ -18,6 +24,7 @@ public class ExpressFactory {
      * @return
      */
     public static Express threadLocalExpress(Object object) {
+        logger.info("expressType:"+GlobalOptions.ExpressType+ "_"+ExpressTypeEnum.QLEXPRESS.getExpressType());
         if (GlobalOptions.ExpressType == ExpressTypeEnum.QLEXPRESS.getExpressType()) {
             return expressRefQLExpress.get().reset().bind(object);
         }
@@ -28,6 +35,7 @@ public class ExpressFactory {
         if (classloader == null) {
             classloader = ClassLoader.getSystemClassLoader();
         }
+        logger.info("expressType:"+GlobalOptions.ExpressType+ "_"+ExpressTypeEnum.QLEXPRESS.getExpressType());
         if (GlobalOptions.ExpressType == ExpressTypeEnum.QLEXPRESS.getExpressType()) {
             return new QLExpress(classloader);
         }

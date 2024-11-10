@@ -71,6 +71,7 @@ public class OptionsCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         try {
+            logger.info("start");
             ExitStatus status = null;
             if (isShow()) {
                 status = processShow(process);
