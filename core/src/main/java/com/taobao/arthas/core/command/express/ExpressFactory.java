@@ -24,8 +24,7 @@ public class ExpressFactory {
      * @return
      */
     public static Express threadLocalExpress(Object object) {
-        logger.info("expressType:"+GlobalOptions.ExpressType+ "_"+ExpressTypeEnum.QLEXPRESS.getExpressType());
-        if (GlobalOptions.ExpressType == ExpressTypeEnum.QLEXPRESS.getExpressType()) {
+        if (GlobalOptions.ExpressType.equals(ExpressTypeEnum.QLEXPRESS.getExpressType())) {
             return expressRefQLExpress.get().reset().bind(object);
         }
         return expressRef.get().reset().bind(object);
@@ -35,8 +34,7 @@ public class ExpressFactory {
         if (classloader == null) {
             classloader = ClassLoader.getSystemClassLoader();
         }
-        logger.info("expressType:"+GlobalOptions.ExpressType+ "_"+ExpressTypeEnum.QLEXPRESS.getExpressType());
-        if (GlobalOptions.ExpressType == ExpressTypeEnum.QLEXPRESS.getExpressType()) {
+        if (GlobalOptions.ExpressType.equals(ExpressTypeEnum.QLEXPRESS.getExpressType())) {
             return new QLExpress(classloader);
         }
         return new OgnlExpress(new ClassLoaderClassResolver(classloader));
