@@ -58,6 +58,7 @@ public class QLExpress implements Express {
             initOptionsBuilder.debug(qlExpressConfigModel.isDebug());
             initOptionsBuilder.useCacheClear(qlExpressConfigModel.isUseCacheClear());
             initOptions = initOptionsBuilder.build();
+
             //4.0设置InitOptions
         }catch (Throwable t){
             //异常不设置options
