@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>native-agent-management-web</artifactId>
+    <name>native-agent-management-web</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

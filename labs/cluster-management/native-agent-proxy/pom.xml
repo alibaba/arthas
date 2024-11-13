@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>native-agent-proxy</artifactId>
+    <name>native-agent-proxy</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
