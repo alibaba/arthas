@@ -1,0 +1,80 @@
+name: Update docs on gh-pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version number to download and update (e.g., 4.0.3)"
+        required: true
+
+jobs:
+  update-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步骤 1：检出 gh-pages 分支的代码
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
+      # 步骤 2：下载指定版本的文档 ZIP 文件到 /tmp 目录
+      - name: Download documentation ZIP file
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          DOC_DOWNLOAD_URL="https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/${VERSION}/arthas-packaging-${VERSION}-doc.zip"
+          echo "Downloading documentation from $DOC_DOWNLOAD_URL"
+          curl -L "$DOC_DOWNLOAD_URL" -o "/tmp/arthas-doc.zip"
+
+      # 步骤 3：解压文档 ZIP 文件
+      - name: Unzip documentation file
+        run: |
+          unzip -o /tmp/arthas-doc.zip -d /tmp/arthas-doc
+
+      # 步骤 4：删除仓库中的 assets 目录
+      - name: Remove assets directory
+        run: |
+          rm -rf assets
+
+      # 步骤 5：复制解压后的文档文件到仓库
+      - name: Copy documentation files to repository
+        run: |
+          cp -r /tmp/arthas-doc/* ./
+
+      # 步骤 6：下载指定版本的二进制 ZIP 文件到 /tmp 目录
+      - name: Download binary ZIP file
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          BIN_DOWNLOAD_URL="https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/${VERSION}/arthas-packaging-${VERSION}-bin.zip"
+          echo "Downloading binary files from $BIN_DOWNLOAD_URL"
+          curl -L "$BIN_DOWNLOAD_URL" -o "/tmp/arthas-bin.zip"
+
+      # 步骤 7：解压二进制 ZIP 文件
+      - name: Unzip binary file
+        run: |
+          unzip -o /tmp/arthas-bin.zip -d /tmp/arthas-bin
+
+      # 步骤 8：复制指定文件到仓库目录
+      - name: Copy binary files to repository
+        run: |
+          cp /tmp/arthas-bin/as.sh ./
+          cp /tmp/arthas-bin/arthas-boot.jar ./
+          cp /tmp/arthas-bin/math-game.jar ./
+
+      # 步骤 9：赋予 as.sh 可执行权限
+      - name: Make as.sh executable
+        run: |
+          chmod +x as.sh
+
+      # 步骤 10：设置 Git 用户信息
+      - name: Set Git user
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      # 步骤 11：提交并推送更改到远程仓库
+      - name: Commit and push changes
+        run: |
+          git add .
+          git commit -m "Update docs to version ${{ github.event.inputs.version }}"
+          git push origin gh-pages
