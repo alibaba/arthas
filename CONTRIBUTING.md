@@ -147,7 +147,7 @@ Tip: you can use `--versions` to list all available versions.
     版本号信息地址： https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/maven-metadata.xml
 
 * 打上tag，push tag到仓库上
-* 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
+* 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新，可以通过 github action 更新： https://github.com/alibaba/arthas/actions/workflows/update-doc.yaml
 * 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 
     以 3.6.5 版本为例：
