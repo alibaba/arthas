@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-37178538","path":"/doc/agent.html","title":"\u4EE5 Java Agent \u7684\u65B9\u5F0F\u542F\u52A8","lang":"zh-CN","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1658120060000,"contributors":[{"name":"hengyunabc","email":"hengyunabc@gmail.com","commits":1}]},"filePathRelative":"doc/agent.md","version":"4.0.3"}');export{e as data};

@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-f6b5c310","path":"/en/doc/agent.html","title":"Start as a Java Agent","lang":"en-US","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1658120060000,"contributors":[{"name":"hengyunabc","email":"hengyunabc@gmail.com","commits":1}]},"filePathRelative":"en/doc/agent.md","version":"4.0.3"}');export{e as data};
