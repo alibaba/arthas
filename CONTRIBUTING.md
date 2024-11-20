@@ -150,12 +150,8 @@ Tip: you can use `--versions` to list all available versions.
 * 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新，可以通过 github action 更新： https://github.com/alibaba/arthas/actions/workflows/update-doc.yaml
 * 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 
-    以 3.6.5 版本为例：
-    ```
-    docker buildx build . --build-arg ARTHAS_VERSION=3.6.5 --build-arg MIRROR=true -t hengyunabc/arthas:3.6.5 -t hengyunabc/arthas:latest --platform=linux/arm64,linux/amd64 --push 
+    可以通过 github action push： https://github.com/alibaba/arthas/actions/workflows/push-docker.yaml 
 
-    docker buildx build .  --build-arg ARTHAS_VERSION=3.6.5  --build-arg MIRROR=true -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.6.5-no-jdk --platform=linux/arm64,linux/amd64  --push 
-    ```
 * 更新README.md，比如增加了新命令，要加上说明，更新wiki的链接
 * 更新release页面的 issue信息，修改信息等
 * 更新 https://arthas.aliyun.com/api/latest_version api
