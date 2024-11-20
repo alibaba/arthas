@@ -1,7 +1,7 @@
 # Stage 1: Build
 FROM openjdk:8-jdk-alpine AS builder
 
-ARG ARTHAS_VERSION="4.0.3"
+ARG ARTHAS_VERSION="4.0.4"
 ARG MIRROR=false
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
   MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public
