@@ -161,7 +161,7 @@
             <dependency>
                 <groupId>ognl</groupId>
                 <artifactId>ognl</artifactId>
-                <version>3.4.2</version>
+                <version>3.3.5</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
