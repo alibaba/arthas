@@ -63,8 +63,8 @@ public class StackAdviceListener extends AdviceListenerAdapter {
                 StackModel stackModel = ThreadUtil.getThreadStackModel(advice.getLoader(), Thread.currentThread());
                 stackModel.setTs(LocalDateTime.now());
                 process.appendResult(stackModel);
-                process.times().incrementAndGet();
-                if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
+                int times = process.times().incrementAndGet();
+                if (isLimitExceeded(command.getNumberOfLimit(), times)) {
                     abortProcess(process, command.getNumberOfLimit());
                 }
             }

@@ -102,8 +102,8 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 }
 
                 process.appendResult(model);
-                process.times().incrementAndGet();
-                if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
+                int times = process.times().incrementAndGet();
+                if (isLimitExceeded(command.getNumberOfLimit(), times)) {
                     abortProcess(process, command.getNumberOfLimit());
                 }
             }

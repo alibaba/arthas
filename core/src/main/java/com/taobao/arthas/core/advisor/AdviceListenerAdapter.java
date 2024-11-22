@@ -131,7 +131,9 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
      * @return true 如果超过或者达到了上限
      */
     protected boolean isLimitExceeded(int limit, int currentTimes) {
-        return currentTimes >= limit;
+        //正常来讲，只需要判断currentTimes == limit即可，currentTimes如果是准确的（不能使用process.times().get()），
+        //那么不会出现自增时跳过limit的问题，为了应对未知的极端情况，仍旧加上currentTimes - limit > 100，以防万一
+        return limit <= 0 || currentTimes == limit || currentTimes - limit > 100;
     }
 
     /**

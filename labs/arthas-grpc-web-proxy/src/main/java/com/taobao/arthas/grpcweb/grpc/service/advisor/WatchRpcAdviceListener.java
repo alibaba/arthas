@@ -119,8 +119,8 @@ public class WatchRpcAdviceListener extends AdviceListenerAdapter {
                     model.setAccessPoint(AccessPoint.ACCESS_AFTER_THROWING.getKey());
                 }
                 arthasStreamObserver.appendResult(model);
-                arthasStreamObserver.times().incrementAndGet();
-                if (isLimitExceeded(watchRequestModel.getNumberOfLimit(), arthasStreamObserver.times().get())) {
+                int times = arthasStreamObserver.times().incrementAndGet();
+                if (isLimitExceeded(watchRequestModel.getNumberOfLimit(), times)) {
                     String msg = "Command execution times exceed limit: " + watchRequestModel.getNumberOfLimit()
                             + ", so command will exit.\n";
                     arthasStreamObserver.end();
