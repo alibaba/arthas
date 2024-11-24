@@ -1,11 +1,11 @@
 package com.taobao.arthas.core.command.express;
 
 import ognl.MemberAccess;
-import ognl.OgnlContext;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
+import java.util.Map;
 
 /**
  * ognl.DefaultMemberAccess (ognl:ognl:3.1.19)
@@ -58,7 +58,8 @@ public class DefaultMemberAccess implements MemberAccess {
         allowPackageProtectedAccess = value;
     }
 
-    public Object setup(OgnlContext context, Object target, Member member, String propertyName) {
+    @Override
+    public Object setup(Map context, Object target, Member member, String propertyName) {
         Object result = null;
 
         if (isAccessible(context, target, member, propertyName)) {
@@ -72,7 +73,8 @@ public class DefaultMemberAccess implements MemberAccess {
         return result;
     }
 
-    public void restore(OgnlContext context, Object target, Member member, String propertyName, Object state) {
+    @Override
+    public void restore(Map context, Object target, Member member, String propertyName, Object state) {
         if (state != null) {
             ((AccessibleObject)member).setAccessible((Boolean)state);
         }
@@ -88,7 +90,8 @@ public class DefaultMemberAccess implements MemberAccess {
      * @param propertyName the property to test accessibility for (not used).
      * @return true if the member is accessible in the context, false otherwise.
      */
-    public boolean isAccessible(OgnlContext context, Object target, Member member, String propertyName) {
+    @Override
+    public boolean isAccessible(Map context, Object target, Member member, String propertyName) {
         int modifiers = member.getModifiers();
         boolean result = Modifier.isPublic(modifiers);
 

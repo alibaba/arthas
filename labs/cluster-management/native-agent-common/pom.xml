@@ -10,6 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>native-agent-common</artifactId>
+    <name>native-agent-common</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
