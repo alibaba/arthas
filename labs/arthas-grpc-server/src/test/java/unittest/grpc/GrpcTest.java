@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GrpcTest {
     private static final String HOST = "localhost";
-    private static final int PORT = 9091;
+    private static final int PORT = 9092;
     private static final String HOST_PORT = HOST + ":" + PORT;
     private static final String UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME = "unittest.grpc.service.impl";
     private static final Logger log = (Logger) LoggerFactory.getLogger(GrpcTest.class);
@@ -101,7 +101,7 @@ public class GrpcTest {
     @Test
     public void testClientStreamSum() throws Throwable {
         log.info("testClientStreamSum start!");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
 
@@ -144,7 +144,7 @@ public class GrpcTest {
     @Test
     public void testDataIsolation() throws InterruptedException {
         log.info("testDataIsolation start!");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
 
@@ -199,7 +199,7 @@ public class GrpcTest {
     @Test
     public void testServerStream() throws InterruptedException {
         log.info("testServerStream start!");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
 
@@ -237,7 +237,7 @@ public class GrpcTest {
     @Test
     public void testBiStream() throws Throwable {
         log.info("testBiStream start!");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
 
