@@ -238,6 +238,7 @@ public class CompletionUtils {
                 res.add(method.getName());
             }
         }
+        res.add("<init>");
 
         if (res.size() == 1) {
             completion.complete(res.get(0).substring(lastToken.length()), true);

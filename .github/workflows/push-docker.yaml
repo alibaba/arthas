@@ -1,0 +1,34 @@
+name: Push arthas images to Docker Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version number to push (e.g., 4.0.3)"
+        required: true
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步骤 1：检出 master 分支的代码
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          docker buildx build . --build-arg ARTHAS_VERSION=$VERSION --build-arg MIRROR=true -t hengyunabc/arthas:$VERSION  -t hengyunabc/arthas:latest --platform=linux/arm64,linux/amd64 --push
+          docker buildx build .  --build-arg ARTHAS_VERSION=$VERSION   --build-arg MIRROR=true -f Dockerfile-No-Jdk -t hengyunabc/arthas:$VERSION-no-jdk --platform=linux/arm64,linux/amd64  --push
