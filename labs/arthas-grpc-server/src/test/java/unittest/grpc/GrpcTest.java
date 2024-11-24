@@ -33,7 +33,7 @@ public class GrpcTest {
     private static final String HOST_PORT = HOST + ":" + PORT;
     private static final String UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME = "unittest.grpc.service.impl";
     private static final Logger log = (Logger) LoggerFactory.getLogger(GrpcTest.class);
-    private ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub blockingStub = null;
+    private ManagedChannel clientChannel;
     Random random = new Random();
     ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
@@ -42,6 +42,7 @@ public class GrpcTest {
     public void startServer() {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Logger rootLogger = loggerContext.getLogger("ROOT");
+
         rootLogger.setLevel(Level.INFO);
 
         Thread grpcWebProxyStart = new Thread(() -> {
@@ -49,23 +50,25 @@ public class GrpcTest {
             arthasGrpcServer.start();
         });
         grpcWebProxyStart.start();
+
+        clientChannel = ManagedChannelBuilder.forTarget(HOST_PORT)
+                .usePlaintext()
+                .build();
     }
 
     @Test
     public void testUnary() {
         log.info("testUnary start!");
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
-                .usePlaintext()
-                .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub = ArthasUnittestServiceGrpc.newBlockingStub(channel);
+
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub = ArthasUnittestServiceGrpc.newBlockingStub(clientChannel);
 
         try {
             ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage("unaryInvoke").build();
             ArthasUnittest.ArthasUnittestResponse res = stub.unary(request);
             System.out.println(res.getMessage());
         } finally {
-            channel.shutdownNow();
+            clientChannel.shutdownNow();
         }
         log.info("testUnary success!");
     }
@@ -73,11 +76,8 @@ public class GrpcTest {
     @Test
     public void testUnarySum() throws InterruptedException {
         log.info("testUnarySum start!");
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
-                .usePlaintext()
-                .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub = ArthasUnittestServiceGrpc.newBlockingStub(channel);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub = ArthasUnittestServiceGrpc.newBlockingStub(clientChannel);
         for (int i = 0; i < 10; i++) {
             AtomicInteger sum = new AtomicInteger(0);
             int finalId = i;
@@ -93,7 +93,7 @@ public class GrpcTest {
             System.out.println("id:" + finalId + ",sum:" + sum.get() + ",grpcSum:" + grpcSum);
             Assert.assertEquals(sum.get(), grpcSum);
         }
-        channel.shutdown();
+        clientChannel.shutdown();
         log.info("testUnarySum success!");
     }
 
@@ -101,11 +101,8 @@ public class GrpcTest {
     @Test
     public void testClientStreamSum() throws Throwable {
         log.info("testClientStreamSum start!");
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
-                .usePlaintext()
-                .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(clientChannel);
 
         AtomicInteger sum = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
@@ -136,7 +133,7 @@ public class GrpcTest {
 
         clientStreamObserver.onCompleted();
         latch.await(20,TimeUnit.SECONDS);
-        channel.shutdown();
+        clientChannel.shutdown();
         log.info("testClientStreamSum success!");
     }
 
@@ -144,11 +141,8 @@ public class GrpcTest {
     @Test
     public void testDataIsolation() throws InterruptedException {
         log.info("testDataIsolation start!");
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
-                .usePlaintext()
-                .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(clientChannel);
         for (int i = 0; i < 10; i++) {
             threadPool.submit(() -> {
                 AtomicInteger sum = new AtomicInteger(0);
@@ -189,7 +183,7 @@ public class GrpcTest {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                channel.shutdown();
+                clientChannel.shutdown();
             });
         }
         Thread.sleep(10000L);
@@ -199,11 +193,8 @@ public class GrpcTest {
     @Test
     public void testServerStream() throws InterruptedException {
         log.info("testServerStream start!");
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
-                .usePlaintext()
-                .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(clientChannel);
 
         ArthasUnittest.ArthasUnittestRequest request = ArthasUnittest.ArthasUnittestRequest.newBuilder().setMessage("serverStream").build();
 
@@ -228,7 +219,7 @@ public class GrpcTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            channel.shutdown();
+            clientChannel.shutdown();
         }
         log.info("testServerStream success!");
     }
@@ -237,11 +228,8 @@ public class GrpcTest {
     @Test
     public void testBiStream() throws Throwable {
         log.info("testBiStream start!");
-        ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
-                .usePlaintext()
-                .build();
 
-        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(channel);
+        ArthasUnittestServiceGrpc.ArthasUnittestServiceStub stub = ArthasUnittestServiceGrpc.newStub(clientChannel);
 
         CountDownLatch latch = new CountDownLatch(1);
         StreamObserver<ArthasUnittest.ArthasUnittestRequest> biStreamObserver = stub.biStream(new StreamObserver<ArthasUnittest.ArthasUnittestResponse>() {
@@ -271,7 +259,7 @@ public class GrpcTest {
         Thread.sleep(2000);
         biStreamObserver.onCompleted();
         latch.await(20, TimeUnit.SECONDS);
-        channel.shutdown();
+        clientChannel.shutdown();
         log.info("testBiStream success!");
     }
 
