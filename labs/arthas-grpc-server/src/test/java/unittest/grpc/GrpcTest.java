@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GrpcTest {
     private static final String HOST = "localhost";
-    private static final int PORT = 9090;
+    private static final int PORT = 9091;
     private static final String HOST_PORT = HOST + ":" + PORT;
     private static final String UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME = "unittest.grpc.service.impl";
     private ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub blockingStub = null;
@@ -89,7 +89,7 @@ public class GrpcTest {
     // 用于测试客户端流
     @Test
     public void testClientStreamSum() throws Throwable {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
 
@@ -130,7 +130,7 @@ public class GrpcTest {
     // 用于测试请求数据隔离性
     @Test
     public void testDataIsolation() throws InterruptedException {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
 
@@ -183,7 +183,7 @@ public class GrpcTest {
 
     @Test
     public void testServerStream() throws InterruptedException {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
 
@@ -219,7 +219,7 @@ public class GrpcTest {
     // 用于测试双向流
     @Test
     public void testBiStream() throws Throwable {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
 
