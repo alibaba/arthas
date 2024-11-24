@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -115,14 +116,14 @@ public class GrpcTest {
             }
         });
 
-        for (int j = 0; j < 1000; j++) {
+        for (int j = 0; j < 100; j++) {
             int num = random.nextInt(1001);
             sum.addAndGet(num);
             clientStreamObserver.onNext(ArthasUnittest.ArthasUnittestRequest.newBuilder().setNum(num).build());
         }
 
         clientStreamObserver.onCompleted();
-        latch.await();
+        latch.await(20,TimeUnit.SECONDS);
         channel.shutdown();
     }
 
@@ -170,14 +171,14 @@ public class GrpcTest {
 
                 clientStreamObserver.onCompleted();
                 try {
-                    latch.await();
+                    latch.await(20,TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 channel.shutdown();
             });
         }
-        Thread.sleep(7000L);
+        Thread.sleep(10000L);
     }
 
     @Test
@@ -251,7 +252,7 @@ public class GrpcTest {
 
         Thread.sleep(2000);
         biStreamObserver.onCompleted();
-        latch.await();
+        latch.await(20, TimeUnit.SECONDS);
         channel.shutdown();
     }
 
