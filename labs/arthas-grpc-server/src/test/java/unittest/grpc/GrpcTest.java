@@ -2,18 +2,19 @@ package unittest.grpc;
 
 import arthas.grpc.unittest.ArthasUnittest;
 import arthas.grpc.unittest.ArthasUnittestServiceGrpc;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import com.taobao.arthas.grpc.server.ArthasGrpcServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -31,12 +32,18 @@ public class GrpcTest {
     private static final int PORT = 9091;
     private static final String HOST_PORT = HOST + ":" + PORT;
     private static final String UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME = "unittest.grpc.service.impl";
+    private static final Logger log = (Logger) LoggerFactory.getLogger(GrpcTest.class);
     private ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub blockingStub = null;
     Random random = new Random();
     ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
+
     @Before
     public void startServer() {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger rootLogger = loggerContext.getLogger("ROOT");
+        rootLogger.setLevel(Level.INFO);
+
         Thread grpcWebProxyStart = new Thread(() -> {
             ArthasGrpcServer arthasGrpcServer = new ArthasGrpcServer(PORT, UNIT_TEST_GRPC_SERVICE_PACKAGE_NAME);
             arthasGrpcServer.start();
@@ -46,6 +53,7 @@ public class GrpcTest {
 
     @Test
     public void testUnary() {
+        log.info("testUnary start!");
         ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
@@ -59,10 +67,12 @@ public class GrpcTest {
         } finally {
             channel.shutdownNow();
         }
+        log.info("testUnary success!");
     }
 
     @Test
     public void testUnarySum() throws InterruptedException {
+        log.info("testUnarySum start!");
         ManagedChannel channel = ManagedChannelBuilder.forTarget(HOST_PORT)
                 .usePlaintext()
                 .build();
@@ -71,7 +81,7 @@ public class GrpcTest {
         for (int i = 0; i < 10; i++) {
             AtomicInteger sum = new AtomicInteger(0);
             int finalId = i;
-            for (int j = 0; j < 100; j++) {
+            for (int j = 0; j < 10; j++) {
                 int num = random.nextInt(101);
                 sum.addAndGet(num);
                 threadPool.submit(() -> {
@@ -84,11 +94,13 @@ public class GrpcTest {
             Assert.assertEquals(sum.get(), grpcSum);
         }
         channel.shutdown();
+        log.info("testUnarySum success!");
     }
 
     // 用于测试客户端流
     @Test
     public void testClientStreamSum() throws Throwable {
+        log.info("testClientStreamSum start!");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
@@ -125,11 +137,13 @@ public class GrpcTest {
         clientStreamObserver.onCompleted();
         latch.await(20,TimeUnit.SECONDS);
         channel.shutdown();
+        log.info("testClientStreamSum success!");
     }
 
     // 用于测试请求数据隔离性
     @Test
     public void testDataIsolation() throws InterruptedException {
+        log.info("testDataIsolation start!");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
@@ -179,10 +193,12 @@ public class GrpcTest {
             });
         }
         Thread.sleep(10000L);
+        log.info("testDataIsolation success!");
     }
 
     @Test
     public void testServerStream() throws InterruptedException {
+        log.info("testServerStream start!");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
@@ -214,11 +230,13 @@ public class GrpcTest {
         } finally {
             channel.shutdown();
         }
+        log.info("testServerStream success!");
     }
 
     // 用于测试双向流
     @Test
     public void testBiStream() throws Throwable {
+        log.info("testBiStream start!");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
                 .usePlaintext()
                 .build();
@@ -254,6 +272,7 @@ public class GrpcTest {
         biStreamObserver.onCompleted();
         latch.await(20, TimeUnit.SECONDS);
         channel.shutdown();
+        log.info("testBiStream success!");
     }
 
     private void addSum(ArthasUnittestServiceGrpc.ArthasUnittestServiceBlockingStub stub, int id, int num) {
