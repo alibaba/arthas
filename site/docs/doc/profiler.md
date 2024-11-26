@@ -228,10 +228,10 @@ profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*
 
 ## 指定执行时间
 
-比如，希望 profiler 执行 300 秒自动结束，可以用 `-d`/`--duration` 参数为 collect action 指定时间：
+比如，希望 profiler 执行 300 秒自动结束，可以用 `-d`/`--duration` 参数为 start action 指定时间：
 
 ```bash
-profiler collect --duration 300
+profiler start --duration 300
 ```
 
 ## 生成 jfr 格式结果
@@ -383,7 +383,7 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 
 ## `--timeout` 选项
 
-这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
+这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action。可参考 [async-profiler docs](https://github.com/async-profiler/async-profiler/blob/master/docs/ProfilerOptions.md) 了解更多信息。
 
 ## `--wall` 选项
 
