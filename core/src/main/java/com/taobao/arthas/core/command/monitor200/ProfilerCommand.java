@@ -38,7 +38,7 @@ import one.profiler.AsyncProfiler;
 import one.profiler.Counter;
 
 /**
- * 
+ * https://github.com/async-profiler/async-profiler/blob/master/docs/ProfilerOptions.md 具体参数说明，以及哪些参数可以传递给 async-profiler agent
  * @author hengyunabc 2019-10-31
  *
  */
@@ -524,18 +524,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("run profiler in a loop (continuous profiling)")
     public void setLoop(String loop) {
         this.loop = loop;
-        if (this.action.equals("collect")) {
-            this.action = "start";
-        }
     }
 
     @Option(longName = "timeout")
     @Description("automatically stop profiler at TIME (absolute or relative)")
     public void setTimeout(String timeout) {
         this.timeout = timeout;
-        if (this.action.equals("collect")) {
-            this.action = "start";
-        }
     }
 
 
@@ -581,11 +575,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     /**
-     * https://github.com/async-profiler/async-profiler/blob/v2.9/profiler.sh#L154
+     * https://github.com/async-profiler/async-profiler/blob/v3.0/src/arguments.cpp#L131
      */
     public enum ProfilerAction {
-        // start, resume, stop, dump, check, status, meminfo, list, collect,
-        start, resume, stop, dump, check, status, meminfo, list, collect,
+        // start, resume, stop, dump, check, status, meminfo, list,
+        start, resume, stop, dump, check, status, meminfo, list,
         version,
 
         load,
@@ -720,6 +714,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private static String execute(AsyncProfiler asyncProfiler, String arg)
             throws IllegalArgumentException, IOException {
+        logger.info("profiler execute args: {}", arg);
         String result = asyncProfiler.execute(arg);
         if (!result.endsWith("\n")) {
             result += "\n";
@@ -747,13 +742,16 @@ public class ProfilerCommand extends AnnotatedCommand {
                 }
                 String result = execute(asyncProfiler, this.actionArg);
                 appendExecuteResult(process, result);
-            } else if (ProfilerAction.collect.equals(profilerAction)) {
-                String executeArgs = executeArgs(ProfilerAction.collect);
-                String result = execute(asyncProfiler, executeArgs);
-                ProfilerModel profilerModel = createProfilerModel(result);
-
-                if (this.duration != null) {
+            } else if (ProfilerAction.start.equals(profilerAction)) {
+                if (this.duration == null) {
+                    String executeArgs = executeArgs(ProfilerAction.start);
+                    String result = execute(asyncProfiler, executeArgs);
+                    appendExecuteResult(process, result);
+                } else { // 设置延时执行 stop
                     final String outputFile = outputFile();
+                    String executeArgs = executeArgs(ProfilerAction.start);
+                    String result = execute(asyncProfiler, executeArgs);
+                    ProfilerModel profilerModel = createProfilerModel(result);
                     profilerModel.setOutputFile(outputFile);
                     profilerModel.setDuration(duration);
 
@@ -761,7 +759,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                     ArthasBootstrap.getInstance().getScheduledExecutorService().schedule(new Runnable() {
                         @Override
                         public void run() {
-                            //在异步线程执行，profiler命令已经结束，不能输出到客户端
+                            // 在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
                                 logger.info("stopping profiler ...");
                                 ProfilerModel model = processStop(asyncProfiler, ProfilerAction.stop);
@@ -772,12 +770,9 @@ public class ProfilerCommand extends AnnotatedCommand {
                             }
                         }
                     }, this.duration, TimeUnit.SECONDS);
+                    process.appendResult(profilerModel);
                 }
-                process.appendResult(profilerModel);
-            } else if (ProfilerAction.start.equals(profilerAction)) {
-                String executeArgs = executeArgs(ProfilerAction.start);
-                String result = execute(asyncProfiler, executeArgs);
-                appendExecuteResult(process, result);
+
             } else if (ProfilerAction.stop.equals(profilerAction)) {
                 ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
                 process.appendResult(profilerModel);

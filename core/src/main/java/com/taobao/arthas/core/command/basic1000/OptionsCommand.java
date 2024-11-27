@@ -155,6 +155,11 @@ public class OptionsCommand extends AnnotatedCommand {
                 return ExitStatus.failure(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
             }
 
+            // FIXME hack for ongl strict
+            if (field.getName().equals("strict")) {
+                GlobalOptions.updateOnglStrict(Boolean.valueOf(optionValue));
+                logger.info("update ongl strict to: {}", optionValue);
+            }
         } catch (Throwable t) {
             return ExitStatus.failure(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
         }
