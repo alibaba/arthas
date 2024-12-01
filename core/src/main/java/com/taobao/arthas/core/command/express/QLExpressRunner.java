@@ -12,18 +12,18 @@ public class QLExpressRunner {
     private volatile static QLExpressRunner instance = null;
     private Express4Runner expressRunner;
 
-    private QLExpressRunner(){
-        expressRunner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+    private QLExpressRunner(InitOptions initOptions){
+        expressRunner = new Express4Runner(initOptions);
     }
 
     //对外提供静态方法获取对象
-    public static Express4Runner getInstance(){
+    public static Express4Runner getInstance(InitOptions initOptions){
         //第一次判断,如果instance不为null,不进入抢锁阶段,直接返回实例
         if(instance == null){
             synchronized (QLExpressRunner.class){
                 //抢到锁之后再次进行判断是否为null
                 if(instance == null){
-                    instance = new QLExpressRunner();
+                    instance = new QLExpressRunner(initOptions);
                 }
             }
         }

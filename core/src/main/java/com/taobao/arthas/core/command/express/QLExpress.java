@@ -3,9 +3,12 @@ package com.taobao.arthas.core.command.express;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.qlexpress4.ClassSupplier;
 import com.alibaba.qlexpress4.Express4Runner;
 import com.alibaba.qlexpress4.InitOptions;
 import com.alibaba.qlexpress4.QLOptions;
+import com.alibaba.qlexpress4.runtime.ReflectLoader;
+import com.alibaba.qlexpress4.security.QLSecurityStrategy;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.QLExpressConfigModel;
 
@@ -18,30 +21,25 @@ public class QLExpress implements Express {
     private static final Logger logger = LoggerFactory.getLogger(QLExpress.class);
     private Express4Runner expressRunner;
     private QLGlobalContext qlGlobalContext;
-    private Object runResult;
-
-    private QLExpressConfigModel qlExpressConfigModel;
 
     private QLOptions qlOptions;
 
     private InitOptions initOptions;
 
     public QLExpress() {
-        initQLExpress();
-        initConfig();
-        initContext();
+        this(QLExpressCustomClassResolver.customClassResolver);
     }
 
-    public QLExpress(ClassLoader classloader) {
-        initQLExpress();
+    public QLExpress(ClassSupplier classResolver) {
+        initQLExpress(classResolver);
         initConfig();
         initContext();
     }
 
     private void initConfig() {
         try {
-            QLOptions.Builder qlOptionsBuilder = QLOptions.builder();
             if (GlobalOptions.QLExpressConfig.length() > 0) {
+                QLOptions.Builder qlOptionsBuilder = QLOptions.builder();
                 QLExpressConfigModel qlExpressConfigModel = JSON.parseObject(GlobalOptions.QLExpressConfig, QLExpressConfigModel.class);
                 qlOptionsBuilder.cache(qlExpressConfigModel.isCache());
                 qlOptionsBuilder.avoidNullPointer(qlExpressConfigModel.isAvoidNullPointer());
@@ -49,9 +47,10 @@ public class QLExpress implements Express {
                 qlOptionsBuilder.polluteUserContext(qlExpressConfigModel.isPolluteUserContext());
                 qlOptionsBuilder.precise(qlExpressConfigModel.isPrecise());
                 qlOptionsBuilder.timeoutMillis(qlExpressConfigModel.getTimeoutMillis());
+                qlOptions = qlOptionsBuilder.build();
+            }else {
+                qlOptions = QLOptions.DEFAULT_OPTIONS;
             }
-            qlOptions = qlOptionsBuilder.build();
-
             //4.0设置InitOptions
         }catch (Throwable t){
             //异常不设置options
@@ -59,19 +58,27 @@ public class QLExpress implements Express {
         }
     }
 
-    private void initQLExpress() {
-        expressRunner = QLExpressRunner.getInstance();
+    private void initQLExpress(ClassSupplier classResolver) {
+        InitOptions.Builder initOptionsBuilder = InitOptions.builder();
+        initOptionsBuilder.securityStrategy(QLSecurityStrategy.open());
+        initOptionsBuilder.allowPrivateAccess(true);
+        initOptionsBuilder.classSupplier(classResolver);
+        initOptions = initOptionsBuilder.build();
+        expressRunner = QLExpressRunner.getInstance(initOptions);
     }
 
     private void initContext() {
-        qlGlobalContext = new QLGlobalContext();
+        ReflectLoader reflectLoader = new ReflectLoader(initOptions.getSecurityStrategy(), initOptions.getExtensionFunctions(), initOptions.allowPrivateAccess());
+        qlGlobalContext = new QLGlobalContext(reflectLoader);
     }
 
     @Override
     public Object get(String express) throws ExpressException {
         try {
-            logger.info("exp:"+express+ " "+ JSON.toJSONString(qlGlobalContext) + " "+JSON.toJSONString(qlOptions));
+            logger.info("exp:"+express);
+            qlGlobalContext.getContext().forEach((key, value) -> logger.info("qlGlobalContext:"+key + " type:"+value.getClass().getName() + " value:"+JSON.toJSONString(value)));
             Object result = expressRunner.execute(express, qlGlobalContext, qlOptions);
+            logger.info("res："+JSON.toJSONString(result));
             return result;
         } catch (Exception e) {
             logger.error("Error during evaluating the expression with QLExpress:", e);
@@ -87,18 +94,21 @@ public class QLExpress implements Express {
 
     @Override
     public Express bind(Object object) {
+        logger.info("bind object:"+ JSON.toJSONString(object));
         qlGlobalContext.bindObj(object);
         return this;
     }
 
     @Override
     public Express bind(String name, Object value) {
+        logger.info("bind String name, Object value:"+name+ " "+ JSON.toJSONString(value));
         qlGlobalContext.put(name, value);
         return this;
     }
 
     @Override
     public Express reset() {
+        logger.info("bind reset");
         qlGlobalContext.clear();
         return this;
     }

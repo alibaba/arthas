@@ -35,7 +35,7 @@ public class ExpressFactory {
             classloader = ClassLoader.getSystemClassLoader();
         }
         if (GlobalOptions.ExpressType.equals(ExpressTypeEnum.QLEXPRESS.getExpressType())) {
-            return new QLExpress(classloader);
+            return new QLExpress(new QLExpressClassLoaderClassResolver(classloader));
         }
         return new OgnlExpress(new ClassLoaderClassResolver(classloader));
     }
