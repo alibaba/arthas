@@ -9,13 +9,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+
 /**
  *
  * @author hengyunabc 2019-02-05
  *
  */
 public class ClassLoaderUtils {
-
+    private static Logger logger = LoggerFactory.getLogger(ClassLoaderUtils.class);
     public static Set<ClassLoader> getAllClassLoader(Instrumentation inst) {
         Set<ClassLoader> classLoaderSet = new HashSet<ClassLoader>();
 
@@ -127,7 +130,11 @@ public class ClassLoaderUtils {
     @SuppressWarnings({ "unchecked", "restriction" })
     public static URL[] getUrls(ClassLoader classLoader) {
         if (classLoader instanceof URLClassLoader) {
-            return ((URLClassLoader) classLoader).getURLs();
+            try {
+                return ((URLClassLoader) classLoader).getURLs();
+            } catch (Throwable e) {
+                logger.error("classLoader: {} getUrls error", classLoader, e);
+            }
         }
 
         // jdk9
