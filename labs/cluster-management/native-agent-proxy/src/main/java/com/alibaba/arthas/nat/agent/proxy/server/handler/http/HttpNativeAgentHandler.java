@@ -3,6 +3,7 @@ package com.alibaba.arthas.nat.agent.proxy.server.handler.http;
 
 import com.alibaba.arthas.nat.agent.common.dto.NativeAgentInfoDTO;
 import com.alibaba.arthas.nat.agent.proxy.discovery.NativeAgentDiscovery;
+import com.alibaba.arthas.nat.agent.proxy.discovery.impl.NativeAgentProxyNativeAgentDiscovery;
 import com.alibaba.arthas.nat.agent.proxy.factory.NativeAgentDiscoveryFactory;
 import com.alibaba.arthas.nat.agent.proxy.server.NativeAgentProxyBootstrap;
 import com.alibaba.fastjson2.JSON;
@@ -15,10 +16,11 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,8 +29,6 @@ import java.util.concurrent.TimeUnit;
  * @date: 2024-08-01 7:32
  */
 public class HttpNativeAgentHandler {
-
-    private Map<Long, String> localCache = new ConcurrentHashMap<>();
 
     public FullHttpResponse handle(ChannelHandlerContext ctx, FullHttpRequest request) {
         String content = request.content().toString(StandardCharsets.UTF_8);
@@ -50,9 +50,26 @@ public class HttpNativeAgentHandler {
             return forwardRequest(request, address);
         }
 
+        if ("register".equals(operation)) {
+            String addressInfo = (String) bodyMap.get("nativeAgentAddress");
+            String expirationTimeStr = (String) bodyMap.get("expirationTime");
+            return doRegisterNativeAgent(request, addressInfo, expirationTimeStr);
+        }
+
         return null;
     }
 
+    private FullHttpResponse doRegisterNativeAgent(FullHttpRequest request, String addressInfo, String expirationTimeStr) {
+        LocalDateTime expirationTime = LocalDateTime.parse(expirationTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+        NativeAgentProxyNativeAgentDiscovery.storageNativeAgent(addressInfo, expirationTime);
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(
+                request.getProtocolVersion(),
+                HttpResponseStatus.OK,
+                Unpooled.copiedBuffer("success", StandardCharsets.UTF_8)
+        );
+        fillCorsHead(response);
+        return response;
+    }
 
 
     private FullHttpResponse forwardRequest(FullHttpRequest request, String address) {
@@ -84,14 +101,7 @@ public class HttpNativeAgentHandler {
                         HttpResponseStatus.OK,
                         Unpooled.copiedBuffer(responseBody, StandardCharsets.UTF_8)
                 );
-                // 设置跨域响应头
-                fullHttpResponse.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-                fullHttpResponse.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
-                fullHttpResponse.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "X-Requested-With, Content-Type, Authorization");
-
-                // 设置其他必要的头部
-                fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
-                fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
+                fillCorsHead(fullHttpResponse);
                 return fullHttpResponse;
             } else {
                 return new DefaultFullHttpResponse(
@@ -108,6 +118,17 @@ public class HttpNativeAgentHandler {
                     Unpooled.copiedBuffer("Error forwarding request: " + e.getMessage(), CharsetUtil.UTF_8)
             );
         }
+    }
+
+    private void fillCorsHead(FullHttpResponse fullHttpResponse) {
+        // 设置跨域响应头
+        fullHttpResponse.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        fullHttpResponse.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
+        fullHttpResponse.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "X-Requested-With, Content-Type, Authorization");
+
+        // 设置其他必要的头部
+        fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
+        fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
     }
 
     private FullHttpResponse doListNativeAgent(ChannelHandlerContext ctx, FullHttpRequest request) {
@@ -132,14 +153,7 @@ public class HttpNativeAgentHandler {
                 Unpooled.copiedBuffer(nativeAgentInfoStr, StandardCharsets.UTF_8)
         );
 
-        // 设置跨域响应头
-        response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
-        response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "X-Requested-With, Content-Type, Authorization");
-
-        // 设置其他必要的头部
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+        fillCorsHead(response);
 
         return response;
     }
