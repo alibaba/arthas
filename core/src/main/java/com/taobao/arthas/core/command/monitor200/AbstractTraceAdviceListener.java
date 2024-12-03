@@ -93,13 +93,12 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
                 }
                 if (conditionResult) {
                     // 满足输出条件
-                    process.times().incrementAndGet();
                     // TODO: concurrency issues for process.write
                     process.appendResult(traceEntity.getModel());
 
+                    int times = process.times().incrementAndGet();
                     // 是否到达数量限制
-                    if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
-                        // TODO: concurrency issue to abort process
+                    if (isLimitExceeded(command.getNumberOfLimit(), times)) {
                         abortProcess(process, command.getNumberOfLimit());
                     }
                 }
