@@ -43,8 +43,6 @@ public class QLGlobalContext implements ExpressContext {
     }
     @Override
     public Value get(Map<String, Object> attachments, String variableName) {
-        logger.info("get variableName:"+variableName+ " "+ (this.object != null) + " "+(this.reflectLoader != null));
-
         if ((this.reflectLoader != null) && (this.object != null) && !variableName.startsWith("#")) {
             return this.reflectLoader.loadField(this.object, variableName, true, PureErrReporter.INSTANCE);
         }

@@ -68,17 +68,14 @@ public class QLExpress implements Express {
     }
 
     private void initContext() {
-        ReflectLoader reflectLoader = new ReflectLoader(initOptions.getSecurityStrategy(), initOptions.getExtensionFunctions(), initOptions.allowPrivateAccess());
+        ReflectLoader reflectLoader = new ReflectLoader(initOptions.getSecurityStrategy(), initOptions.getExtensionFunctions(), initOptions.isAllowPrivateAccess());
         qlGlobalContext = new QLGlobalContext(reflectLoader);
     }
 
     @Override
     public Object get(String express) throws ExpressException {
         try {
-            logger.info("exp:"+express);
-            qlGlobalContext.getContext().forEach((key, value) -> logger.info("qlGlobalContext:"+key + " type:"+value.getClass().getName() + " value:"+JSON.toJSONString(value)));
             Object result = expressRunner.execute(express, qlGlobalContext, qlOptions);
-            logger.info("res："+JSON.toJSONString(result));
             return result;
         } catch (Exception e) {
             logger.error("Error during evaluating the expression with QLExpress:", e);
@@ -94,21 +91,18 @@ public class QLExpress implements Express {
 
     @Override
     public Express bind(Object object) {
-        logger.info("bind object:"+ JSON.toJSONString(object));
         qlGlobalContext.bindObj(object);
         return this;
     }
 
     @Override
     public Express bind(String name, Object value) {
-        logger.info("bind String name, Object value:"+name+ " "+ JSON.toJSONString(value));
         qlGlobalContext.put(name, value);
         return this;
     }
 
     @Override
     public Express reset() {
-        logger.info("bind reset");
         qlGlobalContext.clear();
         return this;
     }

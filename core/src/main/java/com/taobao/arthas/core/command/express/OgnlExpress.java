@@ -3,7 +3,6 @@ package com.taobao.arthas.core.command.express;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson2.JSON;
 import ognl.ClassResolver;
 import ognl.MemberAccess;
 import ognl.Ognl;
@@ -34,9 +33,6 @@ public class OgnlExpress implements Express {
     @Override
     public Object get(String express) throws ExpressException {
         try {
-            logger.info("Ognl exp:"+express);
-            logger.info("Ognl context:"+context);
-            logger.info("Ognl bindObject:"+JSON.toJSONString(bindObject));
             return Ognl.getValue(express, context, bindObject);
         } catch (Exception e) {
             logger.error("Error during evaluating the expression:", e);
