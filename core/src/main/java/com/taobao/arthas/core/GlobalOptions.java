@@ -7,7 +7,6 @@ import com.taobao.arthas.common.UnsafeUtils;
 
 import ognl.OgnlRuntime;
 
-
 /**
  * 全局开关
  * Created by vlinux on 15/6/4.
@@ -180,4 +179,5 @@ public class GlobalOptions {
             description = ""
     )
     public static volatile String QLExpressConfig = "";
+
 }
