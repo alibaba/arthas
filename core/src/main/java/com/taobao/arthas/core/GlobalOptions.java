@@ -1,6 +1,12 @@
 package com.taobao.arthas.core;
 
+import java.lang.reflect.Field;
+
 import com.taobao.arthas.common.JavaVersionUtils;
+import com.taobao.arthas.common.UnsafeUtils;
+
+import ognl.OgnlRuntime;
+
 
 /**
  * 全局开关
@@ -139,6 +145,20 @@ public class GlobalOptions {
     )
     public static volatile boolean strict = true;
 
+    public static void updateOnglStrict(boolean strict) {
+        try {
+            Field field = OgnlRuntime.class.getDeclaredField("_useStricterInvocation");
+            field.setAccessible(true);
+            // 获取字段的内存偏移量和基址
+            Object staticFieldBase = UnsafeUtils.UNSAFE.staticFieldBase(field);
+            long staticFieldOffset = UnsafeUtils.UNSAFE.staticFieldOffset(field);
+
+            // 修改字段的值
+            UnsafeUtils.UNSAFE.putBoolean(staticFieldBase, staticFieldOffset, strict);
+        } catch (NoSuchFieldException | SecurityException e) {
+            // ignore
+        }
+    }
 
     /**
      * 是否切换使用表达式ognl/qlexpress开关
