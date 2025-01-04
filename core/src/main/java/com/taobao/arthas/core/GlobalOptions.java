@@ -158,7 +158,6 @@ public class GlobalOptions {
             // ignore
         }
     }
-
     /**
      * 是否切换使用表达式ognl/qlexpress开关
      */
@@ -179,6 +178,6 @@ public class GlobalOptions {
             description = ""
     )
     public static volatile String QLExpressConfig = "";
-
-
 }
+
+
