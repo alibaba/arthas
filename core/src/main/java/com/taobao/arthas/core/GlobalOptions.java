@@ -157,7 +157,7 @@ public class GlobalOptions {
      * qlexpress使用参数
      */
     @Option(level = 1,
-            name = QLEXPRESS_CONFIG,
+            name = "qlexpress-config",
             summary = "config init when use qlexpress, with json-simple, for example: {\"precise\": true }",
             description = ""
     )
