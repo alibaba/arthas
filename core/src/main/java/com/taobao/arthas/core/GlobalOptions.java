@@ -16,8 +16,6 @@ public class GlobalOptions {
             + "not allowed to set object properties. "
             + "Want to set object properties, execute `options strict false`";
 
-    public static final String QLEXPRESS_CONFIG = "qlexpress-config";
-
     /**
      * 是否支持系统类<br/>
      * 这个开关打开之后将能代理到来自JVM的部分类，由于有非常强的安全风险可能会引起系统崩溃<br/>
@@ -135,7 +133,8 @@ public class GlobalOptions {
     public static volatile boolean verbose = false;
 
     /**
-     * 是否打开strict 开关
+     * 是否打开strict 开关。更新时注意 ognl 里的配置需要同步修改
+     * @see ognl.OgnlRuntime#getUseStricterInvocationValue()
      */
     @Option(level = 1,
             name = "strict",
@@ -143,21 +142,6 @@ public class GlobalOptions {
             description = STRICT_MESSAGE
     )
     public static volatile boolean strict = true;
-
-    public static void updateOnglStrict(boolean strict) {
-        try {
-            Field field = OgnlRuntime.class.getDeclaredField("_useStricterInvocation");
-            field.setAccessible(true);
-            // 获取字段的内存偏移量和基址
-            Object staticFieldBase = UnsafeUtils.UNSAFE.staticFieldBase(field);
-            long staticFieldOffset = UnsafeUtils.UNSAFE.staticFieldOffset(field);
-
-            // 修改字段的值
-            UnsafeUtils.UNSAFE.putBoolean(staticFieldBase, staticFieldOffset, strict);
-        } catch (NoSuchFieldException | SecurityException e) {
-            // ignore
-        }
-    }
     /**
      * 是否切换使用表达式ognl/qlexpress开关
      */
@@ -178,6 +162,20 @@ public class GlobalOptions {
             description = ""
     )
     public static volatile String QLExpressConfig = "";
+
+    public static void updateOnglStrict(boolean strict) {
+        try {
+            Field field = OgnlRuntime.class.getDeclaredField("_useStricterInvocation");
+            field.setAccessible(true);
+            // 获取字段的内存偏移量和基址
+            Object staticFieldBase = UnsafeUtils.UNSAFE.staticFieldBase(field);
+            long staticFieldOffset = UnsafeUtils.UNSAFE.staticFieldOffset(field);
+
+            // 修改字段的值
+            UnsafeUtils.UNSAFE.putBoolean(staticFieldBase, staticFieldOffset, strict);
+        } catch (NoSuchFieldException | SecurityException e) {
+            // ignore
+        }
+    }
+
 }
-
-
