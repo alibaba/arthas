@@ -7,7 +7,7 @@ package com.taobao.arthas.grpc.server;
  */
 public class ArthasGrpcBootstrap {
     public static void main(String[] args) {
-        ArthasGrpcServer arthasGrpcServer = new ArthasGrpcServer(9090, null);
+        ArthasGrpcServer arthasGrpcServer = new ArthasGrpcServer(9091, null);
         arthasGrpcServer.start();
     }
 }

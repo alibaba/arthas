@@ -30,7 +30,7 @@ public class ArthasGrpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getName());
 
-    private int port = 9090;
+    private int port = 9091;
 
     private String grpcServicePackageName;
 
