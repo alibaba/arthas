@@ -39,6 +39,8 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
 
     @Override
     public void destroy() {
+        //TODO 这里对ThreadLocal执行remove意义不大，不严谨，调用此方法的线程，跟执行before那些方法的线程可能不是一个线程，
+        // 比如执行q指令、ctrl+c指令的线程，既然线程都不是之前set值的那个线程了，那么对ThreadLocal执行remove便没意义了
         threadBoundEntity.remove();
     }
 
@@ -83,6 +85,12 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
         TraceEntity traceEntity = threadLocalTraceEntity(loader);
         if (traceEntity.deep >= 1) { // #1817 防止deep为负数
             traceEntity.deep--;
+            //此次修复了有after没有before的问题后，deep目前不会减为负数了，
+            //不过目前仍存在不配对的情况(即有before没有after，此情况目前是没问题的)，
+            //TODO 建议后续重构before与after的机制，将其与条件匹配&结果输出等逻辑剥离出来，
+            // 严格保证traceEntity.deep++与traceEntity.deep--等这些“进出栈”逻辑能配对执行，不管当前Process的状态如何，
+            // 进行条件判断&输出结果时再根据Process的状态来决定是否跳过。
+            // 可能也是因为不配对的问题，导致很多ThreadLocal不能定义为static，需要在AdviceListener销毁的时候一同废弃
         }
         if (traceEntity.deep == 0) {
             double cost = threadLocalWatch.costInMillis();
