@@ -1,5 +1,6 @@
 package com.alibaba.arthas.nat.agent.server;
 
+import com.alibaba.arthas.nat.agent.common.constants.NativeAgentConstants;
 import com.alibaba.arthas.nat.agent.factory.NativeAgentRegistryFactory;
 import com.alibaba.arthas.nat.agent.registry.NativeAgentRegistry;
 import com.alibaba.arthas.nat.agent.core.ArthasHomeHandler;
@@ -34,14 +35,16 @@ import java.util.Arrays;
 import static com.taobao.arthas.common.ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
 
 /**
- * @description: hello world
+ * @description: NativeAgentBootstrap
  * @author：flzjkl
  * @date: 2024-07-20 9:23
  */
 
 @Name("arthas-native-agent")
 @Summary("Bootstrap Arthas Native Agent")
-@Description("EXAMPLES:\n" + "java -jar native-agent.jar --ip 116.196.97.114 --http-port 2671 --ws-port 2672 --registration-type etcd --registration-address 126.166.97.114:2379\n"
+@Description("EXAMPLES:\n" + "java -jar native-agent.jar --ip 127.0.0.1 --proxy-address 127.0.0.1 :2233\n"
+        + "java -jar native-agent.jar --ip 116.196.97.114 --http-port 2671 --ws-port 2672 --proxy-address 116.196.97.114:2233\n"
+        + "java -jar native-agent.jar --ip 116.196.97.114 --http-port 2671 --ws-port 2672 --registration-type etcd --registration-address 126.166.97.114:2379\n"
         + "  https://arthas.aliyun.com/doc\n")
 public class NativeAgentBootstrap {
 
@@ -53,6 +56,7 @@ public class NativeAgentBootstrap {
     public Integer wsPort;
     public String registrationType;
     public String registrationAddress;
+    public String proxyAddress;
 
     @Option(longName = "ip", required = true)
     @Description("native agent ip")
@@ -72,16 +76,22 @@ public class NativeAgentBootstrap {
         this.wsPort = wsPort;
     }
 
-    @Option(longName = "registration-type", required = true)
+    @Option(longName = "registration-type")
     @Description("registration type")
     public void setRegistrationType(String registrationType) {
         this.registrationType = registrationType;
     }
 
-    @Option(longName = "registration-address", required = true)
+    @Option(longName = "registration-address")
     @Description("registration address")
     public void setRegistrationAddress(String registrationAddress) {
         this.registrationAddress = registrationAddress;
+    }
+
+    @Option(longName = "proxy-address")
+    @Description("registration proxy address")
+    public void setProxyAddress(String proxyAddress) {
+        this.proxyAddress = proxyAddress;
     }
 
     public static void main(String[] args) {
@@ -109,6 +119,17 @@ public class NativeAgentBootstrap {
         logger.info("read input config success");
 
         // Register native agent
+        logger.info("check register params ...");
+        boolean checkRegisterParamsRes = checkRegisterParams(nativeAgentBootstrap);
+        if (!checkRegisterParamsRes) {
+            throw new RuntimeException("Failed to verify the registration parameters. " +
+                    "Please read the documentation and check the parameters you entered");
+        }
+        if (nativeAgentBootstrap.getProxyAddress() != null) {
+            nativeAgentBootstrap.setRegistrationType("native-agent-proxy");
+            nativeAgentBootstrap.setRegistrationAddress(nativeAgentBootstrap.getProxyAddress());
+        }
+        logger.info("check register params success");
         try {
             logger.info("register native agent ...");
             NativeAgentRegistryFactory nativeAgentRegistryFactory = NativeAgentRegistryFactory.getNativeAgentClientRegisterFactory();
@@ -177,7 +198,7 @@ public class NativeAgentBootstrap {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(new HttpServerCodec());
-                            ch.pipeline().addLast(new HttpObjectAggregator(MAX_HTTP_CONTENT_LENGTH));
+                            ch.pipeline().addLast(new HttpObjectAggregator(NativeAgentConstants.MAX_HTTP_CONTENT_LENGTH));
                             ch.pipeline().addLast(new HttpRequestHandler());
                         }
                     });
@@ -193,6 +214,23 @@ public class NativeAgentBootstrap {
             logger.info("shutdown http server");
         }
 
+    }
+
+    private static boolean checkRegisterParams(NativeAgentBootstrap nativeAgentBootstrap) {
+        String proxyAddress = nativeAgentBootstrap.getProxyAddress();
+        String thirdPartyAddress = nativeAgentBootstrap.getRegistrationAddress();
+        String thirdPartyType = nativeAgentBootstrap.getRegistrationType();
+
+        // Register with proxy
+        if (proxyAddress != null && thirdPartyAddress == null && thirdPartyType == null) {
+            return true;
+        }
+        // Register with a third-party registry
+        if (proxyAddress == null && thirdPartyType != null && thirdPartyAddress != null) {
+            return true;
+        }
+
+        return false;
     }
 
     private static String usage(CLI cli) {
@@ -238,5 +276,9 @@ public class NativeAgentBootstrap {
 
     public String getRegistrationType() {
         return registrationType;
+    }
+
+    public String getProxyAddress() {
+        return proxyAddress;
     }
 }
