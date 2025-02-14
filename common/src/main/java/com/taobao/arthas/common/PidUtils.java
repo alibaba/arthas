@@ -1,7 +1,6 @@
 package com.taobao.arthas.common;
 
 import java.lang.management.ManagementFactory;
-import java.util.Map;
 
 /**
  *
@@ -29,10 +28,7 @@ public class PidUtils {
         }
 
         try {
-            for (final Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                if (entry.getKey().startsWith("JAVA_MAIN_CLASS")) // like JAVA_MAIN_CLASS_13328
-                    MAIN_CLASS = entry.getValue();
-            }
+            MAIN_CLASS = System.getProperty("sun.java.command", "");
         } catch (Throwable e) {
             // ignore
         }
