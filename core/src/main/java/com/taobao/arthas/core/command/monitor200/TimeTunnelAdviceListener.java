@@ -98,8 +98,8 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
             isFirst = false;
         }
 
-        process.times().incrementAndGet();
-        if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
+        int times = process.times().incrementAndGet();
+        if (isLimitExceeded(command.getNumberOfLimit(), times)) {
             abortProcess(process, command.getNumberOfLimit());
         }
     }
