@@ -2,6 +2,7 @@ package com.alibaba.arthas.nat.agent.management.web.server;
 
 import com.alibaba.arthas.nat.agent.common.constants.NativeAgentConstants;
 import com.alibaba.arthas.nat.agent.common.utils.WelcomeUtil;
+import com.alibaba.arthas.nat.agent.management.web.discovery.impl.NativeAgentManagementNativeAgentProxyDiscovery;
 import com.alibaba.arthas.nat.agent.management.web.server.http.HttpRequestHandler;
 
 import com.taobao.middleware.cli.CLI;
@@ -23,20 +24,21 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * @description: native agent server
+ * @description: native agent management web
  * @author：flzjkl
  * @date: 2024-07-20 9:23
  */
-
 @Name("arthas-native-agent-management-web")
 @Summary("Bootstrap Arthas Native Management Web")
-@Description("EXAMPLES:\n" + "  java -jar native-agent-management-web.jar  --registration-type etcd --registration-address 161.169.97.114:2379\n"
+@Description("EXAMPLES:\n" + "java -jar native-agent-management-web.jar --proxy-address 161.169.97.114:2233\n"
+        + "java -jar native-agent-management-web.jar  --registration-type etcd --registration-address 161.169.97.114:2379\n"
         + "java -jar native-agent-management-web.jar  --port 3939  --registration-type etcd --registration-address 161.169.97.114:2379\n"
         + "https://arthas.aliyun.com/doc\n")
 public class NativeAgentManagementWebBootstrap {
     private static final Logger logger = LoggerFactory.getLogger(NativeAgentManagementWebBootstrap.class);
     private static final int DEFAULT_NATIVE_AGENT_MANAGEMENT_WEB_PORT = 3939;
     private Integer port;
+    private String proxyAddress;
     public static String registrationType;
     public static String registrationAddress;
 
@@ -46,13 +48,19 @@ public class NativeAgentManagementWebBootstrap {
         this.port = port;
     }
 
-    @Option(longName = "registration-type", required = true)
+    @Option(longName = "proxy-address")
+    @Description("native agent proxy address")
+    public void setProxyAddress(String proxyAddress) {
+        this.proxyAddress = proxyAddress;
+    }
+
+    @Option(longName = "registration-type")
     @Description("registration type")
     public void setRegistrationType(String registrationType) {
         this.registrationType = registrationType;
     }
 
-    @Option(longName = "registration-address", required = true)
+    @Option(longName = "registration-address")
     @Description("registration address")
     public void setRegistrationAddress(String registrationAddress) {
         this.registrationAddress = registrationAddress;
@@ -75,6 +83,19 @@ public class NativeAgentManagementWebBootstrap {
         }
         logger.info("read input success!");
 
+        logger.info("check bootstrap params ...");
+        boolean checkBootstrapParamsRes = checkBootstrapParams(nativeAgentManagementWebBootstrap);
+        if (!checkBootstrapParamsRes) {
+            throw new RuntimeException("Failed to verify the bootstrap parameters. " +
+                    "Please read the documentation and check the parameters you entered");
+        }
+        if (nativeAgentManagementWebBootstrap.getRegistrationType() == null
+                && nativeAgentManagementWebBootstrap.getRegistrationAddress() == null
+                && nativeAgentManagementWebBootstrap.getProxyAddress() != null) {
+            nativeAgentManagementWebBootstrap.setRegistrationType("native-agent-management");
+            nativeAgentManagementWebBootstrap.setRegistrationAddress("127.0.0,1:" + nativeAgentManagementWebBootstrap.getPortOrDefault());
+            NativeAgentManagementNativeAgentProxyDiscovery.proxyAddress = nativeAgentManagementWebBootstrap.getProxyAddress();
+        }
         // Start the http server
         logger.info("start the http server... httPort:{}", nativeAgentManagementWebBootstrap.getPortOrDefault());
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -106,6 +127,21 @@ public class NativeAgentManagementWebBootstrap {
         }
     }
 
+    private static boolean checkBootstrapParams(NativeAgentManagementWebBootstrap managementBootstrap) {
+        String address = managementBootstrap.getRegistrationAddress();
+        String type = managementBootstrap.getRegistrationType();
+        String proxyAddress = managementBootstrap.getProxyAddress();
+        // single
+        if (address == null && type == null && proxyAddress != null) {
+            return true;
+        }
+        // cluster
+        if (address != null && type != null && proxyAddress == null) {
+            return true;
+        }
+        return false;
+    }
+
     public int getPortOrDefault() {
         if (this.port == null) {
             return DEFAULT_NATIVE_AGENT_MANAGEMENT_WEB_PORT;
@@ -120,6 +156,10 @@ public class NativeAgentManagementWebBootstrap {
 
     public String getRegistrationAddress() {
         return registrationAddress;
+    }
+
+    public String getProxyAddress() {
+        return proxyAddress;
     }
 
     public Integer getPort() {

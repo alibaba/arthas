@@ -1,15 +1,13 @@
 package com.alibaba.arthas.nat.agent.core;
 
+import com.taobao.arthas.common.ExecutingCommand;
+import com.taobao.arthas.common.PidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-
-import static com.alibaba.arthas.nat.agent.core.ArthasHomeHandler.ARTHAS_HOME_DIR;
 
 /**
  * @description: list java process via invoke com.taobao.arthas.boot.ProcessUtils#listProcessByJps
@@ -19,39 +17,43 @@ import static com.alibaba.arthas.nat.agent.core.ArthasHomeHandler.ARTHAS_HOME_DI
 public class ListJvmProcessHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ListJvmProcessHandler.class);
-    private static final String PROCESS_UTILS_PATH = "com.taobao.arthas.boot.ProcessUtils";
-    private static final String LIST_PROCESS_BY_JPS_METHOD = "listProcessByJps";
 
-    public static Map<Long, String> listJvmProcessByInvoke()  {
-        if (ARTHAS_HOME_DIR == null) {
-            ArthasHomeHandler.findArthasHome();
-        }
+    public static Map<Long, String> listProcessByJps() {
+        Map<Long, String> result = new LinkedHashMap<Long, String>();
 
-        if (ARTHAS_HOME_DIR == null) {
-            return null;
-        }
+        String jps = "jps";
 
-        String arthasBootPath = ARTHAS_HOME_DIR + File.separator + "arthas-boot.jar";
-        Method method = null;
-        Object instance = null;
-        Map<Long, String> result = null;
+        String[] command = new String[] { jps, "-l" };
 
-        try {
-            URLClassLoader classLoader = new URLClassLoader(new URL[]{new File(arthasBootPath).toURI().toURL()});
+        List<String> lines = ExecutingCommand.runNative(command);
 
-            Class<?> clazz = classLoader.loadClass(PROCESS_UTILS_PATH);
 
-            method = clazz.getDeclaredMethod(LIST_PROCESS_BY_JPS_METHOD, boolean.class);
-            method.setAccessible(true);
+        long currentPid = Long.parseLong(PidUtils.currentPid());
+        for (String line : lines) {
+            String[] strings = line.trim().split("\\s+");
+            if (strings.length < 1) {
+                continue;
+            }
+            try {
+                long pid = Long.parseLong(strings[0]);
+                if (pid == currentPid) {
+                    continue;
+                }
+                if (strings.length >= 2 && isJpsProcess(strings[1])) { // skip jps
+                    continue;
+                }
 
-            instance = clazz.getDeclaredConstructor().newInstance();
+                result.put(pid, line);
+            } catch (Throwable e) {
 
-            result = (Map<Long, String>) method.invoke(instance, false);
-        } catch (Exception e) {
-            logger.error("invoke list java  process failed:" + e.getMessage());
-            throw new RuntimeException(e);
+            }
         }
 
         return result;
     }
+
+    private static boolean isJpsProcess(String mainClassName) {
+        return "sun.tools.jps.Jps".equals(mainClassName) || "jdk.jcmd/sun.tools.jps.Jps".equals(mainClassName);
+    }
+
 }
