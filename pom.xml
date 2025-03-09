@@ -165,8 +165,8 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>QLExpress4</artifactId>
-                <version>4.0.0-beta.2</version>
+                <artifactId>qlexpress4</artifactId>
+                <version>4.0.0-beta.5</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>

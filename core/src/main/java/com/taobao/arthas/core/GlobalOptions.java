@@ -152,17 +152,6 @@ public class GlobalOptions {
     )
     public static volatile String ExpressType = "ognl";
 
-
-    /**
-     * qlexpress使用参数
-     */
-    @Option(level = 1,
-            name = "qlexpress-config",
-            summary = "config init when use qlexpress, with json-simple, for example: {\"precise\": true }",
-            description = ""
-    )
-    public static volatile String QLExpressConfig = "";
-
     public static void updateOnglStrict(boolean strict) {
         try {
             Field field = OgnlRuntime.class.getDeclaredField("_useStricterInvocation");

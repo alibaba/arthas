@@ -20,7 +20,6 @@ Global options
 | verbose                | false         | This option enables print verbose information                                                                                                                                                         |
 | strict                 | true          | whether to enable strict mode                                                                                                                                                                         |
 | express-type           | ognl          | Option to use ognl/qlexpress in commands, default ognl, can change to qlexpress                                                                                                                       |
-| qlexpress-config       |               | Set the parameters for qlexpress4, for more information https://github.com/alibaba/QLExpress                                                                                                          |
 ## View all options
 
 ```bash
@@ -65,9 +64,6 @@ $ options
                                                             false`
  1      String  express-type  ognl   Option to use ognl/ql  Option to use ognl/qlexpress in commands, 
                                      express                default ognl, can change to qlexpress.
- 1      String  qlexpress-config  `` config init when use   config init when use qlexpress, with json
-                                     qlexpress, with json   -simple, more information about https://
-                                     -simple                github.com/alibaba/QLExpress
 ```
 
 ## Get special option value

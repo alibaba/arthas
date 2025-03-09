@@ -213,7 +213,7 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>QLExpress4</artifactId>
+            <artifactId>qlexpress4</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
