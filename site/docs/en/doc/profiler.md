@@ -379,11 +379,17 @@ profiler start -e cpu --jfrsync +jdk.YoungGarbageCollection+jdk.OldGarbageCollec
 
 Use `--loop TIME` to run profiler in a loop (continuous profiling). The argument is either a clock time (hh:mm:ss) or a loop duration in seconds, minutes, hours, or days. Make sure the filename includes a timestamp pattern, or the output will be overwritten on each iteration. The command below will run profiling endlessly and save records of each hour to a jfr file.
 
+> If the `-f` parameter is not specified, nothing will be saved. If the `-f` parameter does not contain `%t`, it will overwrite the same file repeatedly.
+
 ```bash
 profiler start --loop 1h -f /var/log/profile-%t.jfr
 ```
 
 ## `--timeout` option
+
+```bash
+profiler start --timeout 300s
+```
 
 This option specifies the time when profiling will automatically stop. The format is the same as in loop: it is either a wall clock time (12:34:56) or a relative time interval (2h).
 

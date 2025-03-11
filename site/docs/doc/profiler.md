@@ -377,11 +377,17 @@ profiler start -e cpu --jfrsync +jdk.YoungGarbageCollection+jdk.OldGarbageCollec
 
 使用 `--loop TIME` 可以持续运行 profiler 并周期性保存结果。选项格式可以是具体时间 hh:mm:ss 或以秒、分钟、小时或天计算的时间间隔。需要确保指定的输出文件名中包含时间戳，否则每次输出的结果都会覆盖上次保存的结果。以下命令持续执行 profiling 并将每个小时内的记录保存到一个 jfr 文件中。
 
+> 如果没有指定 `-f` 参数，则不会保存任何内容。如果 `-f` 参数里没有 `%t`，则会循环保存到同一个文件里。
+
 ```bash
 profiler start --loop 1h -f /var/log/profile-%t.jfr
 ```
 
 ## `--timeout` 选项
+
+```bash
+profiler start --timeout 300s
+```
 
 这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action。可参考 [async-profiler docs](https://github.com/async-profiler/async-profiler/blob/master/docs/ProfilerOptions.md) 了解更多信息。
 
