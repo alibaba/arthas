@@ -423,7 +423,6 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![智联招聘](static/zhaopin.png)
 ![高德红外](static/guideir.jpg)
 ![达美盛](static/dms.png)
-![明源云](static/mingyuanyun.jpg)
 
 ### 衍生项目
 
