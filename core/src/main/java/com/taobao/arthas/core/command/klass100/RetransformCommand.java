@@ -411,7 +411,7 @@ public class RetransformCommand extends AnnotatedCommand {
         Collections.sort(tmp, new Comparator<RetransformEntry>() {
             @Override
             public int compare(RetransformEntry entry1, RetransformEntry entry2) {
-                return entry1.getId() - entry2.getId();
+                return Integer.compare(entry1.getId(), entry2.getId());
             }
         });
         retransformEntries = tmp;
