@@ -75,7 +75,7 @@ public class HttpNativeAgentHandler {
     private FullHttpResponse doListProcess(ChannelHandlerContext ctx, FullHttpRequest request) {
         Map<Long, String> processMap = null;
         try {
-            processMap = ListJvmProcessHandler.listJvmProcessByInvoke();
+            processMap = ListJvmProcessHandler.listProcessByJps();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
