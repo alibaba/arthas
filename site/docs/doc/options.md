@@ -19,7 +19,7 @@
 | print-parent-fields    | true   | 是否打印在 parent class 里的 filed                                                                                                                         |
 | verbose                | false  | 是否打印更多详细信息                                                                                                                                       |
 | strict                 | true   | 是否启用 strict 模式                                                                                                                                       |
-
+| express-type           | ognl  | 是否切换使用表达式ognl/qlexpress开关                                                                                              |
 ## 查看所有的 options
 
 ```bash
@@ -62,6 +62,8 @@ $ options
         n                             e                     ed to set object properties. Want to set o
                                                             bject properties, execute `options strict
                                                             false`
+ 1      String  express-type  ognl   Option to use ognl/ql  Option to use ognl/qlexpress in commands, 
+                                     express                default ognl, can change to qlexpress.
 ```
 
 ## 获取 option 的值
