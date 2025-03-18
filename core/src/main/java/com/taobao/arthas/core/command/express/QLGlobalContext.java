@@ -35,8 +35,7 @@ public class QLGlobalContext implements ExpressContext {
     }
 
     public void bindObj(Object object) {
-        ObjectFieldExpressContext objectFieldExpressContext = new ObjectFieldExpressContext(object, express4Runner);
-        this.objectFieldExpressContext = objectFieldExpressContext;
+        this.objectFieldExpressContext = new ObjectFieldExpressContext(object, express4Runner);
         context.put("object",object);
     }
     @Override
