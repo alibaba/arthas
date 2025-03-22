@@ -14,7 +14,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build with Maven
-        run: ./mvnw package
+        run: ./mvnw -V -ntp package
       - uses: actions/upload-artifact@v3
         with:
           name: lib
@@ -30,7 +30,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build with Maven
-        run: ./mvnw package
+        run: ./mvnw -V -ntp package
       - uses: actions/upload-artifact@v3
         with:
           name: lib
@@ -46,7 +46,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build with Maven
-        run: ./mvnw package
+        run: ./mvnw -V -ntp package
       - uses: actions/upload-artifact@v3
         with:
           name: lib
@@ -73,7 +73,7 @@ jobs:
 
           run: |
             apt update && apt install openjdk-8-jdk g++ -y
-            ./mvnw package -pl common,arthas-vmtool
+            ./mvnw -V -ntp package -pl common,arthas-vmtool
             cp arthas-vmtool/target/libArthas* lib/
       - uses: actions/upload-artifact@v3
         with:

@@ -17,7 +17,7 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn clean install -P full
+        run: mvn -V -ntp clean install -P full
 
   windows_build:
     runs-on: windows-2019
@@ -33,7 +33,7 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn clean install -P full
+        run: mvn -V -ntp clean install -P full
 
   macos_build:
     runs-on: ${{ matrix.os }}
@@ -52,4 +52,4 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn clean install -P full
+        run: mvn -V -ntp clean install -P full

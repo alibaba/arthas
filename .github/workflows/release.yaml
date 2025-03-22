@@ -16,7 +16,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn clean package -P full
+        run: mvn -V -ntp clean package -P full
 
       - name: Release
         uses: softprops/action-gh-release@v1
