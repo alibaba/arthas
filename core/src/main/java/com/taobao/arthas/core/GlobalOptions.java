@@ -146,8 +146,8 @@ public class GlobalOptions {
      * 是否切换使用表达式ognl/qlexpress开关
      */
     @Option(level = 1,
-            name = "express-type",
-            summary = "Option to use ognl/qlexpress",
+            name = "el",
+            summary = "expression language",
             description = "Option to use ognl/qlexpress in commands, default ognl, can change to qlexpress"
     )
     public static volatile String ExpressType = "ognl";
