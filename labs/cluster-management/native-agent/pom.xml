@@ -49,13 +49,6 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.taobao.arthas</groupId>
-            <artifactId>native-agent-common</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
