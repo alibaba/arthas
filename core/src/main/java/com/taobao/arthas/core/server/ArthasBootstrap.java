@@ -321,7 +321,7 @@ public class ArthasBootstrap {
             if (new File(location).exists()) {
                 Properties properties = FileUtils.readProperties(location);
 
-                boolean overrideAll = false;
+                boolean overrideAll;
                 if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
                     overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
                 } else {
