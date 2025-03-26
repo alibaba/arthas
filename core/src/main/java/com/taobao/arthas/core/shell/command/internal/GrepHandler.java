@@ -85,9 +85,9 @@ public class GrepHandler extends StdoutHandler {
         this.invertMatch = invertMatch;
         this.showLineNumber = showLineNumber;
         this.trimEnd = trimEnd;
-        this.beforeLines = beforeLines > 0 ? beforeLines : 0;
-        this.afterLines = afterLines > 0 ? afterLines : 0;
-        this.maxCount = maxCount > 0 ? maxCount : 0;
+        this.beforeLines = Math.max(beforeLines, 0);
+        this.afterLines = Math.max(afterLines, 0);
+        this.maxCount = Math.max(maxCount, 0);
         if (regexpMode) {
             final int flags = ignoreCase ? Pattern.CASE_INSENSITIVE : 0;
             this.pattern = Pattern.compile(keyword, flags);
