@@ -468,13 +468,6 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>flatten.package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>flatten.clean</id>
                         <phase>clean</phase>
                         <goals>
