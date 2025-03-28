@@ -455,7 +455,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.2</version>
+                <version>1.7.0</version>
                 <configuration>
                     <flattenMode>minimum</flattenMode>
                 </configuration>
@@ -468,7 +468,7 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>flatten-clean</id>
+                        <id>flatten.clean</id>
                         <phase>clean</phase>
                         <goals>
                             <goal>clean</goal>
