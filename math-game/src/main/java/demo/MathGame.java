@@ -20,7 +20,7 @@ public class MathGame {
 
     public void run() throws InterruptedException {
         try {
-            int number = random.nextInt()/10000;
+            int number = random.nextInt(10000) + 2;
             List<Integer> primeFactors = primeFactors(number);
             print(number, primeFactors);
 
@@ -30,7 +30,7 @@ public class MathGame {
     }
 
     public static void print(int number, List<Integer> primeFactors) {
-        StringBuffer sb = new StringBuffer(number + "=");
+        StringBuilder sb = new StringBuilder(number + "=");
         for (int factor : primeFactors) {
             sb.append(factor).append('*');
         }
