@@ -45,7 +45,7 @@ rreadlink() ( # Execute the function in a *subshell* to localize variables and t
   { \unalias command; \unset -f command; } >/dev/null 2>&1
   [ -n "$ZSH_VERSION" ] && options[POSIX_BUILTINS]=on # make zsh find *builtins* with `command` too.
 
-  if [[ `command file $target` =~ broken ]]; then
+  if [ `command -v file` ] && [[ `command file $target` =~ broken ]]; then
     echo 'Error:' `file $target`
     return 1
   fi
