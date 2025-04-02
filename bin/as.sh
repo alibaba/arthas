@@ -823,7 +823,9 @@ parse_arguments()
             echo "2. Try to use different http port, for example: as.sh --telnet-port 9998 --http-port 9999"
             exit 1
         fi
-    elif [ -z ${TARGET_PID} ]; then
+    fi
+
+    if [ -z ${TARGET_PID} ]; then
         # batch mode is enabled, no interactive process selection.
         echo "Illegal arguments, the <PID> is required." 1>&2
         return 1
