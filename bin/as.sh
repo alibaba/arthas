@@ -45,6 +45,11 @@ rreadlink() ( # Execute the function in a *subshell* to localize variables and t
   { \unalias command; \unset -f command; } >/dev/null 2>&1
   [ -n "$ZSH_VERSION" ] && options[POSIX_BUILTINS]=on # make zsh find *builtins* with `command` too.
 
+  if [[ `command file $target` =~ broken ]]; then
+    echo 'Error:' `file $target`
+    return 1
+  fi
+
   while :; do # Resolve potential symlinks until the ultimate target is found.
       [ -L "$target" ] || [ -e "$target" ] || { command printf '%s\n' "ERROR: '$target' does not exist." >&2; return 1; }
       command cd "$(command dirname -- "$target")" # Change to target dir; necessary for correct resolution of target path.
