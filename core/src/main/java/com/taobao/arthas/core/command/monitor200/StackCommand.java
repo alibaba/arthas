@@ -32,6 +32,7 @@ public class StackCommand extends EnhancerCommand {
     private String classPattern;
     private String methodPattern;
     private String conditionExpress;
+    private String excludeClassPattern;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
 
@@ -63,6 +64,12 @@ public class StackCommand extends EnhancerCommand {
     @Description("Threshold of execution times")
     public void setNumberOfLimit(int numberOfLimit) {
         this.numberOfLimit = numberOfLimit;
+    }
+        
+    @Option(longName = "exclude-class-pattern")
+    @Description("exclude class name pattern, use either '.' or '/' as separator")
+    public void setExcludeClassPattern(String excludeClassPattern) {
+        this.excludeClassPattern = excludeClassPattern;
     }
 
     public String getClassPattern() {
@@ -112,6 +119,11 @@ public class StackCommand extends EnhancerCommand {
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         return new StackAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
+    }
+   
+    @Override
+    public String getExcludeClassPattern() {
+        return this.excludeClassPattern;
     }
 
 }
