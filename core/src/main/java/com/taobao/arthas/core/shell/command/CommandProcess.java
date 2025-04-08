@@ -8,6 +8,7 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
 import com.taobao.middleware.cli.CommandLine;
 
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -181,5 +182,10 @@ public interface CommandProcess extends Tty {
      * @param result a phased result of the command
      */
     void appendResult(ResultModel result);
+
+    /**
+     * add custom output file
+     */
+    File getArthasOutput();
 
 }
