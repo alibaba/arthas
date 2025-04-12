@@ -247,7 +247,7 @@ Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
 ### 通过索引删除指定的 tt 记录
 
 ```
-tt -d 1001
+tt -d -i 1001
 ```
 
 ### 清除所有的 tt 记录
