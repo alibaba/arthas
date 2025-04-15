@@ -219,7 +219,7 @@ F.Y.I
 ### Delete the specified tt record by index
 
 ```
-tt -d 1001
+tt -d -i 1001
 ```
 
 ### Clear all tt records
