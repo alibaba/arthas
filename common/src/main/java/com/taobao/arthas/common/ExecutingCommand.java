@@ -44,11 +44,7 @@ public class ExecutingCommand {
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(cmdToRunWithArgs);
-        } catch (SecurityException e) {
-            AnsiLog.trace("Couldn't run command {}:", Arrays.toString(cmdToRunWithArgs));
-            AnsiLog.trace(e);
-            return new ArrayList<String>(0);
-        } catch (IOException e) {
+        } catch (SecurityException | IOException e) {
             AnsiLog.trace("Couldn't run command {}:", Arrays.toString(cmdToRunWithArgs));
             AnsiLog.trace(e);
             return new ArrayList<String>(0);
