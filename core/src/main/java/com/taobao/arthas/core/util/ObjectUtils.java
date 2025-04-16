@@ -28,21 +28,20 @@ public abstract class ObjectUtils {
     public static boolean isCompatibleWithThrowsClause(Throwable ex, Class... declaredExceptions) {
         if(!isCheckedException(ex)) {
             return true;
-        } else {
-            if(declaredExceptions != null) {
-                Class[] var2 = declaredExceptions;
-                int var3 = declaredExceptions.length;
+        }
+        if(declaredExceptions != null) {
+            Class[] var2 = declaredExceptions;
+            int var3 = declaredExceptions.length;
 
-                for(int var4 = 0; var4 < var3; ++var4) {
-                    Class declaredException = var2[var4];
-                    if(declaredException.isInstance(ex)) {
-                        return true;
-                    }
+            for(int var4 = 0; var4 < var3; ++var4) {
+                Class declaredException = var2[var4];
+                if(declaredException.isInstance(ex)) {
+                    return true;
                 }
             }
-
-            return false;
         }
+
+        return false;
     }
 
     public static boolean isArray(Object obj) {
@@ -56,19 +55,18 @@ public abstract class ObjectUtils {
     public static boolean containsElement(Object[] array, Object element) {
         if(array == null) {
             return false;
-        } else {
-            Object[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                Object arrayEle = var2[var4];
-                if(nullSafeEquals(arrayEle, element)) {
-                    return true;
-                }
-            }
-
-            return false;
         }
+        Object[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            Object arrayEle = var2[var4];
+            if(nullSafeEquals(arrayEle, element)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static boolean containsConstant(Enum<?>[] enumValues, String constant) {
@@ -179,200 +177,190 @@ public abstract class ObjectUtils {
     public static int nullSafeHashCode(Object obj) {
         if(obj == null) {
             return 0;
-        } else {
-            if(obj.getClass().isArray()) {
-                if(obj instanceof Object[]) {
-                    return nullSafeHashCode((Object[])((Object[])obj));
-                }
-
-                if(obj instanceof boolean[]) {
-                    return nullSafeHashCode((boolean[])((boolean[])obj));
-                }
-
-                if(obj instanceof byte[]) {
-                    return nullSafeHashCode((byte[])((byte[])obj));
-                }
-
-                if(obj instanceof char[]) {
-                    return nullSafeHashCode((char[])((char[])obj));
-                }
-
-                if(obj instanceof double[]) {
-                    return nullSafeHashCode((double[])((double[])obj));
-                }
-
-                if(obj instanceof float[]) {
-                    return nullSafeHashCode((float[])((float[])obj));
-                }
-
-                if(obj instanceof int[]) {
-                    return nullSafeHashCode((int[])((int[])obj));
-                }
-
-                if(obj instanceof long[]) {
-                    return nullSafeHashCode((long[])((long[])obj));
-                }
-
-                if(obj instanceof short[]) {
-                    return nullSafeHashCode((short[])((short[])obj));
-                }
+        }
+        if(obj.getClass().isArray()) {
+            if(obj instanceof Object[]) {
+                return nullSafeHashCode((Object[])((Object[])obj));
             }
 
-            return obj.hashCode();
+            if(obj instanceof boolean[]) {
+                return nullSafeHashCode((boolean[])((boolean[])obj));
+            }
+
+            if(obj instanceof byte[]) {
+                return nullSafeHashCode((byte[])((byte[])obj));
+            }
+
+            if(obj instanceof char[]) {
+                return nullSafeHashCode((char[])((char[])obj));
+            }
+
+            if(obj instanceof double[]) {
+                return nullSafeHashCode((double[])((double[])obj));
+            }
+
+            if(obj instanceof float[]) {
+                return nullSafeHashCode((float[])((float[])obj));
+            }
+
+            if(obj instanceof int[]) {
+                return nullSafeHashCode((int[])((int[])obj));
+            }
+
+            if(obj instanceof long[]) {
+                return nullSafeHashCode((long[])((long[])obj));
+            }
+
+            if(obj instanceof short[]) {
+                return nullSafeHashCode((short[])((short[])obj));
+            }
         }
+
+        return obj.hashCode();
     }
 
     public static int nullSafeHashCode(Object[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            Object[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                Object element = var2[var4];
-                hash = 31 * hash + nullSafeHashCode(element);
-            }
-
-            return hash;
         }
+        int hash = 7;
+        Object[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            Object element = var2[var4];
+            hash = 31 * hash + nullSafeHashCode(element);
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(boolean[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            boolean[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                boolean element = var2[var4];
-                hash = 31 * hash + hashCode(element);
-            }
-
-            return hash;
         }
+        int hash = 7;
+        boolean[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            boolean element = var2[var4];
+            hash = 31 * hash + hashCode(element);
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(byte[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            byte[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                byte element = var2[var4];
-                hash = 31 * hash + element;
-            }
-
-            return hash;
         }
+        int hash = 7;
+        byte[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            byte element = var2[var4];
+            hash = 31 * hash + element;
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(char[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            char[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                char element = var2[var4];
-                hash = 31 * hash + element;
-            }
-
-            return hash;
         }
+        int hash = 7;
+        char[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            char element = var2[var4];
+            hash = 31 * hash + element;
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(double[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            double[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                double element = var2[var4];
-                hash = 31 * hash + hashCode(element);
-            }
-
-            return hash;
         }
+        int hash = 7;
+        double[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            double element = var2[var4];
+            hash = 31 * hash + hashCode(element);
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(float[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            float[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                float element = var2[var4];
-                hash = 31 * hash + hashCode(element);
-            }
-
-            return hash;
         }
+        int hash = 7;
+        float[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            float element = var2[var4];
+            hash = 31 * hash + hashCode(element);
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(int[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            int[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                int element = var2[var4];
-                hash = 31 * hash + element;
-            }
-
-            return hash;
         }
+        int hash = 7;
+        int[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            int element = var2[var4];
+            hash = 31 * hash + element;
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(long[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            long[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                long element = var2[var4];
-                hash = 31 * hash + hashCode(element);
-            }
-
-            return hash;
         }
+        int hash = 7;
+        long[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            long element = var2[var4];
+            hash = 31 * hash + hashCode(element);
+        }
+
+        return hash;
     }
 
     public static int nullSafeHashCode(short[] array) {
         if(array == null) {
             return 0;
-        } else {
-            int hash = 7;
-            short[] var2 = array;
-            int var3 = array.length;
-
-            for(int var4 = 0; var4 < var3; ++var4) {
-                short element = var2[var4];
-                hash = 31 * hash + element;
-            }
-
-            return hash;
         }
+        int hash = 7;
+        short[] var2 = array;
+        int var3 = array.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            short element = var2[var4];
+            hash = 31 * hash + element;
+        }
+
+        return hash;
     }
 
     public static int hashCode(boolean bool) {
@@ -439,216 +427,207 @@ public abstract class ObjectUtils {
     public static String nullSafeToString(Object[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(boolean[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(byte[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(char[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append("\'").append(array[i]).append("\'");
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append("\'").append(array[i]).append("\'");
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(double[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(float[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(int[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(long[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 
     public static String nullSafeToString(short[] array) {
         if(array == null) {
             return "null";
+        }
+        int length = array.length;
+        if(length == 0) {
+            return "{}";
         } else {
-            int length = array.length;
-            if(length == 0) {
-                return "{}";
-            } else {
-                StringBuilder sb = new StringBuilder("{");
+            StringBuilder sb = new StringBuilder("{");
 
-                for(int i = 0; i < length; ++i) {
-                    if(i > 0) {
-                        sb.append(", ");
-                    }
-
-                    sb.append(array[i]);
+            for(int i = 0; i < length; ++i) {
+                if(i > 0) {
+                    sb.append(", ");
                 }
 
-                sb.append("}");
-                return sb.toString();
+                sb.append(array[i]);
             }
+
+            sb.append("}");
+            return sb.toString();
         }
     }
 }
