@@ -40,6 +40,8 @@ import static java.lang.String.format;
 @Summary("Time Tunnel")
 @Description(Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
         "  tt -t *StringUtils isEmpty\n" +
+        "  tt -t *StringUtils.isEmpty ~\n" +
+        "  tt -t *StringUtils:isEmpty ~\n" +
         "  tt -t *StringUtils isEmpty params[0].length==1\n" +
         "  tt -l\n" +
         "  tt -i 1000\n" +
@@ -49,7 +51,7 @@ import static java.lang.String.format;
         "  tt -s '{params[0] > 1}' -w '{params}' \n" +
         "  tt --delete-all\n" +
         Constants.WIKI + Constants.WIKI_HOME + "tt")
-public class TimeTunnelCommand extends EnhancerCommand {
+public class TimeTunnelCommand extends AbstractMethodBasedCommand {
     // 时间隧道(时间碎片的集合)
     // TODO 并非线程安全？
     private static final Map<Integer, TimeFragment> timeFragmentMap = new LinkedHashMap<Integer, TimeFragment>();
@@ -57,8 +59,6 @@ public class TimeTunnelCommand extends EnhancerCommand {
     private static final AtomicInteger sequence = new AtomicInteger(1000);
     // TimeTunnel the method call
     private boolean isTimeTunnel = false;
-    private String classPattern;
-    private String methodPattern;
     private String conditionExpress;
     // list the TimeTunnel
     private boolean isList = false;
