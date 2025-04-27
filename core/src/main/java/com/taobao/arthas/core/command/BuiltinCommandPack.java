@@ -77,6 +77,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(PerfCounterCommand.class);
         // commandClassList.add(GroovyScriptCommand.class);
         commandClassList.add(OgnlCommand.class);
+        commandClassList.add(QLExpressCommand.class);
         commandClassList.add(MemoryCompilerCommand.class);
         commandClassList.add(RedefineCommand.class);
         commandClassList.add(RetransformCommand.class);

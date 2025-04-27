@@ -36,6 +36,14 @@ public class ExpressFactory {
         return new OgnlExpress(new ClassLoaderClassResolver(classloader));
     }
 
+
+    public static Express unpooledExpressByQL(ClassLoader classloader) {
+        if (classloader == null) {
+            classloader = ClassLoader.getSystemClassLoader();
+        }
+        return new QLExpress(new QLExpressClassLoaderClassResolver(classloader));
+    }
+
     public static Express unpooledExpressByOGNL(ClassLoader classloader) {
         if (classloader == null) {
             classloader = ClassLoader.getSystemClassLoader();
