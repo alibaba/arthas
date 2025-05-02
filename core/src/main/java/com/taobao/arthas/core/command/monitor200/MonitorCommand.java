@@ -7,6 +7,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
@@ -40,7 +41,7 @@ public class MonitorCommand extends EnhancerCommand {
     @Argument(argName = "class-pattern", index = 0)
     @Description("Path and classname of Pattern Matching")
     public void setClassPattern(String classPattern) {
-        this.classPattern = classPattern;
+        this.classPattern = StringUtils.normalizeClassName(classPattern);
     }
 
     @Argument(argName = "method-pattern", index = 1)

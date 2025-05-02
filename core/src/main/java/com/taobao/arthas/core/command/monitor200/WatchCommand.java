@@ -9,6 +9,7 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -49,7 +50,7 @@ public class WatchCommand extends EnhancerCommand {
     @Argument(index = 0, argName = "class-pattern")
     @Description("The full qualified class name you want to watch")
     public void setClassPattern(String classPattern) {
-        this.classPattern = classPattern;
+        this.classPattern = StringUtils.normalizeClassName(classPattern);
     }
 
     @Argument(index = 1, argName = "method-pattern")

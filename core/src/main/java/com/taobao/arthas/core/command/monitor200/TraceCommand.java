@@ -5,6 +5,7 @@ import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.matcher.GroupMatcher;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
@@ -55,7 +56,7 @@ public class TraceCommand extends EnhancerCommand {
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
     public void setClassPattern(String classPattern) {
-        this.classPattern = classPattern;
+        this.classPattern = StringUtils.normalizeClassName(classPattern);
     }
 
     @Argument(argName = "method-pattern", index = 1)
