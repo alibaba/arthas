@@ -24,16 +24,14 @@ import java.util.List;
  * @Author TaoKan
  * @Date 2025/3/23 8:59 PM
  */
-@Name("ql")
+@Name("qlexpress")
 @Summary("Execute qlexpress expression.")
 @Description(Constants.EXAMPLE
-        + "  ql '@java.lang.System@out.println(\"hello \\u4e2d\\u6587\")' \n"
-        + "  ql -x 2 '@Singleton@getInstance()' \n"
-        + "  ql '@Demo@staticFiled' \n"
-        + "  ql '#value1=@System@getProperty(\"java.home\"), #value2=@System@getProperty(\"java.runtime.name\"), {#value1, #value2}'\n"
-        + "  ql -c 5d113a51 '@com.taobao.arthas.core.GlobalOptions@isDump' \n"
-        + Constants.WIKI + Constants.WIKI_HOME + "ql\n"
-        + "  https://commons.apache.org/proper/commons-ognl/language-guide.html")
+        + "  qlexpress 'java.lang.System.out.println(\"hello~\")' \n"
+        + "  qlexpress -x 2 'java.lang.Math.abs(1)' \n"
+        + "  qlexpress -c 5d113a51 'com.taobao.arthas.core.GlobalOptions.isDump' \n"
+        + Constants.WIKI + Constants.WIKI_HOME + "qlexpress\n"
+        + "  https://github.com/alibaba/QLExpress/tree/v4.0.0-beta.1")
 public class QLExpressCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(QLExpressCommand.class);
 
