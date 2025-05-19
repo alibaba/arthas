@@ -37,7 +37,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |       _method-pattern_ | pattern for the method name                                                                            |
 | _condition-expression_ | condition expression for filtering method calls                                                        |
 |                  `[E]` | turn on regex matching while the default is wildcard matching                                          |
-|                 `[c:]` | cycle of statistics, the default value: `120`s                                                         |
+|                 `[c:]` | cycle of statistics, the default value: `60`s                                                         |
 |                  `[b]` | evaluate the condition-expression before method invoke                                                 |
 |            `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
