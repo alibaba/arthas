@@ -56,6 +56,7 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
         + "  vmtool --action interruptThread -t 1\n"
+        + "  vmtool --action mallocTrim\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
@@ -157,7 +158,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     public enum VmToolAction {
-        getInstances, forceGc, interruptThread
+        getInstances, forceGc, interruptThread, mallocTrim
     }
 
     @Override
@@ -238,6 +239,11 @@ public class VmToolCommand extends AnnotatedCommand {
                 process.write("\n");
                 process.end();
 
+                return;
+            } else if (VmToolAction.mallocTrim.equals(action)) {
+                boolean result = vmToolInstance().mallocTrim();
+                process.write("\n");
+                process.end(result ? 0 : -1, "mallocTrim result: " + result);
                 return;
             }
 
