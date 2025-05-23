@@ -56,6 +56,7 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
         + "  vmtool --action interruptThread -t 1\n"
+        + "  vmtool --action mallocTrim\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
