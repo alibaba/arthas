@@ -157,7 +157,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     public enum VmToolAction {
-        getInstances, forceGc, interruptThread
+        getInstances, forceGc, interruptThread, mallocTrim
     }
 
     @Override
@@ -238,6 +238,11 @@ public class VmToolCommand extends AnnotatedCommand {
                 process.write("\n");
                 process.end();
 
+                return;
+            } else if (VmToolAction.mallocTrim.equals(action)) {
+                boolean result = vmToolInstance().mallocTrim();
+                process.write("\n");
+                process.end(result ? 0 : -1, "mallocTrim result: " + result);
                 return;
             }
 

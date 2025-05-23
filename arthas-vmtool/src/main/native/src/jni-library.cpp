@@ -4,6 +4,9 @@
 #include <jvmti.h>
 #include "arthas_VmTool.h" // under target/native/javah/
 
+#ifdef __GLIBC__
+#include <malloc.h>
+#endif
 
 static jvmtiEnv *jvmti;
 static jlong tagCounter = 0;
@@ -204,4 +207,16 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
     }
     jvmti->Deallocate(reinterpret_cast<unsigned char *>(classes));
     return array;
+}
+
+
+extern "C"
+JNIEXPORT jboolean JNICALL Java_arthas_VmTool_mallocTrim
+        (JNIEnv *env, jclass thisClass) {
+#ifdef __GLIBC__
+    if (!::malloc_trim(0)) {
+        return JNI_FALSE;
+    }
+#endif
+    return JNI_TRUE;
 }

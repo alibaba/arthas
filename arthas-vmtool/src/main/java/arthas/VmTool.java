@@ -116,4 +116,10 @@ public class VmTool implements VmToolMXBean {
         return getAllLoadedClasses0(Class.class);
     }
 
+    @Override
+    public boolean mallocTrim() {
+        return mallocTrim0();
+    }
+
+    private static synchronized native boolean mallocTrim0();
 }

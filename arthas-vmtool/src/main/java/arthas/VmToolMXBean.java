@@ -57,4 +57,9 @@ public interface VmToolMXBean {
      * 获取所有已加载的类
      */
     public Class<?>[] getAllLoadedClasses();
+
+    /**
+     * glibc 释放空闲内存
+     */
+    public boolean mallocTrim();
 }
