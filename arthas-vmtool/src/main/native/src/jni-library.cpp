@@ -209,7 +209,6 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
     return array;
 }
 
-
 extern "C"
 JNIEXPORT jboolean JNICALL Java_arthas_VmTool_mallocTrim
         (JNIEnv *env, jclass thisClass) {
