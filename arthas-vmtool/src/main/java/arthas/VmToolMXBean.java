@@ -61,5 +61,5 @@ public interface VmToolMXBean {
     /**
      * glibc 释放空闲内存
      */
-    public boolean mallocTrim();
+    public int mallocTrim();
 }

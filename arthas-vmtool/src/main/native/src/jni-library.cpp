@@ -210,12 +210,10 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_arthas_VmTool_mallocTrim0
+JNIEXPORT jint JNICALL Java_arthas_VmTool_mallocTrim0
         (JNIEnv *env, jclass thisClass) {
 #ifdef __GLIBC__
-    if (!::malloc_trim(0)) {
-        return JNI_FALSE;
-    }
+    return ::malloc_trim(0);
 #endif
-    return JNI_TRUE;
+    return -1;
 }

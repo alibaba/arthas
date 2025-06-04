@@ -117,9 +117,9 @@ public class VmTool implements VmToolMXBean {
     }
 
     @Override
-    public boolean mallocTrim() {
+    public int mallocTrim() {
         return mallocTrim0();
     }
 
-    private static synchronized native boolean mallocTrim0();
+    private static synchronized native int mallocTrim0();
 }
