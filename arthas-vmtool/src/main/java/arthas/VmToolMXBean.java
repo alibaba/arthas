@@ -62,4 +62,9 @@ public interface VmToolMXBean {
      * glibc 释放空闲内存
      */
     public int mallocTrim();
+
+    /**
+     * glibc 输出内存状态到应用的 stderr
+     */
+    public boolean mallocStats();
 }

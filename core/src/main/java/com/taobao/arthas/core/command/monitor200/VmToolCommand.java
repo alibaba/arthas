@@ -57,6 +57,7 @@ import arthas.VmTool;
         + "  vmtool --action forceGc\n"
         + "  vmtool --action interruptThread -t 1\n"
         + "  vmtool --action mallocTrim\n"
+        + "  vmtool --action mallocStats\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
@@ -158,7 +159,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     public enum VmToolAction {
-        getInstances, forceGc, interruptThread, mallocTrim
+        getInstances, forceGc, interruptThread, mallocTrim, mallocStats
     }
 
     @Override
@@ -245,6 +246,12 @@ public class VmToolCommand extends AnnotatedCommand {
                 process.write("\n");
                 process.end(result == 1 ? 0 : -1, "mallocTrim result: " +
                     (result == 1 ? "true" : (result == 0 ? "false" : "not supported")));
+                return;
+            } else if (VmToolAction.mallocStats.equals(action)) {
+                boolean result = vmToolInstance().mallocStats();
+                process.write("\n");
+                process.end(result ? 0 : -1, "mallocStats result: " +
+                    (result ? "true" : "not supported"));
                 return;
             }
 

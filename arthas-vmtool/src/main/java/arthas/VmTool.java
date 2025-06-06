@@ -122,4 +122,10 @@ public class VmTool implements VmToolMXBean {
     }
 
     private static synchronized native int mallocTrim0();
+
+    @Override
+    public boolean mallocStats() {
+        return mallocStats0();
+    }
+    private static synchronized native boolean mallocStats0();
 }
