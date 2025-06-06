@@ -97,3 +97,32 @@ The thread id is specified by the `-t` parameter. It can be obtained using the `
 ```bash
 vmtool --action interruptThread -t 1
 ```
+
+## glibc Release Free Memory
+
+Linux man page: [malloc_trim](https://man7.org/linux/man-pages/man3/malloc_trim.3.html)
+
+```bash
+vmtool --action mallocTrim
+```
+
+## glibc Memory Status
+
+The memory status will be output to the application's stderr. Linux man page: [malloc_stats](https://man7.org/linux/man-pages/man3/malloc_stats.3.html)
+
+```bash
+vmtool --action mallocStats
+```
+
+The output to stderr is as follows:
+
+```
+Arena 0:
+system bytes     =     135168
+in use bytes     =      74352
+Total (incl. mmap):
+system bytes     =     135168
+in use bytes     =      74352
+max mmap regions =          0
+max mmap bytes   =          0
+```
