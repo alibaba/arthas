@@ -43,6 +43,7 @@ import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.command.CommandExecutorImpl;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
@@ -77,6 +78,10 @@ import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
+import com.taobao.arthas.mcp.server.ArthasMcpBootstrap;
+import com.taobao.arthas.mcp.server.CommandExecutor;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpRequestHandler;
+import com.taobao.arthas.mcp.server.protocol.spec.McpServerTransportProvider;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -124,6 +129,8 @@ public class ArthasBootstrap {
     private HistoryManager historyManager;
 
     private HttpApiHandler httpApiHandler;
+
+    private McpRequestHandler mcpRequestHandler;
 
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
@@ -462,6 +469,11 @@ public class ArthasBootstrap {
             //http api handler
             httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
+            // Mcp Server
+            CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
+            ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor);
+            this.mcpRequestHandler = arthasMcpBootstrap.start().getMcpRequestHandler();
+
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
 
@@ -669,6 +681,10 @@ public class ArthasBootstrap {
 
     public HttpApiHandler getHttpApiHandler() {
         return httpApiHandler;
+    }
+
+    public McpRequestHandler getMcpRequestHandler() {
+        return mcpRequestHandler;
     }
 
     public File getOutputPath() {
