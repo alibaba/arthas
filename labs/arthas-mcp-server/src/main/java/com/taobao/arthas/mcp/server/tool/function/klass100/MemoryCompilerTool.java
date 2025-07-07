@@ -43,4 +43,4 @@ public class MemoryCompilerTool {
 
         return ArthasCommandExecutor.executeCommand(cmd.toString());
     }
-} 
+}

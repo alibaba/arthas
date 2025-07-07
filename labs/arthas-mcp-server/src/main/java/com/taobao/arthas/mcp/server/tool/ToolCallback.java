@@ -12,4 +12,4 @@ public interface ToolCallback {
     String call(String toolInput);
 
     String call(String toolInput, ToolContext toolContext);
-} 
+}

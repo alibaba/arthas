@@ -46,4 +46,4 @@ public class ArthasMcpBootstrap {
             mcpServer.stop();
         }
     }
-} 
+}

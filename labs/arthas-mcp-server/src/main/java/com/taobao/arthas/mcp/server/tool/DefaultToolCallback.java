@@ -18,11 +18,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/**
- * @author zhang
- * @date 2025/5/14
- * @Description
- */
 public class DefaultToolCallback implements ToolCallback{
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultToolCallback.class);

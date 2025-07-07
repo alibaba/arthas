@@ -1,25 +1,18 @@
-/*
- * Copyright 2024-2024 the original author or authors.
- */
-
 package com.taobao.arthas.mcp.server.protocol.server;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.taobao.arthas.mcp.server.protocol.spec.McpError;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.LoggingLevel;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.LoggingMessageNotification;
-import com.taobao.arthas.mcp.server.protocol.spec.McpError;
 import com.taobao.arthas.mcp.server.protocol.spec.McpServerSession;
 import com.taobao.arthas.mcp.server.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 
@@ -50,14 +43,6 @@ public class McpNettyServerExchange {
 	private final McpSchema.Implementation clientInfo;
 
 	private volatile LoggingLevel minLoggingLevel = LoggingLevel.INFO;
-
-	private final AtomicLong taskIdGenerator = new AtomicLong(0);
-
-	private final AtomicLong stepCounter = new AtomicLong(0);
-
-	private volatile String currentTaskId;
-
-	private volatile String currentToolName;
 
 	private static final TypeReference<McpSchema.CreateMessageResult> CREATE_MESSAGE_RESULT_TYPE_REF =
 			new TypeReference<McpSchema.CreateMessageResult>() {

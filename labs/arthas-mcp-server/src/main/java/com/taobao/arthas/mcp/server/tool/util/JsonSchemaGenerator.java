@@ -172,4 +172,4 @@ public final class JsonSchemaGenerator {
         });
         return result;
     }
-} 
+}

@@ -32,4 +32,4 @@ public class RedefineTool {
 
         return ArthasCommandExecutor.executeCommand(cmd.toString());
     }
-} 
+}
