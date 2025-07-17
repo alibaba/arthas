@@ -102,11 +102,10 @@ public class CommandExecutorImpl implements CommandExecutor {
             List<ResultModel> results = resultDistributor.getResults();
 
             if (results != null && !results.isEmpty()) {
-                String formattedResults = JSON.toJSONString(results, JSONWriter.Feature.PrettyFormat);
-                result.put("results", formattedResults);
+                result.put("results", results);
                 result.put("resultCount", results.size());
             } else {
-                result.put("results", "[]");
+                result.put("results", results);
                 result.put("resultCount", 0);
             }
             String termOutput = term.getOutput();

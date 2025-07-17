@@ -75,17 +75,6 @@ public final class McpToolUtils {
 
                     String callResult = toolCallback.call(convertRequestToString(request), toolContext);
 
-                    // 一般情况下不会出现image类型的返回值
-                    // if (mimeType != null && mimeType.toString().startsWith("image")) {
-                    //    List<McpSchema.Role> roles = new ArrayList<>();
-                    //    roles.add(McpSchema.Role.ASSISTANT);
-
-                    //    List<McpSchema.Content> contents = new ArrayList<>();
-                    //    contents.add(new McpSchema.ImageContent(roles, null, callResult, mimeType.toString()));
-
-                    //    return CompletableFuture.completedFuture(new McpSchema.CallToolResult(contents, false));
-                    //}
-
                     List<McpSchema.Content> contents = new ArrayList<>();
                     contents.add(new McpSchema.TextContent(callResult));
 

@@ -1,9 +1,7 @@
 package com.taobao.arthas.mcp.server.tool.execution;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +47,9 @@ public final class DefaultToolCallResultConverter implements ToolCallResultConve
 		}
 		else if (result instanceof String) {
 			String stringResult = (String) result;
-
 			if (isValidJson(stringResult)) {
-				logger.debug("Result is already valid JSON, processing nested JSON strings.");
-				return processNestedJsonStrings(stringResult);
+				logger.debug("Result is already valid JSON, returning as is.");
+				return stringResult;
 			} else {
 				logger.debug("Converting string result to JSON.");
 				return JsonParser.toJson(result);
@@ -64,58 +61,15 @@ public final class DefaultToolCallResultConverter implements ToolCallResultConve
 		}
 	}
 
-	/**
-	 * 检查字符串是否为有效的JSON格式
-	 */
 	private boolean isValidJson(String jsonString) {
 		if (jsonString == null || jsonString.trim().isEmpty()) {
 			return false;
 		}
-		
 		try {
 			OBJECT_MAPPER.readTree(jsonString);
 			return true;
 		} catch (JsonProcessingException e) {
 			return false;
-		}
-	}
-
-	/**
-	 * 处理嵌套的JSON字符串，将字符串形式的JSON字段解析为实际的JSON对象
-	 */
-	private String processNestedJsonStrings(String jsonString) {
-		try {
-			JsonNode rootNode = OBJECT_MAPPER.readTree(jsonString);
-
-			if (rootNode.isObject()) {
-				ObjectNode objectNode = (ObjectNode) rootNode;
-
-				String[] fieldsToProcess = {"results", "data", "content", "output"};
-				
-				for (String fieldName : fieldsToProcess) {
-					JsonNode fieldNode = objectNode.get(fieldName);
-					if (fieldNode != null && fieldNode.isTextual()) {
-						String fieldValue = fieldNode.asText();
-						if (isValidJson(fieldValue)) {
-							try {
-								JsonNode parsedFieldNode = OBJECT_MAPPER.readTree(fieldValue);
-								objectNode.set(fieldName, parsedFieldNode);
-								logger.debug("Successfully parsed nested JSON in field: {}", fieldName);
-							} catch (JsonProcessingException e) {
-								logger.debug("Failed to parse nested JSON in field {}: {}", fieldName, e.getMessage());
-							}
-						}
-					}
-				}
-				
-				return OBJECT_MAPPER.writeValueAsString(objectNode);
-			}
-
-			return jsonString;
-			
-		} catch (JsonProcessingException e) {
-			logger.warn("Failed to process nested JSON strings: {}", e.getMessage());
-			return jsonString;
 		}
 	}
 
