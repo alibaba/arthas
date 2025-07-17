@@ -83,9 +83,10 @@ public class McpServerSession implements McpSession {
 	}
 
 	/**
-	 * 在客户端和服务器之间成功初始化序列后调用，包含客户端能力和信息。
-	 * @param clientCapabilities 连接的客户端提供的能力
-	 * @param clientInfo 关于连接的客户端的信息
+	 * Called after successfully initializing the sequence between the client and server,
+	 * including client capabilities and information.
+	 * @param clientCapabilities The capabilities provided by the connected client
+	 * @param clientInfo Information about the connected client
 	 */
 	public void init(McpSchema.ClientCapabilities clientCapabilities, McpSchema.Implementation clientInfo) {
 		this.clientCapabilities.lazySet(clientCapabilities);
@@ -331,7 +332,9 @@ public class McpServerSession implements McpSession {
 	/**
 	 * Handle incoming JSON-RPC notifications, routing them to the appropriate handler.
 	 * @param notification incoming JSON-RPC notification
-	 * @return indicates the CompletableFuture in which the notification processing is complete
+	 * @return a CompletableFuture that completes when the notification processing is finished.
+	 *         The CompletableFuture completes normally if the processing succeeds, or exceptionally
+	 *         if an error occurs during processing.
 	 */
 	private CompletableFuture<Void> handleIncomingNotification(McpSchema.JSONRPCNotification notification) {
 		String method = notification.getMethod();

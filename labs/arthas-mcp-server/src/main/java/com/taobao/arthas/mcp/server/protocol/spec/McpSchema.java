@@ -100,27 +100,27 @@ public final class McpSchema {
 	public static final class ErrorCodes {
 
 		/**
-		 * 服务器收到的 JSON 无效。
+		 * The JSON received by the server is invalid.
 		 */
 		public static final int PARSE_ERROR = -32700;
 
 		/**
-		 * 发送的 JSON 不是有效的 Request 对象。
+		 * The JSON sent is not a valid Request object.
 		 */
 		public static final int INVALID_REQUEST = -32600;
 
 		/**
-		 * 该方法不存在/不可用。
+		 * The method does not exist or is unavailable.
 		 */
 		public static final int METHOD_NOT_FOUND = -32601;
 
 		/**
-		 * 方法参数无效。
+		 * Invalid method parameters.
 		 */
 		public static final int INVALID_PARAMS = -32602;
 
 		/**
-		 * 内部 JSON-RPC 错误。
+		 * Internal JSON-RPC error.
 		 */
 		public static final int INTERNAL_ERROR = -32603;
 

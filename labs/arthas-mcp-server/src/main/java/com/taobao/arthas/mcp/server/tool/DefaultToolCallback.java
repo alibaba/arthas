@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class DefaultToolCallback implements ToolCallback{
+public class DefaultToolCallback implements ToolCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultToolCallback.class);
 

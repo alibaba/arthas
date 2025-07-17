@@ -136,7 +136,6 @@ public final class JsonSchemaGenerator {
     }
 
     private static String getParameterDescription(Parameter parameter) {
-        // 检查ToolParam注解
         ToolParam toolParam = parameter.getAnnotation(ToolParam.class);
         if (toolParam != null && toolParam.description() != null && !toolParam.description().isEmpty()) {
             return toolParam.description();
