@@ -17,10 +17,6 @@ public final class Utils {
 		return (map == null || map.isEmpty());
 	}
 
-	public static boolean isCollectionEmpty(Map<?, ?> map) {
-		return map == null || map.isEmpty();
-	}
-
 	public static boolean isAssignable(Class<?> targetType, Class<?> sourceType) {
 		if (targetType == null || sourceType == null) {
 			return false;

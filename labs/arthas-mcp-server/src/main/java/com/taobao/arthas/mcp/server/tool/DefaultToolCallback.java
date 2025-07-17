@@ -75,7 +75,7 @@ public class DefaultToolCallback implements ToolCallback{
     }
 
     private void validateToolContextSupport(ToolContext toolContext) {
-        boolean isNonEmptyToolContextProvided = toolContext != null && !Utils.isCollectionEmpty(toolContext.getContext());
+        boolean isNonEmptyToolContextProvided = toolContext != null && !Utils.isEmpty(toolContext.getContext());
 
         boolean isToolContextAcceptedByMethod = Arrays.stream(this.toolMethod.getParameterTypes())
                 .anyMatch(type -> Utils.isAssignable(type, ToolContext.class));
