@@ -190,6 +190,23 @@ public class ObjectViewTest {
     }
 
     @Test
+    public void testEnum() {
+        EnumDemo t = EnumDemo.DEMO;
+        ObjectView objectView = new ObjectView(t, 3);
+        Assert.assertEquals("@EnumDemo[DEMO]", objectView.draw());
+    }
+
+    @Test
+    public void testEnumList() {
+        EnumDemo t = EnumDemo.DEMO;
+        ObjectView objectView = new ObjectView(new Object[] {t}, 3);
+        String expected = "@Object[][\n" +
+            "    @EnumDemo[DEMO],\n" +
+            "]";
+        Assert.assertEquals(expected, objectView.draw());
+    }
+
+    @Test
     public void testDate() {
         Date d = new Date(1531204354961L - TimeZone.getDefault().getRawOffset()
                         + TimeZone.getTimeZone("GMT+8").getRawOffset());
@@ -302,5 +319,9 @@ public class ObjectViewTest {
         public void setJ(String j) {
             this.j = j;
         }
+    }
+
+    public enum EnumDemo {
+        DEMO;
     }
 }
