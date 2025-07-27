@@ -68,7 +68,7 @@ public class JadCommand extends AnnotatedCommand {
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
     public void setClassPattern(String classPattern) {
-        this.classPattern = classPattern;
+        this.classPattern = StringUtils.normalizeClassName(classPattern);
     }
 
     @Argument(argName = "method-name", index = 1, required = false)

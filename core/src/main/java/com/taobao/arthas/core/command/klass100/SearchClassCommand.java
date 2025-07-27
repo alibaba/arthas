@@ -57,7 +57,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
     public void setClassPattern(String classPattern) {
-        this.classPattern = classPattern;
+        this.classPattern = StringUtils.normalizeClassName(classPattern);
     }
 
     @Option(shortName = "d", longName = "details", flag = true)
