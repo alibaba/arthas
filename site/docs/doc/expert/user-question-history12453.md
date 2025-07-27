@@ -18,7 +18,6 @@ arthas 怎么查看内存情况？
 
 1. **连接到目标Java进程**：
    首先确保你已经安装了Arthas。如果还未安装，可以按照以下简要步骤操作：
-
    - 下载arthas-boot.jar：`curl -O https://arthas.aliyun.com/arthas-boot.jar`
    - 选择并连接到目标Java进程：`java -jar arthas-boot.jar`，然后在列出的进程中选择你要监控的进程编号。
 
@@ -30,7 +29,6 @@ arthas 怎么查看内存情况？
    ```
 
 3. **分析内存泄漏**：
-
    - 观察`memory`命令的输出，注意那些持续增长而没有减少的内存区域，这些可能是内存泄漏发生的地点。
    - 如果怀疑存在内存泄漏，可以使用`heapdump`命令生成堆内存快照：
      ```
