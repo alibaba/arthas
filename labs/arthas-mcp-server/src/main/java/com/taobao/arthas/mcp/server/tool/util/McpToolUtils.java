@@ -7,8 +7,6 @@ import com.taobao.arthas.mcp.server.protocol.server.McpServerFeatures;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolCallback;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
-import jakarta.activation.MimeType;
-import jakarta.activation.MimeTypeParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,28 +36,11 @@ public final class McpToolUtils {
                 ))
                 .values()
                 .stream()
-                .map(tool -> {
-                    String toolName = tool.getToolDefinition().getName();
-                    String mimeTypeStr = serverProperties
-                            .getToolResponseMimeType() // Map<String,String>
-                            .get(toolName);
-
-                    MimeType mimeType = null;
-                    if (mimeTypeStr != null && !mimeTypeStr.isEmpty()) {
-                        try {
-                            mimeType = new MimeType(mimeTypeStr);
-                        } catch (MimeTypeParseException e) {
-                            throw new IllegalArgumentException(
-                                    "Invalid mime-type for tool " + toolName + ": " + mimeTypeStr, e);
-                        }
-                    }
-                    return McpToolUtils.toToolSpecification(tool, mimeType);
-                })
+                .map(McpToolUtils::toToolSpecification)
                 .collect(Collectors.toList());
     }
 
-    public static McpServerFeatures.ToolSpecification toToolSpecification(ToolCallback toolCallback,
-                                                                              MimeType mimeType) {
+    public static McpServerFeatures.ToolSpecification toToolSpecification(ToolCallback toolCallback) {
 
         McpSchema.Tool tool = new McpSchema.Tool(toolCallback.getToolDefinition().getName(),
                 toolCallback.getToolDefinition().getDescription(), toolCallback.getToolDefinition().getInputSchema());

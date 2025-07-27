@@ -47,11 +47,6 @@ public class McpServerProperties {
     private final ObjectMapper objectMapper;
 
     /**
-     * (Optional) response MIME type per tool name.
-     */
-    private Map<String, String> toolResponseMimeType = new HashMap<>();
-
-    /**
      * Private constructor, can only be created through Builder
      */
     private McpServerProperties(Builder builder) {
@@ -188,14 +183,6 @@ public class McpServerProperties {
      */
     public ObjectMapper getObjectMapper() {
         return objectMapper;
-    }
-
-    public Map<String, String> getToolResponseMimeType() {
-        return toolResponseMimeType;
-    }
-
-    public void setToolResponseMimeType(Map<String, String> toolResponseMimeType) {
-        this.toolResponseMimeType = toolResponseMimeType;
     }
 
     /**

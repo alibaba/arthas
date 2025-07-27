@@ -267,7 +267,7 @@
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-mcp-server</artifactId>
-            <version>4.0.5</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
