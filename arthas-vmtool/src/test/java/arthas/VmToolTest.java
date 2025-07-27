@@ -210,4 +210,16 @@ public class VmToolTest {
         TimeUnit.SECONDS.sleep(5);
         Assert.assertEquals(("interrupted " + interruptMe.getId() + " thread success."), re[0].getMessage());
     }
+
+    @Test
+    public void testMallocTrim() {
+        VmTool vmtool = initVmTool();
+        vmtool.mallocTrim();
+    }
+
+    @Test
+    public void testMallocStats() {
+        VmTool vmtool = initVmTool();
+        vmtool.mallocStats();
+    }
 }
