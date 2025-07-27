@@ -37,7 +37,7 @@
 |    _method-pattern_ | 方法名表达式匹配                                                   |
 | _condition-express_ | 条件表达式                                                         |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配                               |
-|              `[c:]` | 统计周期，默认值为 60 秒                                          |
+|              `[c:]` | 统计周期，默认值为 60 秒                                           |
 |                 [b] | 在**方法调用之前**计算 condition-express                           |
 |         `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为`[maxMatch <arg>]`。 |
 
