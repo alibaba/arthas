@@ -35,7 +35,7 @@ public final class JsonParser {
 			return OBJECT_MAPPER.readValue(json, type);
 		}
 		catch (JsonProcessingException ex) {
-			throw new IllegalStateException("Conversion from JSON to "+ type.getName() +" failed", ex);
+			throw new IllegalStateException("Conversion from JSON to " + type.getName() + " failed", ex);
 		}
 	}
 
@@ -47,7 +47,7 @@ public final class JsonParser {
 			return OBJECT_MAPPER.readValue(json, OBJECT_MAPPER.constructType(type));
 		}
 		catch (JsonProcessingException ex) {
-			throw new IllegalStateException("Conversion from JSON to "+ type.getTypeName() +" failed", ex);
+			throw new IllegalStateException("Conversion from JSON to " + type.getTypeName() + " failed", ex);
 		}
 	}
 

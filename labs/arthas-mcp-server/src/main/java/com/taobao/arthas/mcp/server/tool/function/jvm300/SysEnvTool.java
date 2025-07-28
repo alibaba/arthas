@@ -11,7 +11,7 @@ public class SysEnvTool {
         description = "SysEnv 诊断工具: 查看系统环境变量，对应 Arthas 的 sysenv 命令。"
     )
     public String sysenv(
-            @ToolParam(description = "环境变量名。若 null/empty，则查看所有变量；否则查看单个变量值。", required = false)
+            @ToolParam(description = "环境变量名。若为空或空字符串，则查看所有变量；否则查看单个变量值。", required = false)
             String envName
     ) {
         StringBuilder cmd = new StringBuilder("sysenv");

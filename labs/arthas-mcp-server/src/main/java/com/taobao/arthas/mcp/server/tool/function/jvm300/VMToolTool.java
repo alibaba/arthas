@@ -12,7 +12,7 @@ public class VMToolTool {
 
     @Tool(
         name = "vmtool",
-        description = "VMTool 诊断工具: 查询实例、强制 GC、线程中断等，对应 Arthas 的 vmtool 命令。"
+        description = "虚拟机工具诊断工具: 查询实例、强制 GC、线程中断等，对应 Arthas 的 vmtool 命令。"
     )
     public String vmtool(
             @ToolParam(description = "操作类型: getInstances/forceGc/interruptThread 等")

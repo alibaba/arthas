@@ -11,7 +11,7 @@ public class VMOptionTool {
         description = "VMOption 诊断工具: 查看或更新 JVM VM options，对应 Arthas 的 vmoption 命令。"
     )
     public String vmoption(
-            @ToolParam(description = "VM option 名称，", required = false)
+            @ToolParam(description = "Name of the VM option.", required = false)
             String key,
 
             @ToolParam(description = "更新值，仅在更新时使用", required = false)

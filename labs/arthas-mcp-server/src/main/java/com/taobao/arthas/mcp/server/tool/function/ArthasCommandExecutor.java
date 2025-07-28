@@ -43,7 +43,7 @@ public class ArthasCommandExecutor {
             return JsonParser.toJson(result);
         } catch (Exception e) {
             logger.error("Failed to execute command: {}", command, e);
-            return JsonParser.toJson("Error executing command: " + e.getMessage());
+            return JsonParser.toJson("Error executing command '" + command + "': " + e.getMessage());
         }
     }
 

@@ -146,7 +146,7 @@ public class DefaultToolCallbackProvider implements ToolCallbackProvider {
                 }
             }
         } catch (Throwable t) {
-            logger.debug("Error loading class {}: {}", className, t.getMessage());
+            logger.warn("Error loading class {}: {}", className, t.getMessage(), t);
         }
     }
 
