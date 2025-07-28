@@ -20,7 +20,7 @@ public class MemoryCompilerTool {
             @ToolParam(description = "ClassLoader的完整类名，如sun.misc.Launcher$AppClassLoader，可替代hashcode", required = false)
             String classLoaderClass,
 
-            @ToolParam(description = "指定输出目录，默认为./arthas-output/", required = false)
+            @ToolParam(description = "指定输出目录", required = false)
             String outputDir) {
 
         StringBuilder cmd = new StringBuilder("mc");
