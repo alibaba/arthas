@@ -303,7 +303,7 @@ public class McpRequestHandler {
 
             try {
                 String jsonMessage = objectMapper.writeValueAsString(message);
-                logger.info("sendMessage: {}", jsonMessage);
+                logger.debug("sendMessage: {}", jsonMessage);
 
                 StringBuilder eventBuilder = new StringBuilder();
                 eventBuilder.append("event: ").append(MESSAGE_EVENT_TYPE).append("\n");

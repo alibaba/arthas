@@ -6,8 +6,6 @@ import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
 
 public class MemoryCompilerTool {
 
-    public static final String DEFAULT_DUMP_DIR = "./arthas-output/";
-
     @Tool(
             name = "mc",
             description = "Memory Compiler/内存编译器，编译.java文件生成.class"
@@ -37,8 +35,6 @@ public class MemoryCompilerTool {
 
         if (outputDir != null && !outputDir.trim().isEmpty()) {
             cmd.append(" -d ").append(outputDir.trim());
-        } else {
-            cmd.append(" -d ").append(DEFAULT_DUMP_DIR);
         }
 
         return ArthasCommandExecutor.executeCommand(cmd.toString());

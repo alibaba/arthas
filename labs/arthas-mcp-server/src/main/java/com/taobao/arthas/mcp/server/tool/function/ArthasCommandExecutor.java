@@ -6,6 +6,7 @@ import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ArthasCommandExecutor {
@@ -43,7 +44,10 @@ public class ArthasCommandExecutor {
             return JsonParser.toJson(result);
         } catch (Exception e) {
             logger.error("Failed to execute command: {}", command, e);
-            return JsonParser.toJson("Error executing command '" + command + "': " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", true);
+            errorResponse.put("message", "Error executing command '" + command + "': " + e.getMessage());
+            return JsonParser.toJson(errorResponse);
         }
     }
 
