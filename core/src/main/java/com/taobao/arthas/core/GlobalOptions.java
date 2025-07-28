@@ -142,6 +142,15 @@ public class GlobalOptions {
             description = STRICT_MESSAGE
     )
     public static volatile boolean strict = true;
+    /**
+     * 是否切换使用表达式ognl/qlexpress开关
+     */
+    @Option(level = 1,
+            name = "el",
+            summary = "expression language",
+            description = "Option to use ognl/qlexpress in commands, default ognl, can change to qlexpress"
+    )
+    public static volatile String ExpressType = "ognl";
 
     public static void updateOnglStrict(boolean strict) {
         try {
