@@ -81,6 +81,7 @@
         <module>labs/cluster-management/native-agent-proxy</module>
         <module>labs/cluster-management/native-agent-common</module>
         <module>labs/arthas-grpc-server</module>
+        <module>labs/arthas-mcp-server</module>
     </modules>
 
     <properties>
