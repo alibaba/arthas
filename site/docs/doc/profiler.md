@@ -101,6 +101,7 @@ Basic events:
   lock
   wall
   itimer
+  ctimer
 ```
 
 在 linux 下面
@@ -113,6 +114,7 @@ Basic events:
   lock
   wall
   itimer
+  ctimer
 Java method calls:
   ClassName.methodName
 Perf events:
@@ -226,10 +228,10 @@ profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*
 
 ## 指定执行时间
 
-比如，希望 profiler 执行 300 秒自动结束，可以用 `-d`/`--duration` 参数为 collect action 指定时间：
+比如，希望 profiler 执行 300 秒自动结束，可以用 `-d`/`--duration` 参数为 start action 指定时间：
 
 ```bash
-profiler collect --duration 300
+profiler start --duration 300
 ```
 
 ## 生成 jfr 格式结果
@@ -314,30 +316,62 @@ profiler --cstack fp
 
 此命令将收集 native 栈帧的 Frame Pointer 信息。
 
-## 当指定 native 函数执行时开始/停止 profiling
+## 当指定 Native 函数执行时开始/停止 Profiling
 
-使用 `--begin function` 和 `--end function` 选项在指定 native 函数被执行时让 profiling 过程启动或终止。主要用途是分析特定的 JVM 阶段，比如 GC 和安全点。需要使用特定 JVM 实现中的 native 函数名，比如 HotSpot JVM 中的 `SafepointSynchronize::begin` 和 `SafepointSynchronize::end`。
+使用 `--begin function` 和 `--end function` 选项，可以在指定的 Native 函数被执行时启动或终止性能分析。主要用途是分析特定的 JVM 阶段，比如 GC 和 Safepoint。需要使用特定 JVM 实现中的 Native 函数名，比如在 HotSpot JVM 中的 SafepointSynchronize::begin 和 SafepointSynchronize::end。
 
-### Time-to-safepoint profiling
+### Time-to-Safepoint Profiling
 
-选项 `--ttsp` 实际上是 `--begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized` 的一个别名。它是一种约束而不是独立的 event 类型。无论选择哪种 event，profiler 都可以正常工作，但只有 VM 操作和 safepoint request 之间的事件会被记录下来。
+选项 `--ttsp` 实际上是 `--begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized` 的一个别名。它是一种约束，而不是独立的事件类型。无论选择哪种事件，Profiler 都可以正常工作，但只有在 VM 操作和 Safepoint 请求之间的事件会被记录下来。
+
+现在，当使用 `--ttsp` 选项并指定 JFR 输出格式时，`profiler` 会在生成的 JFR 文件中自动包含 profiler.Window 事件。这些事件表示每次 Time-to-Safepoint 暂停的时间区间，使您无需依赖 JVM 日志即可分析这些暂停。
+
+示例
 
 ```bash
 profiler start --begin SafepointSynchronize::begin --end RuntimeService::record_safepoint_synchronized
-profiler --ttsp
+profiler start --ttsp --format jfr
 ```
+
+生成的 JFR 文件将包含 profiler.Window 事件，可以使用 JDK Mission Control 等工具查看和分析这些事件。
+
+**注意事项:**
+
+- profiler.Window 事件是通用的事件，适用于任何使用 --begin 和 --end 触发器的时间窗口，不仅限于 Safepoint 暂停。
+
+- 在分析长时间的 Safepoint 暂停时，profiler.Window 事件可帮助您识别造成延迟的原因。
+
+- 当使用 --ttsp 选项时，请确保使用 JFR 输出格式，以便能够生成并查看 profiler.Window 事件。
 
 ## 使用 profiler 记录的 event 生成 JFR 文件
 
 用 `--jfrsync CONFIG` 选项可以指定配置启动 Java Flight Recording，输出的 jfr 文件会包含所有常规的 JFR event，但采样的来源是由 profiler 提供的。
 
-`CONFIG` 选项可以是 `profile`，表示使用在 `$JAVA_HOME/lib/jfr` 目录下预置的“profile”配置，也可以是自定义的 JFR 配置文件（.jfc），此选项的值采用与 [JFR.start 命令的 settings 选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html) 相同的格式。
+CONFIG 参数:
 
-比如，以下命令使用“profile”配置启动 JFR：
+- 预置配置：CONFIG 可以是 profile，表示使用 $JAVA_HOME/lib/jfr 目录下预置的 profile 配置。
+- 自定义配置文件：CONFIG 也可以是自定义的 JFR 配置文件（.jfc），此选项的值采用与 jcmd JFR.start 命令的 settings 选项相同的格式。
+- 指定 JFR 事件列表：现在，可以直接在 --jfrsync 中指定要启用的 JFR 事件列表，而无需创建 .jfc 文件。要指定事件列表，请以 + 开头，多个事件用 + 分隔。
+
+示例：
+
+使用预置的 profile 配置启动 JFR：
 
 ```bash
 profiler start -e cpu --jfrsync profile -f combined.jfr
 ```
+
+直接指定 JFR 事件列表，例如启用 jdk.YoungGarbageCollection 和 jdk.OldGarbageCollection 事件：
+
+```bash
+profiler start -e cpu --jfrsync +jdk.YoungGarbageCollection+jdk.OldGarbageCollection -f combined.jfr
+```
+
+**注意事项**
+
+- 当指定事件列表时，由于逗号 , 用于分隔不同的选项，因此事件之间使用加号 + 分隔。
+- 如果 --jfrsync 参数不以 + 开头，则被视为预置配置名或 .jfc 配置文件的路径。
+- 直接指定事件列表在目标应用运行在容器中时特别有用，无需额外的文件操作。
 
 ## 周期性保存结果
 
@@ -349,7 +383,7 @@ profiler start --loop 1h -f /var/log/profile-%t.jfr
 
 ## `--timeout` 选项
 
-这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action 而不是 `collect` action 的。可参考 [async-profiler Github Discussions](https://github.com/async-profiler/async-profiler/discussions/789) 了解更多信息。
+这个选项指定 profiling 自动在多久后停止。该选项和 `--loop` 选项的格式一致，可以是时间点，也可以是一个时间间隔。这两个选项都是用于 `start` action。可参考 [async-profiler docs](https://github.com/async-profiler/async-profiler/blob/master/docs/ProfilerOptions.md) 了解更多信息。
 
 ## `--wall` 选项
 
@@ -368,4 +402,118 @@ Linux 平台: 这个新功能仅在 Linux 平台上有效。macOS 上的 CPU 分
 
 ```bash
 profiler start -e cpu -i 10 --wall 100 -f out.jfr
+```
+
+## `ctimer`事件
+
+`ctimer` 事件是一种新的 CPU 采样模式，基于 `timer_create`，提供了无需 `perf_events` 的精确 CPU 采样。
+
+在某些情况下，`perf_events` 可能不可用，例如由于 `perf_event_paranoid` 设置或 `seccomp` 限制，或者在容器环境中。虽然 itimer 事件可以在容器中工作，但可能存在采样不准确的问题。
+
+`ctimer` 事件结合了 `cpu` 和 `itimer` 的优点：
+
+- 高准确性：提供精确的 CPU 采样。
+- 容器友好：默认在容器中可用。
+- 低资源消耗：不消耗文件描述符。
+
+**请注意，`ctimer` 事件目前仅在 `Linux` 上支持，不支持 `macOS`。**
+可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/855) 了解更多信息。
+
+示例：
+
+```bash
+profiler start -e ctimer -o jfr -f ./out-test.jfr
+```
+
+## `vtable`特性
+
+在某些应用程序中，大量的 CPU 时间花费在调用 `megamorphic` 的虚方法或接口方法上，这在性能分析中显示为 `vtable stub` 或 `itable stub`。这无法帮助我们了解特定调用点为何是`megamorphic` 以及如何优化它。
+
+vtable 特性可以在` vtable stub` 或 `itable stub` 之上添加一个伪帧，显示实际调用的对象类型。这有助于清楚地了解在特定调用点，不同接收者的比例。
+
+该特性默认禁用，可以通过 `-F vtable` 选项启用（或使用 `features=vtable`）。
+可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/736) 了解更多信息。
+
+示例：
+
+```bash
+profiler start -F vtable
+```
+
+## `comptask` 特性
+
+`profiler` 采样 JIT 编译器线程以及 Java 线程，可以显示 JIT 编译所消耗的 CPU 百分比。然而，Java 方法的编译资源消耗各不相同，了解哪些特定的 Java 方法在编译时消耗最多的 CPU 时间非常有用。
+
+`comptask` 特性可以在 `C1/C2` 的堆栈跟踪中添加一个虚拟帧，显示当前正在编译的任务，即正在编译的 Java 方法。
+
+该特性默认禁用，可以通过` -F comptask` 选项启用（或使用 `features=comptask`）。
+可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/777) 了解更多信息。
+
+示例：
+
+```bash
+profiler start -F comptask
+```
+
+## 配置替代的分析信号
+
+`profiler` 使用 `POSIX` 信号来进行性能分析。默认情况下，`SIGPROF` 用于 `CPU` 分析，`SIGVTALRM` 用于 `Wall-Clock` 分析。然而，如果应用程序也使用这些信号，或者希望同时运行多个 `profiler` 实例，这可能会导致信号冲突。
+
+现在，可以使用 `signal` 参数来配置用于分析的信号，以避免冲突。
+可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/759) 了解更多信息。
+
+语法
+
+```bash
+profiler start --signal <信号号码>
+```
+
+如果需要分别指定 CPU 和 Wall-Clock 分析的信号，可以使用以下语法：
+
+```bash
+profiler start --signal <CPU信号号码>/<Wall信号号码>
+```
+
+## `--clock` 选项
+
+`--clock` 选项允许用户控制用于采样时间戳的时钟源。这对于需要将 `profiler` 的数据与其他工具的数据进行时间戳对齐的场景非常有用。
+
+用法
+
+```bash
+profiler start --clock <tsc|monotonic>
+```
+
+参数
+
+- `tsc`：使用 CPU 的时间戳计数器（`RDTSC`）。这是默认选项，提供高精度的时间戳。
+- `monotonic`：使用操作系统的单调时钟（`CLOCK_MONOTONIC`）。这有助于在多种数据源之间对齐时间戳。
+  可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/723) 了解更多信息。
+
+示例 :
+
+使用 `CLOCK_MONOTONIC` 作为时间戳源：
+
+```bash
+profiler start --clock monotonic
+```
+
+**注意事项:**
+
+- 当需要将 `profiler` 的数据与其他使用 `CLOCK_MONOTONIC` 的工具（例如 `perf`）的数据进行对齐时，使用 `--clock monotonic`。
+- 在使用 `jfrsync` 模式时，请谨慎使用 `--clock` 选项，因为 JVM 和 `profiler` 可能使用不同的时间戳源，这可能导致结果不一致。
+
+## `--norm` 选项
+
+在 Java 20 及更早的版本中，编译器为 `lambda` 表达式生成的方法名称包含唯一的数字后缀。例如，同一代码位置定义的 `lambda` 表达式，可能会生成多个不同的帧名称，因为每个 `lambda` 方法的名称都会附加一个唯一的数字后缀（如 `lambda$method$0`、`lambda$method$1` 等）。这会导致逻辑上相同的堆栈无法在火焰图中合并，增加了性能分析的复杂性。
+
+为了解决这个问题，`profiler` 新增了 `--norm` 选项，可以在生成输出时自动规范化方法名称，去除这些数字后缀，使相同的堆栈能够正确地合并。
+可参考 [async-profiler Github Issues](https://github.com/async-profiler/async-profiler/issues/832) 了解更多信息。
+
+**示例:**
+
+生成规范化的火焰图:
+
+```bash
+profiler start --norm
 ```

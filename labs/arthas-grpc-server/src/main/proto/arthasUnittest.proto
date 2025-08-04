@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package arthas.grpc.unittest;
+
+service ArthasUnittestService {
+  rpc unary(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc unaryAddSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc unaryGetSum(ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc clientStreamSum(stream ArthasUnittestRequest) returns (ArthasUnittestResponse);
+  rpc serverStream(ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
+  rpc biStream(stream ArthasUnittestRequest) returns (stream ArthasUnittestResponse);
+}
+
+message ArthasUnittestRequest {
+  int32 id = 1;
+  string message = 2;
+  int32 num = 3;
+}
+
+message ArthasUnittestResponse{
+  int32 id = 1;
+  string message = 2;
+  int32 num = 3;
+}

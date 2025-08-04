@@ -57,7 +57,7 @@ import java.util.TreeSet;
         Constants.WIKI + Constants.WIKI_HOME + "classloader")
 public class ClassLoaderCommand extends AnnotatedCommand {
 
-    private Logger logger = LoggerFactory.getLogger(ClassLoaderCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(ClassLoaderCommand.class);
     private boolean isTree = false;
     private String hashCode;
     private String classLoaderClass;

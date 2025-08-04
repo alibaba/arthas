@@ -38,7 +38,7 @@ import one.profiler.AsyncProfiler;
 import one.profiler.Counter;
 
 /**
- * 
+ * https://github.com/async-profiler/async-profiler/blob/master/docs/ProfilerOptions.md 具体参数说明，以及哪些参数可以传递给 async-profiler agent
  * @author hengyunabc 2019-10-31
  *
  */
@@ -234,6 +234,26 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private String timeout;
 
+    /**
+     * Features enabled for profiling
+     */
+    private String features;
+
+    /**
+     * Profiling signal to use
+     */
+    private String signal;
+
+    /*
+     * Clock source for sampling timestamps: monotonic or tsc
+     */
+    private String clock;
+
+    /*
+     * Normalize method names by removing unique numerical suffixes from lambda classes.
+     */
+    private boolean norm;
+
     private static String libPath;
     private static AsyncProfiler profiler = null;
 
@@ -335,14 +355,14 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "jfrsync")
-    @Description("start Java Flight Recording with the given config along with the profiler")
+    @Description("Start Java Flight Recording with the given config along with the profiler. "
+            + "Accepts a predefined profile name, a path to a .jfc file, or a list of JFR events starting with '+'. ")
     public void setJfrsync(String jfrsync) {
         this.jfrsync = jfrsync;
     }
 
-    @Option(longName = "wall", flag = true)
-    @Description("wall clock profiling interval")
-    @DefaultValue("10000000")
+    @Option(longName = "wall")
+    @Description("wall clock profiling interval in milliseconds(recommended: 200)")
     public void setWall(Long wall) {
         this.wall = wall;
     }
@@ -351,6 +371,30 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
+    }
+
+    @Option(shortName = "F", longName = "features")
+    @Description("Features enabled for profiling")
+    public void setFeatures(String features) {
+        this.features = features;
+    }
+
+    @Option(longName = "signal")
+    @Description("Set the profiling signal to use")
+    public void setSignal(String signal) {
+        this.signal = signal;
+    }
+
+    @Option(longName = "clock")
+    @Description("Clock source for sampling timestamps: monotonic or tsc")
+    public void setClock(String clock) {
+        this.clock = clock;
+    }
+
+    @Option(longName = "norm", flag = true)
+    @Description("Normalize method names by removing unique numerical suffixes from lambda classes.")
+    public void setNorm(boolean norm) {
+        this.norm = norm;
     }
 
     @Option(longName = "sched", flag = true)
@@ -480,18 +524,12 @@ public class ProfilerCommand extends AnnotatedCommand {
     @Description("run profiler in a loop (continuous profiling)")
     public void setLoop(String loop) {
         this.loop = loop;
-        if (this.action.equals("collect")) {
-            this.action = "start";
-        }
     }
 
     @Option(longName = "timeout")
     @Description("automatically stop profiler at TIME (absolute or relative)")
     public void setTimeout(String timeout) {
         this.timeout = timeout;
-        if (this.action.equals("collect")) {
-            this.action = "start";
-        }
     }
 
 
@@ -537,11 +575,11 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     /**
-     * https://github.com/async-profiler/async-profiler/blob/v2.9/profiler.sh#L154
+     * https://github.com/async-profiler/async-profiler/blob/v3.0/src/arguments.cpp#L131
      */
     public enum ProfilerAction {
-        // start, resume, stop, dump, check, status, meminfo, list, collect,
-        start, resume, stop, dump, check, status, meminfo, list, collect,
+        // start, resume, stop, dump, check, status, meminfo, list,
+        start, resume, stop, dump, check, status, meminfo, list,
         version,
 
         load,
@@ -584,6 +622,15 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(COMMA);
         }
+        if (this.features != null) {
+            sb.append("features=").append(this.features).append(COMMA);
+        }
+        if (this.signal != null) {
+            sb.append("signal=").append(this.signal).append(COMMA);
+        }
+        if (this.clock != null) {
+            sb.append("clock=").append(this.clock).append(COMMA);
+        }
         if (this.jstackdepth != null) {
             sb.append("jstackdepth=").append(this.jstackdepth).append(COMMA);
         }
@@ -610,6 +657,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.alluser) {
             sb.append("alluser").append(COMMA);
+        }
+        if (this.norm) {
+            sb.append("norm").append(COMMA);
         }
         if (this.includes != null) {
             for (String include : includes) {
@@ -664,6 +714,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private static String execute(AsyncProfiler asyncProfiler, String arg)
             throws IllegalArgumentException, IOException {
+        logger.info("profiler execute args: {}", arg);
         String result = asyncProfiler.execute(arg);
         if (!result.endsWith("\n")) {
             result += "\n";
@@ -691,13 +742,16 @@ public class ProfilerCommand extends AnnotatedCommand {
                 }
                 String result = execute(asyncProfiler, this.actionArg);
                 appendExecuteResult(process, result);
-            } else if (ProfilerAction.collect.equals(profilerAction)) {
-                String executeArgs = executeArgs(ProfilerAction.collect);
-                String result = execute(asyncProfiler, executeArgs);
-                ProfilerModel profilerModel = createProfilerModel(result);
-
-                if (this.duration != null) {
+            } else if (ProfilerAction.start.equals(profilerAction)) {
+                if (this.duration == null) {
+                    String executeArgs = executeArgs(ProfilerAction.start);
+                    String result = execute(asyncProfiler, executeArgs);
+                    appendExecuteResult(process, result);
+                } else { // 设置延时执行 stop
                     final String outputFile = outputFile();
+                    String executeArgs = executeArgs(ProfilerAction.start);
+                    String result = execute(asyncProfiler, executeArgs);
+                    ProfilerModel profilerModel = createProfilerModel(result);
                     profilerModel.setOutputFile(outputFile);
                     profilerModel.setDuration(duration);
 
@@ -705,7 +759,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                     ArthasBootstrap.getInstance().getScheduledExecutorService().schedule(new Runnable() {
                         @Override
                         public void run() {
-                            //在异步线程执行，profiler命令已经结束，不能输出到客户端
+                            // 在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
                                 logger.info("stopping profiler ...");
                                 ProfilerModel model = processStop(asyncProfiler, ProfilerAction.stop);
@@ -716,12 +770,9 @@ public class ProfilerCommand extends AnnotatedCommand {
                             }
                         }
                     }, this.duration, TimeUnit.SECONDS);
+                    process.appendResult(profilerModel);
                 }
-                process.appendResult(profilerModel);
-            } else if (ProfilerAction.start.equals(profilerAction)) {
-                String executeArgs = executeArgs(ProfilerAction.start);
-                String result = execute(asyncProfiler, executeArgs);
-                appendExecuteResult(process, result);
+
             } else if (ProfilerAction.stop.equals(profilerAction)) {
                 ProfilerModel profilerModel = processStop(asyncProfiler, profilerAction);
                 process.appendResult(profilerModel);
