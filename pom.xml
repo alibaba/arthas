@@ -64,6 +64,8 @@
         <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
+        <module>arthas-jfr-frontend</module>
+        <module>arthas-jfr-backend</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
