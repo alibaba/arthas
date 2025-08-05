@@ -111,8 +111,8 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
         fg.setData(os.toArray(new Object[0][]));
         fg.setThreadSplit(names);
         fg.setSymbolTable(symbolTable.getReverseMap());
-        System.out.println(fg);
-        System.out.println(fg.getSymbolTable());
+        log.debug("FlameGraph: {}", fg);
+        log.debug("SymbolTable: {}", fg.getSymbolTable());
         return fg;
     }
 
