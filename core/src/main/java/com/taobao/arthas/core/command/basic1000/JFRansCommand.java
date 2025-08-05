@@ -29,7 +29,7 @@ public class JFRansCommand extends AnnotatedCommand {
 
             String jarPath = resolveJarPath();
             if (jarPath == null) {
-                process.write("✗ 未找到 arthas-jfr-backend-backend 的 jar 包，请先执行：\n");
+                process.write("✗ 未找到 arthas-jfr-backend 的 jar 包，请先执行：\n");
                 process.write("    mvn clean install\n");
                 process.write("并确保 jar 包位于 arthas-jfr-backend/target/ 目录下\n");
                 process.end();
