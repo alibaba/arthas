@@ -1,4 +1,3 @@
-// @ts-nocheck
 // eslint-disable-next-line
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { colorForName } from '../../utils/color';
