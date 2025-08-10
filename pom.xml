@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -64,8 +64,6 @@
         <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
-        <module>arthas-jfr-frontend</module>
-        <module>arthas-jfr-backend</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -83,6 +81,8 @@
         <module>labs/cluster-management/native-agent-proxy</module>
         <module>labs/cluster-management/native-agent-common</module>
         <module>labs/arthas-grpc-server</module>
+        <module>labs/arthas-jfr-frontend</module>
+        <module>labs/arthas-jfr-backend</module>
     </modules>
 
     <properties>

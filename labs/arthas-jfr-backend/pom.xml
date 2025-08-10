@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
+        <groupId>com.taobao.arthas</groupId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
+
     <artifactId>arthas-jfr-backend</artifactId>
     <name>arthas-jfr-backend</name>
     <description>JFR Analyzer Backend for Arthas</description>
@@ -15,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <jmc.version>8.3.1</jmc.version>
+        <spring-boot3.version>3.5.3</spring-boot3.version>
     </properties>
 
     <dependencies>
@@ -92,7 +94,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <release>${java.version}</release>
+<!--                    <release>${java.version}</release>-->
                 </configuration>
             </plugin>
 
@@ -111,7 +113,6 @@
             </plugin>
         </plugins>
     </build>
-
 
 
 

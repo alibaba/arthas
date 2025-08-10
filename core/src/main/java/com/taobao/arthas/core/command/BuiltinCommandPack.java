@@ -66,7 +66,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(ClassLoaderCommand.class);
         commandClassList.add(JadCommand.class);
         commandClassList.add(GetStaticCommand.class);
-        commandClassList.add(JFRansCommand.class);
         commandClassList.add(MonitorCommand.class);
         commandClassList.add(StackCommand.class);
         commandClassList.add(ThreadCommand.class);
