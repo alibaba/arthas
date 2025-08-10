@@ -1,0 +1,138 @@
+2025-07-08 21:30:41.690076+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table deleted_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, original_created_time datetime(6) not null, size bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table deleted_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, original_created_time datetime(6) not null, size bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:30:41.695074+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table external_login_data (id bigint not null auto_increment, created_time datetime(6) not null, principal_name varchar(64) not null, provider varchar(32) not null, user_id bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table external_login_data (id bigint not null auto_increment, created_time datetime(6) not null, principal_name varchar(64) not null, provider varchar(32) not null, user_id bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:30:41.696083+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, size bigint not null, user_id bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, size bigint not null, user_id bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:30:41.697075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table login_data (id bigint not null auto_increment, created_time datetime(6) not null, password_hash varchar(64), username varchar(128) not null, user_id bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table login_data (id bigint not null auto_increment, created_time datetime(6) not null, password_hash varchar(64), username varchar(128) not null, user_id bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:30:41.698075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table transferring_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, failure_message varchar(1024), last_modified_time datetime(6) not null, total_size bigint not null, transferred_size bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table transferring_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, failure_message varchar(1024), last_modified_time datetime(6) not null, total_size bigint not null, transferred_size bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:30:41.698075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table users (id bigint not null auto_increment, created_time datetime(6) not null, admin bit not null, last_modified_time datetime(6) not null, name varchar(64), primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table users (id bigint not null auto_increment, created_time datetime(6) not null, admin bit not null, last_modified_time datetime(6) not null, name varchar(64), primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:30:41.699083+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "deleted_files" not found (this database is empty); SQL statement:
+alter table deleted_files drop index UK2p842psho13kapkrnebku355r [42104-232]
+2025-07-08 21:30:41.700082+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "deleted_files" not found; SQL statement:
+alter table deleted_files add constraint UK2p842psho13kapkrnebku355r unique (unique_name) [42102-232]
+2025-07-08 21:30:41.700082+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found (this database is empty); SQL statement:
+alter table external_login_data drop index UK2gmisqn1dxiuc9l5ogkw7a107 [42104-232]
+2025-07-08 21:30:41.700082+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found; SQL statement:
+alter table external_login_data add constraint UK2gmisqn1dxiuc9l5ogkw7a107 unique (method, provider, principal_name) [42102-232]
+2025-07-08 21:30:41.700082+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found (this database is empty); SQL statement:
+alter table external_login_data drop index UKcn7mrgng6k3g18v3um9l1ht72 [42104-232]
+2025-07-08 21:30:41.701077+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found; SQL statement:
+alter table external_login_data add constraint UKcn7mrgng6k3g18v3um9l1ht72 unique (user_id) [42102-232]
+2025-07-08 21:30:41.701077+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "files" not found (this database is empty); SQL statement:
+alter table files drop index UKqgdyf7q5prl5o3j8hvk3rinsn [42104-232]
+2025-07-08 21:30:41.701077+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "files" not found; SQL statement:
+alter table files add constraint UKqgdyf7q5prl5o3j8hvk3rinsn unique (unique_name) [42102-232]
+2025-07-08 21:30:41.701077+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found (this database is empty); SQL statement:
+alter table login_data drop index UKh9n534ik0paa1rw5eox0vml8t [42104-232]
+2025-07-08 21:30:41.701077+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found; SQL statement:
+alter table login_data add constraint UKh9n534ik0paa1rw5eox0vml8t unique (username) [42102-232]
+2025-07-08 21:30:41.701077+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found (this database is empty); SQL statement:
+alter table login_data drop index UKq1ymg45td0ee8x4ykod1lqwv1 [42104-232]
+2025-07-08 21:30:41.702075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found; SQL statement:
+alter table login_data add constraint UKq1ymg45td0ee8x4ykod1lqwv1 unique (user_id) [42102-232]
+2025-07-08 21:30:41.702075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "transferring_files" not found (this database is empty); SQL statement:
+alter table transferring_files drop index UK8ib9fse86m5ldk4465h8ntft3 [42104-232]
+2025-07-08 21:30:41.702075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "transferring_files" not found; SQL statement:
+alter table transferring_files add constraint UK8ib9fse86m5ldk4465h8ntft3 unique (unique_name) [42102-232]
+2025-07-08 21:30:41.702075+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found; SQL statement:
+alter table external_login_data add constraint FKnmofcs8yvkr1o1v4tvs02jtm4 foreign key (user_id) references users (id) [42102-232]
+2025-07-08 21:30:41.703083+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found; SQL statement:
+alter table login_data add constraint FKx5lnws4uhfpv80yuo1uvjv2y foreign key (user_id) references users (id) [42102-232]
+2025-07-08 21:30:46.180200+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "files" not found (this database is empty); SQL statement:
+select fe1_0.id,fe1_0.created_time,fe1_0.original_name,fe1_0.size,fe1_0.type,fe1_0.unique_name,fe1_0.user_id from files fe1_0 where fe1_0.user_id=? and fe1_0.type=? order by fe1_0.created_time desc limit ? [42104-232]
+2025-07-08 21:33:30.962279+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table deleted_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, original_created_time datetime(6) not null, size bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table deleted_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, original_created_time datetime(6) not null, size bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:33:30.970795+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table external_login_data (id bigint not null auto_increment, created_time datetime(6) not null, principal_name varchar(64) not null, provider varchar(32) not null, user_id bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table external_login_data (id bigint not null auto_increment, created_time datetime(6) not null, principal_name varchar(64) not null, provider varchar(32) not null, user_id bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:33:30.971788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, size bigint not null, user_id bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, size bigint not null, user_id bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:33:30.971788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table login_data (id bigint not null auto_increment, created_time datetime(6) not null, password_hash varchar(64), username varchar(128) not null, user_id bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table login_data (id bigint not null auto_increment, created_time datetime(6) not null, password_hash varchar(64), username varchar(128) not null, user_id bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:33:30.972788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table transferring_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, failure_message varchar(1024), last_modified_time datetime(6) not null, total_size bigint not null, transferred_size bigint not null, primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table transferring_files (id bigint not null auto_increment, created_time datetime(6) not null, original_name varchar(256) not null, type enum ('JFR','LOG','OTHER') not null, unique_name varchar(64) not null, failure_message varchar(1024), last_modified_time datetime(6) not null, total_size bigint not null, transferred_size bigint not null, primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:33:30.973796+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table users (id bigint not null auto_increment, created_time datetime(6) not null, admin bit not null, last_modified_time datetime(6) not null, name varchar(64), primary key (id)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table users (id bigint not null auto_increment, created_time datetime(6) not null, admin bit not null, last_modified_time datetime(6) not null, name varchar(64), primary key (id)) engine=InnoDB [42001-232]
+2025-07-08 21:33:30.974788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "deleted_files" not found (this database is empty); SQL statement:
+alter table deleted_files drop index UK2p842psho13kapkrnebku355r [42104-232]
+2025-07-08 21:33:30.974788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "deleted_files" not found; SQL statement:
+alter table deleted_files add constraint UK2p842psho13kapkrnebku355r unique (unique_name) [42102-232]
+2025-07-08 21:33:30.975788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found (this database is empty); SQL statement:
+alter table external_login_data drop index UK2gmisqn1dxiuc9l5ogkw7a107 [42104-232]
+2025-07-08 21:33:30.975788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found; SQL statement:
+alter table external_login_data add constraint UK2gmisqn1dxiuc9l5ogkw7a107 unique (method, provider, principal_name) [42102-232]
+2025-07-08 21:33:30.975788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found (this database is empty); SQL statement:
+alter table external_login_data drop index UKcn7mrgng6k3g18v3um9l1ht72 [42104-232]
+2025-07-08 21:33:30.975788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found; SQL statement:
+alter table external_login_data add constraint UKcn7mrgng6k3g18v3um9l1ht72 unique (user_id) [42102-232]
+2025-07-08 21:33:30.975788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "files" not found (this database is empty); SQL statement:
+alter table files drop index UKqgdyf7q5prl5o3j8hvk3rinsn [42104-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "files" not found; SQL statement:
+alter table files add constraint UKqgdyf7q5prl5o3j8hvk3rinsn unique (unique_name) [42102-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found (this database is empty); SQL statement:
+alter table login_data drop index UKh9n534ik0paa1rw5eox0vml8t [42104-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found; SQL statement:
+alter table login_data add constraint UKh9n534ik0paa1rw5eox0vml8t unique (username) [42102-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found (this database is empty); SQL statement:
+alter table login_data drop index UKq1ymg45td0ee8x4ykod1lqwv1 [42104-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found; SQL statement:
+alter table login_data add constraint UKq1ymg45td0ee8x4ykod1lqwv1 unique (user_id) [42102-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "transferring_files" not found (this database is empty); SQL statement:
+alter table transferring_files drop index UK8ib9fse86m5ldk4465h8ntft3 [42104-232]
+2025-07-08 21:33:30.976788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "transferring_files" not found; SQL statement:
+alter table transferring_files add constraint UK8ib9fse86m5ldk4465h8ntft3 unique (unique_name) [42102-232]
+2025-07-08 21:33:30.977788+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "external_login_data" not found; SQL statement:
+alter table external_login_data add constraint FKnmofcs8yvkr1o1v4tvs02jtm4 foreign key (user_id) references users (id) [42102-232]
+2025-07-08 21:33:30.978789+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "login_data" not found; SQL statement:
+alter table login_data add constraint FKx5lnws4uhfpv80yuo1uvjv2y foreign key (user_id) references users (id) [42102-232]
+2025-07-08 21:37:32.670419+08:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "files" not found (this database is empty); SQL statement:
+select fe1_0.id,fe1_0.created_time,fe1_0.original_name,fe1_0.size,fe1_0.type,fe1_0.unique_name,fe1_0.user_id from files fe1_0 where fe1_0.user_id=? and fe1_0.type=? order by fe1_0.created_time desc limit ? [42104-232]
