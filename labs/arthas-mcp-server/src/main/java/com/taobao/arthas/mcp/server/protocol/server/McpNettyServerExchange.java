@@ -1,25 +1,22 @@
 package com.taobao.arthas.mcp.server.protocol.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.mcp.server.protocol.spec.McpError;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.LoggingLevel;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.LoggingMessageNotification;
-import com.taobao.arthas.mcp.server.protocol.spec.McpServerSession;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSession;
 import com.taobao.arthas.mcp.server.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicLong;
-
-
 
 /**
  * Represents the interaction between MCP server and client. Provides methods for communication, logging, and context management.
+ * This class is focused only on MCP protocol communication and does not handle command execution directly.
  *
- * @author Yeaury
  * <p>
  * McpNettyServerExchange provides various methods for communicating with the client, including:
  * <ul>
@@ -28,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <li>Handling logging notifications
  * <li>Creating client messages
  * <li>Managing root directories
+ * <li>Streamable task management
  * </ul>
  * <p>
  * Each exchange object is associated with a specific client session, providing context and capabilities for that session.
@@ -36,11 +34,15 @@ public class McpNettyServerExchange {
 
 	private static final Logger logger = LoggerFactory.getLogger(McpNettyServerExchange.class);
 
-	private final McpServerSession session;
+	private final String sessionId;
+
+	private final McpSession session;
 
 	private final McpSchema.ClientCapabilities clientCapabilities;
 
 	private final McpSchema.Implementation clientInfo;
+
+	private final McpTransportContext transportContext;
 
 	private volatile LoggingLevel minLoggingLevel = LoggingLevel.INFO;
 
@@ -52,35 +54,18 @@ public class McpNettyServerExchange {
 			new TypeReference<McpSchema.ListRootsResult>() {
 	};
 
-	/**
-	 * Create a new server exchange object.
-	 * @param session Session associated with the client
-	 * @param clientCapabilities Client capabilities
-	 * @param clientInfo Client information
-	 */
-	public McpNettyServerExchange(McpServerSession session, McpSchema.ClientCapabilities clientCapabilities,
-			McpSchema.Implementation clientInfo) {
-		Assert.notNull(session, "Session cannot be null");
+	public static final TypeReference<Object> OBJECT_TYPE_REF = new TypeReference<Object>() {
+	};
+
+	public McpNettyServerExchange(String sessionId, McpSession session,
+								  McpSchema.ClientCapabilities clientCapabilities, McpSchema.Implementation clientInfo,
+								  McpTransportContext transportContext) {
+		this.sessionId = sessionId;
 		this.session = session;
 		this.clientCapabilities = clientCapabilities;
 		this.clientInfo = clientInfo;
-		logger.debug("Created new server exchange, session ID: {}, client: {}", session.getId(), clientInfo);
+		this.transportContext = transportContext;
 	}
-
-	/**
-	 * Create a new server exchange object. This constructor is used when the session exists but client capabilities and information are unknown.
-	 * For example, for exchange objects created in request handlers.
-	 * @param session Server session
-	 * @param objectMapper JSON object mapper
-	 */
-	public McpNettyServerExchange(McpServerSession session, ObjectMapper objectMapper) {
-		Assert.notNull(session, "Session cannot be null");
-		this.session = session;
-		this.clientCapabilities = null;
-		this.clientInfo = null;
-		logger.debug("Created new server exchange, session ID: {}, client info unknown", session.getId());
-	}
-
 	/**
 	 * Get client capabilities.
 	 * @return Client capabilities
@@ -98,23 +83,11 @@ public class McpNettyServerExchange {
 	}
 
 	/**
-	 * Send a notification with parameters to the client.
-	 * @param method Notification method name to send to the client
-	 * @param params Parameters to send with the notification
-	 * @return A CompletableFuture that completes when the notification is sent
+	 * Get the MCP server session associated with this exchange.
+	 * @return The MCP server session
 	 */
-	public CompletableFuture<Void> sendNotification(String method, Object params) {
-		Assert.hasText(method, "Method name cannot be empty");
-
-		logger.debug("Sending notification to client - method: {}, session: {}", method, this.session.getId());
-		return this.session.sendNotification(method, params).whenComplete((result, error) -> {
-			if (error != null) {
-				logger.error("Notification failed - method: {}, session: {}, error: {}", method, this.session.getId(), error.getMessage());
-			}
-			else {
-				logger.debug("Notification sent successfully - method: {}, session: {}", method, this.session.getId());
-			}
-		});
+	public McpSession getSession() {
+		return this.session;
 	}
 
 	/**
@@ -141,15 +114,15 @@ public class McpNettyServerExchange {
 			return future;
 		}
 
-		logger.debug("Creating client message, session ID: {}", this.session.getId());
+		logger.debug("Creating client message, session ID: {}", this.sessionId);
 		return this.session
 			.sendRequest(McpSchema.METHOD_SAMPLING_CREATE_MESSAGE, createMessageRequest, CREATE_MESSAGE_RESULT_TYPE_REF)
 			.whenComplete((result, error) -> {
 				if (error != null) {
-					logger.error("Failed to create message, session ID: {}, error: {}", this.session.getId(), error.getMessage());
+					logger.error("Failed to create message, session ID: {}, error: {}", this.sessionId, error.getMessage());
 				}
 				else {
-					logger.debug("Message created successfully, session ID: {}", this.session.getId());
+					logger.debug("Message created successfully, session ID: {}", this.sessionId);
 				}
 			});
 	}
@@ -168,16 +141,16 @@ public class McpNettyServerExchange {
 	 * @return Emits a CompletableFuture containing the results of the root list
 	 */
 	public CompletableFuture<McpSchema.ListRootsResult> listRoots(String cursor) {
-		logger.debug("Requesting root list, session ID: {}, cursor: {}", this.session.getId(), cursor);
+		logger.debug("Requesting root list, session ID: {}, cursor: {}", this.sessionId, cursor);
 		return this.session
 			.sendRequest(McpSchema.METHOD_ROOTS_LIST, new McpSchema.PaginatedRequest(cursor),
 					LIST_ROOTS_RESULT_TYPE_REF)
 			.whenComplete((result, error) -> {
 				if (error != null) {
-					logger.error("Failed to get root list, session ID: {}, error: {}", this.session.getId(), error.getMessage());
+					logger.error("Failed to get root list, session ID: {}, error: {}", this.sessionId, error.getMessage());
 				}
 				else {
-					logger.debug("Root list retrieved successfully, session ID: {}", this.session.getId());
+					logger.debug("Root list retrieved successfully, session ID: {}", this.sessionId);
 				}
 			});
 	}
@@ -194,16 +167,20 @@ public class McpNettyServerExchange {
 				.whenComplete((result, error) -> {
 					if (error != null) {
 						logger.error("Failed to send logging notification, level: {}, session ID: {}, error: {}", loggingMessageNotification.getLevel(),
-								this.session.getId(), error.getMessage());
+								this.sessionId, error.getMessage());
 					}
 				});
 		}
 		return CompletableFuture.completedFuture(null);
 	}
 
+	public CompletableFuture<Object> ping() {
+		return this.session.sendRequest(McpSchema.METHOD_PING, null, OBJECT_TYPE_REF);
+	}
+
 	public void setMinLoggingLevel(LoggingLevel minLoggingLevel) {
 		Assert.notNull(minLoggingLevel, "最低日志级别不能为空");
-		logger.debug("Setting minimum logging level: {}, session ID: {}", minLoggingLevel, this.session.getId());
+		logger.debug("Setting minimum logging level: {}, session ID: {}", minLoggingLevel, this.sessionId);
 		this.minLoggingLevel = minLoggingLevel;
 	}
 
@@ -211,4 +188,21 @@ public class McpNettyServerExchange {
 		return loggingLevel.level() >= this.minLoggingLevel.level();
 	}
 
+	public CompletableFuture<Void> progressNotification(McpSchema.ProgressNotification progressNotification) {
+		if (progressNotification == null) {
+			CompletableFuture<Void> future = new CompletableFuture<>();
+			future.completeExceptionally(new McpError("进度通知不能为空"));
+			return future;
+		}
+
+		return this.session
+				.sendNotification(McpSchema.METHOD_NOTIFICATION_PROGRESS, progressNotification)
+				.whenComplete((result, error) -> {
+					if (error != null) {
+						logger.error("Failed to send progress notification, session ID: {}, error: {}", this.sessionId, error.getMessage());
+					} else {
+						logger.debug("Progress notification sent successfully, session ID: {}", this.sessionId);
+					}
+				});
+	}
 }
