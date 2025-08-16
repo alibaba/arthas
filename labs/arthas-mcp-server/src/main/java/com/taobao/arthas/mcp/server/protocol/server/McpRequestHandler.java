@@ -23,4 +23,4 @@ public interface McpRequestHandler<T> {
 	 */
 	CompletableFuture<T> handle(McpNettyServerExchange exchange, ArthasCommandContext arthasCommandContext, Object params);
 
-} 
+}

@@ -61,4 +61,4 @@ public class DefaultMcpStreamableServerSessionFactory implements McpStreamableSe
 
         return new McpStreamableServerSession.McpStreamableServerSessionInit(session, initResult);
     }
-} 
+}

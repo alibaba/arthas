@@ -23,4 +23,4 @@ public interface McpNotificationHandler {
 	 */
 	CompletableFuture<Void> handle(McpNettyServerExchange exchange, ArthasCommandContext arthasCommandContext, Object params);
 
-} 
+}

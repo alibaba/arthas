@@ -48,5 +48,4 @@ public interface EventStore {
 
     void removeSessionEvents(String sessionId);
 
-
 }

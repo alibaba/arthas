@@ -21,4 +21,4 @@ public interface McpInitRequestHandler {
 	 */
 	CompletableFuture<McpSchema.InitializeResult> handle(McpSchema.InitializeRequest initializeRequest);
 
-} 
+}

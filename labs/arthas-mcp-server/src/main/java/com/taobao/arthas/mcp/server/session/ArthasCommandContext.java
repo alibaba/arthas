@@ -73,4 +73,4 @@ public class ArthasCommandContext {
         requireSessionSupport();
         return sessionBinding.getArthasSessionId();
     }
-} 
+}

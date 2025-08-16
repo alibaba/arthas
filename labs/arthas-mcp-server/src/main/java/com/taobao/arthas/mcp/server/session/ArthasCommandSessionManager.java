@@ -74,4 +74,4 @@ public class ArthasCommandSessionManager {
     public void closeAllSessions() {
         sessionBindings.keySet().forEach(this::closeCommandSession);
     }
-} 
+}

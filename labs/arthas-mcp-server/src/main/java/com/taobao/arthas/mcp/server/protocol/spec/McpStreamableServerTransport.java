@@ -18,4 +18,4 @@ public interface McpStreamableServerTransport extends McpServerTransport {
     CompletableFuture<Void> sendMessage(McpSchema.JSONRPCMessage message, String messageId);
 
     <T> T unmarshalFrom(Object value, TypeReference<T> typeRef);
-} 
+}

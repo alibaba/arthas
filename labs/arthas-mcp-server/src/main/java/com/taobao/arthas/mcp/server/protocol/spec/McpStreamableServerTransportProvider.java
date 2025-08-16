@@ -15,4 +15,4 @@ public interface McpStreamableServerTransportProvider extends McpServerTransport
 
     String protocolVersion();
 
-} 
+}
