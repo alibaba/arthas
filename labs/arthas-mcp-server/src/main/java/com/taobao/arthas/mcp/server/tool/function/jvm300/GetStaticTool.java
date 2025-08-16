@@ -1,8 +1,12 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
+import com.taobao.arthas.mcp.server.util.JsonParser;
+
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class GetStaticTool {
 
@@ -25,8 +29,11 @@ public class GetStaticTool {
             String fieldName,
 
             @ToolParam(description = "OGNL 表达式", required = false)
-            String ognlExpression
+            String ognlExpression,
+
+            ToolContext toolContext
     ) {
+        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
         StringBuilder cmd = new StringBuilder("getstatic");
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
@@ -43,6 +50,6 @@ public class GetStaticTool {
         }
 
         String commandStr = cmd.toString();
-        return ArthasCommandExecutor.executeCommand(commandStr);
+        return JsonParser.toJson(commandContext.executeSync(commandStr));
     }
 }

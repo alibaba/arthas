@@ -1,10 +1,18 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
+import com.taobao.arthas.mcp.server.util.JsonParser;
+
+import java.nio.file.Paths;
+
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class MemoryCompilerTool {
+
+    public static final String DEFAULT_DUMP_DIR = Paths.get("arthas-output").toAbsolutePath().toString();
 
     @Tool(
             name = "mc",
@@ -20,8 +28,11 @@ public class MemoryCompilerTool {
             @ToolParam(description = "ClassLoader的完整类名，如sun.misc.Launcher$AppClassLoader，可替代hashcode", required = false)
             String classLoaderClass,
 
-            @ToolParam(description = "指定输出目录", required = false)
-            String outputDir) {
+            @ToolParam(description = "指定输出目录，默认为工作目录下arthas-output文件夹", required = false)
+            String outputDir,
+
+            ToolContext toolContext) {
+        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
 
         StringBuilder cmd = new StringBuilder("mc");
 
@@ -35,8 +46,10 @@ public class MemoryCompilerTool {
 
         if (outputDir != null && !outputDir.trim().isEmpty()) {
             cmd.append(" -d ").append(outputDir.trim());
+        }else {
+            cmd.append(" -d ").append(DEFAULT_DUMP_DIR);
         }
 
-        return ArthasCommandExecutor.executeCommand(cmd.toString());
+        return JsonParser.toJson(commandContext.executeSync(cmd.toString()));
     }
 }

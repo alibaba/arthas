@@ -2,8 +2,27 @@ package com.taobao.arthas.mcp.server;
 
 import java.util.Map;
 
-
+/**
+ * 命令执行器接口
+ *
+ * @author Yeaury 2025/5/26
+ */
 public interface CommandExecutor {
 
-    Map<String, Object> execute(String commandLine, long timeout);
+    default Map<String, Object> executeSync(String commandLine, long timeout) {
+        return executeSync(commandLine, timeout, null);
+    }
+
+    Map<String, Object> executeSync(String commandLine, long timeout, String sessionId);
+
+    Map<String, Object> executeAsync(String commandLine, String sessionId);
+
+    Map<String, Object> pullResults(String sessionId, String consumerId);
+
+    Map<String, Object> interruptJob(String sessionId);
+
+    Map<String, Object> createSession();
+
+    Map<String, Object> closeSession(String sessionId);
 }
+

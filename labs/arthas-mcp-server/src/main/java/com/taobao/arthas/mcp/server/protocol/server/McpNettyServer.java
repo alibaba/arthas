@@ -1,4 +1,17 @@
+/*
+ * Copyright 2024-2024 the original author or authors.
+ */
+
 package com.taobao.arthas.mcp.server.protocol.server;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.mcp.server.CommandExecutor;
+import com.taobao.arthas.mcp.server.protocol.spec.*;
+import com.taobao.arthas.mcp.server.util.Assert;
+import com.taobao.arthas.mcp.server.util.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.*;
@@ -7,15 +20,6 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiFunction;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.channel.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.taobao.arthas.mcp.server.protocol.spec.*;
-import com.taobao.arthas.mcp.server.util.Assert;
-import com.taobao.arthas.mcp.server.util.Utils;
 
 /**
  * A Netty-based MCP server implementation that provides access to tools, resources, and prompts.
@@ -46,13 +50,12 @@ public class McpNettyServer {
 
 	private McpSchema.LoggingLevel minLoggingLevel = McpSchema.LoggingLevel.DEBUG;
 
-	private List<String> protocolVersions = Collections.singletonList(McpSchema.LATEST_PROTOCOL_VERSION);
+	private List<String> protocolVersions;
 
-	public McpNettyServer(
-			McpServerTransportProvider mcpTransportProvider,
-			ObjectMapper objectMapper,
-			Duration requestTimeout,
-			McpServerFeatures.McpServerConfig features) {
+	McpNettyServer(McpStreamableServerTransportProvider mcpTransportProvider,
+				   ObjectMapper objectMapper, Duration requestTimeout,
+				   McpServerFeatures.McpServerConfig features,
+				   CommandExecutor commandExecutor) {
 		this.mcpTransportProvider = mcpTransportProvider;
 		this.objectMapper = objectMapper;
 		this.serverInfo = features.getServerInfo();
@@ -63,13 +66,44 @@ public class McpNettyServer {
 		this.resourceTemplates.addAll(features.getResourceTemplates());
 		this.prompts.putAll(features.getPrompts());
 
-		Map<String, McpServerSession.RequestHandler<?>> requestHandlers = new HashMap<>();
+		Map<String, McpRequestHandler<?>> requestHandlers = prepareRequestHandlers();
+		Map<String, McpNotificationHandler> notificationHandlers = prepareNotificationHandlers(features);
+
+		this.protocolVersions = Collections.singletonList(mcpTransportProvider.protocolVersion());
+
+		mcpTransportProvider.setSessionFactory(new DefaultMcpStreamableServerSessionFactory(requestTimeout,
+				this::initializeRequestHandler, requestHandlers, notificationHandlers, commandExecutor));
+	}
+
+	private Map<String, McpNotificationHandler> prepareNotificationHandlers(McpServerFeatures.McpServerConfig features) {
+		Map<String, McpNotificationHandler> notificationHandlers = new HashMap<>();
+
+		notificationHandlers.put(McpSchema.METHOD_NOTIFICATION_INITIALIZED,
+				(exchange, commandContext, params) -> CompletableFuture.completedFuture(null));
+
+		List<BiFunction<McpNettyServerExchange, List<McpSchema.Root>, CompletableFuture<Void>>> rootsChangeConsumers = features
+				.getRootsChangeConsumers();
+
+		if (Utils.isEmpty(rootsChangeConsumers)) {
+			rootsChangeConsumers = Collections.singletonList(
+					(exchange, roots) -> CompletableFuture.runAsync(() ->
+							logger.warn("Roots list changed notification, but no consumers provided. Roots list changed: {}", roots))
+			);
+		}
+
+		notificationHandlers.put(McpSchema.METHOD_NOTIFICATION_ROOTS_LIST_CHANGED,
+				rootsListChangedNotificationHandler(rootsChangeConsumers));
+		return notificationHandlers;
+	}
+
+	private Map<String, McpRequestHandler<?>> prepareRequestHandlers() {
+		Map<String, McpRequestHandler<?>> requestHandlers = new HashMap<>();
 
 		// Initialize request handlers for standard MCP methods
 
 		// Ping MUST respond with an empty data, but not NULL response.
 		requestHandlers.put(McpSchema.METHOD_PING,
-				(exchange, params) -> CompletableFuture.completedFuture(Collections.emptyMap()));
+				(exchange, commandContext, params) -> CompletableFuture.completedFuture(Collections.emptyMap()));
 
 		// Add tools API handlers if the tool capability is enabled
 		if (this.serverCapabilities.getTools() != null) {
@@ -90,36 +124,14 @@ public class McpNettyServer {
 			requestHandlers.put(McpSchema.METHOD_PROMPT_GET, promptsGetRequestHandler());
 		}
 
+		// Add logging API handlers if the logging capability is enabled
 		if (this.serverCapabilities.getLogging() != null) {
 			requestHandlers.put(McpSchema.METHOD_LOGGING_SET_LEVEL, setLoggerRequestHandler());
 		}
 
-		Map<String, McpServerSession.NotificationHandler> notificationHandlers = new HashMap<>();
-
-		notificationHandlers.put(McpSchema.METHOD_NOTIFICATION_INITIALIZED,
-				(exchange, params) -> CompletableFuture.completedFuture(null));
-
-		List<BiFunction<McpNettyServerExchange, List<McpSchema.Root>, CompletableFuture<Void>>> rootsChangeConsumers = features
-			.getRootsChangeConsumers();
-
-		if (Utils.isEmpty(rootsChangeConsumers)) {
-			rootsChangeConsumers = Collections.singletonList(
-					(exchange, roots) -> CompletableFuture.runAsync(() ->
-									logger.warn("Roots list changed notification, but no consumers provided. Roots list changed: {}", roots))
-			);
-		}
-
-		notificationHandlers.put(McpSchema.METHOD_NOTIFICATION_ROOTS_LIST_CHANGED,
-				rootsListChangedNotificationHandler(rootsChangeConsumers));
-
-		mcpTransportProvider.setSessionFactory(transport -> {
-			Channel channel = transport.getChannel();
-			return new McpServerSession(UUID.randomUUID().toString(),
-					requestTimeout, transport, this::initializeRequestHandler,
-					() -> CompletableFuture.completedFuture(null), requestHandlers, notificationHandlers,
-					channel);
-		});
+		return requestHandlers;
 	}
+
 
 	// ---------------------------------------
 	// Lifecycle Management
@@ -165,9 +177,9 @@ public class McpNettyServer {
 		this.mcpTransportProvider.close();
 	}
 
-	private McpServerSession.NotificationHandler rootsListChangedNotificationHandler(
+	private McpNotificationHandler rootsListChangedNotificationHandler(
 			List<BiFunction<McpNettyServerExchange, List<McpSchema.Root>, CompletableFuture<Void>>> rootsChangeConsumers) {
-		return (exchange, params) -> {
+		return (exchange, commandContext, params) -> {
 			CompletableFuture<McpSchema.ListRootsResult> futureRoots = exchange.listRoots();
 
 			return futureRoots.thenCompose(listRootsResult -> {
@@ -268,8 +280,8 @@ public class McpNettyServer {
 		return this.mcpTransportProvider.notifyClients(McpSchema.METHOD_NOTIFICATION_TOOLS_LIST_CHANGED, null);
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.ListToolsResult> toolsListRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<McpSchema.ListToolsResult> toolsListRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			List<McpSchema.Tool> tools = new ArrayList<>();
 			for (McpServerFeatures.ToolSpecification toolSpec : this.tools) {
 				tools.add(toolSpec.getTool());
@@ -279,8 +291,8 @@ public class McpNettyServer {
 		};
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.CallToolResult> toolsCallRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<McpSchema.CallToolResult> toolsCallRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			McpSchema.CallToolRequest callToolRequest = objectMapper.convertValue(params,
 					new TypeReference<McpSchema.CallToolRequest>() {
 					});
@@ -294,7 +306,7 @@ public class McpNettyServer {
 				return future;
 			}
 
-			return toolSpecification.get().getCall().apply(exchange, callToolRequest.getArguments());
+			return toolSpecification.get().getCall().apply(exchange, commandContext, callToolRequest);
 		};
 	}
 
@@ -369,8 +381,8 @@ public class McpNettyServer {
 		return this.mcpTransportProvider.notifyClients(McpSchema.METHOD_NOTIFICATION_RESOURCES_LIST_CHANGED, null);
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.ListResourcesResult> resourcesListRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<McpSchema.ListResourcesResult> resourcesListRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			List<McpSchema.Resource> resourceList = new ArrayList<>();
 			for (McpServerFeatures.ResourceSpecification spec : this.resources.values()) {
 				resourceList.add(spec.getResource());
@@ -379,13 +391,13 @@ public class McpNettyServer {
 		};
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.ListResourceTemplatesResult> resourceTemplateListRequestHandler() {
-		return (exchange, params) -> CompletableFuture
+	private McpRequestHandler<McpSchema.ListResourceTemplatesResult> resourceTemplateListRequestHandler() {
+		return (exchange, commandContext, params) -> CompletableFuture
 			.completedFuture(new McpSchema.ListResourceTemplatesResult(this.resourceTemplates, null));
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.ReadResourceResult> resourcesReadRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<McpSchema.ReadResourceResult> resourcesReadRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			McpSchema.ReadResourceRequest resourceRequest = objectMapper.convertValue(params,
 					new TypeReference<McpSchema.ReadResourceRequest>() {
 					});
@@ -473,8 +485,8 @@ public class McpNettyServer {
 		return this.mcpTransportProvider.notifyClients(McpSchema.METHOD_NOTIFICATION_PROMPTS_LIST_CHANGED, null);
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.ListPromptsResult> promptsListRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<McpSchema.ListPromptsResult> promptsListRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			List<McpSchema.Prompt> promptList = new ArrayList<>();
 			for (McpServerFeatures.PromptSpecification promptSpec : this.prompts.values()) {
 				promptList.add(promptSpec.getPrompt());
@@ -483,8 +495,8 @@ public class McpNettyServer {
 		};
 	}
 
-	private McpServerSession.RequestHandler<McpSchema.GetPromptResult> promptsGetRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<McpSchema.GetPromptResult> promptsGetRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			McpSchema.GetPromptRequest promptRequest = objectMapper.convertValue(params,
 					new TypeReference<McpSchema.GetPromptRequest>() {
 					});
@@ -514,8 +526,8 @@ public class McpNettyServer {
 				loggingMessageNotification);
 	}
 
-	private McpServerSession.RequestHandler<Map<String, Object>> setLoggerRequestHandler() {
-		return (exchange, params) -> {
+	private McpRequestHandler<Map<String, Object>> setLoggerRequestHandler() {
+		return (exchange, commandContext, params) -> {
 			try {
 				McpSchema.SetLevelRequest request = this.objectMapper.convertValue(params,
 						McpSchema.SetLevelRequest.class);

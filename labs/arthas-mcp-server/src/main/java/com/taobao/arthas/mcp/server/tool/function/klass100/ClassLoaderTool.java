@@ -1,8 +1,12 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
+import com.taobao.arthas.mcp.server.util.JsonParser;
+
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class ClassLoaderTool {
 
@@ -30,7 +34,10 @@ public class ClassLoaderTool {
             String resource,
 
             @ToolParam(description = "要加载的类名，支持全限定名", required = false)
-            String loadClass) {
+            String loadClass,
+
+            ToolContext toolContext) {
+        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
 
         StringBuilder cmd = new StringBuilder("classloader");
 
@@ -68,6 +75,6 @@ public class ClassLoaderTool {
             cmd.append(" --load ").append(loadClass.trim());
         }
 
-        return ArthasCommandExecutor.executeCommand(cmd.toString());
+        return JsonParser.toJson(commandContext.executeSync(cmd.toString()));
     }
 }

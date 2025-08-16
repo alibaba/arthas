@@ -1,8 +1,12 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
+import com.taobao.arthas.mcp.server.util.JsonParser;
+
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class SysPropTool {
 
@@ -15,8 +19,11 @@ public class SysPropTool {
             String propertyName,
 
             @ToolParam(description = "属性值；若指定则修改，否则查看", required = false)
-            String propertyValue
+            String propertyValue,
+
+            ToolContext toolContext
     ) {
+        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
         StringBuilder cmd = new StringBuilder("sysprop");
         if (propertyName != null && !propertyName.trim().isEmpty()) {
             cmd.append(" ").append(propertyName.trim());
@@ -25,6 +32,6 @@ public class SysPropTool {
             }
         }
         String commandStr = cmd.toString();
-        return ArthasCommandExecutor.executeCommand(commandStr);
+        return JsonParser.toJson(commandContext.executeSync(commandStr));
     }
 }

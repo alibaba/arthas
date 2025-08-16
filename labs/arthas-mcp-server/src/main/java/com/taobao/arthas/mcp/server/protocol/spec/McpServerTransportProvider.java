@@ -1,6 +1,6 @@
 package com.taobao.arthas.mcp.server.protocol.spec;
 
-import com.taobao.arthas.mcp.server.protocol.server.handler.McpRequestHandler;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpStreamableHttpRequestHandler;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -12,8 +12,6 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface McpServerTransportProvider {
 
-	void setSessionFactory(McpServerSession.Factory sessionFactory);
-
 	CompletableFuture<Void> notifyClients(String method, Object params);
 
 	CompletableFuture<Void> closeGracefully();
@@ -22,5 +20,7 @@ public interface McpServerTransportProvider {
 		closeGracefully();
 	}
 
-	McpRequestHandler getMcpRequestHandler();
+	McpStreamableHttpRequestHandler getMcpRequestHandler();
+
+    String protocolVersion();
 }

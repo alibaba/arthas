@@ -80,8 +80,7 @@ import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
 import com.taobao.arthas.mcp.server.ArthasMcpBootstrap;
 import com.taobao.arthas.mcp.server.CommandExecutor;
-import com.taobao.arthas.mcp.server.protocol.server.handler.McpRequestHandler;
-import com.taobao.arthas.mcp.server.protocol.spec.McpServerTransportProvider;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpHttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -130,7 +129,7 @@ public class ArthasBootstrap {
 
     private HttpApiHandler httpApiHandler;
 
-    private McpRequestHandler mcpRequestHandler;
+    private McpHttpRequestHandler mcpRequestHandler;
 
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
@@ -683,7 +682,7 @@ public class ArthasBootstrap {
         return httpApiHandler;
     }
 
-    public McpRequestHandler getMcpRequestHandler() {
+    public McpHttpRequestHandler getMcpRequestHandler() {
         return mcpRequestHandler;
     }
 

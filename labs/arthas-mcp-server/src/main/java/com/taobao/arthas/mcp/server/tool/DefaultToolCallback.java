@@ -13,10 +13,12 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
+import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 
 public class DefaultToolCallback implements ToolCallback {
 
@@ -62,6 +64,8 @@ public class DefaultToolCallback implements ToolCallback {
         validateToolContextSupport(toolContext);
 
         Map<String, Object> toolArguments = extractToolArguments(toolInput);
+        
+        validateRequiredParameters(toolArguments);
 
         Object[] methodArguments = buildMethodArguments(toolArguments, toolContext);
 
@@ -82,6 +86,34 @@ public class DefaultToolCallback implements ToolCallback {
 
         if (isToolContextAcceptedByMethod && !isNonEmptyToolContextProvided) {
             throw new IllegalArgumentException("ToolContext is required by the method as an argument");
+        }
+    }
+
+    /**
+     * validate the required parameters
+     */
+    private void validateRequiredParameters(Map<String, Object> toolArguments) {
+        Parameter[] parameters = this.toolMethod.getParameters();
+        
+        for (Parameter parameter : parameters) {
+            if (parameter.getType().isAssignableFrom(ToolContext.class)) {
+                continue;
+            }
+            
+            ToolParam toolParam = parameter.getAnnotation(ToolParam.class);
+            if (toolParam != null && toolParam.required()) {
+                String paramName = parameter.getName();
+                Object paramValue = toolArguments.get(paramName);
+                
+                // check if the parameter is empty or an empty string
+                if (paramValue == null) {
+                    throw new IllegalArgumentException("Required parameter '" + paramName + "' is missing");
+                }
+
+                if (paramValue instanceof String && ((String) paramValue).trim().isEmpty()) {
+                    throw new IllegalArgumentException("Required parameter '" + paramName + "' cannot be empty");
+                }
+            }
         }
     }
 
