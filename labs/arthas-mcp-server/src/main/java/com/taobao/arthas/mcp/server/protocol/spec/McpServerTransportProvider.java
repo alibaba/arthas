@@ -1,3 +1,7 @@
+/*
+ * Copyright 2024-2024 the original author or authors.
+ */
+
 package com.taobao.arthas.mcp.server.protocol.spec;
 
 import com.taobao.arthas.mcp.server.protocol.server.handler.McpStreamableHttpRequestHandler;
