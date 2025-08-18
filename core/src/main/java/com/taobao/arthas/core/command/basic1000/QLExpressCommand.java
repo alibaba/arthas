@@ -8,7 +8,6 @@ import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ObjectVO;
-import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.command.model.QLExpressModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
