@@ -30,18 +30,11 @@ public final class StreamableToolUtils {
     }
 
     /**
-     * 同步拉取命令执行结果并发送进度通知
-     * 
-     * @param exchange MCP服务器交换对象
-     * @param commandContext Arthas命令上下文
-     * @param totalExecutions 总执行次数
-     * @param intervalMs 命令执行间隔（毫秒）
-     * @param progressToken 进度令牌
-     * @return 是否成功完成
+     * 拉取命令执行结果并发送进度通知
      */
     public static boolean pullResultsSync(McpNettyServerExchange exchange, ArthasCommandContext commandContext, 
-                                        int totalExecutions, Integer intervalMs, Integer progressToken) {
-        int currentExecution = 0;
+                                        Integer expectedResultCount, Integer intervalMs, Integer progressToken) {
+        int actualResultCount = 0;
         int pollAttempts = 0;
         int errorRetries = 0;
         int allowInputCount = 0;
@@ -50,7 +43,7 @@ public final class StreamableToolUtils {
         int pullIntervalMs = (intervalMs != null && intervalMs > 0) ? intervalMs : DEFAULT_POLL_INTERVAL_MS;
 
         try {
-            while (currentExecution < totalExecutions && pollAttempts < MAX_POLL_ATTEMPTS) {
+            while (pollAttempts < MAX_POLL_ATTEMPTS) {
                 pollAttempts++;
                 
                 try {
@@ -59,20 +52,29 @@ public final class StreamableToolUtils {
                         Thread.sleep(pullIntervalMs);
                         continue;
                     }
-
                     errorRetries = 0;
+
+                    // filter and count command specific outcome models
+                    Map<String, Object> filteredResults = filterCommandSpecificResults(results);
+                    int currentBatchResultCount = getCommandSpecificResultCount(filteredResults);
+                    
+                    if (currentBatchResultCount > 0) {
+                        actualResultCount += currentBatchResultCount;
+                        sendProgressNotification(exchange, filteredResults, actualResultCount, 
+                                                expectedResultCount != null ? expectedResultCount : actualResultCount, progressToken);
+                    }
 
                     boolean commandCompleted = checkCommandCompletion(results, allowInputCount);
                     if (commandCompleted) {
                         allowInputCount++;
                     }
 
-                    currentExecution++;
-                    sendProgressNotification(exchange, results, currentExecution, totalExecutions, progressToken);
-
                     String jobStatus = (String) results.get("jobStatus");
-                    // 需要检测到至少2次 ALLOW_INPUT 才认为真正结束
-                    if ((commandCompleted && allowInputCount >= 2) || "TERMINATED".equals(jobStatus) || currentExecution >= totalExecutions) {
+                    
+                    // 判断是否应该结束
+                    // 如果是TERMINATED状态，或者命令已完成且允许输入次数大于等于2，或者实际结果数量达到预期结果数量
+                    if ("TERMINATED".equals(jobStatus) || (commandCompleted && allowInputCount >= 2) || (actualResultCount >= expectedResultCount)) {
+                        logger.info("Command completed. Total results: {}, Expected: {}", actualResultCount, expectedResultCount);
                         return true;
                     }
 
@@ -136,25 +138,77 @@ public final class StreamableToolUtils {
         return false;
     }
 
+        private static Map<String, Object> filterCommandSpecificResults(Map<String, Object> results) {
+        if (results == null) {
+            return new HashMap<>();
+        }
+        
+        Map<String, Object> filteredResults = new HashMap<>(results);
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = (List<Object>) results.get("results");
+        
+        if (resultList == null || resultList.isEmpty()) {
+            return filteredResults;
+        }
+        
+        // Define the types of secondary models that need to be excluded
+        String[] auxiliaryModelTypes = {
+            "InputStatusModel", "StatusModel", "WelcomeModel", "MessageModel", 
+            "CommandRequestModel", "SessionModel", "EnhancerModel"
+        };
+        
+        List<Object> filteredResultList = resultList.stream()
+            .filter(result -> {
+                String resultClassName = result.getClass().getSimpleName();
+ 
+                for (String auxiliaryType : auxiliaryModelTypes) {
+                    if (resultClassName.equals(auxiliaryType)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            })
+            .collect(java.util.stream.Collectors.toList());
+        
+        filteredResults.put("results", filteredResultList);
+        filteredResults.put("resultCount", filteredResultList.size());
+        
+        return filteredResults;
+    }
+
+    // progress is judged based on the number of results
+    private static int getCommandSpecificResultCount(Map<String, Object> filteredResults) {
+        if (filteredResults == null) {
+            return 0;
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = (List<Object>) filteredResults.get("results");
+        return resultList != null ? resultList.size() : 0;
+    }
+
     public static void sendProgressNotification(McpNettyServerExchange exchange, Map<String, Object> data, 
-                                              int currentExecution, int totalExecutions, Integer progressToken) {
+                                              int currentResultCount, int totalExpected, Integer progressToken) {
         try {
             Map<String, Object> enhancedData = new HashMap<>(data);
             enhancedData.put("stage", "progress");
-            enhancedData.put("executionNumber", currentExecution);
-            enhancedData.put("totalExecutions", totalExecutions);
-            
+            enhancedData.put("currentResultCount", currentResultCount);
+            enhancedData.put("totalExpected", totalExpected);
+
+            // send logging notification with intermediate results
             exchange.loggingNotification(new McpSchema.LoggingMessageNotification(
                     McpSchema.LoggingLevel.INFO,
-                    "中间结果",
+                    "intermediateResults",
                     enhancedData
             )).join();
 
+            // send progress notifications
             if (progressToken != null) {
                 exchange.progressNotification(new McpSchema.ProgressNotification(
                         progressToken,
-                        currentExecution,
-                        (double) totalExecutions
+                        currentResultCount,
+                        (double) totalExpected
                 )).join();
             }
             
@@ -163,6 +217,8 @@ public final class StreamableToolUtils {
             throw new RuntimeException("Failed to send progress notification", e);
         }
     }
+
+
 
     public static Map<String, Object> createErrorResponse(String message) {
         Map<String, Object> response = new HashMap<>();
