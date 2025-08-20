@@ -18,7 +18,7 @@ public class TimeTunnelTool {
 
     private static final Logger logger = LoggerFactory.getLogger(TimeTunnelTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 100;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
     public static final int DEFAULT_POLL_INTERVAL_MS = 100;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
     public static final int DEFAULT_REPLAY_TIMES = 1;

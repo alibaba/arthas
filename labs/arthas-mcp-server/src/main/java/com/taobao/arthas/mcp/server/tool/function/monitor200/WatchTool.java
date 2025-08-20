@@ -19,7 +19,7 @@ public class WatchTool {
     private static final Logger logger = LoggerFactory.getLogger(WatchTool.class);
 
     public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
-    public static final int DEFAULT_POLL_INTERVAL_MS = 100;
+    public static final int DEFAULT_POLL_INTERVAL_MS = 50;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
     public static final int DEFAULT_EXPAND_LEVEL = 1;
     public static final String DEFAULT_EXPRESS = "{params, target, returnObj}";
