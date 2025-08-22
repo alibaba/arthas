@@ -24,17 +24,59 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot3.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>${spring-boot3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -59,6 +101,8 @@
             <version>9.2</version>
         </dependency>
 
+
+
         <!-- JMC (Java Mission Control) dependencies for JFR analysis -->
         <dependency>
             <groupId>org.openjdk.jmc</groupId>
@@ -80,9 +124,7 @@
             <artifactId>flightrecorder.rules.jdk</artifactId>
             <version>${jmc.version}</version>
         </dependency>
-
     </dependencies>
-
 
     <build>
         <plugins>
@@ -94,7 +136,9 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-<!--                    <release>${java.version}</release>-->
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -106,15 +150,13 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal> <!-- 👈 关键，打包成可执行 jar -->
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-
 
     <!-- 覆盖父 POM 中的 Logback 版本，使用与 Spring Boot 3.x 兼容的版本 -->
     <dependencyManagement>
@@ -136,5 +178,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>
