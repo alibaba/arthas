@@ -93,7 +93,8 @@ public class WatchTool {
     ) {
         McpNettyServerExchange exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
         ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        Integer progressToken = (Integer) toolContext.getContext().get(PROGRESS_TOKEN);
+        Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
+        String progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
 
         int execCount = (numberOfExecutions != null && numberOfExecutions > 0) ? numberOfExecutions : DEFAULT_NUMBER_OF_EXECUTIONS;
         int maxMatch = (maxMatchCount != null && maxMatchCount > 0) ? maxMatchCount : DEFAULT_MAX_MATCH_COUNT;

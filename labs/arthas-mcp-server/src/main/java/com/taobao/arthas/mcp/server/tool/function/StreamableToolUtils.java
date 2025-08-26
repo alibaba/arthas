@@ -33,7 +33,7 @@ public final class StreamableToolUtils {
      * 拉取命令执行结果并发送进度通知
      */
     public static boolean pullResultsSync(McpNettyServerExchange exchange, ArthasCommandContext commandContext, 
-                                        Integer expectedResultCount, Integer intervalMs, Integer progressToken) {
+                                        Integer expectedResultCount, Integer intervalMs, String progressToken) {
         int actualResultCount = 0;
         int pollAttempts = 0;
         int errorRetries = 0;
@@ -189,7 +189,7 @@ public final class StreamableToolUtils {
     }
 
     public static void sendProgressNotification(McpNettyServerExchange exchange, Map<String, Object> data, 
-                                              int currentResultCount, int totalExpected, Integer progressToken) {
+                                              int currentResultCount, int totalExpected, String progressToken) {
         try {
             Map<String, Object> enhancedData = new HashMap<>(data);
             enhancedData.put("stage", "progress");

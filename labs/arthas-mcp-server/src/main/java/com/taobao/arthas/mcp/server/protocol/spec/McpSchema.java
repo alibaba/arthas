@@ -1675,12 +1675,12 @@ public final class McpSchema {
 	// ---------------------------
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class ProgressNotification {
-		private final int progressToken;
+		private final String progressToken;
 		private final double progress;
 		private final Double total;
 
 		public ProgressNotification(
-				@JsonProperty("progressToken") int progressToken,
+				@JsonProperty("progressToken") String progressToken,
 				@JsonProperty("progress") double progress,
 				@JsonProperty("total") Double total) {
 			this.progressToken = progressToken;
@@ -1688,7 +1688,7 @@ public final class McpSchema {
 			this.total = total;
 		}
 
-		public int getProgressToken() {
+		public String getProgressToken() {
 			return progressToken;
 		}
 
