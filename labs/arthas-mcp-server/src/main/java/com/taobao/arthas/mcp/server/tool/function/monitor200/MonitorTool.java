@@ -79,7 +79,7 @@ public class MonitorTool {
         try {
             StringBuilder cmd = new StringBuilder("monitor");
 
-            // -c 指定统计周期，默认值为120秒
+            // -c 指定统计周期，默认值为 60 秒
             cmd.append(" -c ").append(interval / 1000);
 
             cmd.append(" -n ").append(execCount);

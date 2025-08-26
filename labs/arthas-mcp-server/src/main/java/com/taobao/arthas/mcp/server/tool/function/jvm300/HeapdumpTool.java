@@ -6,10 +6,11 @@ import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -39,7 +40,7 @@ public class HeapdumpTool {
             String filePath,
 
             ToolContext toolContext
-    ) throws Exception {
+    ) throws IOException {
         ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
 
         String finalFilePath;

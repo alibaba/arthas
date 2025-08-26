@@ -26,6 +26,8 @@ public final class StreamableToolUtils {
     private static final int MAX_POLL_ATTEMPTS = 100;           // 最大轮询尝试次数，避免无限循环
     private static final int MAX_ERROR_RETRIES = 10;            // 最大错误重试次数
 
+    public static final int MIN_ALLOW_INPUT_COUNT_TO_COMPLETE = 2;
+
     private StreamableToolUtils() {
     }
 
@@ -73,7 +75,9 @@ public final class StreamableToolUtils {
                     
                     // 判断是否应该结束
                     // 如果是TERMINATED状态，或者命令已完成且允许输入次数大于等于2，或者实际结果数量达到预期结果数量
-                    if ("TERMINATED".equals(jobStatus) || (commandCompleted && allowInputCount >= 2) || (actualResultCount >= expectedResultCount)) {
+                    if ("TERMINATED".equals(jobStatus)
+                            || (commandCompleted && allowInputCount >= MIN_ALLOW_INPUT_COUNT_TO_COMPLETE)
+                            || (actualResultCount >= expectedResultCount)) {
                         logger.info("Command completed. Total results: {}, Expected: {}", actualResultCount, expectedResultCount);
                         return true;
                     }

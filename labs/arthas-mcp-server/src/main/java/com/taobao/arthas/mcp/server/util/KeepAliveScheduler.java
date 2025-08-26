@@ -64,7 +64,7 @@ public class KeepAliveScheduler {
      * @param interval Interval between subsequent keepAlive calls
      * @param mcpSessions Supplier for McpSession instances
      */
-    KeepAliveScheduler(ScheduledExecutorService scheduler, boolean ownsExecutor, Duration initialDelay,
+    private KeepAliveScheduler(ScheduledExecutorService scheduler, boolean ownsExecutor, Duration initialDelay,
                             Duration interval, Supplier<? extends Collection<? extends McpSession>> mcpSessions) {
         this.scheduler = scheduler;
         this.ownsExecutor = ownsExecutor;
