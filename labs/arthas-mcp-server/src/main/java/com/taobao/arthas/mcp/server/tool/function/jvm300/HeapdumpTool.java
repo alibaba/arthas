@@ -54,7 +54,7 @@ public class HeapdumpTool {
 
             String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMATTER);
             String defaultFileName = String.format("heapdump_%s.hprof", timestamp);
-            finalFilePath = DEFAULT_DUMP_DIR + "/" + defaultFileName;
+            finalFilePath = Paths.get(DEFAULT_DUMP_DIR, defaultFileName).toString().replace("\\", "/");
         }
 
         StringBuilder cmd = new StringBuilder("heapdump");
