@@ -270,15 +270,6 @@ public class McpStreamableHttpRequestHandler {
                 ctx.channel().closeFuture().addListener(future -> {
                     logger.debug("SSE connection closed for session: {}", sessionId);
                     listeningStream.close();
-                    
-                    // 清理整个会话，确保 Arthas 命令会话也被正确关闭
-                    try {
-                        session.close();
-                        this.sessions.remove(sessionId);
-                        logger.debug("Session {} cleaned up after connection closed", sessionId);
-                    } catch (Exception e) {
-                        logger.warn("Failed to cleanup session {} after connection closed: {}", sessionId, e.getMessage());
-                    }
                 });
             }
         } catch (Exception e) {
@@ -565,16 +556,7 @@ public class McpStreamableHttpRequestHandler {
                 
                 // Check if channel is still active
                 if (!this.ctx.channel().isActive()) {
-                    logger.warn("Channel for session {} is not active, cleaning up session", this.sessionId);
-                    McpStreamableServerSession session = McpStreamableHttpRequestHandler.this.sessions.remove(this.sessionId);
-                    if (session != null) {
-                        try {
-                            session.close();
-                            logger.debug("Session {} cleaned up after detecting inactive channel", this.sessionId);
-                        } catch (Exception e) {
-                            logger.warn("Failed to cleanup session {} after detecting inactive channel: {}", this.sessionId, e.getMessage());
-                        }
-                    }
+                    logger.warn("Channel for session {} is not active, message will not be sent", this.sessionId);
                     return;
                 }
                 lock.lock();
@@ -591,15 +573,6 @@ public class McpStreamableHttpRequestHandler {
                     logger.debug("Message sent to session {} with ID {}", this.sessionId, messageId);
                 } catch (Exception e) {
                     logger.error("Failed to send message to session {}: {}", this.sessionId, e.getMessage());
-                    McpStreamableServerSession session = McpStreamableHttpRequestHandler.this.sessions.remove(this.sessionId);
-                    if (session != null) {
-                        try {
-                            session.close();
-                            logger.debug("Session {} cleaned up after send message failure", this.sessionId);
-                        } catch (Exception cleanupException) {
-                            logger.warn("Failed to cleanup session {} after send message failure: {}", this.sessionId, cleanupException.getMessage());
-                        }
-                    }
                     this.ctx.close();
                 } finally {
                     lock.unlock();

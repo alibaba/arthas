@@ -56,7 +56,7 @@ public class WatchTool {
             @ToolParam(description = "在方法正常返回后观察(-s)，默认false", required = false)
             Boolean successOnly,
 
-            @ToolParam(description = "执行次数限制，默认值为100。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为 5。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)

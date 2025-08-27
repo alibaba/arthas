@@ -60,7 +60,67 @@ public class ArthasCommandSessionManager {
     }
 
     public CommandSessionBinding getCommandSession(String mcpSessionId) {
-        return sessionBindings.computeIfAbsent(mcpSessionId, this::createCommandSession);
+        CommandSessionBinding binding = sessionBindings.get(mcpSessionId);
+
+        if (binding == null) {
+            binding = createCommandSession(mcpSessionId);
+            sessionBindings.put(mcpSessionId, binding);
+            logger.debug("Created new command session: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
+            return binding;
+        }
+
+        if (isSessionValid(binding)) {
+            logger.debug("Using existing valid session: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
+            return binding;
+        }
+
+        logger.info("Session expired, recreating: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
+
+        try {
+            commandExecutor.closeSession(binding.getArthasSessionId());
+        } catch (Exception e) {
+            logger.debug("Failed to close expired session (may already be cleaned up): {}", e.getMessage());
+        }
+
+        CommandSessionBinding newBinding = createCommandSession(mcpSessionId);
+        sessionBindings.put(mcpSessionId, newBinding);
+        logger.info("Recreated command session: MCP={}, Old Arthas={}, New Arthas={}", 
+                   mcpSessionId, binding.getArthasSessionId(), newBinding.getArthasSessionId());
+        
+        return newBinding;
+    }
+    
+    /**
+     * 检查session是否有效
+     * 通过尝试获取结果来验证session和consumer是否仍然存在
+     */
+    private boolean isSessionValid(CommandSessionBinding binding) {
+        try {
+            Map<String, Object> result = commandExecutor.pullResults(binding.getArthasSessionId(), binding.getConsumerId());
+
+            if (result == null) {
+                return true;
+            }
+
+            Boolean success = (Boolean) result.get("success");
+            if (Boolean.TRUE.equals(success)) {
+                return true;
+            }
+
+            String errorMessage = (String) result.get("error");
+            if (errorMessage != null && (errorMessage.contains("Session not found") || 
+                                        errorMessage.contains("Consumer not found") ||
+                                        errorMessage.contains("session is inactive"))) {
+                logger.debug("Session validation failed: {}", errorMessage);
+                return false;
+            }
+
+            return true;
+            
+        } catch (Exception e) {
+            logger.debug("Session validation error: {}", e.getMessage());
+            return false;
+        }
     }
 
     public void closeCommandSession(String mcpSessionId) {
