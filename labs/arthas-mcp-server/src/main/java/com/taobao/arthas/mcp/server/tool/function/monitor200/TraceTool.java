@@ -18,7 +18,7 @@ public class TraceTool {
 
     private static final Logger logger = LoggerFactory.getLogger(TraceTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 100;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
 
@@ -41,7 +41,7 @@ public class TraceTool {
             @ToolParam(description = "OGNL条件表达式，包括#cost耗时过滤，如'#cost>100'表示耗时超过100ms", required = false)
             String condition,
 
-            @ToolParam(description = "执行次数限制，默认值为5。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为3。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -172,10 +172,9 @@ public class TraceTool {
             Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
             logger.debug("Async execution started: {}", asyncResult);
 
-            // Trace命令是事件驱动的，使用较快的轮询间隔来及时获取调用路径信息
-            boolean success = pullResultsSync(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
-            if (success) {
-                return JsonParser.toJson(createCompletedResponse("Trace execution completed successfully"));
+            Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
+            if (results != null) {
+                return JsonParser.toJson(createCompletedResponse("Trace execution completed successfully", results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Trace execution failed due to timeout or error limits exceeded"));
             }

@@ -18,14 +18,14 @@ public class DashboardTool {
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
-    public static final int DEFAULT_REFRESH_INTERVAL_MS = 5000;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
 
     /**
      * dashboard 实时面板命令
      * 支持:
-     * - intervalMs: 刷新间隔，单位 ms，默认 5000ms
-     * - count: 刷新次数限制，即 -n 参数；如果不指定则使用 DEFAULT_NUMBER_OF_EXECUTIONS
+     * - intervalMs: 刷新间隔，单位 ms，默认 3000ms
+     * - count: 刷新次数限制，即 -n 参数；如果不指定则使用 DEFAULT_NUMBER_OF_EXECUTIONS (3次)
      */
     @Tool(
             name = "dashboard",
@@ -33,10 +33,10 @@ public class DashboardTool {
             streamable = true
     )
     public String dashboard(
-            @ToolParam(description = "刷新间隔，单位为毫秒，默认 5000ms。用于控制输出频率", required = false)
+            @ToolParam(description = "刷新间隔，单位为毫秒，默认 3000ms。用于控制输出频率", required = false)
             Integer intervalMs,
 
-            @ToolParam(description = "执行次数限制，默认值为5。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为 3。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             ToolContext toolContext
@@ -64,9 +64,10 @@ public class DashboardTool {
             } else {
                 Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
                 logger.debug("Async execution started: {}", asyncResult);
-                boolean success = pullResultsSync(exchange, commandContext, execCount, interval / 10, progressToken);
-                if (success) {
-                    return JsonParser.toJson(createCompletedResponse("Dashboard execution completed successfully"));
+                
+                Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, interval / 10, progressToken);
+                if (results != null) {
+                    return JsonParser.toJson(createCompletedResponse("Dashboard execution completed successfully", results));
                 } else {
                     return JsonParser.toJson(createErrorResponse("Dashboard execution failed due to timeout or error limits exceeded"));
                 }

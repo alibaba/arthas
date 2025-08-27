@@ -6,13 +6,14 @@ import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 流式工具的工具类
- * 提供通用的结果拉取和进度通知功能
+ * 同步工具的工具类
+ * 提供同步执行命令并收集所有结果的功能
  * 
  * @author Yeaury
  */
@@ -32,14 +33,25 @@ public final class StreamableToolUtils {
     }
 
     /**
-     * 拉取命令执行结果并发送进度通知
+     * 同步执行命令并收集所有结果，支持进度通知
+     * 
+     * @param exchange MCP交换器，用于发送进度通知
+     * @param commandContext 命令上下文
+     * @param expectedResultCount 预期结果数量
+     * @param intervalMs 轮询间隔
+     * @param progressToken 进度令牌
+     * @return 包含所有结果的Map，如果执行失败返回null
      */
-    public static boolean pullResultsSync(McpNettyServerExchange exchange, ArthasCommandContext commandContext, 
-                                        Integer expectedResultCount, Integer intervalMs, String progressToken) {
-        int actualResultCount = 0;
+    public static Map<String, Object> executeAndCollectResults(McpNettyServerExchange exchange, 
+                                                             ArthasCommandContext commandContext, 
+                                                             Integer expectedResultCount, Integer intervalMs, 
+                                                             String progressToken) {
+        List<Object> allResults = new ArrayList<>();
         int pollAttempts = 0;
         int errorRetries = 0;
         int allowInputCount = 0;
+        int totalResultCount = 0;
+        
         // 轮询间隔使用命令执行间隙的 1/10,事件驱动则在命令中自定义默认轮询间隔
         // 工具中默认轮询间隔为200ms
         int pullIntervalMs = (intervalMs != null && intervalMs > 0) ? intervalMs : DEFAULT_POLL_INTERVAL_MS;
@@ -56,14 +68,19 @@ public final class StreamableToolUtils {
                     }
                     errorRetries = 0;
 
-                    // filter and count command specific outcome models
                     Map<String, Object> filteredResults = filterCommandSpecificResults(results);
-                    int currentBatchResultCount = getCommandSpecificResultCount(filteredResults);
+                    List<Object> currentBatchResults = getCommandSpecificResults(filteredResults);
                     
-                    if (currentBatchResultCount > 0) {
-                        actualResultCount += currentBatchResultCount;
-                        sendProgressNotification(exchange, filteredResults, actualResultCount, 
-                                                expectedResultCount != null ? expectedResultCount : actualResultCount, progressToken);
+                    if (currentBatchResults != null && !currentBatchResults.isEmpty()) {
+                        allResults.addAll(currentBatchResults);
+                        totalResultCount += currentBatchResults.size();
+                        logger.debug("Collected {} results, total: {}", currentBatchResults.size(), totalResultCount);
+
+                        if (exchange != null) {
+                            sendProgressNotification(exchange, totalResultCount, 
+                                                    expectedResultCount != null ? expectedResultCount : totalResultCount, 
+                                                    progressToken);
+                        }
                     }
 
                     boolean commandCompleted = checkCommandCompletion(results, allowInputCount);
@@ -77,37 +94,48 @@ public final class StreamableToolUtils {
                     // 如果是TERMINATED状态，或者命令已完成且允许输入次数大于等于2，或者实际结果数量达到预期结果数量
                     if ("TERMINATED".equals(jobStatus)
                             || (commandCompleted && allowInputCount >= MIN_ALLOW_INPUT_COUNT_TO_COMPLETE)
-                            || (actualResultCount >= expectedResultCount)) {
-                        logger.info("Command completed. Total results: {}, Expected: {}", actualResultCount, expectedResultCount);
-                        return true;
+                            || (expectedResultCount != null && totalResultCount >= expectedResultCount)) {
+                        logger.info("Command completed. Total results collected: {}, Expected: {}", totalResultCount, expectedResultCount);
+                        break;
                     }
 
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    return false;
+                    logger.warn("Command execution interrupted");
+                    return null;
                 } catch (Exception e) {
                     if (++errorRetries >= MAX_ERROR_RETRIES) {
                         logger.error("Maximum error retries exceeded", e);
-                        return false;
+                        return null;
                     }
                     
                     try {
                         Thread.sleep(ERROR_RETRY_INTERVAL_MS);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
-                        return false;
+                        return null;
                     }
                 }
             }
 
-            return pollAttempts < MAX_POLL_ATTEMPTS;
+            Map<String, Object> finalResult = new HashMap<>();
+            finalResult.put("results", allResults);
+            finalResult.put("resultCount", totalResultCount);
+            finalResult.put("status", "completed");
+            finalResult.put("stage", "final");
+            
+            if (pollAttempts >= MAX_POLL_ATTEMPTS) {
+                logger.warn("Command execution reached maximum poll attempts: {}", MAX_POLL_ATTEMPTS);
+                finalResult.put("warning", "Execution reached maximum poll attempts");
+            }
+            
+            return finalResult;
             
         } catch (Exception e) {
-            logger.error("Error in result pulling", e);
-            return false;
+            logger.error("Error in command execution", e);
+            return null;
         }
     }
-
 
     private static boolean checkCommandCompletion(Map<String, Object> results, int currentAllowInputCount) {
         if (results == null) {
@@ -142,7 +170,7 @@ public final class StreamableToolUtils {
         return false;
     }
 
-        private static Map<String, Object> filterCommandSpecificResults(Map<String, Object> results) {
+    private static Map<String, Object> filterCommandSpecificResults(Map<String, Object> results) {
         if (results == null) {
             return new HashMap<>();
         }
@@ -155,7 +183,7 @@ public final class StreamableToolUtils {
             return filteredResults;
         }
         
-        // Define the types of secondary models that need to be excluded
+        // 定义需要排除的辅助模型类型
         String[] auxiliaryModelTypes = {
             "InputStatusModel", "StatusModel", "WelcomeModel", "MessageModel", 
             "CommandRequestModel", "SessionModel", "EnhancerModel"
@@ -181,33 +209,22 @@ public final class StreamableToolUtils {
         return filteredResults;
     }
 
-    // progress is judged based on the number of results
-    private static int getCommandSpecificResultCount(Map<String, Object> filteredResults) {
+    private static List<Object> getCommandSpecificResults(Map<String, Object> filteredResults) {
         if (filteredResults == null) {
-            return 0;
+            return new ArrayList<>();
         }
         
         @SuppressWarnings("unchecked")
         List<Object> resultList = (List<Object>) filteredResults.get("results");
-        return resultList != null ? resultList.size() : 0;
+        return resultList != null ? resultList : new ArrayList<>();
     }
 
-    public static void sendProgressNotification(McpNettyServerExchange exchange, Map<String, Object> data, 
-                                              int currentResultCount, int totalExpected, String progressToken) {
+    /**
+     * 发送进度通知
+     */
+    private static void sendProgressNotification(McpNettyServerExchange exchange, int currentResultCount, 
+                                               int totalExpected, String progressToken) {
         try {
-            Map<String, Object> enhancedData = new HashMap<>(data);
-            enhancedData.put("stage", "progress");
-            enhancedData.put("currentResultCount", currentResultCount);
-            enhancedData.put("totalExpected", totalExpected);
-
-            // send logging notification with intermediate results
-            exchange.loggingNotification(new McpSchema.LoggingMessageNotification(
-                    McpSchema.LoggingLevel.INFO,
-                    "intermediateResults",
-                    enhancedData
-            )).join();
-
-            // send progress notifications
             if (progressToken != null) {
                 exchange.progressNotification(new McpSchema.ProgressNotification(
                         progressToken,
@@ -218,25 +235,28 @@ public final class StreamableToolUtils {
             
         } catch (Exception e) {
             logger.error("Error sending progress notification", e);
-            throw new RuntimeException("Failed to send progress notification", e);
         }
     }
-
-
 
     public static Map<String, Object> createErrorResponse(String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("error", true);
         response.put("message", message);
-        return response;
-    }
-
-    public static Map<String, Object> createCompletedResponse(String message) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "completed");
-        response.put("message", message);
+        response.put("status", "error");
         response.put("stage", "final");
         return response;
     }
 
+    public static Map<String, Object> createCompletedResponse(String message, Map<String, Object> results) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "completed");
+        response.put("message", message);
+        response.put("stage", "final");
+        
+        if (results != null) {
+            response.putAll(results);
+        }
+        
+        return response;
+    }
 }

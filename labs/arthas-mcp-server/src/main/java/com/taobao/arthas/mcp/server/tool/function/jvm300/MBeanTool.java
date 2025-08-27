@@ -18,8 +18,8 @@ public class MBeanTool {
 
     private static final Logger logger = LoggerFactory.getLogger(MBeanTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
-    public static final int DEFAULT_REFRESH_INTERVAL_MS = 5000;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
 
     /**
      * mbean 诊断工具: 查看或监控 MBean 属性
@@ -46,10 +46,10 @@ public class MBeanTool {
             @ToolParam(description = "是否查看元信息 (-m)", required = false)
             Boolean metadata,
 
-            @ToolParam(description = "刷新间隔，单位为毫秒，默认 5000ms。用于控制输出频率", required = false)
+            @ToolParam(description = "刷新间隔，单位为毫秒，默认 3000ms。用于控制输出频率", required = false)
             Integer intervalMs,
 
-            @ToolParam(description = "执行次数限制，默认值为5。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为 3。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -104,13 +104,12 @@ public class MBeanTool {
                 Map<String, Object> result = commandContext.executeSync(commandStr);
                 return JsonParser.toJson(result);
             } else {
-                // 使用异步流式输出
-                logger.info("Executing async mbean command: {}", commandStr);
                 Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
                 logger.debug("Async execution started: {}", asyncResult);
-                boolean success = pullResultsSync(exchange, commandContext, execCount, interval / 10, progressToken);
-                if (success) {
-                    return JsonParser.toJson(createCompletedResponse("MBean execution completed successfully"));
+                
+                Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, interval / 10, progressToken);
+                if (results != null) {
+                    return JsonParser.toJson(createCompletedResponse("MBean execution completed successfully", results));
                 } else {
                     return JsonParser.toJson(createErrorResponse("MBean execution failed due to timeout or error limits exceeded"));
                 }

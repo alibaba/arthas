@@ -18,7 +18,7 @@ public class TimeTunnelTool {
 
     private static final Logger logger = LoggerFactory.getLogger(TimeTunnelTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 100;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
     public static final int DEFAULT_REPLAY_TIMES = 1;
@@ -47,7 +47,7 @@ public class TimeTunnelTool {
             @ToolParam(description = "OGNL条件表达式，满足条件的调用才会被记录，如params[0]<0或'params.length==1'", required = false)
             String condition,
 
-            @ToolParam(description = "记录次数限制，默认值为100。达到指定次数后自动停止（仅record操作）", required = false)
+            @ToolParam(description = "记录次数限制，默认值为 3。达到指定次数后自动停止（仅record操作）", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -160,9 +160,10 @@ public class TimeTunnelTool {
             if ("record".equals(ttAction)) {
                 Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
                 logger.debug("Async execution started: {}", asyncResult);
-                boolean success = pullResultsSync(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
-                if (success) {
-                    return JsonParser.toJson(createCompletedResponse("TimeTunnel recording completed successfully"));
+                
+                Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
+                if (results != null) {
+                    return JsonParser.toJson(createCompletedResponse("TimeTunnel recording completed successfully", results));
                 } else {
                     return JsonParser.toJson(createErrorResponse("TimeTunnel recording failed due to timeout or error limits exceeded"));
                 }

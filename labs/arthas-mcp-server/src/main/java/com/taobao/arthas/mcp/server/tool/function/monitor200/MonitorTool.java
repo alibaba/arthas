@@ -18,9 +18,9 @@ public class MonitorTool {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
-    public static final int DEFAULT_REFRESH_INTERVAL_MS = 5000;
-    public static final int DEFAULT_MAX_MATCH_COUNT = 50;    // 默认最大匹配类数量
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
+    public static final int DEFAULT_MAX_MATCH_COUNT = 50;
 
     /**
      * monitor 方法调用监控工具
@@ -29,8 +29,8 @@ public class MonitorTool {
      * - classPattern: 类名表达式匹配，支持通配符
      * - methodPattern: 方法名表达式匹配，支持通配符
      * - condition: OGNL条件表达式，满足条件的调用才会被监控
-     * - intervalMs: 监控统计输出间隔，默认5000ms
-     * - numberOfExecutions: 监控执行次数，默认5次
+     * - intervalMs: 监控统计输出间隔，默认3000ms
+     * - numberOfExecutions: 监控执行次数，默认3次
      * - regex: 是否开启正则表达式匹配，默认false
      * - excludeClassPattern: 排除的类名模式
      * - maxMatch: 最大匹配类数量，防止匹配过多类影响性能，默认50
@@ -50,10 +50,10 @@ public class MonitorTool {
             @ToolParam(description = "OGNL条件表达式，满足条件的调用才会被监控，如params[0]<0", required = false)
             String condition,
 
-            @ToolParam(description = "监控统计输出间隔，单位为毫秒，默认 5000ms。用于控制输出频率", required = false)
+            @ToolParam(description = "监控统计输出间隔，单位为毫秒，默认 3000ms。用于控制输出频率", required = false)
             Integer intervalMs,
 
-            @ToolParam(description = "执行次数限制，默认值为5。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为3。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -115,9 +115,9 @@ public class MonitorTool {
             Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
             logger.debug("Async execution started: {}", asyncResult);
 
-            boolean success = pullResultsSync(exchange, commandContext, execCount, interval / 10, progressToken);
-            if (success) {
-                return JsonParser.toJson(createCompletedResponse("Monitor execution completed successfully"));
+            Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, interval / 10, progressToken);
+            if (results != null) {
+                return JsonParser.toJson(createCompletedResponse("Monitor execution completed successfully", results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Monitor execution failed due to timeout or error limits exceeded"));
             }

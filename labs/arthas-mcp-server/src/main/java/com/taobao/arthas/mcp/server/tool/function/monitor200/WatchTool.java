@@ -18,7 +18,7 @@ public class WatchTool {
 
     private static final Logger logger = LoggerFactory.getLogger(WatchTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 50;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
     public static final int DEFAULT_EXPAND_LEVEL = 1;
@@ -56,7 +56,7 @@ public class WatchTool {
             @ToolParam(description = "在方法正常返回后观察(-s)，默认false", required = false)
             Boolean successOnly,
 
-            @ToolParam(description = "执行次数限制，默认值为 5。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为 3。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -170,9 +170,9 @@ public class WatchTool {
             Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
             logger.debug("Async execution started: {}", asyncResult);
 
-            boolean success = pullResultsSync(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
-            if (success) {
-                return JsonParser.toJson(createCompletedResponse("Watch execution completed successfully"));
+            Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
+            if (results != null) {
+                return JsonParser.toJson(createCompletedResponse("Watch execution completed successfully", results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Watch execution failed due to timeout or error limits exceeded"));
             }

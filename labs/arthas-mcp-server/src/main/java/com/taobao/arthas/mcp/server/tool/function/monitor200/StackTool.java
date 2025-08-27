@@ -18,7 +18,7 @@ public class StackTool {
 
     private static final Logger logger = LoggerFactory.getLogger(StackTool.class);
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 50;
 
     /**
@@ -47,7 +47,7 @@ public class StackTool {
             @ToolParam(description = "OGNL条件表达式，满足条件的调用才会被跟踪，如params[0]<0", required = false)
             String condition,
 
-            @ToolParam(description = "捕获次数限制，默认值为5。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "捕获次数限制，默认值为3。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -98,10 +98,9 @@ public class StackTool {
             Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
             logger.debug("Async execution started: {}", asyncResult);
 
-            // Stack命令是事件驱动的，使用较快的轮询间隔来及时获取堆栈信息
-            boolean success = pullResultsSync(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
-            if (success) {
-                return JsonParser.toJson(createCompletedResponse("Stack execution completed successfully"));
+            Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
+            if (results != null) {
+                return JsonParser.toJson(createCompletedResponse("Stack execution completed successfully", results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Stack execution failed due to timeout or error limits exceeded"));
             }
