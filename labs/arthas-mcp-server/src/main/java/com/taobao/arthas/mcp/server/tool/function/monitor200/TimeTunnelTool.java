@@ -21,9 +21,6 @@ public class TimeTunnelTool {
     public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 100;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
-    public static final int DEFAULT_REPLAY_TIMES = 1;
-    public static final int DEFAULT_REPLAY_INTERVAL = 1000;
-    public static final int DEFAULT_EXPAND_LEVEL = 1;
 
     /**
      * tt 时空隧道工具 (TimeTunnel)
@@ -53,50 +50,14 @@ public class TimeTunnelTool {
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
             Boolean regex,
 
-            @ToolParam(description = "排除的类名模式，支持通配符", required = false)
-            String excludeClassPattern,
-
             @ToolParam(description = "指定索引，用于info/replay/delete等操作", required = false)
             Integer index,
-
-            @ToolParam(description = "索引范围或模式，用于delete操作，如1001-1010或单个索引", required = false)
-            String indexPattern,
 
             @ToolParam(description = "搜索表达式，用于search操作，支持OGNL表达式如'method.name==\"primeFactors\"'", required = false)
             String searchExpression,
 
-            @ToolParam(description = "观察表达式，使用OGNL表达式，如target.field、params[0]、returnObj，默认为{params,returnObj,throwExp}", required = false)
-            String watchExpression,
-
-            @ToolParam(description = "输出结果属性遍历深度，默认为1", required = false)
-            Integer expandLevel,
-
-            @ToolParam(description = "详细输出模式，显示调用的详细信息", required = false)
-            Boolean verbose,
-
-            @ToolParam(description = "重放次数，用于replay操作，默认1次", required = false)
-            Integer replayTimes,
-
-            @ToolParam(description = "多次重放间隔时间，单位毫秒，默认1000ms", required = false)
-            Integer replayInterval,
-
             @ToolParam(description = "Class最大匹配数量，防止匹配到的Class数量太多导致JVM挂起，默认50", required = false)
             Integer maxMatchCount,
-
-            @ToolParam(description = "ClassLoader的hashcode（16进制），用于指定特定的ClassLoader", required = false)
-            String classLoaderHashcode,
-
-            @ToolParam(description = "ClassLoader的完整类名，如sun.misc.Launcher$AppClassLoader，可替代hashcode", required = false)
-            String classLoaderClass,
-
-            @ToolParam(description = "是否包含子类，默认为false", required = false)
-            Boolean includeSubClass,
-
-            @ToolParam(description = "是否跳过JDK的方法，默认为true", required = false)
-            Boolean skipJdkMethod,
-
-            @ToolParam(description = "监听耗时超过指定时间的调用，单位为毫秒", required = false)
-            Integer costThreshold,
 
             ToolContext toolContext
     ) {
@@ -105,24 +66,18 @@ public class TimeTunnelTool {
         Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
         String progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
 
-        // 设置默认操作类型
         String ttAction = normalizeAction(action);
         int execCount = (numberOfExecutions != null && numberOfExecutions > 0) ? numberOfExecutions : DEFAULT_NUMBER_OF_EXECUTIONS;
         int maxMatch = (maxMatchCount != null && maxMatchCount > 0) ? maxMatchCount : DEFAULT_MAX_MATCH_COUNT;
-        int expandLv = (expandLevel != null && expandLevel > 0) ? expandLevel : DEFAULT_EXPAND_LEVEL;
 
-        // 验证必需参数
-        validateParameters(ttAction, classPattern, methodPattern, index, searchExpression, indexPattern);
+        validateParameters(ttAction, classPattern, methodPattern, index, searchExpression);
 
         try {
             StringBuilder cmd = new StringBuilder("tt");
 
-            // 根据不同的操作类型构建命令
             switch (ttAction) {
                 case "record":
-                    cmd = buildRecordCommand(cmd, classPattern, methodPattern, condition, execCount, maxMatch,
-                            regex, excludeClassPattern, classLoaderHashcode, classLoaderClass,
-                            includeSubClass, expandLv, skipJdkMethod, costThreshold, verbose);
+                    cmd = buildRecordCommand(cmd, classPattern, methodPattern, condition, execCount, maxMatch, regex);
                     break;
 
                 case "list":
@@ -130,23 +85,23 @@ public class TimeTunnelTool {
                     break;
 
                 case "info":
-                    cmd = buildInfoCommand(cmd, index, expandLv, watchExpression);
+                    cmd.append(" -i ").append(index);
                     break;
 
                 case "search":
-                    cmd = buildSearchCommand(cmd, searchExpression, expandLv);
+                    cmd.append(" -s '").append(searchExpression.trim()).append("'");
                     break;
 
                 case "replay":
-                    cmd = buildReplayCommand(cmd, index, expandLv, replayTimes, replayInterval);
+                    cmd.append(" -i ").append(index).append(" -p");
                     break;
 
                 case "delete":
-                    cmd = buildDeleteCommand(cmd, index, indexPattern);
+                    cmd.append(" -i ").append(index).append(" -d");
                     break;
 
                 case "deleteall":
-                    cmd = buildDeleteAllCommand(cmd);
+                    cmd.append(" --delete-all");
                     break;
 
                 default:
@@ -168,7 +123,7 @@ public class TimeTunnelTool {
                     return JsonParser.toJson(createErrorResponse("TimeTunnel recording failed due to timeout or error limits exceeded"));
                 }
             } else {
-                // 其他操作（list/info/search/replay/delete/deleteAll）：使用同步执行，直接返回结果
+                // list/info/search/replay/delete/deleteAll：使用同步执行，直接返回结果
                 logger.info("Executing sync tt command: {}", commandStr);
                 Map<String, Object> result = commandContext.executeSync(commandStr);
                 return JsonParser.toJson(result);
@@ -184,7 +139,7 @@ public class TimeTunnelTool {
      * 验证参数
      */
     private void validateParameters(String action, String classPattern, String methodPattern, 
-                                   Integer index, String searchExpression, String indexPattern) {
+                                   Integer index, String searchExpression) {
         switch (action) {
             case "record":
                 if (classPattern == null || classPattern.trim().isEmpty()) {
@@ -206,13 +161,12 @@ public class TimeTunnelTool {
                 }
                 break;
             case "delete":
-                if (index == null && (indexPattern == null || indexPattern.trim().isEmpty())) {
-                    throw new IllegalArgumentException("delete operation requires index or indexPattern parameter");
+                if (index == null) {
+                    throw new IllegalArgumentException("delete operation requires index parameter");
                 }
                 break;
             case "list":
             case "deleteall":
-                // 这些操作不需要额外参数
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported action: " + action);
@@ -229,7 +183,6 @@ public class TimeTunnelTool {
 
         String normalizedAction = action.trim().toLowerCase();
 
-        // 支持各种别名
         switch (normalizedAction) {
             case "record":
             case "r":
@@ -273,10 +226,7 @@ public class TimeTunnelTool {
     }
 
     private StringBuilder buildRecordCommand(StringBuilder cmd, String classPattern, String methodPattern,
-                                             String condition, int execCount, int maxMatch, Boolean regex,
-                                             String excludeClassPattern, String classLoaderHashcode, String classLoaderClass,
-                                             Boolean includeSubClass, Integer expandLevel, Boolean skipJdkMethod,
-                                             Integer costThreshold, Boolean verbose) {
+                                             String condition, int execCount, int maxMatch, Boolean regex) {
 
         cmd.append(" -t");
 
@@ -285,36 +235,6 @@ public class TimeTunnelTool {
 
         if (Boolean.TRUE.equals(regex)) {
             cmd.append(" -E");
-        }
-
-        if (Boolean.FALSE.equals(skipJdkMethod)) {
-            cmd.append(" --skipJDKMethod false");
-        }
-
-        if (classLoaderHashcode != null && !classLoaderHashcode.trim().isEmpty()) {
-            cmd.append(" -c ").append(classLoaderHashcode.trim());
-        } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-            cmd.append(" --classLoaderClass '").append(classLoaderClass.trim()).append("'");
-        }
-
-        if (Boolean.TRUE.equals(includeSubClass)) {
-            cmd.append(" --include-sub-class");
-        }
-
-        if (expandLevel != null && expandLevel > 0) {
-            cmd.append(" -x ").append(expandLevel);
-        }
-
-        if (costThreshold != null && costThreshold > 0) {
-            cmd.append(" --cost ").append(costThreshold);
-        }
-
-        if (Boolean.TRUE.equals(verbose)) {
-            cmd.append(" -v");
-        }
-
-        if (excludeClassPattern != null && !excludeClassPattern.trim().isEmpty()) {
-            cmd.append(" --exclude-class-pattern '").append(excludeClassPattern.trim()).append("'");
         }
 
         cmd.append(" '").append(classPattern.trim()).append("'");
@@ -329,62 +249,10 @@ public class TimeTunnelTool {
 
     private StringBuilder buildListCommand(StringBuilder cmd, String searchExpression) {
         cmd.append(" -l");
-        // 支持可选的搜索表达式
         if (searchExpression != null && !searchExpression.trim().isEmpty()) {
             cmd.append(" '").append(searchExpression.trim()).append("'");
         }
         return cmd;
     }
 
-    private StringBuilder buildInfoCommand(StringBuilder cmd, Integer index, Integer expandLevel, String watchExpression) {
-        cmd.append(" -i ").append(index);
-
-        if (expandLevel != null && expandLevel > 0) {
-            cmd.append(" -x ").append(expandLevel);
-        }
-        if (watchExpression != null && !watchExpression.trim().isEmpty()) {
-            cmd.append(" -w '").append(watchExpression.trim()).append("'");
-        }
-        return cmd;
-    }
-
-    private StringBuilder buildSearchCommand(StringBuilder cmd, String searchExpression, Integer expandLevel) {
-        cmd.append(" -s '").append(searchExpression.trim()).append("'");
-        if (expandLevel != null && expandLevel > 0) {
-            cmd.append(" -x ").append(expandLevel);
-        }
-        return cmd;
-    }
-
-    private StringBuilder buildReplayCommand(StringBuilder cmd, Integer index, Integer expandLevel,
-                                             Integer replayTimes, Integer replayInterval) {
-        cmd.append(" -i ").append(index).append(" -p");
-        if (expandLevel != null && expandLevel > 0) {
-            cmd.append(" -x ").append(expandLevel);
-        }
-
-        int times = (replayTimes != null && replayTimes > 0) ? replayTimes : DEFAULT_REPLAY_TIMES;
-        if (times > 1) {
-            cmd.append(" --replay-times ").append(times);
-        }
-
-        int interval = (replayInterval != null && replayInterval > 0) ? replayInterval : DEFAULT_REPLAY_INTERVAL;
-        if (times > 1 && interval != DEFAULT_REPLAY_INTERVAL) {
-            cmd.append(" --replay-interval ").append(interval);
-        }
-
-        return cmd;
-    }
-    private StringBuilder buildDeleteCommand(StringBuilder cmd, Integer index, String indexPattern) {
-        if (index != null) {
-            cmd.append(" -i ").append(index).append(" -d");
-        } else {
-            cmd.append(" -d ").append(indexPattern.trim());
-        }
-        return cmd;
-    }
-    private StringBuilder buildDeleteAllCommand(StringBuilder cmd) {
-        cmd.append(" --delete-all");
-        return cmd;
-    }
 }

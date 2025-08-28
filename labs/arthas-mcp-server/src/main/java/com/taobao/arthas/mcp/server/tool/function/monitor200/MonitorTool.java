@@ -59,9 +59,6 @@ public class MonitorTool {
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
             Boolean regex,
 
-            @ToolParam(description = "排除的类名模式，支持通配符", required = false)
-            String excludeClassPattern,
-
             @ToolParam(description = "最大匹配类数量，防止匹配过多类影响性能，默认50", required = false)
             Integer maxMatch,
 
@@ -88,11 +85,6 @@ public class MonitorTool {
 
             if (Boolean.TRUE.equals(regex)) {
                 cmd.append(" -E");
-            }
-
-            // --exclude-class-pattern 排除类模式
-            if (excludeClassPattern != null && !excludeClassPattern.trim().isEmpty()) {
-                cmd.append(" --exclude-class-pattern '").append(excludeClassPattern.trim()).append("'");
             }
 
             if (classPattern != null && !classPattern.trim().isEmpty()) {

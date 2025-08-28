@@ -47,44 +47,8 @@ public class TraceTool {
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
             Boolean regex,
 
-            @ToolParam(description = "排除的类名模式，支持通配符", required = false)
-            String excludeClassPattern,
-
             @ToolParam(description = "指定Class最大匹配数量，默认50", required = false)
             Integer maxMatchCount,
-
-            @ToolParam(description = "是否跳过JDK方法，默认true", required = false)
-            Boolean skipJdkMethod,
-
-            @ToolParam(description = "ClassLoader的hashcode（16进制），用于指定特定的ClassLoader", required = false)
-            String classLoaderHashcode,
-
-            @ToolParam(description = "ClassLoader的完整类名，如sun.misc.Launcher$AppClassLoader，可替代hashcode", required = false)
-            String classLoaderClass,
-
-            @ToolParam(description = "是否包含子类，默认为false", required = false)
-            Boolean includeSubClass,
-
-            @ToolParam(description = "监听耗时超过指定时间的调用，单位为毫秒", required = false)
-            Integer costThreshold,
-
-            @ToolParam(description = "输出结果属性遍历深度，默认为1", required = false)
-            Integer expandLevel,
-
-            @ToolParam(description = "只显示耗时大于等于指定时间的调用链路，单位为毫秒", required = false)
-            Integer minCost,
-
-            @ToolParam(description = "是否输出调用参数，默认为false", required = false)
-            Boolean printParameters,
-
-            @ToolParam(description = "是否输出返回值，默认为false", required = false)
-            Boolean printReturnValue,
-
-            @ToolParam(description = "是否输出异常信息，默认为true", required = false)
-            Boolean printException,
-
-            @ToolParam(description = "是否按调用耗时排序输出，默认为false", required = false)
-            Boolean sortByTime,
 
             ToolContext toolContext
     ) {
@@ -104,52 +68,6 @@ public class TraceTool {
 
             if (Boolean.TRUE.equals(regex)) {
                 cmd.append(" -E");
-            }
-
-            if (Boolean.FALSE.equals(skipJdkMethod)) {
-                cmd.append(" --skipJDKMethod false");
-            }
-
-            if (classLoaderHashcode != null && !classLoaderHashcode.trim().isEmpty()) {
-                cmd.append(" -c ").append(classLoaderHashcode.trim());
-            } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-                cmd.append(" --classLoaderClass ").append(classLoaderClass.trim());
-            }
-
-            if (Boolean.TRUE.equals(includeSubClass)) {
-                cmd.append(" --include-sub-class");
-            }
-
-            if (costThreshold != null && costThreshold > 0) {
-                cmd.append(" --cost ").append(costThreshold);
-            }
-
-            if (expandLevel != null && expandLevel > 0) {
-                cmd.append(" -x ").append(expandLevel);
-            }
-
-            if (minCost != null && minCost > 0) {
-                cmd.append(" --min-cost ").append(minCost);
-            }
-
-            if (Boolean.TRUE.equals(printParameters)) {
-                cmd.append(" -p");
-            }
-
-            if (Boolean.TRUE.equals(printReturnValue)) {
-                cmd.append(" -r");
-            }
-
-            if (Boolean.FALSE.equals(printException)) {
-                cmd.append(" --no-exception");
-            }
-
-            if (Boolean.TRUE.equals(sortByTime)) {
-                cmd.append(" --sort-by-cost");
-            }
-
-            if (excludeClassPattern != null && !excludeClassPattern.trim().isEmpty()) {
-                cmd.append(" --exclude-class-pattern '").append(excludeClassPattern.trim()).append("'");
             }
 
             if (classPattern != null && !classPattern.trim().isEmpty()) {

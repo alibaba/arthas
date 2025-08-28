@@ -53,9 +53,6 @@ public class StackTool {
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
             Boolean regex,
 
-            @ToolParam(description = "排除的类名模式，支持通配符", required = false)
-            String excludeClassPattern,
-
             ToolContext toolContext
     ) {
         McpNettyServerExchange exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
@@ -72,10 +69,6 @@ public class StackTool {
 
             if (Boolean.TRUE.equals(regex)) {
                 cmd.append(" -E");
-            }
-
-            if (excludeClassPattern != null && !excludeClassPattern.trim().isEmpty()) {
-                cmd.append(" --exclude-class-pattern '").append(excludeClassPattern.trim()).append("'");
             }
 
             if (classPattern != null && !classPattern.trim().isEmpty()) {
