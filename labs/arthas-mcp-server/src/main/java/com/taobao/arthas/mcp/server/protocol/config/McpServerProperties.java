@@ -1,7 +1,6 @@
 package com.taobao.arthas.mcp.server.protocol.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taobao.arthas.mcp.server.protocol.server.handler.McpRequestHandler;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -35,8 +34,7 @@ public class McpServerProperties {
      */
     private final String bindAddress;
     private final int port;
-    private final String messageEndpoint;
-    private final String sseEndpoint;
+    private final String mcpEndpoint;
 
     /**
      * Timeout configuration
@@ -45,6 +43,11 @@ public class McpServerProperties {
     private final Duration initializationTimeout;
 
     private final ObjectMapper objectMapper;
+
+    /**
+     * (Optional) response MIME type per tool name.
+     */
+    private Map<String, String> toolResponseMimeType = new HashMap<>();
 
     /**
      * Private constructor, can only be created through Builder
@@ -59,8 +62,7 @@ public class McpServerProperties {
         this.resourceSubscribe = builder.resourceSubscribe;
         this.bindAddress = builder.bindAddress;
         this.port = builder.port;
-        this.messageEndpoint = builder.messageEndpoint;
-        this.sseEndpoint = builder.sseEndpoint;
+        this.mcpEndpoint = builder.mcpEndpoint;
         this.requestTimeout = builder.requestTimeout;
         this.initializationTimeout = builder.initializationTimeout;
         this.objectMapper = builder.objectMapper;
@@ -145,20 +147,13 @@ public class McpServerProperties {
         return port;
     }
 
-    /**
-     * Get message endpoint
-     * @return Message endpoint
-     */
-    public String getMessageEndpoint() {
-        return messageEndpoint;
-    }
 
     /**
      * Get SSE endpoint
      * @return SSE endpoint
      */
-    public String getSseEndpoint() {
-        return sseEndpoint;
+    public String getMcpEndpoint() {
+        return mcpEndpoint;
     }
 
     /**
@@ -185,6 +180,14 @@ public class McpServerProperties {
         return objectMapper;
     }
 
+    public Map<String, String> getToolResponseMimeType() {
+        return toolResponseMimeType;
+    }
+
+    public void setToolResponseMimeType(Map<String, String> toolResponseMimeType) {
+        this.toolResponseMimeType = toolResponseMimeType;
+    }
+
     /**
      * Builder class for McpServerProperties
      */
@@ -194,13 +197,12 @@ public class McpServerProperties {
         private String version = "1.0.0";
         private String instructions;
         private boolean toolChangeNotification = true;
-        private boolean resourceChangeNotification = true;
-        private boolean promptChangeNotification = true;
+        private boolean resourceChangeNotification = false;
+        private boolean promptChangeNotification = false;
         private boolean resourceSubscribe = false;
         private String bindAddress = "localhost";
         private int port = 8080;
-        private String messageEndpoint = "/mcp/message";
-        private String sseEndpoint = "/mcp/sse";
+        private String mcpEndpoint = "/mcp";
         private Duration requestTimeout = Duration.ofSeconds(10);
         private Duration initializationTimeout = Duration.ofSeconds(30);
         private ObjectMapper objectMapper;
@@ -254,13 +256,8 @@ public class McpServerProperties {
             return this;
         }
 
-        public Builder messageEndpoint(String messageEndpoint) {
-            this.messageEndpoint = messageEndpoint;
-            return this;
-        }
-
-        public Builder sseEndpoint(String sseEndpoint) {
-            this.sseEndpoint = sseEndpoint;
+        public Builder mcpEndpoint(String mcpEndpoint) {
+            this.mcpEndpoint = mcpEndpoint;
             return this;
         }
 

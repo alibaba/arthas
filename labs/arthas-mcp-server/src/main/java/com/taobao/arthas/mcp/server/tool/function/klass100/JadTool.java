@@ -1,8 +1,12 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
+import com.taobao.arthas.mcp.server.util.JsonParser;
+
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class JadTool {
 
@@ -30,7 +34,10 @@ public class JadTool {
             Boolean useRegex,
 
             @ToolParam(description = "指定dump class文件目录，默认会dump到logback.xml中配置的log目录下", required = false)
-            String dumpDirectory) {
+            String dumpDirectory,
+
+            ToolContext toolContext) {
+        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
 
         StringBuilder cmd = new StringBuilder("jad");
 
@@ -58,6 +65,6 @@ public class JadTool {
             cmd.append(" -d ").append(dumpDirectory.trim());
         }
 
-        return ArthasCommandExecutor.executeCommand(cmd.toString());
+        return JsonParser.toJson(commandContext.executeSync(cmd.toString()));
     }
 }

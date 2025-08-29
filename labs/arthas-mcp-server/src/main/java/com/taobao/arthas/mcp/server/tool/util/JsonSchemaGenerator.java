@@ -45,6 +45,11 @@ public final class JsonSchemaGenerator {
 
         Parameter[] parameters = method.getParameters();
         for (Parameter parameter : parameters) {
+            ToolParam toolParam = parameter.getAnnotation(ToolParam.class);
+            if (toolParam == null) {
+                continue;
+            }
+            
             String paramName = getParameterName(parameter);
             Class<?> paramType = parameter.getType();
 

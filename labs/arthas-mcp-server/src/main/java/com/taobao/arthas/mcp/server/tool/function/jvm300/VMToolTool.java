@@ -1,8 +1,12 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.tool.function.ArthasCommandExecutor;
+import com.taobao.arthas.mcp.server.util.JsonParser;
+
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class VMToolTool {
 
@@ -37,8 +41,11 @@ public class VMToolTool {
             String express,
 
             @ToolParam(description = "线程 ID (-t)，interruptThread 时使用", required = false)
-            Long threadId
+            Long threadId,
+
+            ToolContext toolContext
     ) {
+        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
         StringBuilder cmd = new StringBuilder("vmtool");
         if (action == null || action.trim().isEmpty()) {
             throw new IllegalArgumentException("vmtool: action 参数不能为空");
@@ -76,7 +83,7 @@ public class VMToolTool {
         }
 
         String commandStr = cmd.toString();
-        return ArthasCommandExecutor.executeCommand(commandStr);
+        return JsonParser.toJson(commandContext.executeSync(commandStr));
     }
 
 
