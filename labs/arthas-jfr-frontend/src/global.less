@@ -1,5 +1,361 @@
+/* 全局样式 */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background: #f5f6fa;
   margin: 0;
-  font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
-} 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 暗黑模式支持 */
+.dark-mode {
+  background-color: #141414;
+  color: #fff;
+}
+
+.dark-mode .ant-card {
+  background-color: #1f1f1f;
+  border-color: #303030;
+}
+
+.dark-mode .ant-card-head {
+  background-color: #262626;
+  border-bottom-color: #303030;
+}
+
+.dark-mode .ant-input {
+  background-color: #262626;
+  border-color: #434343;
+  color: #fff;
+}
+
+.dark-mode .ant-select-selector {
+  background-color: #262626 !important;
+  border-color: #434343 !important;
+  color: #fff !important;
+}
+
+.dark-mode .ant-select-selection-item {
+  color: #fff !important;
+}
+
+.dark-mode .ant-checkbox-wrapper {
+  color: #d9d9d9;
+}
+
+.dark-mode .ant-btn {
+  border-color: #434343;
+}
+
+.dark-mode .ant-btn-text {
+  color: #d9d9d9;
+}
+
+.dark-mode .ant-btn-text:hover {
+  color: #fff;
+  background-color: #434343;
+}
+
+/* 火焰图专业样式 */
+.flame-graph-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
+  border-radius: 8px;
+}
+
+.flame-graph-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.flame-node {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.flame-node:hover {
+  filter: brightness(1.1);
+  stroke-width: 2;
+}
+
+.flame-node.selected {
+  stroke: #1890ff;
+  stroke-width: 3;
+  filter: brightness(1.2);
+}
+
+.flame-node.highlighted {
+  stroke: #ff8200;
+  stroke-width: 3;
+  filter: brightness(1.3);
+}
+
+/* 工具提示样式 */
+.flame-tooltip {
+  position: fixed;
+  background: rgba(38, 38, 38, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid #434343;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  pointer-events: none;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 400px;
+  word-break: break-word;
+}
+
+.flame-tooltip-light {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #d9d9d9;
+  color: #000;
+}
+
+/* 操作按钮组样式 */
+.flame-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+
+.flame-control-btn {
+  background: rgba(38, 38, 38, 0.8);
+  border: 1px solid #434343;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.flame-control-btn:hover {
+  background: rgba(38, 38, 38, 0.9);
+  border-color: #666;
+}
+
+.flame-control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 缩放指示器 */
+.zoom-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(38, 38, 38, 0.8);
+  border: 1px solid #434343;
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .flame-controls {
+    top: 8px;
+    right: 8px;
+    gap: 4px;
+  }
+  
+  .flame-control-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .zoom-indicator {
+    bottom: 8px;
+    left: 8px;
+    padding: 2px 6px;
+    font-size: 11px;
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.dark-mode ::-webkit-scrollbar-track {
+  background: #262626;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #434343;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flame-node {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 高亮搜索结果的动画 */
+@keyframes highlightPulse {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.flame-node.search-highlight {
+  animation: highlightPulse 2s ease-in-out infinite;
+}
+
+/* 加载状态样式 */
+.flame-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #666;
+  font-size: 16px;
+}
+
+.dark-mode .flame-loading {
+  color: #999;
+}
+
+/* 空状态样式 */
+.flame-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #999;
+  text-align: center;
+}
+
+.flame-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.flame-empty-text {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.flame-empty-subtext {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.dark-mode   .flame-empty {
+    color: #666;
+  }
+  
+  // Top Table 样式
+  .top-table-container {
+    .ant-table-thead > tr > th {
+      background: #1a1a1a !important;
+      border-color: #434343 !important;
+      color: #fff !important;
+      font-weight: 600;
+      
+      &:hover {
+        background: #262626 !important;
+      }
+    }
+    
+    .ant-table-tbody > tr > td {
+      border-color: #434343 !important;
+      background: #262626 !important;
+      color: #d9d9d9 !important;
+      
+      &:hover {
+        background: #1f1f1f !important;
+      }
+    }
+    
+    .ant-table-tbody > tr:hover > td {
+      background: #1f1f1f !important;
+    }
+    
+    .top-function-row {
+      background: #1a1a1a !important;
+      
+      td {
+        background: #1a1a1a !important;
+        color: #fff !important;
+        font-weight: 600;
+      }
+      
+      &:hover td {
+        background: #262626 !important;
+      }
+    }
+  }
+  
+  // 视图切换按钮样式
+  .view-toggle-container {
+    .ant-btn {
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+    }
+  }
+  
+  // 搜索高亮样式
+  .search-highlight {
+    background: #ff8200;
+    color: #000;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: bold;
+  } 
