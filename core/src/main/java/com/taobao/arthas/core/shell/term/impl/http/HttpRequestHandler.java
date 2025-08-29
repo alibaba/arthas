@@ -5,7 +5,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
-import com.taobao.arthas.mcp.server.protocol.server.handler.McpRequestHandler;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpHttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,7 +38,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private HttpApiHandler httpApiHandler;
 
-    private McpRequestHandler mcpRequestHandler;
+    private McpHttpRequestHandler mcpRequestHandler;
 
     public HttpRequestHandler(String wsUri) {
         this(wsUri, ArthasBootstrap.getInstance().getOutputPath());
@@ -76,9 +76,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 }
 
                 //handle mcp request
-                String messageEndpoint = mcpRequestHandler.getMessageEndpoint();
-                String sseEndpoint = mcpRequestHandler.getSseEndpoint();
-                if (sseEndpoint.equals(path) || messageEndpoint.equals(path)) {
+                String mcpEndpoint = mcpRequestHandler.getMcpEndpoint();
+                if (mcpEndpoint.equals(path)) {
                     mcpRequestHandler.handle(ctx, request);
                     isMcpHandled = true;
                     return;

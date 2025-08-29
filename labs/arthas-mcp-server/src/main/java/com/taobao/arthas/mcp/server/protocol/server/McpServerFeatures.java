@@ -1,14 +1,15 @@
+/*
+ * Copyright 2024-2024 the original author or authors.
+ */
+
 package com.taobao.arthas.mcp.server.protocol.server;
 
-import com.taobao.arthas.mcp.server.protocol.spec.*;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.util.Assert;
 import com.taobao.arthas.mcp.server.util.Utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
@@ -159,11 +160,11 @@ public class McpServerFeatures {
 
 	public static class ToolSpecification {
 		private final McpSchema.Tool tool;
-		private final BiFunction<McpNettyServerExchange, Map<String, Object>, CompletableFuture<McpSchema.CallToolResult>> call;
+		private final ToolCallFunction call;
 
 		public ToolSpecification(
 				McpSchema.Tool tool,
-				BiFunction<McpNettyServerExchange, Map<String, Object>, CompletableFuture<McpSchema.CallToolResult>> call) {
+				ToolCallFunction call) {
 			this.tool = tool;
 			this.call = call;
 		}
@@ -172,9 +173,21 @@ public class McpServerFeatures {
 			return tool;
 		}
 
-		public BiFunction<McpNettyServerExchange, Map<String, Object>, CompletableFuture<McpSchema.CallToolResult>> getCall() {
+		public ToolCallFunction getCall() {
 			return call;
 		}
+	}
+
+	/**
+	 * Tool call function interface with three parameters
+	 */
+	@FunctionalInterface
+	public interface ToolCallFunction {
+		CompletableFuture<McpSchema.CallToolResult> apply(
+				McpNettyServerExchange exchange,
+				ArthasCommandContext commandContext,
+				McpSchema.CallToolRequest arguments
+		);
 	}
 
 	public static class ResourceSpecification {

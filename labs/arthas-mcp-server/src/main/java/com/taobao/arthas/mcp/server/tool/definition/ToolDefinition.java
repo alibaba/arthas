@@ -31,6 +31,10 @@ public class ToolDefinition {
         return inputSchema;
     }
 
+    public boolean isStreamable() {
+        return streamable;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

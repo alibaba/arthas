@@ -1,3 +1,7 @@
+/*
+ * Copyright 2024-2024 the original author or authors.
+ */
+
 package com.taobao.arthas.mcp.server.protocol.spec;
 
 import com.fasterxml.jackson.annotation.*;
@@ -9,11 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Based on the <a href="http://www.jsonrpc.org/specification">JSON-RPC 2.0 specification</a>
@@ -29,7 +29,7 @@ public final class McpSchema {
 	private McpSchema() {
 	}
 
-	public static final String LATEST_PROTOCOL_VERSION = "2024-11-05";
+	public static final String LATEST_PROTOCOL_VERSION = "2025-03-26";
 
 	public static final String JSONRPC_VERSION = "2.0";
 
@@ -43,6 +43,8 @@ public final class McpSchema {
 	public static final String METHOD_NOTIFICATION_INITIALIZED = "notifications/initialized";
 
 	public static final String METHOD_PING = "ping";
+
+	public static final String METHOD_NOTIFICATION_PROGRESS = "notifications/progress";
 
 	// Tool Methods
 	public static final String METHOD_TOOLS_LIST = "tools/list";
@@ -81,15 +83,6 @@ public final class McpSchema {
 	public static final String METHOD_SAMPLING_CREATE_MESSAGE = "sampling/createMessage";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-	// Streamable Methods
-	public static final String METHOD_PROGRESS_UPDATE = "notifications/progress";
-
-	public static final String METHOD_STATUS_UPDATE = "notifications/status";
-
-	public static final String METHOD_INTERMEDIATE_RESULT = "notifications/intermediate";
-
-	public static final String METHOD_TOOL_ERROR = "notifications/error";
 
 	// ---------------------------
 	// JSON-RPC Error Codes
@@ -1302,16 +1295,24 @@ public final class McpSchema {
 	public static class CallToolRequest implements Request {
 		private final String name;
 		private final Map<String, Object> arguments;
+		private final Map<String, Object> meta;
+
 
 		public CallToolRequest(
 				@JsonProperty("name") String name,
-				@JsonProperty("arguments") Map<String, Object> arguments) {
+				@JsonProperty("arguments") Map<String, Object> arguments,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.name = name;
 			this.arguments = arguments;
+			this.meta = meta;
 		}
 
 		public CallToolRequest(String name, String jsonArguments) {
-			this(name, parseJsonArguments(jsonArguments));
+			this(name, parseJsonArguments(jsonArguments), null);
+		}
+
+		public CallToolRequest(String name, Map<String, Object> arguments) {
+			this(name, arguments, null);
 		}
 
 		private static Map<String, Object> parseJsonArguments(String jsonArguments) {
@@ -1329,6 +1330,56 @@ public final class McpSchema {
 
 		public Map<String, Object> getArguments() {
 			return arguments;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
+		}
+
+		public static Builder builder() {
+			return new Builder();
+		}
+
+		public static class Builder {
+
+			private String name;
+
+			private Map<String, Object> arguments;
+
+			private Map<String, Object> meta;
+
+			public Builder name(String name) {
+				this.name = name;
+				return this;
+			}
+
+			public Builder arguments(Map<String, Object> arguments) {
+				this.arguments = arguments;
+				return this;
+			}
+
+			public Builder arguments(String jsonArguments) {
+				this.arguments = parseJsonArguments(jsonArguments);
+				return this;
+			}
+
+			public Builder meta(Map<String, Object> meta) {
+				this.meta = meta;
+				return this;
+			}
+
+			public Builder progressToken(String progressToken) {
+				if (this.meta == null) {
+					this.meta = new HashMap<>();
+				}
+				this.meta.put("progressToken", progressToken);
+				return this;
+			}
+
+			public CallToolRequest build() {
+				Assert.hasText(name, "name must not be empty");
+				return new CallToolRequest(name, arguments, meta);
+			}
 		}
 	}
 
@@ -1661,12 +1712,12 @@ public final class McpSchema {
 	public static class LoggingMessageNotification {
 		private final LoggingLevel level;
 		private final String logger;
-		private final String data;
+		private final Object data;
 
 		public LoggingMessageNotification(
 				@JsonProperty("level") LoggingLevel level,
 				@JsonProperty("logger") String logger,
-				@JsonProperty("data") String data) {
+				@JsonProperty("data") Object data) {
 			this.level = level;
 			this.logger = logger;
 			this.data = data;
@@ -1680,7 +1731,7 @@ public final class McpSchema {
 			return logger;
 		}
 
-		public String getData() {
+		public Object getData() {
 			return data;
 		}
 
@@ -1691,7 +1742,7 @@ public final class McpSchema {
 		public static class Builder {
 			private LoggingLevel level = LoggingLevel.INFO;
 			private String logger = "server";
-			private String data;
+			private Object data;
 
 			public Builder level(LoggingLevel level) {
 				this.level = level;
@@ -1703,7 +1754,7 @@ public final class McpSchema {
 				return this;
 			}
 
-			public Builder data(String data) {
+			public Builder data(Object data) {
 				this.data = data;
 				return this;
 			}
@@ -1748,6 +1799,32 @@ public final class McpSchema {
 		public LoggingLevel getLevel() {
 			return level;
 		}
+	}
+
+	/**
+	 * Notification for sending intermediate results during streaming tool execution.
+	 * This allows tools to send partial results to clients in real-time.
+	 */
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class IntermediateResultNotification {
+		private final String type;
+		private final Object data;
+
+		public IntermediateResultNotification(
+				@JsonProperty("type") String type,
+				@JsonProperty("data") Object data) {
+			this.type = type;
+			this.data = data;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public Object getData() {
+			return data;
+		}
+
 	}
 
 	// ---------------------------
