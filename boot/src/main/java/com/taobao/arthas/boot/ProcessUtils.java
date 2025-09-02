@@ -54,6 +54,13 @@ public class ProcessUtils {
     @SuppressWarnings("resource")
     public static long select(boolean v, long telnetPortPid, String select) throws InputMismatchException {
         Map<Long, String> processMap = listProcessByJps(v);
+        if (processMap.isEmpty()) {
+            processMap = listProcessByJcmd();
+            if (processMap.isEmpty()) {
+                AnsiLog.error("Can not find java process. Try to run `jps` or `jcmd` command lists the instrumented Java HotSpot VMs on the target system.");
+                return -1;
+            }
+        }
         // Put the port that is already listening at the first
         if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
             String telnetPortProcess = processMap.get(telnetPortPid);
@@ -64,25 +71,20 @@ public class ProcessUtils {
             processMap = newProcessMap;
         }
 
-        if (processMap.isEmpty()) {
-            AnsiLog.info("Can not find java process. Try to run `jps` command lists the instrumented Java HotSpot VMs on the target system.");
-            return -1;
+        // select target process by the '--select' option when match only one process
+        if (select != null && !select.trim().isEmpty()) {
+            int matchedSelectCount = 0;
+            Long matchedPid = null;
+            for (Entry<Long, String> entry : processMap.entrySet()) {
+                if (entry.getValue().contains(select)) {
+                    matchedSelectCount++;
+                    matchedPid = entry.getKey();
+                }
+            }
+            if (matchedSelectCount == 1) {
+                return matchedPid;
+            }
         }
-
-		// select target process by the '--select' option when match only one process
-		if (select != null && !select.trim().isEmpty()) {
-			int matchedSelectCount = 0;
-			Long matchedPid = null;
-			for (Entry<Long, String> entry : processMap.entrySet()) {
-				if (entry.getValue().contains(select)) {
-					matchedSelectCount++;
-					matchedPid = entry.getKey();
-				}
-			}
-			if (matchedSelectCount == 1) {
-				return matchedPid;
-			}
-		}
 
         AnsiLog.info("Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.");
         // print list
@@ -120,6 +122,51 @@ public class ProcessUtils {
         return -1;
     }
 
+    private static Map<Long, String> listProcessByJcmd() {
+        Map<Long, String> result = new LinkedHashMap<>();
+
+        String jcmd = "jcmd";
+        File jcmdFile = findJcmd();
+        if (jcmdFile != null) {
+            jcmd = jcmdFile.getAbsolutePath();
+        }
+
+        AnsiLog.debug("Try use jcmd to list java process, jcmd: " + jcmd);
+
+        String[] command = new String[] { jcmd, "-l" };
+
+        List<String> lines = ExecutingCommand.runNative(command);
+
+        AnsiLog.debug("jcmd result: " + lines);
+
+        long currentPid = Long.parseLong(PidUtils.currentPid());
+        for (String line : lines) {
+            String[] strings = line.trim().split("\\s+");
+            if (strings.length < 1) {
+                continue;
+            }
+            try {
+                long pid = Long.parseLong(strings[0]);
+                if (pid == currentPid) {
+                    continue;
+                }
+                if (strings.length >= 2 && isJcmdProcess(strings[1])) { // skip jcmd
+                    continue;
+                }
+
+                result.put(pid, line);
+            } catch (Throwable e) {
+                // https://github.com/alibaba/arthas/issues/970
+                // ignore
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @deprecated {@link #listProcessByJcmd()}
+     */
+    @Deprecated
     private static Map<Long, String> listProcessByJps(boolean v) {
         Map<Long, String> result = new LinkedHashMap<Long, String>();
 
@@ -220,7 +267,7 @@ public class ProcessUtils {
                 }
 
                 throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome
-                                + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
+                        + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
             }
         } else {
             FOUND_JAVA_HOME = javaHome;
@@ -236,7 +283,7 @@ public class ProcessUtils {
         File javaPath = findJava(javaHome);
         if (javaPath == null) {
             throw new IllegalArgumentException(
-                            "Can not find java/java.exe executable file under java home: " + javaHome);
+                    "Can not find java/java.exe executable file under java home: " + javaHome);
         }
 
         File toolsJar = findToolsJar(javaHome);
@@ -412,6 +459,61 @@ public class ProcessUtils {
         return toolsJar;
     }
 
+    private static File findJcmd() {
+        // Try to find jcmd under java.home and System env JAVA_HOME
+        String javaHome = System.getProperty("java.home");
+        String[] paths = { "bin/jcmd", "bin/jcmd.exe", "../bin/jcmd", "../bin/jcmd.exe" };
+
+        List<File> jcmdList = new ArrayList<>();
+        for (String path : paths) {
+            File jcmdFile = new File(javaHome, path);
+            if (jcmdFile.exists()) {
+                AnsiLog.debug("Found jcmd: " + jcmdFile.getAbsolutePath());
+                jcmdList.add(jcmdFile);
+            }
+        }
+
+        if (jcmdList.isEmpty()) {
+            AnsiLog.debug("Can not find jcmd under :" + javaHome);
+            String javaHomeEnv = System.getenv("JAVA_HOME");
+            AnsiLog.debug("Try to find jcmd under env JAVA_HOME :" + javaHomeEnv);
+            for (String path : paths) {
+                File jcmdFile = new File(javaHomeEnv, path);
+                if (jcmdFile.exists()) {
+                    AnsiLog.debug("Found jcmd: " + jcmdFile.getAbsolutePath());
+                    jcmdList.add(jcmdFile);
+                }
+            }
+        }
+
+        if (jcmdList.isEmpty()) {
+            AnsiLog.debug("Can not find jcmd under current java home: " + javaHome);
+            return null;
+        }
+
+        // find the shortest path, jre path longer than jdk path
+        if (jcmdList.size() > 1) {
+            jcmdList.sort((file1, file2) -> {
+                try {
+                    return file1.getCanonicalPath().length() - file2.getCanonicalPath().length();
+                } catch (IOException e) {
+                    // ignore
+                }
+                return -1;
+            });
+        }
+        return jcmdList.get(0);
+    }
+
+    private static boolean isJcmdProcess(String mainClassName) {
+        // Java 8 or Java 9+
+        return "sun.tools.jcmd.JCmd".equals(mainClassName) || "jdk.jcmd/sun.tools.jcmd.JCmd".equals(mainClassName);
+    }
+
+    /**
+     * @deprecated {@link #findJcmd()}
+     */
+    @Deprecated
     private static File findJps() {
         // Try to find jps under java.home and System env JAVA_HOME
         String javaHome = System.getProperty("java.home");
@@ -461,6 +563,10 @@ public class ProcessUtils {
         return jpsList.get(0);
     }
 
+    /**
+     * @deprecated {@link #isJcmdProcess(String)}
+     */
+    @Deprecated
     private static boolean isJpsProcess(String mainClassName) {
         return "sun.tools.jps.Jps".equals(mainClassName) || "jdk.jcmd/sun.tools.jps.Jps".equals(mainClassName);
     }
