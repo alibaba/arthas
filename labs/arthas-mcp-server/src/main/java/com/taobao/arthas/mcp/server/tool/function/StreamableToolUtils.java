@@ -145,7 +145,7 @@ public final class StreamableToolUtils {
         }
 
         for (Object result : resultList) {
-            if (result.getClass().getSimpleName().equals("InputStatusModel")) {
+            if ("com.taobao.arthas.mcp.server.model.InputStatusModel".equals(result.getClass().getName())) {
                 try {
                     java.lang.reflect.Method getInputStatusMethod = result.getClass().getMethod("getInputStatus");
                     Object inputStatusObj = getInputStatusMethod.invoke(result);
@@ -181,25 +181,24 @@ public final class StreamableToolUtils {
         }
 
         for (Object result : resultList) {
-            String resultClassName = result.getClass().getSimpleName();
-            
-            // 检查包含消息的模型类中的错误信息
-            if ("MessageModel".equals(resultClassName) || 
-                "EnhancerModel".equals(resultClassName) || 
-                "StatusModel".equals(resultClassName) || 
-                "CommandRequestModel".equals(resultClassName)) {
+            String resultClassName = result.getClass().getName();
+
+            if ("com.taobao.arthas.mcp.server.model.MessageModel".equals(resultClassName) || 
+                "com.taobao.arthas.mcp.server.model.EnhancerModel".equals(resultClassName) || 
+                "com.taobao.arthas.mcp.server.model.StatusModel".equals(resultClassName) || 
+                "com.taobao.arthas.mcp.server.model.CommandRequestModel".equals(resultClassName)) {
                 
                 try {
                     java.lang.reflect.Method getMessageMethod = result.getClass().getMethod("getMessage");
                     Object messageObj = getMessageMethod.invoke(result);
                     if (messageObj != null) {
                         String message = String.valueOf(messageObj);
-                        // 检查是否包含常见的错误关键词
-                        if (message.contains("failed") || message.contains("error") || 
-                            message.contains("exception") || message.contains("Exception") ||
+                        if (message.matches(".*\\b(failed|error|exception)\\b.*") || 
                             message.contains("Malformed OGNL expression") || 
                             message.contains("ParseException") || 
-                            message.contains("ExpressionSyntaxException")) {
+                            message.contains("ExpressionSyntaxException") ||
+                            message.matches(".*Exception.*") ||
+                            message.matches(".*Error.*")) {
                             return message;
                         }
                     }

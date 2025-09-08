@@ -19,8 +19,8 @@ public class McpObjectVOFilter implements ValueFilter {
         if (value == null) {
             return null;
         }
-        String className = value.getClass().getSimpleName();
-        if ("ObjectVO".equals(className)) {
+        String className = value.getClass().getName();
+        if (className.endsWith(".ObjectVO")) {
             return handleObjectVO(value);
         }
         

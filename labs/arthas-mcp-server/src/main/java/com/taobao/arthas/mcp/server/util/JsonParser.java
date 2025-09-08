@@ -95,13 +95,6 @@ public final class JsonParser {
 		}
 
 		try {
-//			JSONWriter.Context context = JSONFactory.createWriteContext();
-//			context.setMaxLevel(10); // 大幅降低最大深度，避免深层递归
-//			context.config(JSONWriter.Feature.IgnoreErrorGetter, true);
-//			context.config(JSONWriter.Feature.ReferenceDetection, true);
-//			context.config(JSONWriter.Feature.IgnoreNonFieldGetter, true);
-//			context.config(JSONWriter.Feature.WriteNonStringKeyAsString, true);
-
 			String result = JSON.toJSONString(object, JSON_FILTERS);
 			return (result != null) ? result : "{}";
 		}
