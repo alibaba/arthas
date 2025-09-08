@@ -33,13 +33,10 @@ export const FileProvider: React.FC<FileProviderProps> = ({ children }) => {
       const res = await getFiles({ page: 1, pageSize: 1000 });
       if (res.code === 1 && res.data && Array.isArray(res.data.items)) {
         setFiles(res.data.items);
-        console.log('Files refreshed:', res.data.items.length, 'files');
       } else {
-        console.warn('Invalid response format:', res);
         setFiles([]);
       }
     } catch (error) {
-      console.error('Failed to fetch files:', error);
       setFiles([]);
     } finally {
       setLoading(false);

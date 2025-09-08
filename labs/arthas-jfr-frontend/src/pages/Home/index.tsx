@@ -1,6 +1,3 @@
-// @ts-nocheck
-// eslint-disable-next-line
-// 由于项目初始化阶段，暂时关闭类型检查和eslint报错，后续完善依赖后移除。
 import React from 'react';
 import { Card, Row, Col, Typography } from 'antd';
 import Home from './Home';

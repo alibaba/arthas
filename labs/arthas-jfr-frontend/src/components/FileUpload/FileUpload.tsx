@@ -1,5 +1,3 @@
-// @ts-nocheck
-// eslint-disable-next-line
 import React, { useState, useRef } from 'react';
 import { Upload, message, Button, Progress } from 'antd';
 import { InboxOutlined, StopOutlined } from '@ant-design/icons';

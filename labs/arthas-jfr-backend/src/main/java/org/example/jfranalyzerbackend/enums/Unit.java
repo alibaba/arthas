@@ -1,9 +1,7 @@
 package org.example.jfranalyzerbackend.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 
-import org.example.jfranalyzerbackend.annotation.UseGsonEnumAdaptor;
-
-@UseGsonEnumAdaptor
 public enum Unit {
     NANO_SECOND("ns"),
 
@@ -17,6 +15,12 @@ public enum Unit {
         this.tag = tag;
     }
 
+    @JsonValue
+    public String getTag() {
+        return tag;
+    }
+
+    @Override
     public String toString() {
         return tag;
     }

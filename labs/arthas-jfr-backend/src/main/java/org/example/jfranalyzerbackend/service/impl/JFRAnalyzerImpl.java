@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 
 
-@SuppressWarnings("unchecked")
+
 @Slf4j
 public class JFRAnalyzerImpl implements JFRAnalyzer {
 
@@ -250,7 +250,7 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
     }
 
     private AnalysisResult analyze(AnalysisRequest request) throws Exception {
-//        listener.beginTask("Analyzing", 5);
+
         long startTime = System.currentTimeMillis();
         AnalysisResult r = new AnalysisResult();
 
@@ -271,7 +271,7 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
     }
 
     private void processEvents(AnalysisRequest request, AnalysisResult r) throws Exception {
-//        listener.subTask("Do Extractors");
+
         List<RecordedEvent> events = this.context.getEvents();
         final List<Extractor> extractors = getExtractors(request);
 
@@ -307,13 +307,13 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
     }
 
     private void sortEvents() {
-//        listener.subTask("Sort Events");
+
         this.context.getEvents().sort(Comparator.comparing(RecordedEvent::getStartTime));
-//        listener.worked(1);
+
     }
 
     private void transformEvents(AnalysisRequest request, IItemCollection collection) throws Exception {
-//        listener.subTask("Transform Events");
+
         List<IItem> list = collection.stream().flatMap(IItemIterable::stream).collect(Collectors.toList());
 
         if (request.getParallelWorkers() > 1) {
@@ -322,32 +322,36 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
             list.forEach(this::parseEventItem);
         }
 
-//        listener.worked(1);
+
     }
 
     private IItemCollection loadEvents(AnalysisRequest request) throws Exception {
         try {
-//            listener.subTask("Load Events");
+
             if (request.getInput() != null) {
                 return JfrLoaderToolkit.loadEvents(request.getInput().toFile());
-            } else {
+            } else if (request.getInputStream() != null) {
                 return JfrLoaderToolkit.loadEvents(request.getInputStream());
+            } else {
+                // 当input和inputStream都为null时，返回空的IItemCollection
+                return org.openjdk.jmc.common.item.ItemCollectionToolkit.EMPTY;
             }
         } finally {
 //            listener.worked(1);
         }
     }
 
+
     private void analyzeProblemsIfNeeded(AnalysisRequest request, IItemCollection collection, AnalysisResult r) {
-//        listener.subTask("Analyze Problems");
+
         if ((request.getDimensions() & ProfileDimension.PROBLEMS.getValue()) != 0) {
             this.analyzeProblems(collection, r);
         }
-//        listener.worked(1);
+
     }
 
     private void parseEventsParallel(List<IItem> list, int workers) throws Exception {
-//        listener.subTask("Transform Events");
+
         CountDownLatch countDownLatch = new CountDownLatch(list.size());
         ExecutorService es = Executors.newFixedThreadPool(workers);
         list.forEach(item -> es.submit(() -> {

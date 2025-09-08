@@ -6,8 +6,17 @@ export interface FlameGraph {
   threadSplit: Record<string, number>;
 }
 
+export interface PerfDimension {
+  key: string;
+  desc: {
+    key: string;
+  };
+  unit: string;
+  filters?: any[];
+}
+
 export interface Metadata {
-  perfDimensions: string[];
+  perfDimensions: PerfDimension[];
 }
 
 export interface AnalysisRequest {

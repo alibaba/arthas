@@ -1,5 +1,3 @@
-// @ts-nocheck
-// eslint-disable-next-line
 
 // 获取JFR文件分析维度元数据
 export async function fetchJfrMetadata(fileId) {

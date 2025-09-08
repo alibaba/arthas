@@ -1,5 +1,3 @@
-// @ts-nocheck
-// eslint-disable-next-line
 import React from 'react';
 import { Layout, Menu, Avatar, Typography } from 'antd';
 import { UserOutlined, ClusterOutlined, HomeOutlined, BarChartOutlined } from '@ant-design/icons';

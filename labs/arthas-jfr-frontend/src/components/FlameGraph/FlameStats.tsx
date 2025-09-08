@@ -40,6 +40,36 @@ const FlameStats: React.FC<FlameStatsProps> = ({
   darkMode,
   selectedNode
 }) => {
+  // 判断是否为时间维度
+  const isTimeDim = unit === 'ns' || unit === 'μs' || unit === 'ms' || unit === 's';
+  // 判断是否为内存维度
+  const isMemoryDim = unit === 'B' || unit === 'KB' || unit === 'MB' || unit === 'GB' || unit === 'TB';
+  
+  // 根据维度类型获取显示标签
+  const getDimensionLabel = () => {
+    if (isTimeDim) return '总耗时';
+    if (isMemoryDim) return '总内存';
+    return '总数值';
+  };
+  
+  const getAverageLabel = () => {
+    if (isTimeDim) return '平均耗时';
+    if (isMemoryDim) return '平均内存';
+    return '平均值';
+  };
+  
+  const getMaxLabel = () => {
+    if (isTimeDim) return '最高耗时';
+    if (isMemoryDim) return '最大内存';
+    return '最大值';
+  };
+  
+  const getMinLabel = () => {
+    if (isTimeDim) return '最低耗时';
+    if (isMemoryDim) return '最小内存';
+    return '最小值';
+  };
+
   if (!flameData) {
     return (
       <Card 
@@ -183,7 +213,7 @@ const FlameStats: React.FC<FlameStatsProps> = ({
         <Row gutter={[16, 8]} style={{ marginTop: 8 }}>
           <Col span={12}>
             <Statistic
-              title="总耗时"
+              title={getDimensionLabel()}
               value={toReadableValue(unit, totalValue)}
               prefix={<ClockCircleOutlined />}
               valueStyle={{ fontSize: '16px', color: darkMode ? '#fff' : '#000' }}
@@ -191,7 +221,7 @@ const FlameStats: React.FC<FlameStatsProps> = ({
           </Col>
           <Col span={12}>
             <Statistic
-              title="平均耗时"
+              title={getAverageLabel()}
               value={toReadableValue(unit, stats.avgValue)}
               valueStyle={{ fontSize: '16px', color: darkMode ? '#fff' : '#000' }}
             />
@@ -214,10 +244,10 @@ const FlameStats: React.FC<FlameStatsProps> = ({
             marginBottom: 4
           }}>
             <Text style={{ fontSize: 12, color: darkMode ? '#ccc' : '#666' }}>
-              最高耗时: {toReadableValue(unit, stats.maxValue)}
+              {getMaxLabel()}: {toReadableValue(unit, stats.maxValue)}
             </Text>
             <Text style={{ fontSize: 12, color: darkMode ? '#ccc' : '#666' }}>
-              最低耗时: {toReadableValue(unit, stats.minValue)}
+              {getMinLabel()}: {toReadableValue(unit, stats.minValue)}
             </Text>
           </div>
           <Progress
@@ -269,64 +299,6 @@ const FlameStats: React.FC<FlameStatsProps> = ({
             />
           </div>
         ))}
-      </div>
-
-      {/* 选中节点统计 */}
-      {selectedNodeStats && (
-        <>
-          <Divider style={{ margin: '12px 0' }} />
-          <div>
-            <Title level={5} style={{ color: darkMode ? '#fff' : '#000', marginBottom: 8 }}>
-              选中节点统计
-            </Title>
-            <Row gutter={[16, 8]}>
-              <Col span={12}>
-                <Statistic
-                  title="耗时占比"
-                  value={selectedNodeStats.percentage}
-                  suffix="%"
-                  valueStyle={{ fontSize: '14px', color: '#1890ff' }}
-                />
-              </Col>
-              <Col span={12}>
-                <Statistic
-                  title="子函数数"
-                  value={selectedNodeStats.childrenCount}
-                  valueStyle={{ fontSize: '14px', color: darkMode ? '#fff' : '#000' }}
-                />
-              </Col>
-            </Row>
-            <div style={{ marginTop: 8 }}>
-              <Text style={{ fontSize: 12, color: darkMode ? '#ccc' : '#666' }}>
-                调用深度: {selectedNodeStats.depth}
-              </Text>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* 分析建议 */}
-      <Divider style={{ margin: '12px 0' }} />
-      <div style={{ 
-        background: darkMode ? '#1a1a1a' : '#f8f9fa',
-        padding: 8,
-        borderRadius: 4,
-        fontSize: 12
-      }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          marginBottom: 4,
-          color: darkMode ? '#ccc' : '#666'
-        }}>
-          <InfoCircleOutlined style={{ marginRight: 4 }} />
-          <Text strong>分析建议</Text>
-        </div>
-        <div style={{ color: darkMode ? '#999' : '#999' }}>
-          {stats.maxDepth > 20 && '调用链较深，建议优化函数嵌套'}
-          {stats.maxDepth <= 20 && stats.maxDepth > 10 && '调用链适中，关注性能热点'}
-          {stats.maxDepth <= 10 && '调用链较浅，整体结构良好'}
-        </div>
       </div>
     </Card>
   );

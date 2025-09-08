@@ -1,5 +1,3 @@
-// @ts-nocheck
-// eslint-disable-next-line
 /**
  * 将JFR后端返回的line格式火焰图数据转换为树结构
  * @param {Array} data - 形如[[0,1,2], 100]的数组，表示栈帧路径和权重

@@ -82,7 +82,7 @@
         <module>labs/cluster-management/native-agent-common</module>
         <module>labs/arthas-grpc-server</module>
         <module>labs/arthas-jfr-frontend</module>
-        <module>labs/arthas-jfr-backend</module>
+<!--        <module>labs/arthas-jfr-backend</module>-->
     </modules>
 
     <properties>

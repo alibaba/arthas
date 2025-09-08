@@ -61,8 +61,6 @@ public class JFRAnalysisController {
             Paths.get(filePath), dimension, include, taskSet, options
         );
         log.info("火焰图生成完成，数据点数量: {}", fg.getData().length);
-        System.out.println(fg.getSymbolTable());
-        System.out.println(fg);
         return Result.success(fg);
     }
 
@@ -87,8 +85,6 @@ public class JFRAnalysisController {
             Paths.get(filePath), dimension, include, taskSet, options
         );
         log.info("火焰图生成完成，数据点数量: {}", fg.getData().length);
-        System.out.println(fg.getSymbolTable());
-        System.out.println(fg);
         return Result.success(fg);
     }
 
@@ -101,7 +97,6 @@ public class JFRAnalysisController {
     public Result<Metadata> getMetadata() {
         Metadata metadata = jfrAnalysisService.getMetadata();
         log.info("=== 获取元数据 ===");
-        System.out.println( metadata);
         return Result.success(metadata);
     }
 
@@ -125,7 +120,6 @@ public class JFRAnalysisController {
     @GetMapping("/dimensions")
     public Result<List<String>> getSupportedDimensions() {
         List<String> dims = jfrAnalysisService.getSupportedDimensions();
-        System.out.println(dims);
         return Result.success(dims);
     }
 

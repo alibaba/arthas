@@ -50,7 +50,6 @@ public class FileServiceImpl implements FileService {
     public PageView<FileView> getUserFileViews(FileType type, int page, int pageSize) {
         log.info("getUserFileViews");
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-        //Todo: 现在写死状态，之后修改为用户--handshake
         Long userId = userService.getCurrentUserId();
 
         //获取page实体
@@ -68,17 +67,15 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public Long handleUploadRequest(FileType type, MultipartFile file) throws IOException {
-        //TODO: 目前不支持分布式存储--不需要支持
-        String uniqueName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
         String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "unknown.file";
+        // 清理文件名，防止路径遍历攻击
+        String safeOriginalName = originalName.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+        String uniqueName = UUID.randomUUID().toString() + "_" + safeOriginalName;
         long size = file.getSize();
-        //Todo: 现在写死状态，之后修改为用户--handshake
+
         Long userId = userService.getCurrentUserId();
 
-//        // 文件保存路径 存在本地
-//        Path savePath = Paths.get("upload", uniqueName);
-//        Files.createDirectories(savePath.getParent());
-//        file.transferTo(savePath.toFile());
         // 使用配置的路径
         Path savePath = Paths.get(arthasConfig.getJfrStoragePath(), uniqueName);
         Files.createDirectories(savePath.getParent());
@@ -87,13 +84,14 @@ public class FileServiceImpl implements FileService {
         // 数据库存储
         FileEntity entity = new FileEntity();
         entity.setUniqueName(uniqueName);
-        entity.setOriginalName(originalName);
+        entity.setOriginalName(safeOriginalName);
         entity.setType(type);
         entity.setSize(size);
         entity.setUserId(userId);
 
         return fileRepo.save(entity).getId();
     }
+
 
     @Override
     public void deleteById(Long fileId) {

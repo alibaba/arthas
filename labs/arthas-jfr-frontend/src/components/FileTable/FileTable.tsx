@@ -1,5 +1,3 @@
-// @ts-nocheck
-// eslint-disable-next-line
 import React, { useState, useMemo } from 'react';
 import { Table, Input, Tag, Button, Popconfirm, message } from 'antd';
 import { deleteFile } from '../../services/fileService';
