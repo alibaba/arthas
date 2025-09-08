@@ -135,13 +135,16 @@ public final class McpToolUtils {
 
 	private static McpSchema.CallToolResult createSuccessResult(String content) {
 		List<McpSchema.Content> contents = new ArrayList<>();
-		contents.add(new McpSchema.TextContent(content));
+		String safeContent = (content != null && !content.trim().isEmpty()) ? content : "{}";
+		contents.add(new McpSchema.TextContent(safeContent));
 		return new McpSchema.CallToolResult(contents, false);
 	}
 
 	private static McpSchema.CallToolResult createErrorResult(String errorMessage) {
 		List<McpSchema.Content> contents = new ArrayList<>();
-		contents.add(new McpSchema.TextContent(errorMessage));
+		String safeErrorMessage = (errorMessage != null && !errorMessage.trim().isEmpty()) ? 
+			errorMessage : "Unknown error occurred";
+		contents.add(new McpSchema.TextContent(safeErrorMessage));
 		return new McpSchema.CallToolResult(contents, true);
 	}
 

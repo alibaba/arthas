@@ -21,10 +21,10 @@ public final class StreamableToolUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(StreamableToolUtils.class);
 
-    private static final int DEFAULT_POLL_INTERVAL_MS = 200;    // 默认轮询间隔200ms
+    private static final int DEFAULT_POLL_INTERVAL_MS = 100;    // 默认轮询间隔100ms
     private static final int ERROR_RETRY_INTERVAL_MS = 500;     // 错误重试间隔500ms
 
-    private static final int MAX_POLL_ATTEMPTS = 100;           // 最大轮询尝试次数，避免无限循环
+    private static final int MAX_POLL_ATTEMPTS = 20;           // 最大轮询尝试次数，避免无限循环
     private static final int MAX_ERROR_RETRIES = 10;            // 最大错误重试次数
 
     public static final int MIN_ALLOW_INPUT_COUNT_TO_COMPLETE = 2;
@@ -67,6 +67,13 @@ public final class StreamableToolUtils {
                         continue;
                     }
                     errorRetries = 0;
+
+                    // 检查是否有错误消息
+                    String errorMessage = checkForErrorMessages(results);
+                    if (errorMessage != null) {
+                        logger.warn("Command execution failed with error: {}", errorMessage);
+                        return createErrorResponseWithResults(errorMessage, allResults, totalResultCount);
+                    }
 
                     Map<String, Object> filteredResults = filterCommandSpecificResults(results);
                     List<Object> currentBatchResults = getCommandSpecificResults(filteredResults);
@@ -118,18 +125,7 @@ public final class StreamableToolUtils {
                 }
             }
 
-            Map<String, Object> finalResult = new HashMap<>();
-            finalResult.put("results", allResults);
-            finalResult.put("resultCount", totalResultCount);
-            finalResult.put("status", "completed");
-            finalResult.put("stage", "final");
-            
-            if (pollAttempts >= MAX_POLL_ATTEMPTS) {
-                logger.warn("Command execution reached maximum poll attempts: {}", MAX_POLL_ATTEMPTS);
-                finalResult.put("warning", "Execution reached maximum poll attempts");
-            }
-            
-            return finalResult;
+            return createFinalResult(allResults, totalResultCount, pollAttempts >= MAX_POLL_ATTEMPTS);
             
         } catch (Exception e) {
             logger.error("Error in command execution", e);
@@ -168,6 +164,52 @@ public final class StreamableToolUtils {
         }
         
         return false;
+    }
+
+    /**
+     * 检查结果中是否包含错误消息
+     */
+    private static String checkForErrorMessages(Map<String, Object> results) {
+        if (results == null) {
+            return null;
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = (List<Object>) results.get("results");
+        if (resultList == null || resultList.isEmpty()) {
+            return null;
+        }
+
+        for (Object result : resultList) {
+            String resultClassName = result.getClass().getSimpleName();
+            
+            // 检查包含消息的模型类中的错误信息
+            if ("MessageModel".equals(resultClassName) || 
+                "EnhancerModel".equals(resultClassName) || 
+                "StatusModel".equals(resultClassName) || 
+                "CommandRequestModel".equals(resultClassName)) {
+                
+                try {
+                    java.lang.reflect.Method getMessageMethod = result.getClass().getMethod("getMessage");
+                    Object messageObj = getMessageMethod.invoke(result);
+                    if (messageObj != null) {
+                        String message = String.valueOf(messageObj);
+                        // 检查是否包含常见的错误关键词
+                        if (message.contains("failed") || message.contains("error") || 
+                            message.contains("exception") || message.contains("Exception") ||
+                            message.contains("Malformed OGNL expression") || 
+                            message.contains("ParseException") || 
+                            message.contains("ExpressionSyntaxException")) {
+                            return message;
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.debug("Failed to get message from {}", resultClassName, e);
+                }
+            }
+        }
+        
+        return null;
     }
 
     private static Map<String, Object> filterCommandSpecificResults(Map<String, Object> results) {
@@ -245,6 +287,28 @@ public final class StreamableToolUtils {
         response.put("status", "error");
         response.put("stage", "final");
         return response;
+    }
+
+    public static Map<String, Object> createErrorResponseWithResults(String message, List<Object> collectedResults, int resultCount) {
+        Map<String, Object> response = createErrorResponse(message);
+        response.put("results", collectedResults != null ? collectedResults : new ArrayList<>());
+        response.put("resultCount", resultCount);
+        return response;
+    }
+
+    private static Map<String, Object> createFinalResult(List<Object> allResults, int totalResultCount, boolean reachedMaxAttempts) {
+        Map<String, Object> finalResult = new HashMap<>();
+        finalResult.put("results", allResults);
+        finalResult.put("resultCount", totalResultCount);
+        finalResult.put("status", "completed");
+        finalResult.put("stage", "final");
+        
+        if (reachedMaxAttempts) {
+            logger.warn("Command execution reached maximum poll attempts: {}", MAX_POLL_ATTEMPTS);
+            finalResult.put("warning", "Execution reached maximum poll attempts");
+        }
+        
+        return finalResult;
     }
 
     public static Map<String, Object> createCompletedResponse(String message, Map<String, Object> results) {
