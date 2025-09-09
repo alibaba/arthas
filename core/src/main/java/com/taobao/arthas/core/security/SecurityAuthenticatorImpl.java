@@ -66,6 +66,13 @@ public class SecurityAuthenticatorImpl implements SecurityAuthenticator {
                 return subject;
             }
         }
+        if (principal instanceof BearerPrincipal) {
+            BearerPrincipal bearerPrincipal = (BearerPrincipal) principal;
+            // Bearer Token认证：将token作为password进行验证
+            if (bearerPrincipal.getToken().equals(this.password)) {
+                return subject;
+            }
+        }
         if (principal instanceof LocalConnectionPrincipal) {
             return subject;
         }
