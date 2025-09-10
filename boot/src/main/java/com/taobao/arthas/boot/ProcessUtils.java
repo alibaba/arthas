@@ -57,7 +57,7 @@ public class ProcessUtils {
         if (processMap.isEmpty()) {
             processMap = listProcessByJcmd();
             if (processMap.isEmpty()) {
-                AnsiLog.error("Can not find java process. Try to run `jps` or `jcmd` command lists the instrumented Java HotSpot VMs on the target system.");
+                AnsiLog.error("Cannot find java process. Try to run `jps` or `jcmd` commands to list the instrumented Java HotSpot VMs on the target system.");
                 return -1;
             }
         }
@@ -498,8 +498,9 @@ public class ProcessUtils {
                     return file1.getCanonicalPath().length() - file2.getCanonicalPath().length();
                 } catch (IOException e) {
                     // ignore
+                    // fallback to absolute path length comparison
+                    return file1.getAbsolutePath().length() - file2.getAbsolutePath().length();
                 }
-                return -1;
             });
         }
         return jcmdList.get(0);
