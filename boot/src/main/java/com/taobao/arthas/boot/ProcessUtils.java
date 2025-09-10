@@ -477,12 +477,16 @@ public class ProcessUtils {
             AnsiLog.debug("Can not find jcmd under :" + javaHome);
             String javaHomeEnv = System.getenv("JAVA_HOME");
             AnsiLog.debug("Try to find jcmd under env JAVA_HOME :" + javaHomeEnv);
-            for (String path : paths) {
-                File jcmdFile = new File(javaHomeEnv, path);
-                if (jcmdFile.exists()) {
-                    AnsiLog.debug("Found jcmd: " + jcmdFile.getAbsolutePath());
-                    jcmdList.add(jcmdFile);
+            if (javaHomeEnv != null) {
+                for (String path : paths) {
+                    File jcmdFile = new File(javaHomeEnv, path);
+                    if (jcmdFile.exists()) {
+                        AnsiLog.debug("Found jcmd: " + jcmdFile.getAbsolutePath());
+                        jcmdList.add(jcmdFile);
+                    }
                 }
+            } else {
+                AnsiLog.debug("JAVA_HOME environment variable is not set.");
             }
         }
 
