@@ -98,22 +98,7 @@ public class MBeanTool {
             String commandStr = cmd.toString();
             logger.info("Starting mbean execution: {}", commandStr);
 
-            // 使用同步执行的情况：查看元数据 或者 不需要流式输出
-            if (Boolean.TRUE.equals(metadata) || !needStreamOutput) {
-                logger.info("Executing sync mbean command: {}", commandStr);
-                Map<String, Object> result = commandContext.executeSync(commandStr);
-                return JsonParser.toJson(result);
-            } else {
-                Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
-                logger.debug("Async execution started: {}", asyncResult);
-                
-                Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, interval / 10, progressToken);
-                if (results != null) {
-                    return JsonParser.toJson(createCompletedResponse("MBean execution completed successfully", results));
-                } else {
-                    return JsonParser.toJson(createErrorResponse("MBean execution failed due to timeout or error limits exceeded"));
-                }
-            }
+            return JsonParser.toJson(commandContext.executeSync(commandStr));
 
         } catch (Exception e) {
             logger.error("Error executing mbean command", e);

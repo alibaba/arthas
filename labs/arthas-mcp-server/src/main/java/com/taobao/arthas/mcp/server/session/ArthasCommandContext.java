@@ -18,7 +18,7 @@ public class ArthasCommandContext {
 
     private final ArthasCommandSessionManager.CommandSessionBinding sessionBinding;
 
-    private static final long DEFAULT_SYNC_TIMEOUT = 10000L;
+    private static final long DEFAULT_SYNC_TIMEOUT = 30000L;
 
     public ArthasCommandContext(CommandExecutor commandExecutor) {
         this.commandExecutor = Objects.requireNonNull(commandExecutor, "commandExecutor cannot be null");
