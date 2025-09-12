@@ -98,7 +98,8 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
 
                 boolean isMcpRequest = isMcpRequest(httpRequest);
                 if (isMcpRequest) {
-                    response.headers().set(HttpHeaderNames.WWW_AUTHENTICATE, "Bearer realm=\"arthas mcp\", Basic realm=\"arthas mcp\"");
+                    response.headers().add(HttpHeaderNames.WWW_AUTHENTICATE, "Bearer realm=\"arthas mcp\"")
+                                       .add(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas mcp\"");
                 } else {
                     response.headers().set(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas webconsole\"");
                 }
