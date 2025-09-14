@@ -5,6 +5,7 @@
 package com.taobao.arthas.mcp.server.protocol.server.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.mcp.server.util.McpAuthExtractor;
 import com.taobao.arthas.mcp.server.protocol.server.DefaultMcpTransportContext;
 import com.taobao.arthas.mcp.server.protocol.server.McpStatelessServerHandler;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
@@ -15,7 +16,6 @@ import com.taobao.arthas.mcp.server.util.Assert;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
@@ -108,6 +108,9 @@ public class McpStatelessHttpRequestHandler {
      */
     private void handlePostRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
         McpTransportContext transportContext = this.contextExtractor.extract(request, new DefaultMcpTransportContext());
+
+        Object authSubject = McpAuthExtractor.extractAuthSubjectFromContext(ctx);
+        transportContext.put(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY, authSubject);
 
         String accept = request.headers().get(ACCEPT);
         if (accept == null || !(accept.contains(APPLICATION_JSON) && accept.contains(TEXT_EVENT_STREAM))) {

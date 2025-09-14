@@ -1,5 +1,6 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
+import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
@@ -14,6 +15,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.MCP_AUTH_SUBJECT_KEY;
+import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.MCP_TRANSPORT_CONTEXT;
 import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
 
 public class HeapdumpTool {
@@ -42,6 +45,8 @@ public class HeapdumpTool {
             ToolContext toolContext
     ) throws IOException {
         ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
+        McpTransportContext mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
+        Object authSubject = mcpTransportContext.get(MCP_AUTH_SUBJECT_KEY);
 
         String finalFilePath;
 
@@ -65,6 +70,6 @@ public class HeapdumpTool {
         cmd.append(" ").append(finalFilePath);
 
         String commandStr = cmd.toString();
-        return JsonParser.toJson(commandContext.executeSync(commandStr));
+        return JsonParser.toJson(commandContext.executeSync(commandStr, authSubject));
     }
 }

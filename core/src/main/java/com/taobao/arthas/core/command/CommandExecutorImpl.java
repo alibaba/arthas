@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.taobao.arthas.common.ArthasConstants.SUBJECT_KEY;
+
 /**
  * 命令执行器，用于执行Arthas命令，支持同步和异步执行
  */
@@ -73,13 +75,29 @@ public class CommandExecutorImpl implements CommandExecutor {
         }
     }
 
+    /**
+     * 内部同步执行方法，统一处理认证和session管理
+     * 
+     * @param commandLine 命令行
+     * @param timeout 超时时间
+     * @param sessionId session ID，如果为null则创建临时session
+     * @param authSubject 认证主体，如果不为null则应用到session
+     * @return 执行结果
+     */
     @Override
-    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId) {
+    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject) {
         Session session = null;
         boolean oneTimeAccess = false;
         
         try {
             session = getCurrentSession(sessionId, true);
+
+            if (authSubject != null) {
+                session.put(SUBJECT_KEY, authSubject);
+                logger.debug("Applied auth subject to session: {} (authSubject: {})", 
+                           session.getSessionId(), authSubject.getClass().getSimpleName());
+            }
+            
             if (session.get(ONETIME_SESSION_KEY) != null) {
                 oneTimeAccess = true;
             }
@@ -303,6 +321,18 @@ public class CommandExecutorImpl implements CommandExecutor {
 
         } catch (SessionNotFoundException e) {
             return createErrorResult(null, e.getMessage());
+        }
+    }
+
+    @Override
+    public void setSessionAuth(String sessionId, Object authSubject) {
+        try {
+            Session session = getCurrentSession(sessionId, false);
+            if (authSubject != null) {
+                session.put(SUBJECT_KEY, authSubject);
+            }
+        } catch (SessionNotFoundException e) {
+            logger.warn("Cannot set auth for non-existent session: {}", sessionId);
         }
     }
 

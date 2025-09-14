@@ -59,35 +59,50 @@ public class ArthasCommandSessionManager {
         return binding;
     }
 
-    public CommandSessionBinding getCommandSession(String mcpSessionId) {
+    /**
+     * 获取命令执行session，支持认证信息
+     * 
+     * @param mcpSessionId MCP session ID
+     * @param authSubject 认证主体对象，可以为null
+     * @return CommandSessionBinding
+     */
+    public CommandSessionBinding getCommandSession(String mcpSessionId, Object authSubject) {
         CommandSessionBinding binding = sessionBindings.get(mcpSessionId);
 
         if (binding == null) {
             binding = createCommandSession(mcpSessionId);
             sessionBindings.put(mcpSessionId, binding);
             logger.debug("Created new command session: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
-            return binding;
-        }
+        } else if (!isSessionValid(binding)) {
+            logger.info("Session expired, recreating: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
 
-        if (isSessionValid(binding)) {
+            try {
+                commandExecutor.closeSession(binding.getArthasSessionId());
+            } catch (Exception e) {
+                logger.debug("Failed to close expired session (may already be cleaned up): {}", e.getMessage());
+            }
+
+            CommandSessionBinding newBinding = createCommandSession(mcpSessionId);
+            sessionBindings.put(mcpSessionId, newBinding);
+            logger.info("Recreated command session: MCP={}, Old Arthas={}, New Arthas={}", 
+                       mcpSessionId, binding.getArthasSessionId(), newBinding.getArthasSessionId());
+            binding = newBinding;
+        } else {
             logger.debug("Using existing valid session: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
-            return binding;
         }
 
-        logger.info("Session expired, recreating: MCP={}, Arthas={}", mcpSessionId, binding.getArthasSessionId());
-
-        try {
-            commandExecutor.closeSession(binding.getArthasSessionId());
-        } catch (Exception e) {
-            logger.debug("Failed to close expired session (may already be cleaned up): {}", e.getMessage());
+        if (authSubject != null) {
+            try {
+                commandExecutor.setSessionAuth(binding.getArthasSessionId(), authSubject);
+                logger.debug("Applied auth to Arthas session: MCP={}, Arthas={}", 
+                           mcpSessionId, binding.getArthasSessionId());
+            } catch (Exception e) {
+                logger.warn("Failed to apply auth to session: MCP={}, Arthas={}, error={}", 
+                          mcpSessionId, binding.getArthasSessionId(), e.getMessage());
+            }
         }
-
-        CommandSessionBinding newBinding = createCommandSession(mcpSessionId);
-        sessionBindings.put(mcpSessionId, newBinding);
-        logger.info("Recreated command session: MCP={}, Old Arthas={}, New Arthas={}", 
-                   mcpSessionId, binding.getArthasSessionId(), newBinding.getArthasSessionId());
         
-        return newBinding;
+        return binding;
     }
     
     /**

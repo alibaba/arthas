@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.MCP_AUTH_SUBJECT_KEY;
+
 /**
  * Main implementation of a streamable MCP server session that manages client connections
  * and handles JSON-RPC communication using CompletableFuture for async operations.
@@ -167,7 +169,7 @@ public class McpStreamableServerSession implements McpSession {
 
             return transport.sendMessage(errorResponse, null);
         }
-        ArthasCommandContext commandContext = createCommandContext();
+        ArthasCommandContext commandContext = createCommandContext(transportContext.get(MCP_AUTH_SUBJECT_KEY));
         
         return requestHandler
                 .handle(new McpNettyServerExchange(this.id, stream, clientCapabilities.get(), 
@@ -187,7 +189,7 @@ public class McpStreamableServerSession implements McpSession {
             return CompletableFuture.completedFuture(null);
         }
 
-        ArthasCommandContext commandContext = createCommandContext();
+        ArthasCommandContext commandContext = createCommandContext(transportContext.get(MCP_AUTH_SUBJECT_KEY));
         McpSession listeningStream = this.listeningStreamRef.get();
         return notificationHandler.handle(new McpNettyServerExchange(this.id, listeningStream,
                 this.clientCapabilities.get(), this.clientInfo.get(), transportContext), commandContext, notification.getParams());
@@ -421,8 +423,8 @@ public class McpStreamableServerSession implements McpSession {
      *
      * @return 命令执行上下文
      */
-    private ArthasCommandContext createCommandContext() {
-        ArthasCommandSessionManager.CommandSessionBinding binding = commandSessionManager.getCommandSession(this.id);
+    private ArthasCommandContext createCommandContext(Object authSubject) {
+        ArthasCommandSessionManager.CommandSessionBinding binding = commandSessionManager.getCommandSession(this.id, authSubject);
         return new ArthasCommandContext(commandExecutor, binding);
     }
 }

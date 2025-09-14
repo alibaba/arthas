@@ -6,6 +6,7 @@ package com.taobao.arthas.mcp.server.protocol.server.handler;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.mcp.server.util.McpAuthExtractor;
 import com.taobao.arthas.mcp.server.protocol.server.DefaultMcpTransportContext;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContextExtractor;
@@ -16,7 +17,6 @@ import com.taobao.arthas.mcp.server.util.KeepAliveScheduler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
@@ -32,6 +32,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.MCP_AUTH_SUBJECT_KEY;
 
 /**
  * Server-side implementation of the Model Context Protocol (MCP) streamable transport
@@ -225,6 +227,9 @@ public class McpStreamableHttpRequestHandler {
 
         McpTransportContext transportContext = this.contextExtractor.extract(request, new DefaultMcpTransportContext());
 
+        Object authSubject = McpAuthExtractor.extractAuthSubjectFromContext(ctx);
+        transportContext.put(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY, authSubject);
+
         try {
             // Set up SSE response headers
             HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
@@ -293,6 +298,9 @@ public class McpStreamableHttpRequestHandler {
         }
 
         McpTransportContext transportContext = this.contextExtractor.extract(request, new DefaultMcpTransportContext());
+
+        Object authSubject = McpAuthExtractor.extractAuthSubjectFromContext(ctx);
+        transportContext.put(MCP_AUTH_SUBJECT_KEY, authSubject);
 
         try {
             ByteBuf content = request.content();
