@@ -29,11 +29,6 @@ public class McpServerProperties {
     private final boolean promptChangeNotification;
     private final boolean resourceSubscribe;
 
-    /**
-     * Transport layer configuration
-     */
-    private final String bindAddress;
-    private final int port;
     private final String mcpEndpoint;
 
     /**
@@ -60,8 +55,6 @@ public class McpServerProperties {
         this.resourceChangeNotification = builder.resourceChangeNotification;
         this.promptChangeNotification = builder.promptChangeNotification;
         this.resourceSubscribe = builder.resourceSubscribe;
-        this.bindAddress = builder.bindAddress;
-        this.port = builder.port;
         this.mcpEndpoint = builder.mcpEndpoint;
         this.requestTimeout = builder.requestTimeout;
         this.initializationTimeout = builder.initializationTimeout;
@@ -130,23 +123,6 @@ public class McpServerProperties {
     public boolean isResourceSubscribe() {
         return resourceSubscribe;
     }
-
-    /**
-     * Get bind address
-     * @return Bind address
-     */
-    public String getBindAddress() {
-        return bindAddress;
-    }
-
-    /**
-     * Get server port
-     * @return Server port
-     */
-    public int getPort() {
-        return port;
-    }
-
 
     /**
      * Get SSE endpoint
@@ -243,16 +219,6 @@ public class McpServerProperties {
 
         public Builder resourceSubscribe(boolean resourceSubscribe) {
             this.resourceSubscribe = resourceSubscribe;
-            return this;
-        }
-
-        public Builder bindAddress(String bindAddress) {
-            this.bindAddress = bindAddress;
-            return this;
-        }
-
-        public Builder port(int port) {
-            this.port = port;
             return this;
         }
 

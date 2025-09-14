@@ -196,7 +196,17 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
     protected static boolean isMcpRequest(HttpRequest request) {
         try {
             String path = new java.net.URI(request.uri()).getPath();
-            return path != null && path.endsWith("/mcp");
+            if (path == null) {
+                return false;
+            }
+
+            String mcpEndpoint = ArthasBootstrap.getInstance().getConfigure().getMcpEndpoint();
+            if (mcpEndpoint == null || mcpEndpoint.trim().isEmpty()) {
+                // MCP 服务器未配置，不处理 MCP 请求
+                return false;
+            }
+            
+            return mcpEndpoint.equals(path);
         } catch (Exception e) {
             logger.debug("Failed to parse request URI: {}", request.uri(), e);
             return false;
