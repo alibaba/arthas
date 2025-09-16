@@ -84,7 +84,7 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
             DimensionResult<TaskCPUTime> cpuTime = result.getCpuTime();
             generateCpuTime(cpuTime, os, names, symbolTable, include, taskSet);
         } else {
-            DimensionResult<? extends TaskResultBase> DimensionResult = switch (dimension) {
+            DimensionResult<? extends BaseTaskResult> DimensionResult = switch (dimension) {
                 case CPU_SAMPLE -> result.getCpuSample();
                 case WALL_CLOCK -> result.getWallClock();
                 case NATIVE_EXECUTION_SAMPLES -> result.getNativeExecutionSamples();
@@ -116,14 +116,14 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
         return fg;
     }
 
-    private void generate(DimensionResult<? extends TaskResultBase> result, List<Object[]> os, Map<String, Long> names,
+    private void generate(DimensionResult<? extends BaseTaskResult> result, List<Object[]> os, Map<String, Long> names,
                           SymbolMap map, boolean include, List<String> taskSet) {
-        List<? extends TaskResultBase> list = result.getList();
+        List<? extends BaseTaskResult> list = result.getList();
         Set<String> set = null;
         if (taskSet != null) {
             set = new HashSet<>(taskSet);
         }
-        for (TaskResultBase ts : list) {
+        for (BaseTaskResult ts : list) {
             if (set != null && !set.isEmpty()) {
                 if (include && !set.contains(ts.getTask().getName())) {
                     continue;
@@ -135,7 +135,7 @@ public class JFRAnalyzerImpl implements JFRAnalyzer {
         }
     }
 
-    private void doTaskResult(TaskResultBase taskResult, List<Object[]> os, Map<String, Long> names, SymbolMap map) {
+    private void doTaskResult(BaseTaskResult taskResult, List<Object[]> os, Map<String, Long> names, SymbolMap map) {
         Map<StackTrace, Long> samples = taskResult.getSamples();
         long total = 0;
         for (StackTrace s : samples.keySet()) {

@@ -27,7 +27,7 @@ public class CPUSampleExtractor extends CountExtractor {
 
     @Override
     void visitExecutionSample(RecordedEvent event) {
-        visitEvent(event);
+        processCountEvent(event);
     }
 
     @Override
@@ -42,18 +42,18 @@ public class CPUSampleExtractor extends CountExtractor {
         }
     }
 
-    public List<TaskCount> buildTaskCounts() {
+    public List<TaskCount> generateTaskCounts() {
         if (this.isWallClockEvents) {
             return new ArrayList<>();
         } else {
-            return super.buildTaskCounts();
+            return super.generateCountResults();
         }
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
         DimensionResult<TaskCount> tsResult = new DimensionResult<>();
-        tsResult.setList(buildTaskCounts());
+        tsResult.setList(generateTaskCounts());
         result.setCpuSample(tsResult);
     }
 }

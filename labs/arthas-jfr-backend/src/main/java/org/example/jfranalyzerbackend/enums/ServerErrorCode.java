@@ -21,6 +21,7 @@ public enum ServerErrorCode implements ErrorCode {
     ELASTIC_WORKER_NOT_READY("Elastic worker not ready"),
     ELASTIC_WORKER_STARTUP_FAILURE("Elastic worker startup failure"),
     NO_AVAILABLE_LOCATION("No available location"),
+    INVALID_FILENAME("Invalid filename"),
     ;
 
     private final String message;

@@ -26,13 +26,13 @@ public class ClassLoadCountExtractor extends CountExtractor {
 
     @Override
     void visitClassLoad(RecordedEvent event) {
-        visitEvent(event);
+        processCountEvent(event);
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
         DimensionResult<TaskCount> tsResult = new DimensionResult<>();
-        tsResult.setList(buildTaskCounts());
+        tsResult.setList(generateCountResults());
         result.setClassLoadCount(tsResult);
     }
 }

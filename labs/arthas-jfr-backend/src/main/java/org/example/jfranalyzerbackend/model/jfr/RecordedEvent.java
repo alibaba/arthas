@@ -72,7 +72,7 @@ public class RecordedEvent {
         IType<IItem> itemType = ItemToolkit.getItemType(item);
         String itemTypeId = itemType.getIdentifier();
 
-        // fix for JDK Mission Control lib
+        // 修复JDK Mission Control库的兼容性问题
         if ((itemTypeId.startsWith(EventConstant.EXECUTION_SAMPLE) && !itemTypeId.equals(EventConstant.EXECUTION_SAMPLE))) {
             itemTypeId = EventConstant.EXECUTION_SAMPLE;
         } else if (itemTypeId.startsWith(EventConstant.OBJECT_ALLOCATION_OUTSIDE_TLAB)

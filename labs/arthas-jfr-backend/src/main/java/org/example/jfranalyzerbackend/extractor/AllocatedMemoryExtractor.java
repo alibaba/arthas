@@ -1,16 +1,13 @@
-
 package org.example.jfranalyzerbackend.extractor;
-
-
 
 import org.example.jfranalyzerbackend.model.AnalysisResult;
 import org.example.jfranalyzerbackend.model.DimensionResult;
+import org.example.jfranalyzerbackend.model.StackTrace;
 import org.example.jfranalyzerbackend.model.Task;
 import org.example.jfranalyzerbackend.model.TaskAllocatedMemory;
 import org.example.jfranalyzerbackend.model.jfr.RecordedEvent;
 import org.example.jfranalyzerbackend.model.jfr.RecordedStackTrace;
 import org.example.jfranalyzerbackend.util.StackTraceUtil;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,88 +15,96 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 已分配内存事件提取器
+ * 专门处理内存分配大小相关的JFR事件，继承自AllocationsExtractor
+ */
 public class AllocatedMemoryExtractor extends AllocationsExtractor {
+    
     public AllocatedMemoryExtractor(JFRAnalysisContext context) {
         super(context);
     }
 
     @Override
     void visitObjectAllocationInNewTLAB(RecordedEvent event) {
-        if (this.useObjectAllocationSample) {
+        if (this.objectAllocationSamplingEnabled) {
             return;
         }
-        this.visitTLABEvent(event, "tlabSize");
+        this.processMemoryAllocationEvent(event, "tlabSize");
     }
 
     @Override
     void visitObjectAllocationOutsideTLAB(RecordedEvent event) {
-        if (this.useObjectAllocationSample) {
+        if (this.objectAllocationSamplingEnabled) {
             return;
         }
-        this.visitTLABEvent(event, "allocationSize");
+        this.processMemoryAllocationEvent(event, "allocationSize");
     }
 
     @Override
     void visitObjectAllocationSample(RecordedEvent event) {
-        this.visitTLABEvent(event, "weight");
+        this.processMemoryAllocationEvent(event, "weight");
     }
 
-    void visitTLABEvent(RecordedEvent event, String fieldName) {
+    private void processMemoryAllocationEvent(RecordedEvent event, String sizeFieldName) {
         RecordedStackTrace stackTrace = event.getStackTrace();
         if (stackTrace == null) {
             stackTrace = StackTraceUtil.DUMMY_STACK_TRACE;
         }
 
-        AllocationsExtractor.AllocTaskData allocThreadData = getThreadData(event.getThread());
-        if (allocThreadData.getSamples() == null) {
-            allocThreadData.setSamples(new HashMap<>());
-        }
+        AllocationMetrics memoryMetrics = obtainThreadMetrics(event.getThread());
+        initializeSamplesIfNeeded(memoryMetrics);
 
-        long eventTotal = event.getLong(fieldName);
-
-        allocThreadData.getSamples().compute(stackTrace, (k, temp) -> temp == null ? eventTotal : temp + eventTotal);
-        allocThreadData.allocatedMemory += eventTotal;
+        long allocationSize = event.getLong(sizeFieldName);
+        updateMemoryMetrics(memoryMetrics, stackTrace, allocationSize);
     }
 
-    private List<TaskAllocatedMemory> buildThreadAllocatedMemory() {
-        List<TaskAllocatedMemory> taskAllocatedMemoryList = new ArrayList<>();
+    private void updateMemoryMetrics(AllocationMetrics metrics, RecordedStackTrace stackTrace, long size) {
+        metrics.getSamples().compute(stackTrace, (key, existingSize) -> 
+            existingSize == null ? size : existingSize + size);
+        metrics.totalAllocatedBytes += size;
+    }
 
-        for (AllocTaskData data : this.data.values()) {
-            if (data.allocatedMemory == 0) {
+    private List<TaskAllocatedMemory> generateMemoryAllocationResults() {
+        List<TaskAllocatedMemory> memoryResults = new ArrayList<>();
+
+        for (AllocationMetrics metrics : this.threadMetrics.values()) {
+            if (metrics.totalAllocatedBytes == 0) {
                 continue;
             }
 
-            TaskAllocatedMemory taskAllocatedMemory = new TaskAllocatedMemory();
-            Task ta = new Task();
-            ta.setId(data.getThread().getJavaThreadId());
-            ta.setName(data.getThread().getJavaName());
-            taskAllocatedMemory.setTask(ta);
-
-            if (data.getSamples() != null) {
-                taskAllocatedMemory.setAllocatedMemory(data.allocatedMemory);
-                taskAllocatedMemory.setSamples(data.getSamples().entrySet().stream().collect(
-                        Collectors.toMap(
-                                e -> StackTraceUtil.build(e.getKey(), context.getSymbols()),
-                                Map.Entry::getValue,
-                                Long::sum)
-                ));
-            }
-
-            taskAllocatedMemoryList.add(taskAllocatedMemory);
+            TaskAllocatedMemory memoryResult = createMemoryAllocationResult(metrics);
+            memoryResults.add(memoryResult);
         }
 
-        taskAllocatedMemoryList.sort((o1, o2) -> {
-            long delta = o2.getAllocatedMemory() - o1.getAllocatedMemory();
-            return delta > 0 ? 1 : (delta == 0 ? 0 : -1);
-        });
+        return sortMemoryAllocationsBySize(memoryResults);
+    }
 
-        return taskAllocatedMemoryList;
+    private TaskAllocatedMemory createMemoryAllocationResult(AllocationMetrics metrics) {
+        TaskAllocatedMemory result = new TaskAllocatedMemory();
+        Task taskInfo = createTaskInfo(metrics.getThread());
+        result.setTask(taskInfo);
+
+        if (metrics.getSamples() != null) {
+            result.setAllocatedMemory(metrics.totalAllocatedBytes);
+            result.setSamples(transformSamples(metrics.getSamples()));
+        }
+
+        return result;
+    }
+
+    private List<TaskAllocatedMemory> sortMemoryAllocationsBySize(List<TaskAllocatedMemory> allocations) {
+        allocations.sort((first, second) -> {
+            long sizeDifference = second.getAllocatedMemory() - first.getAllocatedMemory();
+            return sizeDifference > 0 ? 1 : (sizeDifference == 0 ? 0 : -1);
+        });
+        return allocations;
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
-        DimensionResult<TaskAllocatedMemory> memResult = new DimensionResult<>();
-        memResult.setList(buildThreadAllocatedMemory());
-        result.setAllocatedMemory(memResult);
+        DimensionResult<TaskAllocatedMemory> memoryDimension = new DimensionResult<>();
+        memoryDimension.setList(generateMemoryAllocationResults());
+        result.setAllocatedMemory(memoryDimension);
     }
 }

@@ -31,49 +31,13 @@ public class NativeExecutionExtractor extends CountExtractor {
 
     @Override
     void visitNativeExecutionSample(RecordedEvent event) {
-        visitEvent(event);
-    }
-
-    private List<TaskCount> buildTaskExecutionSamples() {
-        List<TaskCount> nativeSamples = new ArrayList<>();
-
-        for (TaskCountData data : this.data.values()) {
-            if (data.count == 0) {
-                continue;
-            }
-
-            TaskCount threadSamples = new TaskCount();
-            Task ta = new Task();
-            ta.setId(data.getThread().getJavaThreadId());
-            ta.setName(data.getThread().getJavaName());
-            threadSamples.setTask(ta);
-
-            if (data.getSamples() != null) {
-                threadSamples.setCount(data.count);
-                threadSamples.setSamples(data.getSamples().entrySet().stream().collect(
-                        Collectors.toMap(
-                                e -> StackTraceUtil.build(e.getKey(), context.getSymbols()),
-                                Map.Entry::getValue,
-                                Long::sum
-                        )
-                ));
-            }
-
-            nativeSamples.add(threadSamples);
-        }
-
-        nativeSamples.sort((o1, o2) -> {
-            long delta = o2.getCount() - o1.getCount();
-            return delta > 0 ? 1 : (delta == 0 ? 0 : -1);
-        });
-
-        return nativeSamples;
+        processCountEvent(event);
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
         DimensionResult<TaskCount> nativeResult = new DimensionResult<>();
-        nativeResult.setList(buildTaskExecutionSamples());
+        nativeResult.setList(generateCountResults());
         result.setNativeExecutionSamples(nativeResult);
     }
 }

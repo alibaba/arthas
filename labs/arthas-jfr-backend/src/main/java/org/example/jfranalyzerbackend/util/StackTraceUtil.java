@@ -1,15 +1,4 @@
-/********************************************************************************
- * Copyright (c) 2024 Contributors to the Eclipse Foundation
- *
- * See the NOTICE file(s) distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- ********************************************************************************/
+
 package org.example.jfranalyzerbackend.util;
 
 
@@ -31,12 +20,11 @@ import java.util.List;
 public class StackTraceUtil {
     public static final RecordedStackTrace DUMMY_STACK_TRACE = StackTraceUtil.newDummyStackTrace("", "", "NO Frame");
 
-    // FIXME: need cache
+
     public static StackTrace build(RecordedStackTrace stackTrace, SymbolTable<SymbolBase> symbols) {
         StackTrace result = new StackTrace();
         result.setTruncated(stackTrace.isTruncated());
 
-        DescriptorUtil util = new DescriptorUtil();
         List<RecordedFrame> srcFrames = stackTrace.getFrames();
         Frame[] dstFrames = new Frame[srcFrames.size()];
         for (int i = 0; i < srcFrames.size(); i++) {
@@ -56,7 +44,7 @@ public class StackTraceUtil {
             dstMethod.setPackageName(method.getType().getPackageName());
             dstMethod.setType(method.getType().getName());
             dstMethod.setName(method.getName());
-            dstMethod.setDescriptor(util.decodeMethodArgs(method.getDescriptor()));
+            dstMethod.setDescriptor(method.getDescriptor()); // 直接使用原始描述符
 
             dstMethod.setModifiers(method.getModifiers());
             dstMethod.setHidden(method.isHidden());

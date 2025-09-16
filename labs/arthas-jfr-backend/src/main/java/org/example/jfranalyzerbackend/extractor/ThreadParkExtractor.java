@@ -13,12 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ThreadParkExtractor extends SumExtractor {
-    protected static final List<String> INTERESTED = Collections.unmodifiableList(new ArrayList<>() {
-        {
-            add(EventConstant.THREAD_PARK);
-        }
-    });
+public class ThreadParkExtractor extends BaseValueExtractor {
+    protected static final List<String> INTERESTED = createInterestedList(EventConstant.THREAD_PARK);
 
     public ThreadParkExtractor(JFRAnalysisContext context) {
         super(context, INTERESTED);
@@ -26,18 +22,13 @@ public class ThreadParkExtractor extends SumExtractor {
 
     @Override
     void visitThreadPark(RecordedEvent event) {
-        visitEvent(event);
-    }
-
-    private void visitEvent(RecordedEvent event) {
         long eventValue = event.getDurationNano();
-        visitEvent(event, eventValue);
+        processValueEvent(event, eventValue);
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
-        DimensionResult<TaskSum> tsResult = new DimensionResult<>();
-        tsResult.setList(buildTaskSums());
-        result.setThreadPark(tsResult);
+        List<TaskSum> taskSums = generateTaskResults(TaskSum.class);
+        populateResult(result, taskSums, result::setThreadPark);
     }
 }

@@ -1,7 +1,7 @@
 
 package org.example.jfranalyzerbackend.extractor;
 
-
+import org.example.jfranalyzerbackend.model.StackTrace;
 import org.example.jfranalyzerbackend.model.Task;
 import org.example.jfranalyzerbackend.model.TaskCount;
 import org.example.jfranalyzerbackend.model.TaskData;
@@ -16,71 +16,104 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 计数事件提取器基类
+ * 提供通用的计数统计功能，用于处理各种计数类型的事件
+ */
 public abstract class CountExtractor extends Extractor {
+    
     CountExtractor(JFRAnalysisContext context, List<String> interested) {
         super(context, interested);
     }
 
-    public static class TaskCountData extends TaskData {
-        TaskCountData(RecordedThread thread) {
+    /**
+     * 任务计数数据容器
+     * 存储每个线程的计数统计信息
+     */
+    public static class CountMetrics extends TaskData {
+        CountMetrics(RecordedThread thread) {
             super(thread);
         }
 
-        long count;
+        long eventCount;
     }
 
-    protected final Map<Long, TaskCountData> data = new HashMap<>();
+    private final Map<Long, CountMetrics> threadCounts = new HashMap<>();
 
-    TaskCountData getTaskCountData(RecordedThread thread) {
-        return data.computeIfAbsent(thread.getJavaThreadId(), i -> new TaskCountData(thread));
+    private CountMetrics obtainCountMetrics(RecordedThread thread) {
+        return threadCounts.computeIfAbsent(thread.getJavaThreadId(), 
+            threadId -> new CountMetrics(thread));
     }
 
-    protected void visitEvent(RecordedEvent event) {
+    protected void processCountEvent(RecordedEvent event) {
         RecordedStackTrace stackTrace = event.getStackTrace();
         if (stackTrace == null) {
             return;
         }
 
-        TaskCountData data = getTaskCountData(event.getThread());
-        if (data.getSamples() == null) {
-            data.setSamples(new HashMap<>());
-        }
-
-        data.getSamples().compute(stackTrace, (k, tmp) -> tmp == null ? 1 : tmp + 1);
-        data.count += 1;
+        CountMetrics metrics = obtainCountMetrics(event.getThread());
+        initializeSamplesIfNeeded(metrics);
+        
+        metrics.getSamples().compute(stackTrace, (key, existingCount) -> 
+            existingCount == null ? 1L : existingCount + 1L);
+        metrics.eventCount += 1;
     }
 
-    public List<TaskCount> buildTaskCounts() {
-        List<TaskCount> counts = new ArrayList<>();
-        for (TaskCountData data : this.data.values()) {
-            if (data.count == 0) {
+    private void initializeSamplesIfNeeded(CountMetrics metrics) {
+        if (metrics.getSamples() == null) {
+            metrics.setSamples(new HashMap<>());
+        }
+    }
+
+    public List<TaskCount> generateCountResults() {
+        List<TaskCount> countResults = new ArrayList<>();
+        
+        for (CountMetrics metrics : this.threadCounts.values()) {
+            if (metrics.eventCount == 0) {
                 continue;
             }
 
-            TaskCount ts = new TaskCount();
-            Task ta = new Task();
-            ta.setId(data.getThread().getJavaThreadId());
-            ta.setName(context.getThread(data.getThread()).getName());
-            ts.setTask(ta);
-
-            if (data.getSamples() != null) {
-                ts.setCount(data.count);
-                ts.setSamples(data.getSamples().entrySet().stream().collect(
-                        Collectors.toMap(
-                                e -> StackTraceUtil.build(e.getKey(), context.getSymbols()),
-                                Map.Entry::getValue,
-                                Long::sum)
-                ));
-            }
-
-            counts.add(ts);
+            TaskCount countResult = createCountResult(metrics);
+            countResults.add(countResult);
         }
 
-        counts.sort((o1, o2) -> {
-            long delta = o2.getCount() - o1.getCount();
-            return delta > 0 ? 1 : (delta == 0 ? 0 : -1);
-        });
+        return sortCountsByValue(countResults);
+    }
 
+    private TaskCount createCountResult(CountMetrics metrics) {
+        TaskCount result = new TaskCount();
+        Task taskInfo = createTaskInfo(metrics.getThread());
+        result.setTask(taskInfo);
+
+        if (metrics.getSamples() != null) {
+            result.setCount(metrics.eventCount);
+            result.setSamples(transformSamples(metrics.getSamples()));
+        }
+
+        return result;
+    }
+
+    protected Task createTaskInfo(RecordedThread thread) {
+        Task task = new Task();
+        task.setId(thread.getJavaThreadId());
+        task.setName(context.getThread(thread).getName());
+        return task;
+    }
+
+    protected Map<StackTrace, Long> transformSamples(Map<RecordedStackTrace, Long> rawSamples) {
+        return rawSamples.entrySet().stream()
+                .collect(Collectors.toMap(
+                    entry -> StackTraceUtil.build(entry.getKey(), context.getSymbols()),
+                    Map.Entry::getValue,
+                    Long::sum
+                ));
+    }
+
+    private List<TaskCount> sortCountsByValue(List<TaskCount> counts) {
+        counts.sort((first, second) -> {
+            long difference = second.getCount() - first.getCount();
+            return difference > 0 ? 1 : (difference == 0 ? 0 : -1);
+        });
         return counts;
     }
 }

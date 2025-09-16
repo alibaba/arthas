@@ -58,8 +58,8 @@ export async function getFiles(params: {
 // 上传文件
 export async function uploadFile(file: File, type: string = 'JFR'): Promise<FileUploadResponse> {
   const formData = new FormData();
-  formData.append('file', file);
-  formData.append('type', type);
+  formData.append('uploadedFile', file);
+  formData.append('fileType', type);
   
   const response = await api.post('/files/upload', formData, {
     headers: {

@@ -1,10 +1,10 @@
 package org.example.jfranalyzerbackend.util;
 
 public class PagingRequest {
-    // page index starts with 1
+    // 页码从1开始
     private int page;
 
-    // page size, must be greater than 0
+    // 页面大小，必须大于0
     private int pageSize;
 
     public int getPage() {
@@ -16,10 +16,10 @@ public class PagingRequest {
     }
 
     /**
-     * Create a new PagingRequest
+     * 创建新的分页请求
      *
-     * @param page     page index, starts with 1
-     * @param pageSize page size, must be greater than 0
+     * @param page     页码，从1开始
+     * @param pageSize 页面大小，必须大于0
      */
     public PagingRequest(int page, int pageSize) {
 //        Validate.isTrue(page >= 1 && pageSize >= 1);
@@ -28,15 +28,15 @@ public class PagingRequest {
     }
 
     /**
-     * @return from index (inclusive), starts with 0
+     * @return 起始索引（包含），从0开始
      */
     public int from() {
         return (page - 1) * pageSize;
     }
 
     /**
-     * @param totalSize total size of the elements
-     * @return end index (exclusive)
+     * @param totalSize 元素总数
+     * @return 结束索引（不包含）
      */
     public int to(int totalSize) {
         return Math.min(from() + pageSize, totalSize);

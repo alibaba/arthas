@@ -52,7 +52,7 @@ public class WallClockExtractor extends Extractor {
 
     private final Map<Long, TaskWallClockData> data = new HashMap<>();
     private long methodSampleEventId = -1;
-    private long interval; // nano
+    private long interval; // 纳秒
 
     private boolean isWallClockEvents = false;
 

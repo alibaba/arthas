@@ -58,8 +58,8 @@ public class CPUTimeExtractor extends Extractor {
     private boolean profiledByJFR = true;
 
     private int cpuCores;
-    private long intervalAsyncProfiler; // unit: nano
-    private long intervalJFR; // unit: nano
+    private long intervalAsyncProfiler; // 单位：纳秒
+    private long intervalJFR; // 单位：纳秒
 
     private int concurrentGCThreads = -1;
     private int parallelGCThreads = -1;
@@ -129,11 +129,11 @@ public class CPUTimeExtractor extends Extractor {
             if (EventConstant.WALL.equals(event.getString("name"))) {
                 this.isWallClockEvents = true;
             } else if (EventConstant.INTERVAL.equals(event.getString("name"))) {
-                // async-profiler is "interval"
+                // async-profiler使用"interval"参数
                 this.intervalAsyncProfiler = Long.parseLong(event.getString("value"));
                 this.profiledByJFR = false;
             } else if (EventConstant.PERIOD.equals(event.getString("name"))) {
-                // JFR is "period"
+                // JFR使用"period"参数
                 try {
                     this.intervalJFR = TimeUtil.parseTimespan(event.getString("value"));
                 } catch (Exception e) {

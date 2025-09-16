@@ -1,23 +1,15 @@
 
 package org.example.jfranalyzerbackend.extractor;
 
-
 import org.example.jfranalyzerbackend.enums.EventConstant;
 import org.example.jfranalyzerbackend.model.AnalysisResult;
-import org.example.jfranalyzerbackend.model.DimensionResult;
 import org.example.jfranalyzerbackend.model.TaskSum;
 import org.example.jfranalyzerbackend.model.jfr.RecordedEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class SocketWriteTimeExtractor extends SumExtractor {
-    protected static final List<String> INTERESTED = Collections.unmodifiableList(new ArrayList<>() {
-        {
-            add(EventConstant.SOCKET_WRITE);
-        }
-    });
+public class SocketWriteTimeExtractor extends BaseValueExtractor {
+    private static final List<String> INTERESTED = createInterestedList(EventConstant.SOCKET_WRITE);
 
     public SocketWriteTimeExtractor(JFRAnalysisContext context) {
         super(context, INTERESTED);
@@ -25,18 +17,13 @@ public class SocketWriteTimeExtractor extends SumExtractor {
 
     @Override
     void visitSocketWrite(RecordedEvent event) {
-        visitEvent(event);
-    }
-
-    private void visitEvent(RecordedEvent event) {
         long eventValue = event.getDurationNano();
-        visitEvent(event, eventValue);
+        processValueEvent(event, eventValue);
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
-        DimensionResult<TaskSum> tsResult = new DimensionResult<>();
-        tsResult.setList(buildTaskSums());
-        result.setSocketWriteTime(tsResult);
+        List<TaskSum> taskSums = generateTaskResults(TaskSum.class);
+        populateResult(result, taskSums, result::setSocketWriteTime);
     }
 }

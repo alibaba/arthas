@@ -15,8 +15,7 @@ public class BaseFileEntity extends BaseEntity {
     @Column(unique = true, nullable = false, updatable = false, length = 64)
     private String uniqueName;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private UserEntity user;
+
 
     @Column(nullable = false, updatable = false, length = 256)
     private String originalName;

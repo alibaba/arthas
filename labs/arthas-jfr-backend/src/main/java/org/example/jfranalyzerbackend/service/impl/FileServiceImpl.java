@@ -10,8 +10,8 @@ import org.example.jfranalyzerbackend.exception.CommonException;
 import org.example.jfranalyzerbackend.repository.FileRepo;
 import org.example.jfranalyzerbackend.repository.DeletedFileRepo;
 import org.example.jfranalyzerbackend.service.FileService;
-import org.example.jfranalyzerbackend.service.UserService;
 import org.example.jfranalyzerbackend.util.FileViewConverter;
+import org.example.jfranalyzerbackend.util.PathSecurityUtil;
 import org.example.jfranalyzerbackend.vo.PageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +28,15 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 文件服务实现类
+ * 提供文件上传、下载、删除和查询等核心功能
+ */
 @Component
 public class FileServiceImpl implements FileService {
 
-    private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private FileRepo fileRepo;
@@ -47,102 +49,130 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    public PageView<FileView> getUserFileViews(FileType type, int page, int pageSize) {
-        log.info("getUserFileViews");
-        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-        Long userId = userService.getCurrentUserId();
+    public PageView<FileView> retrieveUserFileViews(FileType fileType, int pageNumber, int pageSize) {
+        logger.info("检索用户文件视图");
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        Long currentUserId = 1L; // 使用固定用户ID
 
-        //获取page实体
-        Page<FileEntity> files = (type == null)
-                ? fileRepo.findByUserIdOrderByCreatedTimeDesc(userId, pageRequest)
-                : fileRepo.findByUserIdAndTypeOrderByCreatedTimeDesc(userId, type, pageRequest);
+        // 根据文件类型获取分页数据
+        Page<FileEntity> fileEntities = (fileType == null)
+                ? fileRepo.findByUserIdOrderByCreatedTimeDesc(currentUserId, pageRequest)
+                : fileRepo.findByUserIdAndTypeOrderByCreatedTimeDesc(currentUserId, fileType, pageRequest);
 
-        List<FileView> views = files.getContent().stream()
+        List<FileView> fileViews = fileEntities.getContent().stream()
                 .map(FileViewConverter::convert)
                 .toList();
 
-        return new PageView<>(page, pageSize, (int) files.getTotalElements(), views);
+        return new PageView<>(pageNumber, pageSize, (int) fileEntities.getTotalElements(), fileViews);
     }
 
     @Override
     @Transactional
-    public Long handleUploadRequest(FileType type, MultipartFile file) throws IOException {
+    public Long processFileUpload(FileType fileType, MultipartFile uploadedFile) throws IOException {
+        String originalFileName = uploadedFile.getOriginalFilename() != null ? uploadedFile.getOriginalFilename() : "unknown.file";
+        long fileSize = uploadedFile.getSize();
 
-        String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "unknown.file";
-        // 清理文件名，防止路径遍历攻击
-        String safeOriginalName = originalName.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
-        String uniqueName = UUID.randomUUID().toString() + "_" + safeOriginalName;
-        long size = file.getSize();
+        Long currentUserId = 1L; // 使用固定用户ID
 
-        Long userId = userService.getCurrentUserId();
+        // 使用安全的路径构建方法
+        Path basePath = Paths.get(arthasConfig.getJfrStoragePath());
+        String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+        Path targetPath = PathSecurityUtil.buildSafePath(basePath, uniqueFileName);
+        
+        // 确保目录存在
+        Files.createDirectories(targetPath.getParent());
+        
+        // 保存文件
+        uploadedFile.transferTo(targetPath.toFile());
 
-        // 使用配置的路径
-        Path savePath = Paths.get(arthasConfig.getJfrStoragePath(), uniqueName);
-        Files.createDirectories(savePath.getParent());
-        file.transferTo(savePath.toFile());
+        // 保存到数据库
+        FileEntity fileEntity = new FileEntity();
+        fileEntity.setUniqueName(uniqueFileName);
+        fileEntity.setOriginalName(originalFileName);
+        fileEntity.setType(fileType);
+        fileEntity.setSize(fileSize);
+        fileEntity.setUserId(currentUserId);
 
-        // 数据库存储
-        FileEntity entity = new FileEntity();
-        entity.setUniqueName(uniqueName);
-        entity.setOriginalName(safeOriginalName);
-        entity.setType(type);
-        entity.setSize(size);
-        entity.setUserId(userId);
-
-        return fileRepo.save(entity).getId();
+        return fileRepo.save(fileEntity).getId();
     }
 
 
     @Override
-    public void deleteById(Long fileId) {
-        FileEntity entity = fileRepo.findById(fileId)
+    public void removeFileById(Long fileId) {
+        FileEntity fileEntity = fileRepo.findById(fileId)
                 .orElseThrow(() -> new CommonException(org.example.jfranalyzerbackend.enums.ServerErrorCode.FILE_NOT_FOUND));
 
-        if (!entity.getUserId().equals(userService.getCurrentUserId())) {
+        if (!fileEntity.getUserId().equals(1L)) { // 使用固定用户ID
             throw new CommonException(org.example.jfranalyzerbackend.enums.ServerErrorCode.FILE_NOT_FOUND);
         }
 
-        // 构建删除记录
-        DeletedFileEntity deletedFile = new DeletedFileEntity();
-        deletedFile.setUniqueName(entity.getUniqueName());
-        deletedFile.setOriginalName(entity.getOriginalName());
-        deletedFile.setType(entity.getType());
-        deletedFile.setSize(entity.getSize());
-        deletedFile.setOriginalCreatedTime(entity.getCreatedTime());
+        // 创建删除记录
+        DeletedFileEntity deletedFileRecord = new DeletedFileEntity();
+        deletedFileRecord.setUniqueName(fileEntity.getUniqueName());
+        deletedFileRecord.setOriginalName(fileEntity.getOriginalName());
+        deletedFileRecord.setType(fileEntity.getType());
+        deletedFileRecord.setSize(fileEntity.getSize());
+        deletedFileRecord.setOriginalCreatedTime(fileEntity.getCreatedTime());
 
         fileRepo.deleteById(fileId);
-        deletedFileRepo.save(deletedFile);
+        deletedFileRepo.save(deletedFileRecord);
 
-        // 清理实际文件（磁盘）
+        // 清理磁盘文件
         try {
-            Path filePath = Paths.get(arthasConfig.getJfrStoragePath(), entity.getUniqueName());
-            Files.deleteIfExists(filePath);
+            Path physicalFilePath = Paths.get(arthasConfig.getJfrStoragePath(), fileEntity.getUniqueName());
+            Files.deleteIfExists(physicalFilePath);
         } catch (Exception e) {
-            log.warn("Failed to delete file from disk: {}", e.getMessage());
+            logger.warn("磁盘文件删除失败: {}", e.getMessage());
         }
+    }
+
+    @Override
+    public FileView retrieveFileViewById(Long fileId) {
+        FileEntity fileEntity = fileRepo.findById(fileId)
+                .orElse(null);
+        
+        if (fileEntity == null) {
+            return null;
+        }
+        
+        // 验证用户权限
+        if (!fileEntity.getUserId().equals(1L)) { // 使用固定用户ID
+            return null;
+        }
+        
+        return FileViewConverter.convert(fileEntity);
+    }
+
+    @Override
+    public String retrieveFilePathById(Long fileId) {
+        FileEntity fileEntity = fileRepo.findById(fileId)
+                .orElseThrow(() -> new CommonException(org.example.jfranalyzerbackend.enums.ServerErrorCode.FILE_NOT_FOUND));
+        return Paths.get(arthasConfig.getJfrStoragePath(), fileEntity.getUniqueName()).toString();
+    }
+
+    // 向后兼容的方法
+    @Override
+    public PageView<FileView> getUserFileViews(FileType type, int page, int pageSize) {
+        return retrieveUserFileViews(type, page, pageSize);
+    }
+
+    @Override
+    public Long handleUploadRequest(FileType type, MultipartFile file) throws IOException {
+        return processFileUpload(type, file);
+    }
+
+    @Override
+    public void deleteById(Long fileId) {
+        removeFileById(fileId);
     }
 
     @Override
     public FileView getFileViewById(Long fileId) {
-        FileEntity entity = fileRepo.findById(fileId)
-                .orElse(null);
-        
-        if (entity == null) {
-            return null;
-        }
-        
-        // 检查用户权限
-        if (!entity.getUserId().equals(userService.getCurrentUserId())) {
-            return null;
-        }
-        
-        return FileViewConverter.convert(entity);
+        return retrieveFileViewById(fileId);
     }
 
     @Override
     public String getFilePathById(Long fileId) {
-        FileEntity entity = fileRepo.findById(fileId)
-                .orElseThrow(() -> new CommonException(org.example.jfranalyzerbackend.enums.ServerErrorCode.FILE_NOT_FOUND));
-        return Paths.get(arthasConfig.getJfrStoragePath(), entity.getUniqueName()).toString();
+        return retrieveFilePathById(fileId);
     }
 }

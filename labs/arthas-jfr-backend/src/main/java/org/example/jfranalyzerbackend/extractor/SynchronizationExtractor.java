@@ -13,12 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SynchronizationExtractor extends SumExtractor {
-    protected static final List<String> INTERESTED = Collections.unmodifiableList(new ArrayList<>() {
-        {
-            add(EventConstant.JAVA_MONITOR_ENTER);
-        }
-    });
+public class SynchronizationExtractor extends BaseValueExtractor {
+    private static final List<String> INTERESTED = createInterestedList(EventConstant.JAVA_MONITOR_ENTER);
 
     public SynchronizationExtractor(JFRAnalysisContext context) {
         super(context, INTERESTED);
@@ -26,18 +22,17 @@ public class SynchronizationExtractor extends SumExtractor {
 
     @Override
     void visitMonitorEnter(RecordedEvent event) {
-        visitEvent(event, event.getDurationNano());
+        processValueEvent(event, event.getDurationNano());
     }
 
     @Override
     void visitThreadPark(RecordedEvent event) {
-        visitEvent(event, event.getDurationNano());
+        processValueEvent(event, event.getDurationNano());
     }
 
     @Override
     public void fillResult(AnalysisResult result) {
-        DimensionResult<TaskSum> tsResult = new DimensionResult<>();
-        tsResult.setList(buildTaskSums());
-        result.setSynchronization(tsResult);
+        List<TaskSum> taskSums = generateTaskResults(TaskSum.class);
+        populateResult(result, taskSums, result::setSynchronization);
     }
 }

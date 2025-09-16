@@ -8,13 +8,7 @@ import java.util.List;
 public class PageView<T> {
     private static final PageView<?> EMPTY = new PageView<>(null, 0, Collections.emptyList());
 
-    /**
-     * Return an empty page view.
-     *
-     * @param <T> data type
-     * @return empty page view
-     */
-    @SuppressWarnings("unchecked")
+
     public static <T> PageView<T> empty() {       return (PageView<T>) EMPTY;
     }
 
@@ -58,13 +52,7 @@ public class PageView<T> {
         this.totalSize = totalSize;
     }
 
-    /**
-     * Create a page view with paging request, total size and data.
-     *
-     * @param request   paging request
-     * @param totalSize total size
-     * @param data      data
-     */
+
     public PageView(PagingRequest request, int totalSize, List<T> data) {
         this.data = data;
         this.page = request != null ? request.getPage() : 0;
@@ -72,14 +60,7 @@ public class PageView<T> {
         this.totalSize = totalSize;
     }
 
-    /**
-     * Create a page view with page index, page size, total size and data.
-     *
-     * @param page      page index
-     * @param pageSize  page size
-     * @param totalSize total size
-     * @param data      data
-     */
+
     public PageView(int page, int pageSize, int totalSize, List<T> data) {
         this.data = data;
         this.page = page;
