@@ -1,17 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
-import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.MCP_AUTH_SUBJECT_KEY;
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.MCP_TRANSPORT_CONTEXT;
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class JadTool {
+public class JadTool extends AbstractArthasTool {
 
     @Tool(
             name = "jad",
@@ -40,36 +34,26 @@ public class JadTool {
             String dumpDirectory,
 
             ToolContext toolContext) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        McpTransportContext mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
-        Object authSubject = mcpTransportContext.get(MCP_AUTH_SUBJECT_KEY);
+        
+        StringBuilder cmd = buildCommand("jad");
 
-        StringBuilder cmd = new StringBuilder("jad");
-
-        cmd.append(" ").append(classPattern);
+        addParameter(cmd, classPattern);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
-            cmd.append(" -c ").append(classLoaderHash.trim());
+            addParameter(cmd, "-c", classLoaderHash);
         } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-            cmd.append(" --classLoaderClass ").append(classLoaderClass.trim());
+            addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
 
-        if (Boolean.TRUE.equals(sourceOnly)) {
-            cmd.append(" --source-only");
-        }
-
+        addFlag(cmd, "--source-only", sourceOnly);
+        addFlag(cmd, "-E", useRegex);
+        
         if (Boolean.TRUE.equals(noLineNumber)) {
             cmd.append(" --lineNumber false");
         }
 
-        if (Boolean.TRUE.equals(useRegex)) {
-            cmd.append(" -E");
-        }
-
-        if (dumpDirectory != null && !dumpDirectory.trim().isEmpty()) {
-            cmd.append(" -d ").append(dumpDirectory.trim());
-        }
-
-        return JsonParser.toJson(commandContext.executeSync(cmd.toString(), authSubject));
+        addParameter(cmd, "-d", dumpDirectory);
+        
+        return executeSync(toolContext, cmd.toString());
     }
 }

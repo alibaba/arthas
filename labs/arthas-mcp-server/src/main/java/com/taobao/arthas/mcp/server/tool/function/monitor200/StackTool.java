@@ -1,22 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.monitor200;
 
-import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import java.util.Map;
-
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.*;
-import static com.taobao.arthas.mcp.server.tool.function.StreamableToolUtils.*;
-
-public class StackTool {
-
-    private static final Logger logger = LoggerFactory.getLogger(StackTool.class);
+public class StackTool extends AbstractArthasTool {
 
     public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 50;
@@ -55,52 +44,21 @@ public class StackTool {
 
             ToolContext toolContext
     ) {
-        McpNettyServerExchange exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
-        String progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
+        int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
 
-        int execCount = (numberOfExecutions != null && numberOfExecutions > 0) ? numberOfExecutions : DEFAULT_NUMBER_OF_EXECUTIONS;
-
-        try {
-            StringBuilder cmd = new StringBuilder("stack");
-
-            cmd.append(" -n ").append(execCount);
-
-            if (Boolean.TRUE.equals(regex)) {
-                cmd.append(" -E");
-            }
-
-            if (classPattern != null && !classPattern.trim().isEmpty()) {
-                cmd.append(" ").append(classPattern.trim());
-            } else {
-                throw new IllegalArgumentException("classPattern is required");
-            }
-
-            if (methodPattern != null && !methodPattern.trim().isEmpty()) {
-                cmd.append(" ").append(methodPattern.trim());
-            }
-
-            if (condition != null && !condition.trim().isEmpty()) {
-                cmd.append(" '").append(condition.trim()).append("'");
-            }
-
-            String commandStr = cmd.toString();
-            logger.info("Starting stack execution: {}", commandStr);
-
-            Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
-            logger.debug("Async execution started: {}", asyncResult);
-
-            Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
-            if (results != null) {
-                return JsonParser.toJson(createCompletedResponse("Stack execution completed successfully", results));
-            } else {
-                return JsonParser.toJson(createErrorResponse("Stack execution failed due to timeout or error limits exceeded"));
-            }
-
-        } catch (Exception e) {
-            logger.error("Error executing stack command", e);
-            return JsonParser.toJson(createErrorResponse("Error executing stack: " + e.getMessage()));
+        StringBuilder cmd = buildCommand("stack");
+        cmd.append(" -n ").append(execCount);
+        
+        addFlag(cmd, "-E", regex);
+        addParameter(cmd, classPattern);
+        
+        if (methodPattern != null && !methodPattern.trim().isEmpty()) {
+            cmd.append(" ").append(methodPattern.trim());
         }
+        
+        addQuotedParameter(cmd, condition);
+
+        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS, 
+                                "Stack execution completed successfully");
     }
 }

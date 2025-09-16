@@ -689,10 +689,6 @@ public class ArthasBootstrap {
         return mcpRequestHandler;
     }
 
-    public boolean isMcpServerEnabled() {
-        return mcpRequestHandler != null;
-    }
-
     public File getOutputPath() {
         return outputPath;
     }

@@ -1,22 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
-import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import java.util.Map;
-
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.*;
-import static com.taobao.arthas.mcp.server.tool.function.StreamableToolUtils.*;
-
-public class MBeanTool {
-
-    private static final Logger logger = LoggerFactory.getLogger(MBeanTool.class);
+public class MBeanTool extends AbstractArthasTool {
 
     public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
@@ -57,52 +46,30 @@ public class MBeanTool {
 
             ToolContext toolContext
     ) {
-        McpNettyServerExchange exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
-        String progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
-
         boolean needStreamOutput = (intervalMs != null && intervalMs > 0) || (numberOfExecutions != null && numberOfExecutions > 0);
-
-        int interval = DEFAULT_REFRESH_INTERVAL_MS;
-        int execCount = DEFAULT_NUMBER_OF_EXECUTIONS;
         
-        if (needStreamOutput) {
-            interval = (intervalMs != null && intervalMs > 0) ? intervalMs : DEFAULT_REFRESH_INTERVAL_MS;
-            execCount = (numberOfExecutions != null && numberOfExecutions > 0) ? numberOfExecutions : DEFAULT_NUMBER_OF_EXECUTIONS;
+        int interval = getDefaultValue(intervalMs, DEFAULT_REFRESH_INTERVAL_MS);
+        int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
+
+        StringBuilder cmd = buildCommand("mbean");
+
+        addFlag(cmd, "-m", metadata);
+        addFlag(cmd, "-E", regex);
+        
+        // 只有在需要流式输出且不是查看元数据时才添加 -i 和 -n 参数
+        if (needStreamOutput && !Boolean.TRUE.equals(metadata)) {
+            cmd.append(" -i ").append(interval);
+            cmd.append(" -n ").append(execCount);
+        }
+        
+        if (namePattern != null && !namePattern.trim().isEmpty()) {
+            cmd.append(" ").append(namePattern.trim());
+        }
+        if (attributePattern != null && !attributePattern.trim().isEmpty()) {
+            cmd.append(" ").append(attributePattern.trim());
         }
 
-        try {
-            StringBuilder cmd = new StringBuilder("mbean");
-
-            if (Boolean.TRUE.equals(metadata)) {
-                cmd.append(" -m");
-            }
-            if (Boolean.TRUE.equals(regex)) {
-                cmd.append(" -E");
-            }
-            
-            // 只有在需要流式输出且不是查看元数据时才添加 -i 和 -n 参数
-            if (needStreamOutput && !Boolean.TRUE.equals(metadata)) {
-                cmd.append(" -i ").append(interval);
-                cmd.append(" -n ").append(execCount);
-            }
-            
-            if (namePattern != null && !namePattern.trim().isEmpty()) {
-                cmd.append(" ").append(namePattern.trim());
-            }
-            if (attributePattern != null && !attributePattern.trim().isEmpty()) {
-                cmd.append(" ").append(attributePattern.trim());
-            }
-
-            String commandStr = cmd.toString();
-            logger.info("Starting mbean execution: {}", commandStr);
-
-            return JsonParser.toJson(commandContext.executeSync(commandStr));
-
-        } catch (Exception e) {
-            logger.error("Error executing mbean command", e);
-            return JsonParser.toJson(createErrorResponse("Error executing mbean: " + e.getMessage()));
-        }
+        logger.info("Starting mbean execution: {}", cmd.toString());
+        return executeSync(toolContext, cmd.toString());
     }
 }
