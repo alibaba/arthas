@@ -19,6 +19,8 @@ import java.io.InputStream;
 public class AsyncProfiler implements AsyncProfilerMXBean {
     private static AsyncProfiler instance;
 
+    baiduhello
+
     private AsyncProfiler() {
     }
 
