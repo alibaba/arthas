@@ -130,7 +130,7 @@ public class ArthasBanner {
         }
         table.row("pid", PidUtils.currentPid())
              .row("start_time", DateUtils.getStartDateTime())
-             .row("currnt_time", DateUtils.getCurrentDateTime());
+             .row("current_time", DateUtils.getCurrentDateTime());
         for (Entry<String, String> entry : infos.entrySet()) {
             table.row(entry.getKey(), entry.getValue());
         }
