@@ -130,7 +130,8 @@ public abstract class AbstractArthasTool {
 
     protected void addParameter(StringBuilder cmd, String value) {
         if (value != null && !value.trim().isEmpty()) {
-            cmd.append(" ").append(value.trim());
+            // Safely quote the value to prevent command injection
+            cmd.append(" '").append(value.trim().replace("'", "'\\''")).append("'");
         }
     }
 
