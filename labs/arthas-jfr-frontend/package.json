@@ -21,6 +21,7 @@
     "@types/react": "^18.2.41",
     "@types/react-dom": "^18.2.17",
     "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.2.1",
     "less": "^4.3.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.8"
