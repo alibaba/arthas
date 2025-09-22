@@ -1,14 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class ClassLoaderTool {
+public class ClassLoaderTool extends AbstractArthasTool {
 
     public static final String MODE_STATS = "stats";
     public static final String MODE_INSTANCES = "instances";
@@ -37,9 +34,7 @@ public class ClassLoaderTool {
             String loadClass,
 
             ToolContext toolContext) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-
-        StringBuilder cmd = new StringBuilder("classloader");
+        StringBuilder cmd = buildCommand("classloader");
 
         if (mode != null) {
             switch (mode.toLowerCase()) {
@@ -62,19 +57,15 @@ public class ClassLoaderTool {
         }
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
-            cmd.append(" -c ").append(classLoaderHash.trim());
+            addParameter(cmd, "-c", classLoaderHash);
         } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-            cmd.append(" --classLoaderClass ").append(classLoaderClass.trim());
+            addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
 
-        if (resource != null && !resource.trim().isEmpty()) {
-            cmd.append(" -r ").append(resource.trim());
-        }
+        addParameter(cmd, "-r", resource);
 
-        if (loadClass != null && !loadClass.trim().isEmpty()) {
-            cmd.append(" --load ").append(loadClass.trim());
-        }
+        addParameter(cmd, "--load", loadClass);
 
-        return JsonParser.toJson(commandContext.executeSync(cmd.toString()));
+        return executeSync(toolContext, cmd.toString());
     }
 }

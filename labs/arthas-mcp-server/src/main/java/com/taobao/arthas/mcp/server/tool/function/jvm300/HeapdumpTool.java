@@ -1,22 +1,18 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class HeapdumpTool {
+public class HeapdumpTool extends AbstractArthasTool {
 
     public static final String DEFAULT_DUMP_DIR = Paths.get("arthas-output").toAbsolutePath().toString().replace("\\", "/");
 
@@ -41,8 +37,6 @@ public class HeapdumpTool {
 
             ToolContext toolContext
     ) throws IOException {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-
         String finalFilePath;
 
         if (filePath != null && !filePath.trim().isEmpty()) {
@@ -58,13 +52,10 @@ public class HeapdumpTool {
             finalFilePath = Paths.get(DEFAULT_DUMP_DIR, defaultFileName).toString().replace("\\", "/");
         }
 
-        StringBuilder cmd = new StringBuilder("heapdump");
-        if (Boolean.TRUE.equals(live)) {
-            cmd.append(" --live");
-        }
+        StringBuilder cmd = buildCommand("heapdump");
+        addFlag(cmd, "--live", live);
         cmd.append(" ").append(finalFilePath);
 
-        String commandStr = cmd.toString();
-        return JsonParser.toJson(commandContext.executeSync(commandStr));
+        return executeSync(toolContext, cmd.toString());
     }
 }

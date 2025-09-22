@@ -1,12 +1,5 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
-import java.nio.charset.Charset;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.Subject;
-
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.ArthasConstants;
@@ -18,21 +11,23 @@ import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSession;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.util.StringUtils;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.base64.Base64;
-import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.*;
 import io.netty.util.Attribute;
+
+import javax.security.auth.Subject;
+import java.nio.charset.Charset;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+
+import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.SUBJECT_ATTRIBUTE_KEY;
+
 
 /**
  * 
@@ -67,10 +62,9 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                 authed = true;
             }
 
+            boolean isMcpRequest = isMcpRequest(httpRequest);
             Principal principal = null;
             if (!authed) {
-                boolean isMcpRequest = isMcpRequest(httpRequest);
-                
                 if (isMcpRequest) {
                     principal = extractMcpAuthSubject(httpRequest);
                 } else {
@@ -90,13 +84,13 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                 if (session != null) {
                     session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
                 }
+                ctx.channel().attr(SUBJECT_ATTRIBUTE_KEY).set(subject);
             }
 
             if (!authed) {
                 // restricted resource, so send back 401 to require valid username/password
                 HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
 
-                boolean isMcpRequest = isMcpRequest(httpRequest);
                 if (isMcpRequest) {
                     response.headers().add(HttpHeaderNames.WWW_AUTHENTICATE, "Bearer realm=\"arthas mcp\"")
                                        .add(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas mcp\"");
@@ -202,7 +196,17 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
     protected static boolean isMcpRequest(HttpRequest request) {
         try {
             String path = new java.net.URI(request.uri()).getPath();
-            return path != null && path.endsWith("/mcp");
+            if (path == null) {
+                return false;
+            }
+
+            String mcpEndpoint = ArthasBootstrap.getInstance().getConfigure().getMcpEndpoint();
+            if (mcpEndpoint == null || mcpEndpoint.trim().isEmpty()) {
+                // MCP 服务器未配置，不处理 MCP 请求
+                return false;
+            }
+            
+            return mcpEndpoint.equals(path);
         } catch (Exception e) {
             logger.debug("Failed to parse request URI: {}", request.uri(), e);
             return false;

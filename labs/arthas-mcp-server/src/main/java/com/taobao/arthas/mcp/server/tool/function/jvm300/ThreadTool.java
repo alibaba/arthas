@@ -1,20 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import java.util.Map;
-
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.*;
-
-public class ThreadTool {
-
-    private static final Logger logger = LoggerFactory.getLogger(ThreadTool.class);
+public class ThreadTool extends AbstractArthasTool {
 
     /**
      * thread 诊断工具: 查看线程信息及堆栈
@@ -43,26 +34,18 @@ public class ThreadTool {
 
             ToolContext toolContext
     ) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
+        StringBuilder cmd = buildCommand("thread");
 
-        StringBuilder cmd = new StringBuilder("thread");
-
-        if (Boolean.TRUE.equals(blocking)) {
-            cmd.append(" -b");
-        }
+        addFlag(cmd, "-b", blocking);
         if (topN != null && topN > 0) {
             cmd.append(" -n ").append(topN);
         }
-        if (Boolean.TRUE.equals(all)) {
-            cmd.append(" --all");
-        }
+        addFlag(cmd, "--all", all);
         if (threadId != null && threadId > 0) {
             cmd.append(" ").append(threadId);
         }
 
-        String commandStr = cmd.toString();
-        logger.info("Executing thread command: {}", commandStr);
-
-        return JsonParser.toJson(commandContext.executeSync(commandStr));
+        logger.info("Executing thread command: {}", cmd.toString());
+        return executeSync(toolContext, cmd.toString());
     }
 }

@@ -1,22 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.monitor200;
 
-import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import java.util.Map;
-
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.*;
-import static com.taobao.arthas.mcp.server.tool.function.StreamableToolUtils.*;
-
-public class TimeTunnelTool {
-
-    private static final Logger logger = LoggerFactory.getLogger(TimeTunnelTool.class);
+public class TimeTunnelTool extends AbstractArthasTool {
 
     public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_POLL_INTERVAL_MS = 100;
@@ -61,78 +50,43 @@ public class TimeTunnelTool {
 
             ToolContext toolContext
     ) {
-        McpNettyServerExchange exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
-        String progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
-
         String ttAction = normalizeAction(action);
-        int execCount = (numberOfExecutions != null && numberOfExecutions > 0) ? numberOfExecutions : DEFAULT_NUMBER_OF_EXECUTIONS;
-        int maxMatch = (maxMatchCount != null && maxMatchCount > 0) ? maxMatchCount : DEFAULT_MAX_MATCH_COUNT;
+        int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
+        int maxMatch = getDefaultValue(maxMatchCount, DEFAULT_MAX_MATCH_COUNT);
 
         validateParameters(ttAction, classPattern, methodPattern, index, searchExpression);
 
-        try {
-            StringBuilder cmd = new StringBuilder("tt");
+        StringBuilder cmd = buildCommand("tt");
 
-            switch (ttAction) {
-                case "record":
-                    cmd = buildRecordCommand(cmd, classPattern, methodPattern, condition, execCount, maxMatch, regex);
-                    break;
-
-                case "list":
-                    cmd = buildListCommand(cmd, searchExpression);
-                    break;
-
-                case "info":
-                    cmd.append(" -i ").append(index);
-                    break;
-
-                case "search":
-                    cmd.append(" -s '").append(searchExpression.trim()).append("'");
-                    break;
-
-                case "replay":
-                    cmd.append(" -i ").append(index).append(" -p");
-                    break;
-
-                case "delete":
-                    cmd.append(" -i ").append(index).append(" -d");
-                    break;
-
-                case "deleteall":
-                    cmd.append(" --delete-all");
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Unsupported action: " + ttAction +
-                            ". Supported actions: record(t), list(l), info(i), search(s), replay(p), delete(d), deleteAll(da)");
-            }
-
-            String commandStr = cmd.toString();
-            logger.info("Starting TimeTunnel execution: {}", commandStr);
-
-            if ("record".equals(ttAction)) {
-                Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
-                logger.debug("Async execution started: {}", asyncResult);
-                
-                Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, DEFAULT_POLL_INTERVAL_MS, progressToken);
-                if (results != null) {
-                    return JsonParser.toJson(createCompletedResponse("TimeTunnel recording completed successfully", results));
-                } else {
-                    return JsonParser.toJson(createErrorResponse("TimeTunnel recording failed due to timeout or error limits exceeded"));
-                }
-            } else {
-                // list/info/search/replay/delete/deleteAll：使用同步执行，直接返回结果
-                logger.info("Executing sync tt command: {}", commandStr);
-                Map<String, Object> result = commandContext.executeSync(commandStr);
-                return JsonParser.toJson(result);
-            }
-
-        } catch (Exception e) {
-            logger.error("Error executing tt command", e);
-            return JsonParser.toJson(createErrorResponse("Error executing tt: " + e.getMessage()));
+        switch (ttAction) {
+            case "record":
+                cmd = buildRecordCommand(cmd, classPattern, methodPattern, condition, execCount, maxMatch, regex);
+                break;
+            case "list":
+                cmd = buildListCommand(cmd, searchExpression);
+                break;
+            case "info":
+                cmd.append(" -i ").append(index);
+                break;
+            case "search":
+                cmd.append(" -s '").append(searchExpression.trim()).append("'");
+                break;
+            case "replay":
+                cmd.append(" -i ").append(index).append(" -p");
+                break;
+            case "delete":
+                cmd.append(" -i ").append(index).append(" -d");
+                break;
+            case "deleteall":
+                cmd.append(" --delete-all");
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported action: " + ttAction +
+                        ". Supported actions: record(t), list(l), info(i), search(s), replay(p), delete(d), deleteAll(da)");
         }
+
+        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS,
+                "TimeTunnel recording completed successfully");
     }
 
     /**

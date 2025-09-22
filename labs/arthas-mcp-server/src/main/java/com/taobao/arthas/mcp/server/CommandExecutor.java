@@ -10,10 +10,14 @@ import java.util.Map;
 public interface CommandExecutor {
 
     default Map<String, Object> executeSync(String commandLine, long timeout) {
-        return executeSync(commandLine, timeout, null);
+        return executeSync(commandLine, timeout, null, null);
     }
 
-    Map<String, Object> executeSync(String commandLine, long timeout, String sessionId);
+    default Map<String, Object> executeSync(String commandLine, Object authSubject) {
+        return executeSync(commandLine, 30000L, null, authSubject);
+    }
+
+    Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject);
 
     Map<String, Object> executeAsync(String commandLine, String sessionId);
 
@@ -24,5 +28,7 @@ public interface CommandExecutor {
     Map<String, Object> createSession();
 
     Map<String, Object> closeSession(String sessionId);
+
+    void setSessionAuth(String sessionId, Object authSubject);
 }
 

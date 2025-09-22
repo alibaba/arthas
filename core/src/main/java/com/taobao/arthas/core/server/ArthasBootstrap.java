@@ -469,12 +469,15 @@ public class ArthasBootstrap {
             httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
             // Mcp Server
-            CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
-            ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor);
-            this.mcpRequestHandler = arthasMcpBootstrap.start().getMcpRequestHandler();
-
-            logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
-                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+            String mcpEndpoint = configure.getMcpEndpoint();
+            if (mcpEndpoint != null && !mcpEndpoint.trim().isEmpty()) {
+                logger().info("try to start mcp server, endpoint: {}.", mcpEndpoint);
+                CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
+                ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint);
+                this.mcpRequestHandler = arthasMcpBootstrap.start().getMcpRequestHandler();
+            }
+            logger().info("as-server listening on network={};telnet={};http={};timeout={};mcp={};", configure.getIp(),
+                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout(), configure.getMcpEndpoint());
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {

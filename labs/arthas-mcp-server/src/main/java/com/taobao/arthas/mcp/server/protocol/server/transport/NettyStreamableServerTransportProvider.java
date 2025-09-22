@@ -15,6 +15,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
+import static com.taobao.arthas.mcp.server.ArthasMcpServer.DEFAULT_MCP_ENDPOINT;
+
 /**
  * Server-side implementation of the Model Context Protocol (MCP) streamable transport
  * layer using HTTP with Server-Sent Events (SSE) through Netty. This implementation
@@ -98,7 +100,7 @@ public class NettyStreamableServerTransportProvider implements McpStreamableServ
     public static class Builder {
 
         private ObjectMapper objectMapper;
-        private String mcpEndpoint = "/mcp";
+        private String mcpEndpoint = DEFAULT_MCP_ENDPOINT;
         private boolean disallowDelete = false;
         private McpTransportContextExtractor<FullHttpRequest> contextExtractor = (serverRequest, context) -> context;
         private Duration keepAliveInterval;
