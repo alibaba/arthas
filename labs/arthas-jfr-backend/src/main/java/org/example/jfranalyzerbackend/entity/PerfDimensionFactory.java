@@ -1,4 +1,6 @@
+
 package org.example.jfranalyzerbackend.entity;
+
 
 
 import org.example.jfranalyzerbackend.enums.Unit;

@@ -1,8 +1,5 @@
 import React, { useState, useRef, useCallback, useLayoutEffect, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { toReadableValue, formatByteValue } from '../../utils/format';
-import '../../components/FlameGraph/flame-graph-core.js';
-import '../../components/FlameGraph/flame-graph-class.js';
-import '../../components/FlameGraph/flame-graph-component.js';
 
 interface ReactFlameGraphWrapperProps {
   data: any;

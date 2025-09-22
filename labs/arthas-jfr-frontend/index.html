@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <title>JFR 文件分析</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 火焰图相关脚本 - 按顺序加载 -->
+    <script src="/flame-graph/flame-graph-core.js"></script>
+    <script src="/flame-graph/flame-graph-class.js"></script>
+    <script src="/flame-graph/flame-graph-component.js"></script>
+    <script>
+      // 确保脚本加载完成
+      window.addEventListener('load', function() {
+        console.log('Flame graph scripts loaded:', {
+          Frame: typeof window.Frame,
+          FlameGraph: typeof window.FlameGraph
+        });
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
