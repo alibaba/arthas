@@ -74,6 +74,11 @@ public class Configure {
      */
     private Boolean localConnectionNonAuth;
 
+    /**
+     * MCP (Model Context Protocol) endpoint path
+     */
+    private String mcpEndpoint;
+
     public String getIp() {
         return ip;
     }
@@ -208,6 +213,14 @@ public class Configure {
 
     public void setLocalConnectionNonAuth(boolean localConnectionNonAuth) {
         this.localConnectionNonAuth = localConnectionNonAuth;
+    }
+
+    public String getMcpEndpoint() {
+        return mcpEndpoint;
+    }
+
+    public void setMcpEndpoint(String mcpEndpoint) {
+        this.mcpEndpoint = mcpEndpoint;
     }
 
     /**

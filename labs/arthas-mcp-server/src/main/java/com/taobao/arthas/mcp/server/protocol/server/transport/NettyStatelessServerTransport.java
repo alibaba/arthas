@@ -14,6 +14,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.taobao.arthas.mcp.server.ArthasMcpServer.DEFAULT_MCP_ENDPOINT;
+
 /**
  * Server-side implementation of the Model Context Protocol (MCP) stateless transport
  * layer using HTTP through Netty. This implementation provides a bridge between 
@@ -81,7 +83,7 @@ public class NettyStatelessServerTransport implements McpStatelessServerTranspor
     public static class Builder {
 
         private ObjectMapper objectMapper;
-        private String mcpEndpoint = "/mcp";
+        private String mcpEndpoint = DEFAULT_MCP_ENDPOINT;
         private McpTransportContextExtractor<FullHttpRequest> contextExtractor = (serverRequest, context) -> context;
 
         public Builder objectMapper(ObjectMapper objectMapper) {

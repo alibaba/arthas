@@ -1,16 +1,13 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
 import java.nio.file.Paths;
 
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class MemoryCompilerTool {
+public class MemoryCompilerTool extends AbstractArthasTool {
 
     public static final String DEFAULT_DUMP_DIR = Paths.get("arthas-output").toAbsolutePath().toString();
 
@@ -32,24 +29,22 @@ public class MemoryCompilerTool {
             String outputDir,
 
             ToolContext toolContext) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
+        StringBuilder cmd = buildCommand("mc");
 
-        StringBuilder cmd = new StringBuilder("mc");
-
-        cmd.append(" ").append(javaFilePaths);
+        addParameter(cmd, javaFilePaths);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
-            cmd.append(" -c ").append(classLoaderHash.trim());
+            addParameter(cmd, "-c", classLoaderHash);
         } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-            cmd.append(" --classLoaderClass ").append(classLoaderClass.trim());
+            addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
 
         if (outputDir != null && !outputDir.trim().isEmpty()) {
-            cmd.append(" -d ").append(outputDir.trim());
-        }else {
+            addParameter(cmd, "-d", outputDir);
+        } else {
             cmd.append(" -d ").append(DEFAULT_DUMP_DIR);
         }
 
-        return JsonParser.toJson(commandContext.executeSync(cmd.toString()));
+        return executeSync(toolContext, cmd.toString());
     }
 }

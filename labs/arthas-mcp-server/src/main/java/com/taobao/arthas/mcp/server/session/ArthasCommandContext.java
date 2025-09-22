@@ -48,10 +48,8 @@ public class ArthasCommandContext {
     public Map<String, Object> executeSync(String commandLine, long timeout) {
         return commandExecutor.executeSync(commandLine, timeout);
     }
-
-    public Map<String, Object> executeSyncWithSession(String commandLine, long timeout) {
-        requireSessionSupport();
-        return commandExecutor.executeSync(commandLine, timeout, sessionBinding.getArthasSessionId());
+    public Map<String, Object> executeSync(String commandStr, Object authSubject) {
+        return commandExecutor.executeSync(commandStr, DEFAULT_SYNC_TIMEOUT, null, authSubject);
     }
 
     public Map<String, Object> executeAsync(String commandLine) {

@@ -1,16 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.klass100;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import java.nio.file.Paths;
-
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class DumpClassTool {
+public class DumpClassTool extends AbstractArthasTool {
 
     /**
      * Dump 命令 - 将JVM中已加载的类字节码导出到指定目录
@@ -40,29 +35,24 @@ public class DumpClassTool {
             Integer limit,
 
             ToolContext toolContext) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        StringBuilder cmd = new StringBuilder("dump");
+        StringBuilder cmd = buildCommand("dump");
 
-        cmd.append(" ").append(classPattern);
+        addParameter(cmd, classPattern);
 
-        if (outputDir != null && !outputDir.trim().isEmpty()) {
-            cmd.append(" -d ").append(outputDir.trim());
-        }
+        addParameter(cmd, "-d", outputDir);
 
         if (classLoaderHashcode != null && !classLoaderHashcode.trim().isEmpty()) {
-            cmd.append(" -c ").append(classLoaderHashcode.trim());
+            addParameter(cmd, "-c", classLoaderHashcode);
         } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-            cmd.append(" --classLoaderClass ").append(classLoaderClass.trim());
+            addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
 
-        if (Boolean.TRUE.equals(includeInnerClasses)) {
-            cmd.append(" --include-inner-classes");
-        }
+        addFlag(cmd, "--include-inner-classes", includeInnerClasses);
 
         if (limit != null && limit > 0) {
             cmd.append(" --limit ").append(limit);
         }
 
-        return JsonParser.toJson(commandContext.executeSync(cmd.toString()));
+        return executeSync(toolContext, cmd.toString());
     }
 }

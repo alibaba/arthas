@@ -34,8 +34,7 @@ public class ArthasMcpServer {
     private McpNettyServer streamableServer;
     private McpStatelessNettyServer statelessServer;
 
-    private final int port;
-    private final String bindAddress;
+    private final String mcpEndpoint;
 
     private final CommandExecutor commandExecutor;
 
@@ -44,14 +43,11 @@ public class ArthasMcpServer {
     private McpStreamableHttpRequestHandler streamableHandler;
 
     private McpStatelessHttpRequestHandler statelessHandler;
+
+    public static final String DEFAULT_MCP_ENDPOINT = "/mcp";
     
-    public ArthasMcpServer(CommandExecutor commandExecutor) {
-        this(8080, "localhost", commandExecutor);
-    }
-    
-    public ArthasMcpServer(int port, String bindAddress, CommandExecutor commandExecutor) {
-        this.port = port;
-        this.bindAddress = bindAddress;
+    public ArthasMcpServer(String mcpEndpoint, CommandExecutor commandExecutor) {
+        this.mcpEndpoint = mcpEndpoint != null ? mcpEndpoint : DEFAULT_MCP_ENDPOINT;
         this.commandExecutor = commandExecutor;
     }
 
@@ -63,14 +59,11 @@ public class ArthasMcpServer {
      * Start MCP server
      */
     public void start() {
-        logger.info("Starting Arthas MCP server on {}:{}", bindAddress, port);
         try {
             McpServerProperties properties = new McpServerProperties.Builder()
                     .name("arthas-mcp-server")
                     .version("1.0.0")
-                    .bindAddress(bindAddress)
-                    .port(port)
-                    .mcpEndpoint("/mcp")
+                    .mcpEndpoint(mcpEndpoint)
                     .toolChangeNotification(true)
                     .resourceChangeNotification(true)
                     .promptChangeNotification(true)
@@ -125,7 +118,6 @@ public class ArthasMcpServer {
             statelessServer = statelessServerNettySpecification.build();
             
             logger.info("Arthas MCP server started successfully");
-            logger.info("- Listening on {}:{}", bindAddress, port);
             logger.info("- MCP Endpoint: {}", properties.getMcpEndpoint());
             logger.info("- Transport modes: Streamable + Stateless");
             logger.info("- Available tools: {}", providerToolCallbacks.size());

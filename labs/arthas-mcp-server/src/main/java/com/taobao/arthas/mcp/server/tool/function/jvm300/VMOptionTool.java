@@ -1,14 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class VMOptionTool {
+public class VMOptionTool extends AbstractArthasTool {
 
     @Tool(
         name = "vmoption",
@@ -23,15 +20,13 @@ public class VMOptionTool {
 
             ToolContext toolContext
     ) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        StringBuilder cmd = new StringBuilder("vmoption");
+        StringBuilder cmd = buildCommand("vmoption");
         if (key != null && !key.trim().isEmpty()) {
             cmd.append(" ").append(key.trim());
             if (value != null && !value.trim().isEmpty()) {
                 cmd.append(" ").append(value.trim());
             }
         }
-        String commandStr = cmd.toString();
-        return JsonParser.toJson(commandContext.executeSync(commandStr));
+        return executeSync(toolContext, cmd.toString());
     }
 }

@@ -1,22 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
-import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import java.util.Map;
-
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.*;
-import static com.taobao.arthas.mcp.server.tool.function.StreamableToolUtils.*;
-
-public class DashboardTool {
-
-    private static final Logger logger = LoggerFactory.getLogger(DashboardTool.class);
+public class DashboardTool extends AbstractArthasTool {
 
     public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
     public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
@@ -41,41 +30,14 @@ public class DashboardTool {
 
             ToolContext toolContext
     ) {
-        McpNettyServerExchange exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
-        String progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
+        int interval = getDefaultValue(intervalMs, DEFAULT_REFRESH_INTERVAL_MS);
+        int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
 
-        int interval = (intervalMs != null && intervalMs > 0) ? intervalMs : DEFAULT_REFRESH_INTERVAL_MS;
-        int execCount = (numberOfExecutions != null && numberOfExecutions > 0) ? numberOfExecutions : DEFAULT_NUMBER_OF_EXECUTIONS;
+        StringBuilder cmd = buildCommand("dashboard");
+        cmd.append(" -i ").append(interval);
+        cmd.append(" -n ").append(execCount);
 
-        try {
-            StringBuilder cmd = new StringBuilder("dashboard");
-            cmd.append(" -i ").append(interval);
-            cmd.append(" -n ").append(execCount);
-            String commandStr = cmd.toString();
-            logger.info("Starting dashboard execution: {}", commandStr);
-
-            // 如果只执行一次，使用同步执行
-            if (execCount == 1) {
-                logger.info("Executing sync dashboard command: {}", commandStr);
-                Map<String, Object> result = commandContext.executeSync(commandStr);
-                return JsonParser.toJson(result);
-            } else {
-                Map<String, Object> asyncResult = commandContext.executeAsync(commandStr);
-                logger.debug("Async execution started: {}", asyncResult);
-                
-                Map<String, Object> results = executeAndCollectResults(exchange, commandContext, execCount, interval / 10, progressToken);
-                if (results != null) {
-                    return JsonParser.toJson(createCompletedResponse("Dashboard execution completed successfully", results));
-                } else {
-                    return JsonParser.toJson(createErrorResponse("Dashboard execution failed due to timeout or error limits exceeded"));
-                }
-            }
-
-        } catch (Exception e) {
-            logger.error("Error executing dashboard command", e);
-            return JsonParser.toJson(createErrorResponse("Error executing dashboard: " + e.getMessage()));
-        }
+        return executeStreamable(toolContext, cmd.toString(), execCount, interval / 10,
+                "Dashboard execution completed successfully");
     }
 }

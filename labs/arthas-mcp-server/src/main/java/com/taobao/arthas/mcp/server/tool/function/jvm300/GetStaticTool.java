@@ -1,14 +1,11 @@
 package com.taobao.arthas.mcp.server.tool.function.jvm300;
 
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
-import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.tool.function.AbstractArthasTool;
 
-import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.TOOL_CONTEXT_COMMAND_CONTEXT_KEY;
-
-public class GetStaticTool {
+public class GetStaticTool extends AbstractArthasTool {
 
 
     @Tool(
@@ -33,23 +30,21 @@ public class GetStaticTool {
 
             ToolContext toolContext
     ) {
-        ArthasCommandContext commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
-        StringBuilder cmd = new StringBuilder("getstatic");
+        StringBuilder cmd = buildCommand("getstatic");
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
-            cmd.append(" -c ").append(classLoaderHash.trim());
+            addParameter(cmd, "-c", classLoaderHash);
+        } else if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
+            addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
-        if (classLoaderClass != null && !classLoaderClass.trim().isEmpty()) {
-            cmd.append(" --classLoaderClass ").append(classLoaderClass.trim());
-        }
-        cmd.append(" ").append(className.trim());
-        cmd.append(" ").append(fieldName.trim());
+
+        addParameter(cmd, className);
+        addParameter(cmd, fieldName);
 
         if (ognlExpression != null && !ognlExpression.trim().isEmpty()) {
             cmd.append(" ").append(ognlExpression.trim());
         }
 
-        String commandStr = cmd.toString();
-        return JsonParser.toJson(commandContext.executeSync(commandStr));
+        return executeSync(toolContext, cmd.toString());
     }
 }
