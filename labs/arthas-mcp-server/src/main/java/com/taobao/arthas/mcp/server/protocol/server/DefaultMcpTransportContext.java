@@ -33,7 +33,11 @@ public class DefaultMcpTransportContext implements McpTransportContext {
 
 	@Override
 	public void put(String key, Object value) {
-		this.storage.put(key, value);
+		if (value != null) {
+			this.storage.put(key, value);
+		} else {
+			this.storage.remove(key);
+		}
 	}
 
 	/**

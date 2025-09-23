@@ -22,8 +22,7 @@ public class MBeanTool extends AbstractArthasTool {
      */
     @Tool(
         name = "mbean",
-        description = "MBean 诊断工具: 查看或监控 MBean 属性信息，对应 Arthas 的 mbean 命令。",
-        streamable = true
+        description = "MBean 诊断工具: 查看或监控 MBean 属性信息，对应 Arthas 的 mbean 命令。"
     )
     public String mbean(
             @ToolParam(description = "MBean名称表达式匹配，如java.lang:type=GarbageCollector,name=*")
