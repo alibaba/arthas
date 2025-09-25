@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStreamWriter;
 import java.lang.instrument.Instrumentation;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,6 +36,9 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.alibaba.deps.org.objectweb.asm.ClassReader.SKIP_DEBUG;
 import static com.alibaba.deps.org.objectweb.asm.ClassReader.SKIP_FRAMES;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**
  * @author: Ares
@@ -76,7 +78,7 @@ public class ReflectAnalysisCommand extends AnnotatedCommand {
     String resultFilePath = args.get(0);
     Path path = Paths.get(resultFilePath);
     if (!path.isAbsolute()) {
-      resultFilePath = TEMP_DIR + resultFilePath;
+      resultFilePath = Paths.get(TEMP_DIR, resultFilePath).toString();
     }
     return resultFilePath;
   }
@@ -137,7 +139,12 @@ public class ReflectAnalysisCommand extends AnnotatedCommand {
       for (String generatedMethodAccessorName : valueList) {
         generatedMethodAccessorNames.append(generatedMethodAccessorName).append(",");
       }
-      reflectAnalysisModel.setGeneratedMethodAccessorNames(generatedMethodAccessorNames.substring(0, generatedMethodAccessorNames.length() - 1));
+      if (generatedMethodAccessorNames.length() > 0) {
+        reflectAnalysisModel.setGeneratedMethodAccessorNames(generatedMethodAccessorNames.substring(0, generatedMethodAccessorNames.length() - 1)
+        );
+      } else {
+        reflectAnalysisModel.setGeneratedMethodAccessorNames("");
+      }
       resultList.add(reflectAnalysisModel);
     });
     resultList.sort((leftMode, rightModel) -> {
@@ -164,12 +171,9 @@ public class ReflectAnalysisCommand extends AnnotatedCommand {
     LOGGER.info("start write reflect analysis result: {} to file: {}", reflectAnalysisModelList.size(), resultFilePath);
     File file = new File(resultFilePath);
     try {
-      if (file.exists()) {
-        file.delete();
-      }
-      file.createNewFile();
       // write csv file
-      try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8))) {
+      try (BufferedWriter bufferedWriter = new BufferedWriter(
+          new OutputStreamWriter(Files.newOutputStream(file.toPath(), CREATE, TRUNCATE_EXISTING), UTF_8))) {
         bufferedWriter.write("count");
         bufferedWriter.write(",");
         bufferedWriter.write("refName");
