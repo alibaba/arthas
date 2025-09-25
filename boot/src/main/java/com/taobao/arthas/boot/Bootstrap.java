@@ -45,7 +45,8 @@ import com.taobao.middleware.cli.annotations.Summary;
  */
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
-@Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
+@Description("NOTE: Arthas 4 supports JDK 8+. If you need to diagnose applications running on JDK 6/7, you can use Arthas 3.\n\n"
+                +"EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
                 + "  java -jar arthas-boot.jar --username admin --password <password>\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
@@ -53,7 +54,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.6.8\n"
+                + "  java -jar arthas-boot.jar --use-version 4.0.5\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
@@ -428,14 +429,14 @@ public class Bootstrap {
                             + File.separator + bootstrap.getUseVersion() + File.separator + "arthas");
             if (!specialVersionDir.exists()) {
                 // try to download arthas from remote server.
-                DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
+                DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isUseHttp(),
                                 bootstrap.getUseVersion(), ARTHAS_LIB_DIR.getAbsolutePath());
             }
             verifyArthasHome(specialVersionDir.getAbsolutePath());
             arthasHomeDir = specialVersionDir;
         }
 
-        // Try set the directory where arthas-boot.jar is located to arhtas home
+        // Try set the directory where arthas-boot.jar is located to arthas home
         if (arthasHomeDir == null) {
             CodeSource codeSource = Bootstrap.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
@@ -469,16 +470,16 @@ public class Bootstrap {
             List<String> versionList = listNames(ARTHAS_LIB_DIR);
             Collections.sort(versionList);
 
-            String localLastestVersion = null;
+            String localLatestVersion = null;
             if (!versionList.isEmpty()) {
-                localLastestVersion = versionList.get(versionList.size() - 1);
+                localLatestVersion = versionList.get(versionList.size() - 1);
             }
 
-            String remoteLastestVersion = DownloadUtils.readLatestReleaseVersion();
+            String remoteLatestVersion = DownloadUtils.readLatestReleaseVersion();
 
             boolean needDownload = false;
-            if (localLastestVersion == null) {
-                if (remoteLastestVersion == null) {
+            if (localLatestVersion == null) {
+                if (remoteLatestVersion == null) {
                     // exit
                     AnsiLog.error("Can not find Arthas under local: {} and remote repo mirror: {}", ARTHAS_LIB_DIR,
                             bootstrap.getRepoMirror());
@@ -489,23 +490,23 @@ public class Bootstrap {
                     needDownload = true;
                 }
             } else {
-                if (remoteLastestVersion != null) {
-                    if (localLastestVersion.compareTo(remoteLastestVersion) < 0) {
-                        AnsiLog.info("local lastest version: {}, remote lastest version: {}, try to download from remote.",
-                                        localLastestVersion, remoteLastestVersion);
+                if (remoteLatestVersion != null) {
+                    if (localLatestVersion.compareTo(remoteLatestVersion) < 0) {
+                        AnsiLog.info("local latest version: {}, remote latest version: {}, try to download from remote.",
+                                localLatestVersion, remoteLatestVersion);
                         needDownload = true;
                     }
                 }
             }
             if (needDownload) {
                 // try to download arthas from remote server.
-                DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
-                                remoteLastestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
-                localLastestVersion = remoteLastestVersion;
+                DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isUseHttp(),
+                        remoteLatestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
+                localLatestVersion = remoteLatestVersion;
             }
 
             // get the latest version
-            arthasHomeDir = new File(ARTHAS_LIB_DIR, localLastestVersion + File.separator + "arthas");
+            arthasHomeDir = new File(ARTHAS_LIB_DIR, localLatestVersion + File.separator + "arthas");
         }
 
         verifyArthasHome(arthasHomeDir.getAbsolutePath());
@@ -784,7 +785,7 @@ public class Bootstrap {
         return repoMirror;
     }
 
-    public boolean isuseHttp() {
+    public boolean isUseHttp() {
         return useHttp;
     }
 

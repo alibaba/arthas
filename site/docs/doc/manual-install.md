@@ -93,7 +93,6 @@ as-service.bat -remove
    ```
 
    命令行分几部分组成：
-
    - `-Xbootclasspath` 增加 tools.jar
    - `-jar /tmp/arthas-packaging/arthas-core.jar` 指定 main 函数入口
    - `-pid 15146` 指定目标 java 进程 ID

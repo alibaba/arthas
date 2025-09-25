@@ -68,7 +68,7 @@ public class AuthCommand extends AnnotatedCommand {
                 message = "username can not be empty!";
                 return;
             }
-            if (password == null) { // 没有传入passowrd参数时，打印当前结果
+            if (password == null) { // 没有传入password参数时，打印当前结果
                 boolean authenticated = session.get(ArthasConstants.SUBJECT_KEY) != null;
                 boolean needLogin = this.authenticator.needLogin();
 

@@ -38,7 +38,7 @@ public class ClassUtils {
     }
 
     public static boolean isLambdaClass(Class<?> clazz) {
-        return clazz.getName().contains("$$Lambda$");
+        return clazz.getName().contains("$$Lambda");
     }
 
     public static Element renderClassInfo(ClassDetailVO clazz) {

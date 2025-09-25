@@ -135,6 +135,7 @@ Tip: you can use `--versions` to list all available versions.
 * 如果 arthas-vmtool 有更新，则需要手动触发action，构建后会把新的动态库文件提交到 lib 目录。 https://github.com/alibaba/arthas/actions/workflows/build-vmtool.yaml
 * 修改`as.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
+* 执行一次 gpg --sign /tmp/2.txt ，让 gpg 后台进程启动，否则打包可能失败
 * mvn clean deploy -DskipTests -P full -P release
 
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
@@ -146,15 +147,11 @@ Tip: you can use `--versions` to list all available versions.
     版本号信息地址： https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/maven-metadata.xml
 
 * 打上tag，push tag到仓库上
-* 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
+* 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新，可以通过 github action 更新： https://github.com/alibaba/arthas/actions/workflows/update-doc.yaml
 * 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 
-    以 3.6.5 版本为例：
-    ```
-    docker buildx build . --build-arg ARTHAS_VERSION=3.6.5 --build-arg MIRROR=true -t hengyunabc/arthas:3.6.5 -t hengyunabc/arthas:latest --platform=linux/arm64,linux/amd64 --push 
+    可以通过 github action push： https://github.com/alibaba/arthas/actions/workflows/push-docker.yaml 
 
-    docker buildx build .  --build-arg ARTHAS_VERSION=3.6.5  --build-arg MIRROR=true -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.6.5-no-jdk --platform=linux/arm64,linux/amd64  --push 
-    ```
 * 更新README.md，比如增加了新命令，要加上说明，更新wiki的链接
 * 更新release页面的 issue信息，修改信息等
 * 更新 https://arthas.aliyun.com/api/latest_version api

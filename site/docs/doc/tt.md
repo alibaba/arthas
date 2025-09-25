@@ -12,6 +12,11 @@
 
 于是乎，TimeTunnel 命令就诞生了。
 
+## 注意事项
+
+- tt 命令的实现是：把函数的入参/返回值等，保存到一个`Map<Integer, TimeFragment>`里，默认的大小是 100。
+- tt 相关功能在使用完之后，需要手动释放内存，否则长时间可能导致OOM。退出 arthas 不会自动清除 tt 的缓存 map。
+
 ## 使用参考
 
 ### 启动 Demo
@@ -48,7 +53,6 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
 ```
 
 - 命令参数解析
-
   - `-t`
 
     tt 命令有很多个主参数，`-t` 就是其中之一。这个参数的表明希望记录下类 `*Test` 的 `print` 方法的每次执行情况。
@@ -79,7 +83,6 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
 - 条件表达式
 
   不知道大家是否有在使用过程中遇到以下困惑
-
   - Arthas 似乎很难区分出重载的方法
   - 我只需要观察特定参数，但是 tt 却全部都给我记录了下来
 
@@ -228,7 +231,6 @@ Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
 高级用法 [获取 spring context 调用 bean 方法](https://github.com/alibaba/arthas/issues/482)
 
 - 需要强调的点
-
   1. **ThreadLocal 信息丢失**
 
      很多框架偷偷的将一些环境变量信息塞到了发起调用线程的 ThreadLocal 中，由于调用线程发生了变化，这些 ThreadLocal 线程信息无法通过 Arthas 保存，所以这些信息将会丢失。
@@ -238,3 +240,15 @@ Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
   2. **引用的对象**
 
      需要强调的是，`tt` 命令是将当前环境的对象引用保存起来，但仅仅也只能保存一个引用而已。如果方法内部对入参进行了变更，或者返回的对象经过了后续的处理，那么在 `tt` 查看的时候将无法看到当时最准确的值。这也是为什么 `watch` 命令存在的意义。
+
+### 通过索引删除指定的 tt 记录
+
+```
+tt -d -i 1001
+```
+
+### 清除所有的 tt 记录
+
+```
+tt --delete-all
+```

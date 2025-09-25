@@ -134,17 +134,25 @@ public class ProxyClient {
             if (msg instanceof HttpContent) {
                 HttpContent content = (HttpContent) msg;
 
-                ByteBuf byteBuf = content.content();
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.readBytes(bytes);
+                ByteBuf byteBuf = null;
+                try{
+                    byteBuf = content.content();
+                    byte[] bytes = new byte[byteBuf.readableBytes()];
+                    byteBuf.readBytes(bytes);
 
-                simpleHttpResponse.setContent(bytes);
+                    simpleHttpResponse.setContent(bytes);
 
-                promise.setSuccess(simpleHttpResponse);
+                    promise.setSuccess(simpleHttpResponse);
 
-                if (content instanceof LastHttpContent) {
-                    ctx.close();
+                    if (content instanceof LastHttpContent) {
+                        ctx.close();
+                    }
+                }finally {
+                    if (byteBuf != null) {
+                        byteBuf.release();
+                    }
                 }
+
             }
         }
 

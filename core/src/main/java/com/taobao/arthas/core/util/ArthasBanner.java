@@ -112,13 +112,25 @@ public class ArthasBanner {
 
     public static String welcome(Map<String, String> infos) {
         logger.info("Current arthas version: {}, recommend latest version: {}", version(), latestVersion());
+        String appName = System.getProperty("project.name");
+        if (appName == null) {
+            appName = System.getProperty("app.name");
+        }
+        if (appName == null) {
+            appName = System.getProperty("spring.application.name");
+        }
         TableElement table = new TableElement().rightCellPadding(1)
                         .row("wiki", wiki())
                         .row("tutorials", tutorials())
                         .row("version", version())
-                        .row("main_class", PidUtils.mainClass())
-                        .row("pid", PidUtils.currentPid())
-                        .row("time", DateUtils.getCurrentDateTime());
+                        .row("main_class", PidUtils.mainClass());
+
+        if (appName != null) {
+            table.row("app_name", appName);
+        }
+        table.row("pid", PidUtils.currentPid())
+             .row("start_time", DateUtils.getStartDateTime())
+             .row("current_time", DateUtils.getCurrentDateTime());
         for (Entry<String, String> entry : infos.entrySet()) {
             table.row(entry.getKey(), entry.getValue());
         }
@@ -127,14 +139,29 @@ public class ArthasBanner {
     }
 
     static String latestVersion() {
+        final String[] version = { "" };
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URLConnection urlConnection = openURLConnection(ARTHAS_LATEST_VERSIONS_URL);
+                    InputStream inputStream = urlConnection.getInputStream();
+                    version[0] = com.taobao.arthas.common.IOUtils.toString(inputStream).trim();
+                } catch (Throwable e) {
+                    logger.debug("get latest version error", e);
+                }
+            }
+        });
+
+        thread.setDaemon(true);
+        thread.start();
         try {
-            URLConnection urlConnection = openURLConnection(ARTHAS_LATEST_VERSIONS_URL);
-            InputStream inputStream = urlConnection.getInputStream();
-            return com.taobao.arthas.common.IOUtils.toString(inputStream).trim();
+            thread.join(2000); // Wait up to 2 seconds for the version check
         } catch (Throwable e) {
-            // ignore
+            // Ignore
         }
-        return "";
+
+        return version[0];
     }
 
     /**

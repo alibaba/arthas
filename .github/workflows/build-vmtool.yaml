@@ -11,10 +11,10 @@ jobs:
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: "8"
+          distribution: "adopt"
       - name: Build with Maven
-        run: ./mvnw package
+        run: ./mvnw -V -ntp package
       - uses: actions/upload-artifact@v3
         with:
           name: lib
@@ -27,26 +27,26 @@ jobs:
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: "8"
+          distribution: "adopt"
       - name: Build with Maven
-        run: ./mvnw package
+        run: ./mvnw -V -ntp package
       - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: arthas-vmtool/target/libArthas*
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: "8"
+          distribution: "adopt"
       - name: Build with Maven
-        run: ./mvnw package
+        run: ./mvnw -V -ntp package
       - uses: actions/upload-artifact@v3
         with:
           name: lib
@@ -73,7 +73,7 @@ jobs:
 
           run: |
             apt update && apt install openjdk-8-jdk g++ -y
-            ./mvnw package -pl common,arthas-vmtool
+            ./mvnw -V -ntp package -pl common,arthas-vmtool
             cp arthas-vmtool/target/libArthas* lib/
       - uses: actions/upload-artifact@v3
         with:

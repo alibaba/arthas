@@ -97,3 +97,32 @@ thread id 通过`-t`参数指定，可以使用 `thread`命令获取。
 ```bash
 vmtool --action interruptThread -t 1
 ```
+
+## glibc 释放空闲内存
+
+Linux man page: [malloc_trim](https://man7.org/linux/man-pages/man3/malloc_trim.3.html)
+
+```bash
+vmtool --action mallocTrim
+```
+
+## glibc 内存状态
+
+内存状态将会输出到应用的 stderr。Linux man page: [malloc_stats](https://man7.org/linux/man-pages/man3/malloc_stats.3.html)
+
+```bash
+vmtool --action mallocStats
+```
+
+输出到 stderr 的内容如下：
+
+```
+Arena 0:
+system bytes     =     135168
+in use bytes     =      74352
+Total (incl. mmap):
+system bytes     =     135168
+in use bytes     =      74352
+max mmap regions =          0
+max mmap bytes   =          0
+```

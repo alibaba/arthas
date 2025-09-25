@@ -587,7 +587,7 @@ public class ObjectView implements View {
                 appendStringBuilder(buf, format("@%s[%s]", className, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS").format(obj)));
             }
 
-            else if (object instanceof Enum<?>) {
+            else if (obj instanceof Enum<?>) {
                 appendStringBuilder(buf, format("@%s[%s]", className, obj));
             }
 

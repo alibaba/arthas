@@ -6,8 +6,9 @@ import { WebglAddon } from "xterm-addon-webgl"
 import { MenuAlt2Icon } from "@heroicons/vue/outline"
 import fullPic from "~/assert/fullsc.png"
 import arthasLogo from "~/assert/arthas.png"
-const { isTunnel = false } = defineProps<{
+const { isTunnel = false, isNativeAgent = false} = defineProps<{
   isTunnel?: boolean
+  isNativeAgent?: boolean
 }>()
 
 let ws: WebSocket | undefined;
@@ -21,6 +22,7 @@ const port = ref('')
 const iframe = ref(true)
 const fullSc = ref(true)
 const agentID = ref('')
+const nativeAgentAddress = ref('')
 const outputHerf = computed(() => {
   console.log(agentID.value)
   return isTunnel?`proxy/${agentID.value}/arthas-output/`:`/arthas-output/`
@@ -33,6 +35,7 @@ let xterm = new Terminal({ allowProposedApi: true })
 onMounted(() => {
   ip.value = getUrlParam('ip') ?? window.location.hostname;
   port.value = getUrlParam('port') ?? ARTHAS_PORT;
+  if (isNativeAgent) nativeAgentAddress.value = getUrlParam("nativeAgentAddress") ?? ""
   if (isTunnel) agentID.value = getUrlParam("agentId") ?? ""
   let _iframe = getUrlParam('iframe')
   if (_iframe && _iframe.trim() !== 'false') iframe.value = false
@@ -55,6 +58,7 @@ function getUrlParam(name: string) {
 
 function getWsUri() {
   const host = `${ip.value}:${port.value}`
+  if (isNativeAgent) return `ws://${host}/ws?nativeAgentAddress=${nativeAgentAddress.value}`;
   if (!isTunnel) return `ws://${host}/ws`;
   const path = getUrlParam("path") ?? 'ws'
   const _targetServer = getUrlParam("targetServer")

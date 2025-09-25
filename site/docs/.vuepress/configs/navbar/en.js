@@ -20,4 +20,13 @@ export const navbarEN = [
     text: "DOWNLOAD",
     link: "/en/doc/download.md",
   },
+  {
+    text: "VERSIONS",
+    children: [
+      {
+        text: "v3.x",
+        link: "https://arthas.aliyun.com/3.x/en/",
+      },
+    ],
+  },
 ];

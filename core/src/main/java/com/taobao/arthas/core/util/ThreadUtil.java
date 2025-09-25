@@ -266,6 +266,9 @@ abstract public class ThreadUtil {
     }
 
     public static String getFullStacktrace(BusyThreadInfo threadInfo, int lockIdentityHashCode, int blockingThreadCount) {
+        if (threadInfo == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder("\"" + threadInfo.getName() + "\"");
         if (threadInfo.getId() > 0) {
             sb.append(" Id=").append(threadInfo.getId());

@@ -8,6 +8,24 @@ For questions that are not in this list, please search in issues. [https://githu
 
 Log file path: `~/logs/arthas/arthas.log`
 
+### telnet: connect to address 127.0.0.1: Connection refused
+
+1. Check the log `~/logs/arthas/arthas.log`
+2. Check the startup parameters of `as.sh`/`arthas-boot.jar`, whether a specific `port` is specified
+3. Use `netstat` to check the process of `LISTEN 3658` port, confirm it is a `java` process, and it is the process you want to diagnose
+4. If the process of `LISTEN 3658` port is not a `java` process, then the `3658` port is already occupied. You need to specify other ports in the startup parameters of `as.sh`/`arthas-boot.jar`.
+5. After confirming the process and port, try to connect with `telnet 127.0.0.1 3658`
+
+Essentially, `arthas` will start a `tcp server` within the application java process, and then use `telnet` to connect to it.
+
+1. The port may not match
+2. The process itself may have been suspended and cannot accept new connections
+
+If there is `Arthas server already bind.` in the Arthas log
+
+1. It means that the `Arthas server` has been started before, check the file descriptors opened by the target process. If it is a `linux` environment, you can go to `/proc/$pid/fd`, use `ls -alh | grep arthas` to check whether the process has loaded the `arthas` related jar package.
+2. If not, it may be that other processes have started `arthas`, or the application has been restarted.
+
 ### How much impact does Arthas attach have on the performance of the original process?
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
