@@ -49,7 +49,7 @@ $ classloader -t
   +-jdk.internal.loader.ClassLoaders$AppClassLoader@4b85612c
     +-org.springframework.boot.loader.LaunchedURLClassLoader@7f9a81e8
 
-$ qlexpress -c 7f9a81e8 @org.springframework.boot.SpringApplication@logger
+$ qlexpress -c 7f9a81e8 org.springframework.boot.SpringApplication.logger
 @Slf4jLocationAwareLog[
     FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
     name=@String[org.springframework.boot.SpringApplication],
@@ -63,20 +63,10 @@ $
 对于只有唯一实例的 ClassLoader 可以通过 class name 指定，使用起来更加方便：
 
 ```bash
-$ qlexpress --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+$ qlexpress --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  org.springframework.boot.SpringApplication.logger
 @Slf4jLocationAwareLog[
     FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
     name=@String[org.springframework.boot.SpringApplication],
     logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
-]
-```
-
-执行多行表达式，赋值给临时变量，返回一个 List：
-
-```bash
-$ qlexpress '#value1=@System@getProperty("java.home"), #value2=@System@getProperty("java.runtime.name"), {#value1, #value2}'
-@ArrayList[
-    @String[/opt/java/8.0.181-zulu/jre],
-    @String[OpenJDK Runtime Environment],
 ]
 ```
