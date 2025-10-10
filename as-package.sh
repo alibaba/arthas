@@ -4,8 +4,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 get_local_maven_project_version()
 {
-    "$DIR/mvnw" -T 2C -Dmaven.test.skip=true -DskipTests=true -Dmaven.javadoc.skip=true org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate \
-     -Dexpression=project.version -f $DIR/pom.xml -B | grep -e '^[^\[]' | cut -b 1-5
+    "$DIR/mvnw" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
+     -Dexpression=project.version -q -DforceStdout -f "$DIR/pom.xml"
 }
 
 "$DIR/mvnw" -version
