@@ -1,37 +1,33 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
-import java.nio.charset.Charset;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.Subject;
-
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.security.AuthUtils;
 import com.taobao.arthas.core.security.BasicPrincipal;
+import com.taobao.arthas.core.security.BearerPrincipal;
 import com.taobao.arthas.core.security.SecurityAuthenticator;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSession;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.util.StringUtils;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.base64.Base64;
-import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.*;
 import io.netty.util.Attribute;
+
+import javax.security.auth.Subject;
+import java.nio.charset.Charset;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+
+import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.SUBJECT_ATTRIBUTE_KEY;
+
 
 /**
  * 
@@ -66,13 +62,16 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                 authed = true;
             }
 
+            boolean isMcpRequest = isMcpRequest(httpRequest);
             Principal principal = null;
             if (!authed) {
-                // 判断请求header里是否带有 username/password
-                principal = extractBasicAuthSubject(httpRequest);
-                if (principal == null) {
-                    // 判断 url里是否有 username/password
-                    principal = extractBasicAuthSubjectFromUrl(httpRequest);
+                if (isMcpRequest) {
+                    principal = extractMcpAuthSubject(httpRequest);
+                } else {
+                    principal = extractBasicAuthSubject(httpRequest);
+                    if (principal == null) {
+                        principal = extractBasicAuthSubjectFromUrl(httpRequest);
+                    }
                 }
             }
             if (!authed && principal == null) {
@@ -85,12 +84,20 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                 if (session != null) {
                     session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
                 }
+                ctx.channel().attr(SUBJECT_ATTRIBUTE_KEY).set(subject);
             }
 
             if (!authed) {
                 // restricted resource, so send back 401 to require valid username/password
                 HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-                response.headers().set(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas webconsole\"");
+
+                if (isMcpRequest) {
+                    response.headers().add(HttpHeaderNames.WWW_AUTHENTICATE, "Bearer realm=\"arthas mcp\"")
+                                       .add(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas mcp\"");
+                } else {
+                    response.headers().set(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas webconsole\"");
+                }
+                
                 response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
                 response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
 
@@ -174,6 +181,78 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                     String password = StringUtils.after(userAndPw, ":");
                     BasicPrincipal principal = new BasicPrincipal(username, password);
                     logger.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
+                    return principal;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 判断是否为MCP请求
+     * 
+     * @param request
+     */
+    protected static boolean isMcpRequest(HttpRequest request) {
+        try {
+            String path = new java.net.URI(request.uri()).getPath();
+            if (path == null) {
+                return false;
+            }
+
+            String mcpEndpoint = ArthasBootstrap.getInstance().getConfigure().getMcpEndpoint();
+            if (mcpEndpoint == null || mcpEndpoint.trim().isEmpty()) {
+                // MCP 服务器未配置，不处理 MCP 请求
+                return false;
+            }
+            
+            return mcpEndpoint.equals(path);
+        } catch (Exception e) {
+            logger.debug("Failed to parse request URI: {}", request.uri(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 为MCP请求提取认证主体，支持Bearer Token和Basic Auth两种方式
+     * 
+     * @param request
+     */
+    protected static Principal extractMcpAuthSubject(HttpRequest request) {
+        // 首先尝试Bearer Token认证
+        BearerPrincipal tokenPrincipal = extractBearerTokenSubject(request);
+        if (tokenPrincipal != null) {
+            return tokenPrincipal;
+        }
+
+        // 然后尝试Basic Auth认证
+        BasicPrincipal basicPrincipal = extractBasicAuthSubject(request);
+        if (basicPrincipal != null) {
+            return basicPrincipal;
+        }
+
+        // 最后尝试从URL参数提取
+        return extractBasicAuthSubjectFromUrl(request);
+    }
+
+    /**
+     * 从Authorization header中提取Bearer Token
+     * 
+     * @param request
+     */
+    protected static BearerPrincipal extractBearerTokenSubject(HttpRequest request) {
+        String auth = request.headers().get(HttpHeaderNames.AUTHORIZATION);
+        if (auth != null) {
+            String constraint = StringUtils.before(auth, " ");
+            if (constraint != null) {
+                if ("Bearer".equalsIgnoreCase(constraint.trim())) {
+                    String token = StringUtils.after(auth, " ");
+                    if (token == null || token.trim().isEmpty()) {
+                        logger.error("Extracted Bearer Token failed, bad auth String: {}", auth);
+                        return null;
+                    }
+                    BearerPrincipal principal = new BearerPrincipal(token.trim());
+                    logger.debug("Extracted Bearer Token principal: {}", principal);
                     return principal;
                 }
             }

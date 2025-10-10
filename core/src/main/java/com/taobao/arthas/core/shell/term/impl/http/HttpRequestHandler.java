@@ -5,6 +5,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpHttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,6 +38,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private HttpApiHandler httpApiHandler;
 
+    private McpHttpRequestHandler mcpRequestHandler;
 
     public HttpRequestHandler(String wsUri) {
         this(wsUri, ArthasBootstrap.getInstance().getOutputPath());
@@ -47,6 +49,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         this.dir = dir;
         dir.mkdirs();
         this.httpApiHandler = ArthasBootstrap.getInstance().getHttpApiHandler();
+        this.mcpRequestHandler = ArthasBootstrap.getInstance().getMcpRequestHandler();
     }
 
     @Override
@@ -65,10 +68,19 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             }
 
             boolean isFileResponseFinished = false;
+            boolean isMcpHandled = false;
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
                     response = httpApiHandler.handle(ctx, request);
+                }
+
+                //handle mcp request
+                String mcpEndpoint = mcpRequestHandler.getMcpEndpoint();
+                if (mcpEndpoint.equals(path)) {
+                    mcpRequestHandler.handle(ctx, request);
+                    isMcpHandled = true;
+                    return;
                 }
 
                 //handle webui requests
@@ -101,7 +113,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 if (response == null) {
                     response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Server error");
                 }
-                if (!isFileResponseFinished) {
+                if (!isFileResponseFinished && !isMcpHandled) {
                     ChannelFuture future = writeResponse(ctx, response);
                     future.addListener(ChannelFutureListener.CLOSE);
                 }
@@ -112,10 +124,10 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private ChannelFuture writeResponse(ChannelHandlerContext ctx, HttpResponse response) {
         // try to add content-length header for DefaultFullHttpResponse
         if (!HttpUtil.isTransferEncodingChunked(response)
-            && response instanceof DefaultFullHttpResponse) {
+                && response instanceof DefaultFullHttpResponse) {
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                ((DefaultFullHttpResponse) response).content().readableBytes());
+                    ((DefaultFullHttpResponse) response).content().readableBytes());
             return ctx.writeAndFlush(response);
         }
 
@@ -131,7 +143,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             URL res = HttpTtyConnection.class.getResource("/com/taobao/arthas/core/http" + path);
             if (res != null) {
                 fullResp = new DefaultFullHttpResponse(request.protocolVersion(),
-                    HttpResponseStatus.OK);
+                        HttpResponseStatus.OK);
                 in = res.openStream();
                 byte[] tmp = new byte[256];
                 for (int l = 0; l != -1; l = in.read(tmp)) {

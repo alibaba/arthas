@@ -83,6 +83,7 @@
         <module>labs/arthas-grpc-server</module>
         <module>labs/arthas-jfr-frontend</module>
 <!--        <module>labs/arthas-jfr-backend</module>-->
+        <module>labs/arthas-mcp-server</module>
     </modules>
 
     <properties>
@@ -138,17 +139,17 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.17</version>
+                <version>0.0.19</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>repackage-asm</artifactId>
-                <version>0.0.17</version>
+                <version>0.0.19</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
-                <version>2.0.52</version>
+                <version>2.0.58</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>

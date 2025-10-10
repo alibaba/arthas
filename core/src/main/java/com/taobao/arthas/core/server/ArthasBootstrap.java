@@ -43,6 +43,7 @@ import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.command.CommandExecutorImpl;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
@@ -77,6 +78,9 @@ import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
+import com.taobao.arthas.mcp.server.ArthasMcpBootstrap;
+import com.taobao.arthas.mcp.server.CommandExecutor;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpHttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -124,6 +128,8 @@ public class ArthasBootstrap {
     private HistoryManager historyManager;
 
     private HttpApiHandler httpApiHandler;
+
+    private McpHttpRequestHandler mcpRequestHandler;
 
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
@@ -462,8 +468,16 @@ public class ArthasBootstrap {
             //http api handler
             httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
-            logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
-                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+            // Mcp Server
+            String mcpEndpoint = configure.getMcpEndpoint();
+            if (mcpEndpoint != null && !mcpEndpoint.trim().isEmpty()) {
+                logger().info("try to start mcp server, endpoint: {}.", mcpEndpoint);
+                CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
+                ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint);
+                this.mcpRequestHandler = arthasMcpBootstrap.start().getMcpRequestHandler();
+            }
+            logger().info("as-server listening on network={};telnet={};http={};timeout={};mcp={};", configure.getIp(),
+                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout(), configure.getMcpEndpoint());
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
@@ -669,6 +683,10 @@ public class ArthasBootstrap {
 
     public HttpApiHandler getHttpApiHandler() {
         return httpApiHandler;
+    }
+
+    public McpHttpRequestHandler getMcpRequestHandler() {
+        return mcpRequestHandler;
     }
 
     public File getOutputPath() {
