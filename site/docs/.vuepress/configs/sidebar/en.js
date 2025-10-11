@@ -76,6 +76,7 @@ export const sidebarEN = {
             "/en/doc/agent.html",
             "/en/doc/spring-boot-starter.md",
             "/en/doc/http-api.md",
+            "/en/doc/mcp-server.md",
             "/en/doc/batch-support.md",
           ],
         },

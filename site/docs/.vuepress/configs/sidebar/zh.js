@@ -76,6 +76,7 @@ export const sidebarZH = {
             "/doc/agent.html",
             "/doc/spring-boot-starter.md",
             "/doc/http-api.md",
+            "/doc/mcp-server.md",
             "/doc/batch-support.md",
           ],
         },
