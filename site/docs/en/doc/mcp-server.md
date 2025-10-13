@@ -19,44 +19,44 @@ Arthas MCP Server integrates 26 core diagnostic tools, categorized by functional
 
 ### JVM-Related Tools (12)
 
-| Tool | Description |
-|------|-------------|
-| **dashboard** | Real-time JVM/application dashboard with customizable refresh interval and count control |
-| **heapdump** | Generate JVM heap dump file, supports `--live` option to export only live objects |
-| **jvm** | View current JVM detailed information |
-| **mbean** | View or monitor MBean attributes, supports real-time refresh and pattern matching |
-| **memory** | View JVM memory information |
-| **thread** | View thread information and stack traces, supports finding blocked and busiest threads |
-| **sysprop** | View or modify system properties, supports dynamic JVM system property modification |
-| **sysenv** | View system environment variables |
-| **vmoption** | View or update VM options, supports dynamic JVM parameter adjustment |
-| **perfcounter** | View Perf Counter information, displays JVM performance counters |
-| **vmtool** | VM tool collection, supports forced GC, instance retrieval, thread interruption, etc. |
-| **getstatic** | View static field values of a class |
-| **ognl** | Execute OGNL expressions, dynamically invoke methods and access fields |
+| Tool            | Description                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| **dashboard**   | Real-time JVM/application dashboard with customizable refresh interval and count control |
+| **heapdump**    | Generate JVM heap dump file, supports `--live` option to export only live objects        |
+| **jvm**         | View current JVM detailed information                                                    |
+| **mbean**       | View or monitor MBean attributes, supports real-time refresh and pattern matching        |
+| **memory**      | View JVM memory information                                                              |
+| **thread**      | View thread information and stack traces, supports finding blocked and busiest threads   |
+| **sysprop**     | View or modify system properties, supports dynamic JVM system property modification      |
+| **sysenv**      | View system environment variables                                                        |
+| **vmoption**    | View or update VM options, supports dynamic JVM parameter adjustment                     |
+| **perfcounter** | View Perf Counter information, displays JVM performance counters                         |
+| **vmtool**      | VM tool collection, supports forced GC, instance retrieval, thread interruption, etc.    |
+| **getstatic**   | View static field values of a class                                                      |
+| **ognl**        | Execute OGNL expressions, dynamically invoke methods and access fields                   |
 
 ### Class/ClassLoader Tools (8)
 
-| Tool | Description |
-|------|-------------|
-| **sc** | View loaded class information in JVM, supports detailed info and statistics |
-| **sm** | View method information of loaded classes, displays method signatures and modifiers |
-| **jad** | Decompile loaded class source code, converts bytecode to Java code |
-| **classloader** | ClassLoader diagnostic tool, view classloader statistics, hierarchy tree, URLs |
-| **mc** | Memory compiler, compiles Java source code to bytecode files |
-| **redefine** | Redefine classes, load external class files to redefine classes in JVM |
-| **retransform** | Retransform classes, triggers class retransformation and bytecode enhancement |
-| **dump** | Dump actual running class bytecode from JVM to specified directory |
+| Tool            | Description                                                                         |
+| --------------- | ----------------------------------------------------------------------------------- |
+| **sc**          | View loaded class information in JVM, supports detailed info and statistics         |
+| **sm**          | View method information of loaded classes, displays method signatures and modifiers |
+| **jad**         | Decompile loaded class source code, converts bytecode to Java code                  |
+| **classloader** | ClassLoader diagnostic tool, view classloader statistics, hierarchy tree, URLs      |
+| **mc**          | Memory compiler, compiles Java source code to bytecode files                        |
+| **redefine**    | Redefine classes, load external class files to redefine classes in JVM              |
+| **retransform** | Retransform classes, triggers class retransformation and bytecode enhancement       |
+| **dump**        | Dump actual running class bytecode from JVM to specified directory                  |
 
 ### Monitoring and Diagnostic Tools (6)
 
-| Tool | Description |
-|------|-------------|
-| **monitor** | Monitor invocation of specified methods in real-time |
-| **stack** | Output call path of current method, helps analyze method call chains |
-| **trace** | Trace internal method call paths, output time cost for each node |
-| **tt** | Time tunnel for method execution data, records parameters and return values for each invocation |
-| **watch** | Observe method invocations including parameters, return values, and exceptions |
+| Tool        | Description                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| **monitor** | Monitor invocation of specified methods in real-time                                            |
+| **stack**   | Output call path of current method, helps analyze method call chains                            |
+| **trace**   | Trace internal method call paths, output time cost for each node                                |
+| **tt**      | Time tunnel for method execution data, records parameters and return values for each invocation |
+| **watch**   | Observe method invocations including parameters, return values, and exceptions                  |
 
 ## Quick Start
 
@@ -104,11 +104,11 @@ Add MCP server configuration in settings:
 
 ### Arthas Configuration
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `arthas.mcpEndpoint` | MCP service access path | None (requires manual configuration) |
-| `arthas.httpPort` | HTTP service port | 8563 |
-| `arthas.password` | Authentication password (when authentication enabled) | None |
+| Property             | Description                                           | Default                              |
+| -------------------- | ----------------------------------------------------- | ------------------------------------ |
+| `arthas.mcpEndpoint` | MCP service access path                               | None (requires manual configuration) |
+| `arthas.httpPort`    | HTTP service port                                     | 8563                                 |
+| `arthas.password`    | Authentication password (when authentication enabled) | None                                 |
 
 ### Authentication Configuration
 
