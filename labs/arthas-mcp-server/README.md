@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-`arthas-mcp-server` 是 [Arthas](https://github.com/alibaba/arthas) 的实验模块，实现了基于 MCP（Model Context Protocol）协议的服务端。该模块通过 HTTP/Netty 提供统一的 JSON-RPC 2.0 接口，支持 AI 使用工具调用的方式执行 arthas 的命令。
+`arthas-mcp-server` 是 [Arthas](https://github.com/alibaba/arthas) 的实验模块，实现了基于 MCP（Model Context Protocol）协议（版本 2025-03-26）的服务端。该模块通过 HTTP/Netty 提供统一的 JSON-RPC 2.0 接口，支持 AI 使用工具调用的方式执行 arthas 的命令。
 
 Arthas MCP 服务集成了 26 个核心诊断工具，按功能分类如下：
 
