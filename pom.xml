@@ -3,12 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -81,7 +75,7 @@
         <module>labs/cluster-management/native-agent-proxy</module>
         <module>labs/cluster-management/native-agent-common</module>
         <module>labs/arthas-grpc-server</module>
-        <module>labs/arthas-jfr-frontend</module>
+        <!-- <module>labs/arthas-jfr-frontend</module> -->
 <!--        <module>labs/arthas-jfr-backend</module>-->
         <module>labs/arthas-mcp-server</module>
     </modules>
@@ -341,6 +335,15 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.9.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
