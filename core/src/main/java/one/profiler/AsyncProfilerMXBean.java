@@ -29,4 +29,5 @@ public interface AsyncProfilerMXBean {
     String dumpCollapsed(Counter counter);
     String dumpTraces(int maxTraces);
     String dumpFlat(int maxMethods);
+    byte[] dumpOtlp();
 }
