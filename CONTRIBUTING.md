@@ -138,7 +138,7 @@ Tip: you can use `--versions` to list all available versions.
 * 执行一次 gpg --sign /tmp/2.txt ，让 gpg 后台进程启动，否则打包可能失败
 * mvn clean deploy -DskipTests -P full -P release
 
-* 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
+* 到 https://central.sonatype.com/publishing/deployments ，Publish 自己的 Deployment
 * 发布后，可以到这里查看是否同步到仓库里了： https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/
 * 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
 
