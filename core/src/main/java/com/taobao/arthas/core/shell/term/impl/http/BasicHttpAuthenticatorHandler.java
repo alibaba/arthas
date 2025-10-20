@@ -60,6 +60,8 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
             HttpSession session = httpSessionManager.getOrCreateHttpSession(ctx, httpRequest);
             if (session != null && session.getAttribute(ArthasConstants.SUBJECT_KEY) != null) {
                 authed = true;
+                Object subject = session.getAttribute(ArthasConstants.SUBJECT_KEY);
+                ctx.channel().attr(SUBJECT_ATTRIBUTE_KEY).set(subject);
             }
 
             boolean isMcpRequest = isMcpRequest(httpRequest);
