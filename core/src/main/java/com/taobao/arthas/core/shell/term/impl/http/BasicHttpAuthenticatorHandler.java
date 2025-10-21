@@ -52,64 +52,77 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
             return;
         }
 
+        if (!(msg instanceof HttpRequest)) {
+            ctx.fireChannelRead(msg);
+            return;
+        }
+
+        HttpRequest httpRequest = (HttpRequest) msg;
+
         boolean authed = false;
-        if (msg instanceof HttpRequest) {
-            HttpRequest httpRequest = (HttpRequest) msg;
+        HttpSession session = httpSessionManager.getOrCreateHttpSession(ctx, httpRequest);
 
-            // 判断session里是否有已登陆信息
-            HttpSession session = httpSessionManager.getOrCreateHttpSession(ctx, httpRequest);
-            if (session != null && session.getAttribute(ArthasConstants.SUBJECT_KEY) != null) {
-                authed = true;
+        // 判断session里是否有已登陆信息
+        if (session != null) {
+            Object subjectObj = session.getAttribute(ArthasConstants.SUBJECT_KEY);
+            if (subjectObj != null) {
+                authed =true;
+                setAuthenticatedSubject(ctx, session, subjectObj);
             }
+        }
 
-            boolean isMcpRequest = isMcpRequest(httpRequest);
-            Principal principal = null;
-            if (!authed) {
-                if (isMcpRequest) {
-                    principal = extractMcpAuthSubject(httpRequest);
-                } else {
-                    principal = extractBasicAuthSubject(httpRequest);
-                    if (principal == null) {
-                        principal = extractBasicAuthSubjectFromUrl(httpRequest);
-                    }
+        Principal principal = null;
+        boolean isMcpRequest = isMcpRequest(httpRequest);
+
+        if (!authed) {
+            if (isMcpRequest) {
+                principal = extractMcpAuthSubject(httpRequest);
+            } else {
+                principal = extractBasicAuthSubject(httpRequest);
+                if (principal == null) {
+                    principal = extractBasicAuthSubjectFromUrl(httpRequest);
                 }
             }
-            if (!authed && principal == null) {
+            if (principal == null) {
                 // 判断是否本地连接
                 principal = AuthUtils.localPrincipal(ctx);
             }
             Subject subject = securityAuthenticator.login(principal);
             if (subject != null) {
                 authed = true;
-                if (session != null) {
-                    session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
-                }
-                ctx.channel().attr(SUBJECT_ATTRIBUTE_KEY).set(subject);
+                setAuthenticatedSubject(ctx, session, subject);
+            }
+        }
+
+        if (!authed) {
+            // restricted resource, so send back 401 to require valid username/password
+            HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+
+            if (isMcpRequest) {
+                response.headers()
+                        .add(HttpHeaderNames.WWW_AUTHENTICATE, "Bearer realm=\"arthas mcp\"")
+                        .add(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas mcp\"");
+            } else {
+                response.headers().set(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas webconsole\"");
             }
 
-            if (!authed) {
-                // restricted resource, so send back 401 to require valid username/password
-                HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
 
-                if (isMcpRequest) {
-                    response.headers().add(HttpHeaderNames.WWW_AUTHENTICATE, "Bearer realm=\"arthas mcp\"")
-                                       .add(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas mcp\"");
-                } else {
-                    response.headers().set(HttpHeaderNames.WWW_AUTHENTICATE, "Basic realm=\"arthas webconsole\"");
-                }
-                
-                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
-                response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
-
-                ctx.writeAndFlush(response);
-                // close the channel
-                ctx.channel().close();
-                return;
-            }
-
+            ctx.writeAndFlush(response);
+            // close the channel
+            ctx.channel().close();
+            return;
         }
 
         ctx.fireChannelRead(msg);
+    }
+
+    private void setAuthenticatedSubject(ChannelHandlerContext ctx, HttpSession session, Object subject) {
+        ctx.channel().attr(SUBJECT_ATTRIBUTE_KEY).set(subject);
+        if (session != null) {
+            session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
+        }
     }
 
     @Override
