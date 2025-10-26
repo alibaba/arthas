@@ -6,6 +6,7 @@ import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.express.ExpressException;
+import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.StringUtils;
@@ -101,6 +102,9 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
             timer.cancel();
             timer = null;
         }
+        // Clear ThreadLocal data to avoid leaks when session/command ends
+        threadLocalWatch.cleanUp();
+        ExpressFactory.cleanUp();
     }
 
     @Override

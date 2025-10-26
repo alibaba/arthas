@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.express;
 
+import com.taobao.arthas.core.util.CleanableThreadLocal;
+
 /**
  * ExpressFactory
  * @author ralf0131 2017-01-04 14:40.
@@ -7,7 +9,7 @@ package com.taobao.arthas.core.command.express;
  */
 public class ExpressFactory {
 
-    private static final ThreadLocal<Express> expressRef = new ThreadLocal<Express>() {
+    private static final CleanableThreadLocal<Express> expressRef = new CleanableThreadLocal<Express>() {
         @Override
         protected Express initialValue() {
             return new OgnlExpress();
@@ -28,5 +30,12 @@ public class ExpressFactory {
             classloader = ClassLoader.getSystemClassLoader();
         }
         return new OgnlExpress(new ClassLoaderClassResolver(classloader));
+    }
+
+    /**
+     * Clean up all thread-bound Express instances.
+     */
+    public static void cleanUp() {
+        expressRef.cleanUp();
     }
 }

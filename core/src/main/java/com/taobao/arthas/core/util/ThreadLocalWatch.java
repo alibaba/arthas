@@ -8,7 +8,7 @@ package com.taobao.arthas.core.util;
  */
 public class ThreadLocalWatch {
 
-    private final ThreadLocal<LongStack> timestampRef = new ThreadLocal<LongStack>() {
+    private final CleanableThreadLocal<LongStack> timestampRef = new CleanableThreadLocal<LongStack>() {
         @Override
         protected LongStack initialValue() {
             return new LongStack(1024 * 4);
@@ -27,6 +27,10 @@ public class ThreadLocalWatch {
 
     public double costInMillis() {
         return (System.nanoTime() - timestampRef.get().pop()) / 1000000.0;
+    }
+
+    public void cleanUp() {
+        timestampRef.cleanUp();
     }
 
     /**
