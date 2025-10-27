@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class CleanableThreadLocal<T> {
 
-    private final ConcurrentMap<Thread, T> store = new ConcurrentHashMap<Thread, T>();
+    private final ConcurrentMap<Long, T> store = new ConcurrentHashMap<>();
 
     /**
      * Returns the current thread's value of this thread-local variable. If the
@@ -22,33 +22,14 @@ public class CleanableThreadLocal<T> {
      * stored for the current thread.
      */
     public T get() {
-        Thread t = Thread.currentThread();
-        T val = store.get(t);
-        if (val == null) {
-            val = initialValue();
-            if (val != null) {
-                store.put(t, val);
-            }
-        }
-        return val;
-    }
-
-    /**
-     * Sets the current thread's value for this variable.
-     */
-    public void set(T value) {
-        if (value == null) {
-            remove();
-        } else {
-            store.put(Thread.currentThread(), value);
-        }
+        return store.computeIfAbsent(Thread.currentThread().getId(), ignore -> initialValue());
     }
 
     /**
      * Removes the current thread's value for this variable.
      */
     public void remove() {
-        store.remove(Thread.currentThread());
+        store.remove(Thread.currentThread().getId());
     }
 
     /**
