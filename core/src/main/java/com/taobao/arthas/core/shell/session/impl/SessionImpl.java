@@ -29,6 +29,11 @@ public class SessionImpl implements Session {
     }
 
     @Override
+    public Map<String, Object> cloneSessionData() {
+        return new HashMap<String, Object>(data);
+    }
+
+    @Override
     public Session put(String key, Object obj) {
         if (obj == null) {
             data.remove(key);
