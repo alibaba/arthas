@@ -8,6 +8,7 @@ import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
+import com.taobao.arthas.core.command.express.ExpressFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,6 +44,9 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     @Override
     public void destroy() {
         threadBoundEntity.remove();
+        // Clear ThreadLocal data to avoid leaks when session/command ends
+        threadLocalWatch.cleanUp();
+        ExpressFactory.cleanUp();
     }
 
     @Override

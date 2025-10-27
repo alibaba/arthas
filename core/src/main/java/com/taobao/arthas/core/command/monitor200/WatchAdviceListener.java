@@ -8,6 +8,7 @@ import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.WatchModel;
+import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
@@ -28,6 +29,14 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         this.command = command;
         this.process = process;
         super.setVerbose(verbose);
+    }
+
+    @Override
+    public void destroy() {
+        // Clear ThreadLocal data to avoid leaks when session/command ends
+        threadLocalWatch.cleanUp();
+        ExpressFactory.cleanUp();
+        super.destroy();
     }
 
     private boolean isFinish() {
