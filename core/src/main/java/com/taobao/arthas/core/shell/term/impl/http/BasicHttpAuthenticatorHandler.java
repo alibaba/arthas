@@ -62,7 +62,7 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
         boolean authed = false;
         HttpSession session = httpSessionManager.getOrCreateHttpSession(ctx, httpRequest);
 
-        // 判断session里是否有已登陆信息
+        // 判断session里是否有已登录信息
         if (session != null) {
             Object subjectObj = session.getAttribute(ArthasConstants.SUBJECT_KEY);
             if (subjectObj != null) {
