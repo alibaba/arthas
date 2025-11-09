@@ -16,7 +16,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.termd.core.http.HttpTtyConnection;
 
 /**
- * 从http请求传递过来的 session 信息。解析websocket创建的 term 还需要登陆验证问题
+ * 从http请求传递过来的 session 信息。解析websocket创建的 term 还需要登录验证问题
  * 
  * @author hengyunabc 2021-03-04
  *

@@ -2,7 +2,7 @@
 
 通过 Arthas Tunnel Server/Client 来远程管理/连接多个 Agent。
 
-比如，在流式计算里，Java 进程可以是在不同的机器启动的，想要使用 Arthas 去诊断会比较麻烦，因为用户通常没有机器的权限，即使登陆机器也分不清是哪个 Java 进程。
+比如，在流式计算里，Java 进程可以是在不同的机器启动的，想要使用 Arthas 去诊断会比较麻烦，因为用户通常没有机器的权限，即使登录机器也分不清是哪个 Java 进程。
 
 在这种情况下，可以使用 Arthas Tunnel Server/Client。
 
@@ -29,7 +29,7 @@ java -jar  arthas-tunnel-server.jar
 
 启动之后，可以访问 [http://127.0.0.1:8080/](http://127.0.0.1:8080/) ，再通过`agentId`连接到已注册的 arthas agent 上。
 
-通过 Spring Boot 的 Endpoint，可以查看到具体的连接信息： [http://127.0.0.1:8080/actuator/arthas](http://127.0.0.1:8080/actuator/arthas) ，登陆用户名是`arthas`，密码在 arthas tunnel server 的日志里可以找到，比如：
+通过 Spring Boot 的 Endpoint，可以查看到具体的连接信息： [http://127.0.0.1:8080/actuator/arthas](http://127.0.0.1:8080/actuator/arthas) ，登录用户名是`arthas`，密码在 arthas tunnel server 的日志里可以找到，比如：
 
 ```
 32851 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
