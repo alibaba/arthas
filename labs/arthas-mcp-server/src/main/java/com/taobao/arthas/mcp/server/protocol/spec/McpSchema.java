@@ -122,7 +122,26 @@ public final class McpSchema {
 
 	}
 
-	public interface Request {
+    public interface Meta {
+
+        default Map<String, Object> meta() {
+            return null;
+        }
+
+    }
+
+	public interface Request extends Meta{
+
+        default Object progressToken() {
+            Map<String, Object> metadata = meta();
+            if (metadata != null && metadata.containsKey("progressToken")) {
+                return metadata.get("progressToken");
+            }
+            return null;
+        }
+	}
+
+	public interface Result extends Meta {
 	}
 
 	private static final TypeReference<HashMap<String, Object>> MAP_TYPE_REF = new TypeReference<HashMap<String, Object>>() {
@@ -357,7 +376,7 @@ public final class McpSchema {
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class InitializeResult {
+	public static class InitializeResult implements Result {
 		private final String protocolVersion;
 		private final ServerCapabilities capabilities;
 		private final Implementation serverInfo;
@@ -822,7 +841,7 @@ public final class McpSchema {
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ListResourcesResult {
+	public static class ListResourcesResult implements Result {
 		private final List<Resource> resources;
 		private final String nextCursor;
 		private final Map<String, Object> meta;
@@ -848,14 +867,23 @@ public final class McpSchema {
 			return nextCursor;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
+		}
+
+		public Object getProgressToken() {
+			return (meta() != null) ? meta().get("progressToken") : null;
 		}
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ListResourceTemplatesResult {
+	public static class ListResourceTemplatesResult implements Result {
 		private final List<ResourceTemplate> resourceTemplates;
 		private final String nextCursor;
 		private final Map<String, Object> meta;
@@ -881,8 +909,13 @@ public final class McpSchema {
 			return nextCursor;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
 		}
 	}
 
@@ -903,7 +936,7 @@ public final class McpSchema {
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ReadResourceResult {
+	public static class ReadResourceResult implements Result {
 		private final List<ResourceContents> contents;
 		private final Map<String, Object> meta;
 
@@ -922,8 +955,13 @@ public final class McpSchema {
 			return contents;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
 		}
 	}
 
@@ -1158,7 +1196,7 @@ public final class McpSchema {
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ListPromptsResult {
+	public static class ListPromptsResult implements Result {
 		private final List<Prompt> prompts;
 		private final String nextCursor;
 		private final Map<String, Object> meta;
@@ -1184,8 +1222,13 @@ public final class McpSchema {
 			return nextCursor;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
 		}
 	}
 
@@ -1221,7 +1264,7 @@ public final class McpSchema {
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class GetPromptResult {
+	public static class GetPromptResult implements Result {
 		private final String description;
 		private final List<PromptMessage> messages;
 		private final Map<String, Object> meta;
@@ -1247,8 +1290,13 @@ public final class McpSchema {
 			return messages;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
 		}
 	}
 
@@ -1261,7 +1309,7 @@ public final class McpSchema {
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ListToolsResult {
+	public static class ListToolsResult implements Result {
 		private final List<Tool> tools;
 		private final String nextCursor;
 		private final Map<String, Object> meta;
@@ -1287,8 +1335,13 @@ public final class McpSchema {
 			return nextCursor;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
 		}
 	}
 
@@ -1387,7 +1440,7 @@ public final class McpSchema {
 		public CallToolRequest(
 				@JsonProperty("name") String name,
 				@JsonProperty("arguments") Map<String, Object> arguments,
-				@JsonProperty("_meta") Map<String, Object> meta) {
+				@JsonProperty("meta") Map<String, Object> meta) {
 			this.name = name;
 			this.arguments = arguments;
 			this.meta = meta;
@@ -1418,8 +1471,13 @@ public final class McpSchema {
 			return arguments;
 		}
 
-		public Map<String, Object> getMeta() {
+		@Override
+		public Map<String, Object> meta() {
 			return meta;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta();
 		}
 
 		public static Builder builder() {
@@ -1475,7 +1533,7 @@ public final class McpSchema {
 	 */
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class CallToolResult {
+    public static class CallToolResult implements Result {
         private final List<Content> content;
         private final Boolean isError;
         private final Map<String, Object> meta;  // Add meta field
@@ -1501,8 +1559,13 @@ public final class McpSchema {
             return isError;
         }
 
+        @Override
+        public Map<String, Object> meta() {
+            return meta;
+        }
+
         public Map<String, Object> getMeta() {
-            return meta;  // Getter for meta field
+            return meta();
         }
 
         public static Builder builder() {
@@ -1703,7 +1766,7 @@ public final class McpSchema {
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class CreateMessageResult {
+	public static class CreateMessageResult implements Result {
 		private final Role role;
 		private final Content content;
 		private final String model;
@@ -1764,8 +1827,13 @@ public final class McpSchema {
             return requestedSchema;
         }
 
-        public Map<String, Object> getMeta() {
+        @Override
+        public Map<String, Object> meta() {
             return meta;
+        }
+
+        public Map<String, Object> getMeta() {
+            return meta();
         }
 
         // Backwards compatibility constructor
@@ -1814,7 +1882,7 @@ public final class McpSchema {
 
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ElicitResult {
+    public static class ElicitResult implements Result {
 
         private final Action action;
         private final Map<String, Object> content;
@@ -1844,8 +1912,13 @@ public final class McpSchema {
             return content;
         }
 
-        public Map<String, Object> getMeta() {
+        @Override
+        public Map<String, Object> meta() {
             return meta;
+        }
+
+        public Map<String, Object> getMeta() {
+            return meta();
         }
 
         // Backwards compatibility constructor
@@ -2148,7 +2221,7 @@ public final class McpSchema {
 		}
 	}
 
-	public static class CompleteResult {
+	public static class CompleteResult implements Result {
 		private final CompleteCompletion completion;
 
 		public CompleteResult(
@@ -2348,7 +2421,7 @@ public final class McpSchema {
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ListRootsResult {
+	public static class ListRootsResult implements Result {
 		private final List<Root> roots;
 
 		public ListRootsResult(

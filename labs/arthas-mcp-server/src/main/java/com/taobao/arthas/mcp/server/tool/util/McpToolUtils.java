@@ -58,7 +58,7 @@ public final class McpToolUtils {
 				Map<String, Object> contextMap = new HashMap<>();
 				contextMap.put(TOOL_CONTEXT_MCP_EXCHANGE_KEY, exchange);
 				contextMap.put(TOOL_CONTEXT_COMMAND_CONTEXT_KEY, commandContext);
-				contextMap.put(PROGRESS_TOKEN, request.getMeta().get(PROGRESS_TOKEN));
+                contextMap.put(PROGRESS_TOKEN, request.progressToken());
 				ToolContext toolContext = new ToolContext(contextMap);
 
 				String requestJson = convertParametersToString(request.getArguments());

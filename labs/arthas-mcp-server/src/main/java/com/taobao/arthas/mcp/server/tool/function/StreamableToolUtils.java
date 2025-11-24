@@ -266,7 +266,7 @@ public final class StreamableToolUtils {
     private static void sendProgressNotification(McpNettyServerExchange exchange, int currentResultCount, 
                                                int totalExpected, String progressToken) {
         try {
-            if (progressToken != null) {
+            if (progressToken != null && !progressToken.trim().isEmpty()) {
                 exchange.progressNotification(new McpSchema.ProgressNotification(
                         progressToken,
                         currentResultCount,
