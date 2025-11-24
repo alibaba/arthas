@@ -1440,7 +1440,7 @@ public final class McpSchema {
 		public CallToolRequest(
 				@JsonProperty("name") String name,
 				@JsonProperty("arguments") Map<String, Object> arguments,
-				@JsonProperty("meta") Map<String, Object> meta) {
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.name = name;
 			this.arguments = arguments;
 			this.meta = meta;
@@ -1536,12 +1536,12 @@ public final class McpSchema {
     public static class CallToolResult implements Result {
         private final List<Content> content;
         private final Boolean isError;
-        private final Map<String, Object> meta;  // Add meta field
+        private final Map<String, Object> meta;
 
         public CallToolResult(
                 @JsonProperty("content") List<Content> content,
                 @JsonProperty("isError") Boolean isError,
-                @JsonProperty("_meta") Map<String, Object> meta) {  // Pass meta to constructor
+                @JsonProperty("_meta") Map<String, Object> meta) {
             this.content = content;
             this.isError = isError;
             this.meta = meta;
@@ -1710,7 +1710,7 @@ public final class McpSchema {
 		private final Double temperature;
 		private final int maxTokens;
 		private final List<String> stopSequences;
-		private final Map<String, Object> metadata;
+		private final Map<String, Object> meta;
 
 		public CreateMessageRequest(
 				@JsonProperty("messages") List<SamplingMessage> messages,
@@ -1720,7 +1720,7 @@ public final class McpSchema {
 				@JsonProperty("temperature") Double temperature,
 				@JsonProperty("maxTokens") int maxTokens,
 				@JsonProperty("stopSequences") List<String> stopSequences,
-				@JsonProperty("metadata") Map<String, Object> metadata) {
+                @JsonProperty("_meta") Map<String, Object> meta) {
 			this.messages = messages;
 			this.modelPreferences = modelPreferences;
 			this.systemPrompt = systemPrompt;
@@ -1728,7 +1728,7 @@ public final class McpSchema {
 			this.temperature = temperature;
 			this.maxTokens = maxTokens;
 			this.stopSequences = stopSequences;
-			this.metadata = metadata;
+			this.meta = meta;
 		}
 
 		public List<SamplingMessage> getMessages() {
@@ -1759,8 +1759,8 @@ public final class McpSchema {
 			return stopSequences;
 		}
 
-		public Map<String, Object> getMetadata() {
-			return metadata;
+		public Map<String, Object> getMeta() {
+			return meta;
 		}
 	}
 
