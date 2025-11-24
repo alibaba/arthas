@@ -182,29 +182,6 @@ public final class McpSchema {
 	// JSON-RPC Message Types
 	// ---------------------------
 
-	/**
-	 * Represents an event message with associated event ID.
-	 */
-	public static class EventMessage {
-		private final String eventId;
-		private final JSONRPCMessage message;
-
-		public EventMessage(
-				@JsonProperty("eventId") String eventId,
-				@JsonProperty("message") JSONRPCMessage message) {
-			this.eventId = eventId;
-			this.message = message;
-		}
-
-		public String getEventId() {
-			return eventId;
-		}
-
-		public JSONRPCMessage getMessage() {
-			return message;
-		}
-	}
-
 	public interface JSONRPCMessage {
 		String getJsonrpc();
 	}
