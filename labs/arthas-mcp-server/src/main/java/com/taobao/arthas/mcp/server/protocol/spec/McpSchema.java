@@ -1473,80 +1473,94 @@ public final class McpSchema {
 	 * The server's response to a tools/call request from the client.
 	 *
 	 */
-	@JsonInclude(JsonInclude.Include.NON_ABSENT)
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class CallToolResult {
-		private final List<Content> content;
-		private final Boolean isError;
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CallToolResult {
+        private final List<Content> content;
+        private final Boolean isError;
+        private final Map<String, Object> meta;  // Add meta field
 
-		public CallToolResult(
-				@JsonProperty("content") List<Content> content,
-				@JsonProperty("isError") Boolean isError) {
-			this.content = content;
-			this.isError = isError;
-		}
+        public CallToolResult(
+                @JsonProperty("content") List<Content> content,
+                @JsonProperty("isError") Boolean isError,
+                @JsonProperty("_meta") Map<String, Object> meta) {  // Pass meta to constructor
+            this.content = content;
+            this.isError = isError;
+            this.meta = meta;
+        }
 
-		public CallToolResult(String content, Boolean isError) {
-			this(Collections.singletonList(new TextContent(content)), isError);
-		}
+        public CallToolResult(String content, Boolean isError, Map<String, Object> meta) {
+            this(Collections.singletonList(new TextContent(content)), isError, meta);
+        }
 
-		public List<Content> getContent() {
-			return content;
-		}
+        public List<Content> getContent() {
+            return content;
+        }
 
-		public Boolean getIsError() {
-			return isError;
-		}
+        public Boolean getIsError() {
+            return isError;
+        }
 
-		public static Builder builder() {
-			return new Builder();
-		}
+        public Map<String, Object> getMeta() {
+            return meta;  // Getter for meta field
+        }
 
-		public static class Builder {
-			private List<Content> content = new ArrayList<>();
-			private Boolean isError;
+        public static Builder builder() {
+            return new Builder();
+        }
 
-			public Builder content(List<Content> content) {
-				Assert.notNull(content, "content must not be null");
-				this.content = content;
-				return this;
-			}
+        public static class Builder {
+            private List<Content> content = new ArrayList<>();
+            private Boolean isError;
+            private Map<String, Object> meta;
 
-			public Builder textContent(List<String> textContent) {
-				Assert.notNull(textContent, "textContent must not be null");
-				textContent.stream()
-						.map(TextContent::new)
-						.forEach(this.content::add);
-				return this;
-			}
+            public Builder content(List<Content> content) {
+                Assert.notNull(content, "content must not be null");
+                this.content = content;
+                return this;
+            }
 
-			public Builder addContent(Content contentItem) {
-				Assert.notNull(contentItem, "contentItem must not be null");
-				if (this.content == null) {
-					this.content = new ArrayList<>();
-				}
-				this.content.add(contentItem);
-				return this;
-			}
+            public Builder textContent(List<String> textContent) {
+                Assert.notNull(textContent, "textContent must not be null");
+                textContent.stream()
+                        .map(TextContent::new)
+                        .forEach(this.content::add);
+                return this;
+            }
 
-			public Builder addTextContent(String text) {
-				Assert.notNull(text, "text must not be null");
-				return addContent(new TextContent(text));
-			}
+            public Builder addContent(Content contentItem) {
+                Assert.notNull(contentItem, "contentItem must not be null");
+                if (this.content == null) {
+                    this.content = new ArrayList<>();
+                }
+                this.content.add(contentItem);
+                return this;
+            }
 
-			public Builder isError(Boolean isError) {
-				Assert.notNull(isError, "isError must not be null");
-				this.isError = isError;
-				return this;
-			}
+            public Builder addTextContent(String text) {
+                Assert.notNull(text, "text must not be null");
+                return addContent(new TextContent(text));
+            }
 
-			public CallToolResult build() {
-				return new CallToolResult(content, isError);
-			}
-		}
-	}
+            public Builder isError(Boolean isError) {
+                Assert.notNull(isError, "isError must not be null");
+                this.isError = isError;
+                return this;
+            }
 
-	// ---------------------------
+            public Builder meta(Map<String, Object> meta) {
+                this.meta = meta;
+                return this;
+            }
+
+            public CallToolResult build() {
+                return new CallToolResult(content, isError, meta);
+            }
+        }
+    }
+
+
+    // ---------------------------
 	// Sampling Interfaces
 	// ---------------------------
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
