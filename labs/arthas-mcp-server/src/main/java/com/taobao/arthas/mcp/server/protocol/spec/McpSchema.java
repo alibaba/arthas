@@ -1436,7 +1436,6 @@ public final class McpSchema {
 		private final Map<String, Object> arguments;
 		private final Map<String, Object> meta;
 
-
 		public CallToolRequest(
 				@JsonProperty("name") String name,
 				@JsonProperty("arguments") Map<String, Object> arguments,
@@ -1444,14 +1443,6 @@ public final class McpSchema {
 			this.name = name;
 			this.arguments = arguments;
 			this.meta = meta;
-		}
-
-		public CallToolRequest(String name, String jsonArguments) {
-			this(name, parseJsonArguments(jsonArguments), null);
-		}
-
-		public CallToolRequest(String name, Map<String, Object> arguments) {
-			this(name, arguments, null);
 		}
 
 		private static Map<String, Object> parseJsonArguments(String jsonArguments) {
