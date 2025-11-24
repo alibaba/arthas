@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
 import java.arthas.SpyAPI.AbstractSpy;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -22,6 +23,9 @@ import com.taobao.arthas.core.util.StringUtils;
  */
 public class SpyImpl extends AbstractSpy {
     private static final Logger logger = LoggerFactory.getLogger(SpyImpl.class);
+    //将enter时执行过的AdviceListener暂存起来，exit时取出来，再执行过滤，避免对于同一次增强方法的调用，没有执行enter却执行了exit，
+    // 用null作为分隔符，尽量减少内存占用
+    private static final ThreadLocal<ArrayList<AdviceListener>> LISTENERS = ThreadLocal.withInitial(ArrayList::new);
 
     @Override
     public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
@@ -33,65 +37,60 @@ public class SpyImpl extends AbstractSpy {
         // TODO listener 只用查一次，放到 thread local里保存起来就可以了！
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
+
+        ArrayList<AdviceListener> stack = LISTENERS.get();
+        stack.add(null);
         if (listeners != null) {
             for (AdviceListener adviceListener : listeners) {
                 try {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
+                    stack.add(adviceListener);
                     adviceListener.before(clazz, methodName, methodDesc, target, args);
                 } catch (Throwable e) {
                     logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                 }
             }
         }
-
     }
 
     @Override
     public void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args, Object returnObject) {
-        ClassLoader classLoader = clazz.getClassLoader();
+        //基于目前的增强实现，atExit方法中不能抛出异常，否则，atExit和atExceptionExit的代码可能被同时执行，造成逻辑错乱
 
         String[] info = StringUtils.splitMethodInfo(methodInfo);
         String methodName = info[0];
         String methodDesc = info[1];
 
-        List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
-                methodName, methodDesc);
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
-                    }
-                    adviceListener.afterReturning(clazz, methodName, methodDesc, target, args, returnObject);
-                } catch (Throwable e) {
-                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
+        ArrayList<AdviceListener> stack = LISTENERS.get();
+        for (AdviceListener adviceListener; (adviceListener = stack.remove(stack.size() - 1)) != null; ) {
+            try {
+                if (skipAdviceListener(adviceListener)) {
+                    continue;
                 }
+                adviceListener.afterReturning(clazz, methodName, methodDesc, target, args, returnObject);
+            } catch (Throwable e) {
+                logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
             }
         }
     }
 
     @Override
     public void atExceptionExit(Class<?> clazz, String methodInfo, Object target, Object[] args, Throwable throwable) {
-        ClassLoader classLoader = clazz.getClassLoader();
-
         String[] info = StringUtils.splitMethodInfo(methodInfo);
         String methodName = info[0];
         String methodDesc = info[1];
 
-        List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
-                methodName, methodDesc);
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
-                    }
-                    adviceListener.afterThrowing(clazz, methodName, methodDesc, target, args, throwable);
-                } catch (Throwable e) {
-                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
+        ArrayList<AdviceListener> stack = LISTENERS.get();
+        for (AdviceListener adviceListener; (adviceListener = stack.remove(stack.size() - 1)) != null; ) {
+            try {
+                if (skipAdviceListener(adviceListener)) {
+                    continue;
                 }
+                adviceListener.afterThrowing(clazz, methodName, methodDesc, target, args, throwable);
+            } catch (Throwable e) {
+                logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
             }
         }
     }
@@ -107,12 +106,15 @@ public class SpyImpl extends AbstractSpy {
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
 
+        ArrayList<AdviceListener> stack = LISTENERS.get();
+        stack.add(null);
         if (listeners != null) {
             for (AdviceListener adviceListener : listeners) {
                 try {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
+                    stack.add(adviceListener);
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
                     listener.invokeBeforeTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
                 } catch (Throwable e) {
@@ -129,20 +131,17 @@ public class SpyImpl extends AbstractSpy {
         String owner = info[0];
         String methodName = info[1];
         String methodDesc = info[2];
-        List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
-                owner, methodName, methodDesc);
 
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
-                    }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
+        ArrayList<AdviceListener> stack = LISTENERS.get();
+        for (AdviceListener adviceListener; (adviceListener = stack.remove(stack.size() - 1)) != null; ) {
+            try {
+                if (skipAdviceListener(adviceListener)) {
+                    continue;
                 }
+                final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
+            } catch (Throwable e) {
+                logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
             }
         }
 
@@ -156,20 +155,16 @@ public class SpyImpl extends AbstractSpy {
         String methodName = info[1];
         String methodDesc = info[2];
 
-        List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
-                owner, methodName, methodDesc);
-
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
-                    }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
+        ArrayList<AdviceListener> stack = LISTENERS.get();
+        for (AdviceListener adviceListener; (adviceListener = stack.remove(stack.size() - 1)) != null; ) {
+            try {
+                if (skipAdviceListener(adviceListener)) {
+                    continue;
                 }
+                final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
+            } catch (Throwable e) {
+                logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
             }
         }
     }
