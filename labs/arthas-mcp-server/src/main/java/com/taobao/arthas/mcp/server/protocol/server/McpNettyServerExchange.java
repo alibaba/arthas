@@ -186,6 +186,11 @@ public class McpNettyServerExchange {
 	}
 
 	public CompletableFuture<McpSchema.ElicitResult> createElicitation(McpSchema.ElicitRequest request) {
+        if (request == null) {
+            CompletableFuture<McpSchema.ElicitResult> future = new CompletableFuture<>();
+            future.completeExceptionally(new McpError("elicit request cannot be null"));
+            return future;
+        }
         if (this.clientCapabilities == null) {
             CompletableFuture<McpSchema.ElicitResult> future = new CompletableFuture<>();
             future.completeExceptionally(new McpError("Client must be initialized. Call the initialize method first!"));

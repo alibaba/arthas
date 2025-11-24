@@ -130,7 +130,7 @@ public final class McpSchema {
 
     }
 
-	public interface Request extends Meta{
+	public interface Request extends Meta {
 
         default Object progressToken() {
             Map<String, Object> metadata = meta();
@@ -1467,10 +1467,6 @@ public final class McpSchema {
 			return meta;
 		}
 
-		public Map<String, Object> getMeta() {
-			return meta();
-		}
-
 		public static Builder builder() {
 			return new Builder();
 		}
@@ -1750,9 +1746,10 @@ public final class McpSchema {
 			return stopSequences;
 		}
 
-		public Map<String, Object> getMeta() {
-			return meta;
-		}
+        @Override
+        public Map<String, Object> meta() {
+            return meta;
+        }
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
