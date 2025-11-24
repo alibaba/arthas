@@ -29,7 +29,7 @@ public final class McpSchema {
 	private McpSchema() {
 	}
 
-	public static final String LATEST_PROTOCOL_VERSION = "2025-03-26";
+    public static final String LATEST_PROTOCOL_VERSION = ProtocolVersions.MCP_2025_06_18;
 
 	public static final String JSONRPC_VERSION = "2.0";
 
@@ -81,6 +81,9 @@ public final class McpSchema {
 
 	// Sampling Methods
 	public static final String METHOD_SAMPLING_CREATE_MESSAGE = "sampling/createMessage";
+
+	// Elicitation Methods
+    public static final String METHOD_ELICITATION_CREATE = "elicitation/create";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -401,14 +404,17 @@ public final class McpSchema {
 		private final Map<String, Object> experimental;
 		private final RootCapabilities roots;
 		private final Sampling sampling;
+        private final Elicitation elicitation;
 
 		public ClientCapabilities(
 				@JsonProperty("experimental") Map<String, Object> experimental,
 				@JsonProperty("roots") RootCapabilities roots,
-				@JsonProperty("sampling") Sampling sampling) {
+				@JsonProperty("sampling") Sampling sampling,
+                @JsonProperty("elicitation") Elicitation elicitation) {
 			this.experimental = experimental;
 			this.roots = roots;
 			this.sampling = sampling;
+            this.elicitation = elicitation;
 		}
 
 		/**
@@ -446,6 +452,10 @@ public final class McpSchema {
 		public static class Sampling {
 		}
 
+        @JsonInclude(JsonInclude.Include.NON_ABSENT)
+        public static class Elicitation {
+        }
+
 		public Map<String, Object> getExperimental() {
 			return experimental;
 		}
@@ -458,6 +468,10 @@ public final class McpSchema {
 			return sampling;
 		}
 
+        public Elicitation getElicitation() {
+            return elicitation;
+        }
+
 		public static Builder builder() {
 			return new Builder();
 		}
@@ -466,6 +480,7 @@ public final class McpSchema {
 			private Map<String, Object> experimental;
 			private RootCapabilities roots;
 			private Sampling sampling;
+            private Elicitation elicitation;
 
 			public Builder experimental(Map<String, Object> experimental) {
 				this.experimental = experimental;
@@ -482,8 +497,13 @@ public final class McpSchema {
 				return this;
 			}
 
+            public Builder elicitation() {
+                this.elicitation = new Elicitation();
+                return this;
+            }
+
 			public ClientCapabilities build() {
-				return new ClientCapabilities(experimental, roots, sampling);
+				return new ClientCapabilities(experimental, roots, sampling, elicitation);
 			}
 		}
 	}
@@ -805,12 +825,19 @@ public final class McpSchema {
 	public static class ListResourcesResult {
 		private final List<Resource> resources;
 		private final String nextCursor;
+		private final Map<String, Object> meta;
 
 		public ListResourcesResult(
 				@JsonProperty("resources") List<Resource> resources,
-				@JsonProperty("nextCursor") String nextCursor) {
+				@JsonProperty("nextCursor") String nextCursor,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.resources = resources;
 			this.nextCursor = nextCursor;
+			this.meta = meta;
+		}
+
+		public ListResourcesResult(List<Resource> resources, String nextCursor) {
+			this(resources, nextCursor, null);
 		}
 
 		public List<Resource> getResources() {
@@ -820,6 +847,10 @@ public final class McpSchema {
 		public String getNextCursor() {
 			return nextCursor;
 		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
+		}
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -827,12 +858,19 @@ public final class McpSchema {
 	public static class ListResourceTemplatesResult {
 		private final List<ResourceTemplate> resourceTemplates;
 		private final String nextCursor;
+		private final Map<String, Object> meta;
 
 		public ListResourceTemplatesResult(
 				@JsonProperty("resourceTemplates") List<ResourceTemplate> resourceTemplates,
-				@JsonProperty("nextCursor") String nextCursor) {
+				@JsonProperty("nextCursor") String nextCursor,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.resourceTemplates = resourceTemplates;
 			this.nextCursor = nextCursor;
+			this.meta = meta;
+		}
+
+		public ListResourceTemplatesResult(List<ResourceTemplate> resourceTemplates, String nextCursor) {
+			this(resourceTemplates, nextCursor, null);
 		}
 
 		public List<ResourceTemplate> getResourceTemplates() {
@@ -841,6 +879,10 @@ public final class McpSchema {
 
 		public String getNextCursor() {
 			return nextCursor;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
 		}
 	}
 
@@ -863,14 +905,25 @@ public final class McpSchema {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class ReadResourceResult {
 		private final List<ResourceContents> contents;
+		private final Map<String, Object> meta;
 
 		public ReadResourceResult(
-				@JsonProperty("contents") List<ResourceContents> contents) {
+				@JsonProperty("contents") List<ResourceContents> contents,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.contents = contents;
+			this.meta = meta;
+		}
+
+		public ReadResourceResult(List<ResourceContents> contents) {
+			this(contents, null);
 		}
 
 		public List<ResourceContents> getContents() {
 			return contents;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
 		}
 	}
 
@@ -1108,12 +1161,19 @@ public final class McpSchema {
 	public static class ListPromptsResult {
 		private final List<Prompt> prompts;
 		private final String nextCursor;
+		private final Map<String, Object> meta;
 
 		public ListPromptsResult(
 				@JsonProperty("prompts") List<Prompt> prompts,
-				@JsonProperty("nextCursor") String nextCursor) {
+				@JsonProperty("nextCursor") String nextCursor,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.prompts = prompts;
 			this.nextCursor = nextCursor;
+			this.meta = meta;
+		}
+
+		public ListPromptsResult(List<Prompt> prompts, String nextCursor) {
+			this(prompts, nextCursor, null);
 		}
 
 		public List<Prompt> getPrompts() {
@@ -1122,6 +1182,10 @@ public final class McpSchema {
 
 		public String getNextCursor() {
 			return nextCursor;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
 		}
 	}
 
@@ -1160,12 +1224,19 @@ public final class McpSchema {
 	public static class GetPromptResult {
 		private final String description;
 		private final List<PromptMessage> messages;
+		private final Map<String, Object> meta;
 
 		public GetPromptResult(
 				@JsonProperty("description") String description,
-				@JsonProperty("messages") List<PromptMessage> messages) {
+				@JsonProperty("messages") List<PromptMessage> messages,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.description = description;
 			this.messages = messages;
+			this.meta = meta;
+		}
+
+		public GetPromptResult(String description, List<PromptMessage> messages) {
+			this(description, messages, null);
 		}
 
 		public String getDescription() {
@@ -1174,6 +1245,10 @@ public final class McpSchema {
 
 		public List<PromptMessage> getMessages() {
 			return messages;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
 		}
 	}
 
@@ -1189,12 +1264,19 @@ public final class McpSchema {
 	public static class ListToolsResult {
 		private final List<Tool> tools;
 		private final String nextCursor;
+		private final Map<String, Object> meta;
 
 		public ListToolsResult(
 				@JsonProperty("tools") List<Tool> tools,
-				@JsonProperty("nextCursor") String nextCursor) {
+				@JsonProperty("nextCursor") String nextCursor,
+				@JsonProperty("_meta") Map<String, Object> meta) {
 			this.tools = tools;
 			this.nextCursor = nextCursor;
+			this.meta = meta;
+		}
+
+		public ListToolsResult(List<Tool> tools, String nextCursor) {
+			this(tools, nextCursor, null);
 		}
 
 		public List<Tool> getTools() {
@@ -1203,6 +1285,10 @@ public final class McpSchema {
 
 		public String getNextCursor() {
 			return nextCursor;
+		}
+
+		public Map<String, Object> getMeta() {
+			return meta;
 		}
 	}
 
@@ -1637,7 +1723,155 @@ public final class McpSchema {
 		}
 	}
 
-	// ---------------------------
+    // Elicitation
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ElicitRequest implements Request {
+
+        private final String message;
+        private final Map<String, Object> requestedSchema;
+        private final Map<String, Object> meta;
+
+        // Constructor
+        public ElicitRequest(
+                @JsonProperty("message") String message,
+                @JsonProperty("requestedSchema") Map<String, Object> requestedSchema,
+                @JsonProperty("_meta") Map<String, Object> meta) {
+            this.message = message;
+            this.requestedSchema = requestedSchema;
+            this.meta = meta;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public Map<String, Object> getRequestedSchema() {
+            return requestedSchema;
+        }
+
+        public Map<String, Object> getMeta() {
+            return meta;
+        }
+
+        // Backwards compatibility constructor
+        public ElicitRequest(String message, Map<String, Object> requestedSchema) {
+            this(message, requestedSchema, null);
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder {
+
+            private String message;
+            private Map<String, Object> requestedSchema;
+            private Map<String, Object> meta;
+
+            public Builder message(String message) {
+                this.message = message;
+                return this;
+            }
+
+            public Builder requestedSchema(Map<String, Object> requestedSchema) {
+                this.requestedSchema = requestedSchema;
+                return this;
+            }
+
+            public Builder meta(Map<String, Object> meta) {
+                this.meta = meta;
+                return this;
+            }
+
+            public Builder progressToken(Object progressToken) {
+                if (this.meta == null) {
+                    this.meta = new HashMap<>();
+                }
+                this.meta.put("progressToken", progressToken);
+                return this;
+            }
+
+            public ElicitRequest build() {
+                return new ElicitRequest(message, requestedSchema, meta);
+            }
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ElicitResult {
+
+        private final Action action;
+        private final Map<String, Object> content;
+        private final Map<String, Object> meta;
+
+        public enum Action {
+            @JsonProperty("accept") ACCEPT,
+            @JsonProperty("decline") DECLINE,
+            @JsonProperty("cancel") CANCEL
+        }
+
+        // Constructor
+        public ElicitResult(
+                @JsonProperty("action") Action action,
+                @JsonProperty("content") Map<String, Object> content,
+                @JsonProperty("_meta") Map<String, Object> meta) {
+            this.action = action;
+            this.content = content;
+            this.meta = meta;
+        }
+
+        public Action getAction() {
+            return action;
+        }
+
+        public Map<String, Object> getContent() {
+            return content;
+        }
+
+        public Map<String, Object> getMeta() {
+            return meta;
+        }
+
+        // Backwards compatibility constructor
+        public ElicitResult(Action action, Map<String, Object> content) {
+            this(action, content, null);
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder {
+
+            private Action action;
+            private Map<String, Object> content;
+            private Map<String, Object> meta;
+
+            public Builder action(Action action) {
+                this.action = action;
+                return this;
+            }
+
+            public Builder content(Map<String, Object> content) {
+                this.content = content;
+                return this;
+            }
+
+            public Builder meta(Map<String, Object> meta) {
+                this.meta = meta;
+                return this;
+            }
+
+            public ElicitResult build() {
+                return new ElicitResult(action, content, meta);
+            }
+        }
+    }
+
+
+    // ---------------------------
 	// Pagination Interfaces
 	// ---------------------------
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)

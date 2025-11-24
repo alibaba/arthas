@@ -4,6 +4,8 @@
 
 package com.taobao.arthas.mcp.server.protocol.spec;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface McpStreamableServerTransportProvider extends McpServerTransportProvider {
@@ -17,6 +19,8 @@ public interface McpStreamableServerTransportProvider extends McpServerTransport
         this.closeGracefully();
     }
 
-    String protocolVersion();
+    default List<String> protocolVersions() {
+        return Arrays.asList(ProtocolVersions.MCP_2024_11_05);
+    }
 
 }

@@ -26,5 +26,4 @@ public interface McpServerTransportProvider {
 
 	McpStreamableHttpRequestHandler getMcpRequestHandler();
 
-    String protocolVersion();
 }
