@@ -140,7 +140,7 @@ public class ProcessImpl implements Process {
 
     @Override
     public boolean interrupt(final Handler<Void> completionHandler) {
-        if (processStatus == ExecStatus.RUNNING || processStatus == ExecStatus.STOPPED) {
+        if (processStatus == ExecStatus.RUNNING || processStatus == ExecStatus.STOPPED || processStatus == ExecStatus.TERMINATED) {
             final Handler<Void> handler = interruptHandler;
             try {
                 if (handler != null) {
