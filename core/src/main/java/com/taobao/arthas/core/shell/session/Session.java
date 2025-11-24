@@ -6,6 +6,7 @@ import com.taobao.arthas.core.shell.system.Job;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A shell session.
@@ -168,4 +169,9 @@ public interface Session {
      * Whether the session is tty term
      */
     boolean isTty();
+
+    /**
+     * @return Clone the session data.
+     */
+    Map<String, Object> cloneSessionData();
 }
