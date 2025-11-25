@@ -945,7 +945,6 @@ public final class McpSchema {
 	/**
 	 * Sent from the client to request resources/updated notifications from the server
 	 * whenever a particular resource changes.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1001,7 +1000,6 @@ public final class McpSchema {
 
 	/**
 	 * Text contents of a resource.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1076,7 +1074,6 @@ public final class McpSchema {
 	// ---------------------------
 	/**
 	 * A prompt or prompt template that the server offers.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1109,7 +1106,6 @@ public final class McpSchema {
 
 	/**
 	 * Describes an argument that a prompt can accept.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1142,7 +1138,6 @@ public final class McpSchema {
 
 	/**
 	 * Describes a message returned as part of a prompt.
-	 *
 	 * This is similar to `SamplingMessage`, but also supports the embedding of resources
 	 * from the MCP server.
 	 */
@@ -1211,7 +1206,6 @@ public final class McpSchema {
 
 	/**
 	 * Used by the client to get a prompt provided by the server.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1237,7 +1231,6 @@ public final class McpSchema {
 
 	/**
 	 * The server's response to a prompts/get request from the client.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1282,7 +1275,6 @@ public final class McpSchema {
 	// ---------------------------
 	/**
 	 * The server's response to a tools/list request from the client.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1362,7 +1354,6 @@ public final class McpSchema {
 	 * Represents a tool that the server provides. Tools enable servers to expose
 	 * executable functionality to the system. Through these tools, you can interact with
 	 * external systems, perform computations, and take actions in the real world.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1404,7 +1395,6 @@ public final class McpSchema {
 
 	/**
 	 * Used by the client to call a tool provided by the server.
-	 *
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1493,7 +1483,6 @@ public final class McpSchema {
 
 	/**
 	 * The server's response to a tools/call request from the client.
-	 *
 	 */
     @JsonInclude(JsonInclude.Include.NON_ABSENT)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -1992,7 +1981,6 @@ public final class McpSchema {
 	 * structured log messages to clients. Clients can control logging verbosity by
 	 * setting minimum log levels, with servers sending notifications containing severity
 	 * levels, optional logger names, and arbitrary JSON-serializable data.
-	 *
 	 */
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class LoggingMessageNotification {
