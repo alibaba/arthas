@@ -69,7 +69,7 @@ public class McpNettyServer {
 		Map<String, McpRequestHandler<?>> requestHandlers = prepareRequestHandlers();
 		Map<String, McpNotificationHandler> notificationHandlers = prepareNotificationHandlers(features);
 
-		this.protocolVersions = Collections.singletonList(mcpTransportProvider.protocolVersion());
+		this.protocolVersions = mcpTransportProvider.protocolVersions();
 
 		mcpTransportProvider.setSessionFactory(new DefaultMcpStreamableServerSessionFactory(requestTimeout,
 				this::initializeRequestHandler, requestHandlers, notificationHandlers, commandExecutor));

@@ -14,7 +14,6 @@ import com.taobao.arthas.mcp.server.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -57,6 +56,10 @@ public class McpNettyServerExchange {
 	private static final TypeReference<McpSchema.ListRootsResult> LIST_ROOTS_RESULT_TYPE_REF =
 			new TypeReference<McpSchema.ListRootsResult>() {
 	};
+
+	private static final TypeReference<McpSchema.ElicitResult> ELICIT_USER_INPUT_RESULT_TYPE_REF =
+			new TypeReference<McpSchema.ElicitResult>() {
+    };
 
 	public static final TypeReference<Object> OBJECT_TYPE_REF = new TypeReference<Object>() {
 	};
@@ -162,7 +165,7 @@ public class McpNettyServerExchange {
 	public CompletableFuture<Void> loggingNotification(LoggingMessageNotification loggingMessageNotification) {
 		if (loggingMessageNotification == null) {
 			CompletableFuture<Void> future = new CompletableFuture<>();
-			future.completeExceptionally(new McpError("日志消息不能为空"));
+			future.completeExceptionally(new McpError("log messages cannot be empty"));
 			return future;
 		}
 
@@ -182,8 +185,35 @@ public class McpNettyServerExchange {
 		return this.session.sendRequest(McpSchema.METHOD_PING, null, OBJECT_TYPE_REF);
 	}
 
+	public CompletableFuture<McpSchema.ElicitResult> createElicitation(McpSchema.ElicitRequest request) {
+        if (request == null) {
+            CompletableFuture<McpSchema.ElicitResult> future = new CompletableFuture<>();
+            future.completeExceptionally(new McpError("elicit request cannot be null"));
+            return future;
+        }
+        if (this.clientCapabilities == null) {
+            CompletableFuture<McpSchema.ElicitResult> future = new CompletableFuture<>();
+            future.completeExceptionally(new McpError("Client must be initialized. Call the initialize method first!"));
+            return future;
+        }
+        if (this.clientCapabilities.getElicitation() == null) {
+            CompletableFuture<McpSchema.ElicitResult> future = new CompletableFuture<>();
+            future.completeExceptionally(new McpError("Client must be configured with elicitation capabilities"));
+            return future;
+        }
+		return this.session
+			.sendRequest(McpSchema.METHOD_ELICITATION_CREATE, request, ELICIT_USER_INPUT_RESULT_TYPE_REF)
+			.whenComplete((result, error) -> {
+				if (error != null) {
+					logger.error("Failed to elicit user input, session ID: {}, error: {}", this.sessionId, error.getMessage());
+				} else {
+					logger.debug("User input elicitation completed, session ID: {}", this.sessionId);
+				}
+			});
+	}
+
 	public void setMinLoggingLevel(LoggingLevel minLoggingLevel) {
-		Assert.notNull(minLoggingLevel, "最低日志级别不能为空");
+		Assert.notNull(minLoggingLevel, "the minimum log level cannot be empty");
 		logger.debug("Setting minimum logging level: {}, session ID: {}", minLoggingLevel, this.sessionId);
 		this.minLoggingLevel = minLoggingLevel;
 	}
@@ -195,7 +225,7 @@ public class McpNettyServerExchange {
 	public CompletableFuture<Void> progressNotification(McpSchema.ProgressNotification progressNotification) {
 		if (progressNotification == null) {
 			CompletableFuture<Void> future = new CompletableFuture<>();
-			future.completeExceptionally(new McpError("进度通知不能为空"));
+			future.completeExceptionally(new McpError("progress notifications cannot be empty"));
 			return future;
 		}
 

@@ -9,10 +9,13 @@ import com.taobao.arthas.mcp.server.protocol.server.McpTransportContextExtractor
 import com.taobao.arthas.mcp.server.protocol.server.handler.McpStreamableHttpRequestHandler;
 import com.taobao.arthas.mcp.server.protocol.spec.McpStreamableServerSession;
 import com.taobao.arthas.mcp.server.protocol.spec.McpStreamableServerTransportProvider;
+import com.taobao.arthas.mcp.server.protocol.spec.ProtocolVersions;
 import com.taobao.arthas.mcp.server.util.Assert;
 import io.netty.handler.codec.http.FullHttpRequest;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.taobao.arthas.mcp.server.ArthasMcpServer.DEFAULT_MCP_ENDPOINT;
@@ -51,8 +54,9 @@ public class NettyStreamableServerTransportProvider implements McpStreamableServ
     }
 
     @Override
-    public String protocolVersion() {
-        return "2025-03-26";
+    public List<String> protocolVersions() {
+        return Arrays.asList(ProtocolVersions.MCP_2024_11_05, ProtocolVersions.MCP_2025_03_26,
+                ProtocolVersions.MCP_2025_06_18);
     }
 
     @Override

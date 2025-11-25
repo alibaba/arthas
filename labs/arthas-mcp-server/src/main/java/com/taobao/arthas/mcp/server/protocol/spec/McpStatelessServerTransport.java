@@ -6,6 +6,8 @@ package com.taobao.arthas.mcp.server.protocol.spec;
 
 import com.taobao.arthas.mcp.server.protocol.server.McpStatelessServerHandler;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface McpStatelessServerTransport {
@@ -17,5 +19,9 @@ public interface McpStatelessServerTransport {
 	}
 
 	CompletableFuture<Void> closeGracefully();
+
+    default List<String> protocolVersions() {
+        return Arrays.asList(ProtocolVersions.MCP_2025_03_26, ProtocolVersions.MCP_2025_06_18);
+    }
 
 }

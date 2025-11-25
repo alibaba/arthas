@@ -48,7 +48,7 @@ public class McpStatelessNettyServer {
 
 	private final ConcurrentHashMap<String, McpStatelessServerFeatures.PromptSpecification> prompts = new ConcurrentHashMap<>();
 
-	private List<String> protocolVersions = Collections.singletonList(McpSchema.LATEST_PROTOCOL_VERSION);
+	private List<String> protocolVersions;
 
 	public McpStatelessNettyServer(
 			McpStatelessServerTransport mcpTransport,
@@ -92,6 +92,8 @@ public class McpStatelessNettyServer {
 			requestHandlers.put(McpSchema.METHOD_PROMPT_LIST, promptsListRequestHandler());
 			requestHandlers.put(McpSchema.METHOD_PROMPT_GET, promptsGetRequestHandler());
 		}
+
+        this.protocolVersions = new ArrayList<>(mcpTransport.protocolVersions());
 
 		McpStatelessServerHandler handler = new DefaultMcpStatelessServerHandler(requestHandlers, new HashMap<>(), commandExecutor);
 		mcpTransport.setMcpHandler(handler);

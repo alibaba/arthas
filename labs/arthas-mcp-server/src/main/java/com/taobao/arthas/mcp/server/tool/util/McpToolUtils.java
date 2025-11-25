@@ -58,7 +58,7 @@ public final class McpToolUtils {
 				Map<String, Object> contextMap = new HashMap<>();
 				contextMap.put(TOOL_CONTEXT_MCP_EXCHANGE_KEY, exchange);
 				contextMap.put(TOOL_CONTEXT_COMMAND_CONTEXT_KEY, commandContext);
-				contextMap.put(PROGRESS_TOKEN, request.getMeta().get(PROGRESS_TOKEN));
+                contextMap.put(PROGRESS_TOKEN, request.progressToken());
 				ToolContext toolContext = new ToolContext(contextMap);
 
 				String requestJson = convertParametersToString(request.getArguments());
@@ -137,7 +137,10 @@ public final class McpToolUtils {
 		List<McpSchema.Content> contents = new ArrayList<>();
 		String safeContent = (content != null && !content.trim().isEmpty()) ? content : "{}";
 		contents.add(new McpSchema.TextContent(safeContent));
-		return new McpSchema.CallToolResult(contents, false);
+        return McpSchema.CallToolResult.builder()
+                .content(contents)
+                .isError(false)
+                .build();
 	}
 
 	private static McpSchema.CallToolResult createErrorResult(String errorMessage) {
@@ -145,7 +148,10 @@ public final class McpToolUtils {
 		String safeErrorMessage = (errorMessage != null && !errorMessage.trim().isEmpty()) ? 
 			errorMessage : "Unknown error occurred";
 		contents.add(new McpSchema.TextContent(safeErrorMessage));
-		return new McpSchema.CallToolResult(contents, true);
+        return McpSchema.CallToolResult.builder()
+                .content(contents)
+                .isError(true)
+                .build();
 	}
 
 }
