@@ -32,7 +32,21 @@ public class TraceView extends ResultView<TraceModel> {
 
     @Override
     public void draw(CommandProcess process, TraceModel result) {
-        process.write(drawTree(result.getRoot())).write("\n");
+        String tree = drawTree(result.getRoot());
+        if (result.getTag() != null && !result.getTag().isEmpty()) {
+            // 在每一行添加tag信息
+            String[] lines = tree.split("\n");
+            StringBuilder sb = new StringBuilder();
+            for (String line : lines) {
+                if (!line.isEmpty()) {
+                    sb.append(line).append(" [tag=").append(result.getTag()).append("]");
+                }
+                sb.append("\n");
+            }
+            process.write(sb.toString());
+        } else {
+            process.write(tree).write("\n");
+        }
     }
 
     public String drawTree(TraceNode root) {

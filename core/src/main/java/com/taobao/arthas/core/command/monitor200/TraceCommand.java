@@ -1,5 +1,8 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
@@ -17,9 +20,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 调用跟踪命令<br/>
@@ -52,6 +52,7 @@ public class TraceCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private List<String> pathPatterns;
     private boolean skipJDKTrace;
+    private String tag;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -96,6 +97,12 @@ public class TraceCommand extends EnhancerCommand {
         this.skipJDKTrace = skipJDKTrace;
     }
 
+    @Option(longName = "tag")
+    @Description("Add a tag to the trace output")
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
@@ -122,6 +129,10 @@ public class TraceCommand extends EnhancerCommand {
 
     public List<String> getPathPatterns() {
         return pathPatterns;
+    }
+
+    public String getTag() {
+        return tag;
     }
 
     @Override

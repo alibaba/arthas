@@ -7,6 +7,7 @@ package com.taobao.arthas.core.command.model;
 public class TraceModel extends ResultModel {
     private TraceNode root;
     private int nodeCount;
+    private String tag;
 
     public TraceModel() {
     }
@@ -14,6 +15,12 @@ public class TraceModel extends ResultModel {
     public TraceModel(TraceNode root, int nodeCount) {
         this.root = root;
         this.nodeCount = nodeCount;
+    }
+
+    public TraceModel(TraceNode root, int nodeCount, String tag) {
+        this.root = root;
+        this.nodeCount = nodeCount;
+        this.tag = tag;
     }
 
     @Override
@@ -35,5 +42,13 @@ public class TraceModel extends ResultModel {
 
     public void setNodeCount(int nodeCount) {
         this.nodeCount = nodeCount;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

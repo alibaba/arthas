@@ -5,6 +5,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.command.model.TraceModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
@@ -98,7 +99,9 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
                     // 满足输出条件
                     process.times().incrementAndGet();
                     // TODO: concurrency issues for process.write
-                    process.appendResult(traceEntity.getModel());
+                    TraceModel model = traceEntity.getModel();
+                    model.setTag(command.getTag());
+                    process.appendResult(model);
 
                     // 是否到达数量限制
                     if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
