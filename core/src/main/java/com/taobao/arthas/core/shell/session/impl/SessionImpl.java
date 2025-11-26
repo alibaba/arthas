@@ -132,4 +132,18 @@ public class SessionImpl implements Session {
         return get(TTY) != null;
     }
 
+    @Override
+    public String getUserId() {
+        return (String) data.get(USER_ID);
+    }
+
+    @Override
+    public void setUserId(String userId) {
+        if (userId == null) {
+            data.remove(USER_ID);
+        } else {
+            data.put(USER_ID, userId);
+        }
+    }
+
 }

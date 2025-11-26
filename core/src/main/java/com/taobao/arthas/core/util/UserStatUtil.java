@@ -72,12 +72,15 @@ public class UserStatUtil {
         }
     }
 
-    private static void arthasUsage(String cmd, String detail) {
+    private static void arthasUsage(String cmd, String detail, String userId) {
         RemoteJob job = new RemoteJob();
         job.appendQueryData("ip", ip);
         job.appendQueryData("version", version);
         if (agentId != null) {
             job.appendQueryData("agentId", agentId);
+        }
+        if (userId != null) {
+            job.appendQueryData("userId", URLEncoder.encode(userId));
         }
         job.appendQueryData("command", URLEncoder.encode(cmd));
         if (detail != null) {
@@ -91,7 +94,14 @@ public class UserStatUtil {
         }
     }
 
-    public static void arthasUsageSuccess(String cmd, List<String> args) {
+    /**
+     * Report command usage with userId
+     * 
+     * @param cmd command name
+     * @param args command arguments
+     * @param userId user id
+     */
+    public static void arthasUsageSuccess(String cmd, List<String> args, String userId) {
         if (statUrl == null) {
             return;
         }
@@ -99,7 +109,11 @@ public class UserStatUtil {
         for (String arg : args) {
             commandString.append(" ").append(arg);
         }
-        UserStatUtil.arthasUsage(cmd, commandString.toString());
+        UserStatUtil.arthasUsage(cmd, commandString.toString(), userId);
+    }
+
+    public static void arthasUsageSuccess(String cmd, List<String> args) {
+        arthasUsageSuccess(cmd, args, null);
     }
 
     public static void destroy() {

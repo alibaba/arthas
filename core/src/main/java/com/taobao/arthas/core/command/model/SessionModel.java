@@ -12,6 +12,7 @@ public class SessionModel extends ResultModel {
     private String agentId;
     private String tunnelServer;
     private String statUrl;
+    private String userId;
 
     private boolean tunnelConnected;
 
@@ -66,5 +67,13 @@ public class SessionModel extends ResultModel {
 
     public void setTunnelConnected(boolean tunnelConnected) {
         this.tunnelConnected = tunnelConnected;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

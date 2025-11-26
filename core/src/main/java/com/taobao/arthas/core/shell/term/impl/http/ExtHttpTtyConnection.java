@@ -62,10 +62,17 @@ public class ExtHttpTtyConnection extends HttpTtyConnection {
         if (context != null) {
             HttpSession httpSession = HttpSessionManager.getHttpSessionFromContext(context);
             if (httpSession != null) {
+                Map<String, Object> result = new HashMap<String, Object>();
                 Object subject = httpSession.getAttribute(ArthasConstants.SUBJECT_KEY);
                 if (subject != null) {
-                    Map<String, Object> result = new HashMap<String, Object>();
                     result.put(ArthasConstants.SUBJECT_KEY, subject);
+                }
+                // pass userId from httpSession to arthas session
+                Object userId = httpSession.getAttribute(ArthasConstants.USER_ID_KEY);
+                if (userId != null) {
+                    result.put(ArthasConstants.USER_ID_KEY, userId);
+                }
+                if (!result.isEmpty()) {
                     return result;
                 }
             }

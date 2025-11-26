@@ -47,20 +47,24 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (!securityAuthenticator.needLogin()) {
-            ctx.fireChannelRead(msg);
-            return;
-        }
-
+        // 先处理非 HttpRequest 消息
         if (!(msg instanceof HttpRequest)) {
             ctx.fireChannelRead(msg);
             return;
         }
 
         HttpRequest httpRequest = (HttpRequest) msg;
+        HttpSession session = httpSessionManager.getOrCreateHttpSession(ctx, httpRequest);
+
+        // 无论是否需要登录认证，都从 URL 中提取 userId
+        extractAndSetUserIdFromUrl(httpRequest, session);
+
+        if (!securityAuthenticator.needLogin()) {
+            ctx.fireChannelRead(msg);
+            return;
+        }
 
         boolean authed = false;
-        HttpSession session = httpSessionManager.getOrCreateHttpSession(ctx, httpRequest);
 
         // 判断session里是否有已登录信息
         if (session != null) {
@@ -140,7 +144,30 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
     }
 
     /**
-     * 从url参数里提取 ?username=hello&password=world
+     * 从 url 参数里提取 userId 并存入 HttpSession
+     * 
+     * @param request
+     * @param session
+     */
+    protected static void extractAndSetUserIdFromUrl(HttpRequest request, HttpSession session) {
+        if (session == null) {
+            return;
+        }
+        QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+        Map<String, List<String>> parameters = queryDecoder.parameters();
+
+        List<String> userIds = parameters.get(ArthasConstants.USER_ID_KEY);
+        if (userIds != null && !userIds.isEmpty()) {
+            String userId = userIds.get(0);
+            if (!StringUtils.isBlank(userId)) {
+                session.setAttribute(ArthasConstants.USER_ID_KEY, userId);
+                logger.debug("Extracted userId from url: {}", userId);
+            }
+        }
+    }
+
+    /**
+     * 从 url 参数里提取 ?username=hello&password=world
      * 
      * @param request
      * @return

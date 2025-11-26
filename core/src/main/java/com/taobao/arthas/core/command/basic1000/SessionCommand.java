@@ -42,6 +42,10 @@ public class SessionCommand extends AnnotatedCommand {
         String statUrl = UserStatUtil.getStatUrl();
         result.setStatUrl(statUrl);
 
+        //userId
+        String userId = session.getUserId();
+        result.setUserId(userId);
+
         process.appendResult(result);
         process.end();
     }
