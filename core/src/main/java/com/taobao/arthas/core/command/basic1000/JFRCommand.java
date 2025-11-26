@@ -59,7 +59,7 @@ public class JFRCommand extends AnnotatedCommand {
     private JFRModel result = new JFRModel();
     private static Map<Long, Recording> recordings = new ConcurrentHashMap<Long, Recording>();
 
-    @Argument(index = 0, argName = "cmd", required = true)
+    @Argument(index = 0, argName = "cmd")
     @Description("command name (start status stop dump)")
     public void setCmd(String cmd) {
         this.cmd = cmd;
@@ -209,7 +209,7 @@ public class JFRCommand extends AnnotatedCommand {
                 }
             }
 
-            if (isDumpOnExit() != false) {
+            if (isDumpOnExit()) {
                 r.setDumpOnExit(isDumpOnExit().booleanValue());
             }
 
@@ -256,6 +256,7 @@ public class JFRCommand extends AnnotatedCommand {
                 Recording r = recordings.get(getRecording());
                 if (r == null) {
                     process.end(-1, "recording not exit");
+                    return;
                 }
                 printRecording(r);
             } else {// list all recordings
@@ -308,6 +309,7 @@ public class JFRCommand extends AnnotatedCommand {
                 Recording r = recordings.remove(getRecording());
                 if (r == null) {
                     process.end(-1, "recording not exit");
+                    return;
                 }
                 if ("CLOSED".equals(r.getState().toString()) || "STOPPED".equals(r.getState().toString())) {
                     process.end(-1, "Failed to stop recording, state can not be closed/stopped");
