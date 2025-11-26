@@ -82,10 +82,11 @@ public class CommandExecutorImpl implements CommandExecutor {
      * @param timeout 超时时间
      * @param sessionId session ID，如果为null则创建临时session
      * @param authSubject 认证主体，如果不为null则应用到session
+     * @param userId 用户 ID，用于统计上报
      * @return 执行结果
      */
     @Override
-    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject) {
+    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject, String userId) {
         Session session = null;
         boolean oneTimeAccess = false;
         
@@ -96,6 +97,12 @@ public class CommandExecutorImpl implements CommandExecutor {
                 session.put(SUBJECT_KEY, authSubject);
                 logger.debug("Applied auth subject to session: {} (authSubject: {})", 
                            session.getSessionId(), authSubject.getClass().getSimpleName());
+            }
+            
+            // 设置 userId 到 session，用于统计上报
+            if (userId != null && !userId.trim().isEmpty()) {
+                session.setUserId(userId);
+                logger.debug("Set userId to session: {} (userId: {})", session.getSessionId(), userId);
             }
             
             if (session.get(ONETIME_SESSION_KEY) != null) {
@@ -346,84 +353,6 @@ public class CommandExecutorImpl implements CommandExecutor {
             }
         } catch (SessionNotFoundException e) {
             logger.warn("Cannot set userId for non-existent session: {}", sessionId);
-        }
-    }
-
-    /**
-     * 同步执行命令，支持指定 userId
-     */
-    @Override
-    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject, String userId) {
-        Session session = null;
-        boolean oneTimeAccess = false;
-        
-        try {
-            session = getCurrentSession(sessionId, true);
-
-            if (authSubject != null) {
-                session.put(SUBJECT_KEY, authSubject);
-                logger.debug("Applied auth subject to session: {} (authSubject: {})", 
-                           session.getSessionId(), authSubject.getClass().getSimpleName());
-            }
-            
-            // 设置 userId 到 session
-            if (userId != null && !userId.trim().isEmpty()) {
-                session.setUserId(userId);
-                logger.debug("Set userId to session: {} (userId: {})", session.getSessionId(), userId);
-            }
-            
-            if (session.get(ONETIME_SESSION_KEY) != null) {
-                oneTimeAccess = true;
-            }
-
-            PackingResultDistributorImpl resultDistributor = new PackingResultDistributorImpl(session);
-            Job job = this.createJob(commandLine, session, resultDistributor);
-            
-            if (job == null) {
-                logger.error("Failed to create job for command: {}", commandLine);
-                return createErrorResult(commandLine, "Failed to create job");
-            }
-
-            job.run();
-            boolean finished = waitForJob(job, (int) timeout);
-            if (!finished) {
-                logger.warn("Command timeout after {} ms: {}", timeout, commandLine);
-                job.interrupt();
-                return createTimeoutResult(commandLine, timeout);
-            }
-
-            Map<String, Object> result = new TreeMap<>();
-            result.put("command", commandLine);
-            result.put("success", true);
-            result.put("sessionId", session.getSessionId());
-            result.put("executionTime", System.currentTimeMillis());
-
-            List<ResultModel> results = resultDistributor.getResults();
-            if (results != null && !results.isEmpty()) {
-                result.put("results", results);
-                result.put("resultCount", results.size());
-            } else {
-                result.put("results", results);
-                result.put("resultCount", 0);
-            }
-
-            return result;
-
-        } catch (SessionNotFoundException e) {
-            logger.error("Session error for command: {}", commandLine, e);
-            return createErrorResult(commandLine, e.getMessage());
-        } catch (Exception e) {
-            logger.error("Error executing command: {}", commandLine, e);
-            return createErrorResult(commandLine, "Error executing command: " + e.getMessage());
-        } finally {
-            if (oneTimeAccess && session != null) {
-                try {
-                    sessionManager.removeSession(session.getSessionId());
-                    logger.debug("Destroyed one-time session {}", session.getSessionId());
-                } catch (Exception e) {
-                    logger.warn("Error removing one-time session", e);
-                }
-            }
         }
     }
 

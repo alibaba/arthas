@@ -52,7 +52,7 @@ public class ArthasCommandContext {
     }
 
     public Map<String, Object> executeSync(String commandStr, Object authSubject) {
-        return commandExecutor.executeSync(commandStr, DEFAULT_SYNC_TIMEOUT, null, authSubject);
+        return commandExecutor.executeSync(commandStr, DEFAULT_SYNC_TIMEOUT, null, authSubject, null);
     }
 
     /**
