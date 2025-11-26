@@ -17,7 +17,33 @@ public interface CommandExecutor {
         return executeSync(commandLine, 30000L, null, authSubject);
     }
 
+    /**
+     * 同步执行命令，支持指定 userId
+     *
+     * @param commandLine 命令行
+     * @param authSubject 认证主体
+     * @param userId 用户 ID
+     * @return 执行结果
+     */
+    default Map<String, Object> executeSync(String commandLine, Object authSubject, String userId) {
+        return executeSync(commandLine, 30000L, null, authSubject, userId);
+    }
+
     Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject);
+
+    /**
+     * 同步执行命令，支持指定 userId
+     *
+     * @param commandLine 命令行
+     * @param timeout 超时时间
+     * @param sessionId session ID
+     * @param authSubject 认证主体
+     * @param userId 用户 ID
+     * @return 执行结果
+     */
+    default Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject, String userId) {
+        return executeSync(commandLine, timeout, sessionId, authSubject);
+    }
 
     Map<String, Object> executeAsync(String commandLine, String sessionId);
 
@@ -30,5 +56,13 @@ public interface CommandExecutor {
     Map<String, Object> closeSession(String sessionId);
 
     void setSessionAuth(String sessionId, Object authSubject);
+
+    /**
+     * 设置 session 的 userId
+     *
+     * @param sessionId session ID
+     * @param userId 用户 ID
+     */
+    void setSessionUserId(String sessionId, String userId);
 }
 

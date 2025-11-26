@@ -5,12 +5,12 @@ import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.util.JsonParser;
+import com.taobao.arthas.mcp.server.util.McpAuthExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.taobao.arthas.mcp.server.util.McpAuthExtractor.MCP_AUTH_SUBJECT_KEY;
 import static com.taobao.arthas.mcp.server.tool.util.McpToolUtils.*;
 import static com.taobao.arthas.mcp.server.tool.function.StreamableToolUtils.*;
 
@@ -28,6 +28,7 @@ public abstract class AbstractArthasTool {
         private final ArthasCommandContext commandContext;
         private final McpTransportContext mcpTransportContext;
         private final Object authSubject;
+        private final String userId;
         private final McpNettyServerExchange exchange;
         private final String progressToken;
         private final boolean isStreamable;
@@ -42,9 +43,12 @@ public abstract class AbstractArthasTool {
                 this.progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
                 this.mcpTransportContext = null;
                 this.authSubject = null;
+                this.userId = null;
             } else {
                 this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
-                this.authSubject = mcpTransportContext.get(MCP_AUTH_SUBJECT_KEY);
+                this.authSubject = mcpTransportContext != null ? mcpTransportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY) : null;
+                // 从 McpTransportContext 中获取 userId
+                this.userId = mcpTransportContext != null ? (String) mcpTransportContext.get(McpAuthExtractor.MCP_USER_ID_KEY) : null;
                 this.exchange = null;
                 this.progressToken = null;
             }
@@ -60,6 +64,14 @@ public abstract class AbstractArthasTool {
         
         public Object getAuthSubject() {
             return authSubject;
+        }
+        
+        /**
+         * 获取用户 ID
+         * @return 用户 ID，如果未设置则返回 null
+         */
+        public String getUserId() {
+            return userId;
         }
         
         public McpNettyServerExchange getExchange() {
@@ -78,7 +90,12 @@ public abstract class AbstractArthasTool {
     protected String executeSync(ToolContext toolContext, String commandStr) {
         try {
             ToolExecutionContext execContext = new ToolExecutionContext(toolContext, false);
-            Object result = execContext.getCommandContext().executeSync(commandStr, execContext.getAuthSubject());
+            // 使用带 userId 参数的 executeSync 方法
+            Object result = execContext.getCommandContext().executeSync(
+                    commandStr, 
+                    execContext.getAuthSubject(),
+                    execContext.getUserId()
+            );
             return JsonParser.toJson(result);
         } catch (Exception e) {
             logger.error("Error executing sync command: {}", commandStr, e);
