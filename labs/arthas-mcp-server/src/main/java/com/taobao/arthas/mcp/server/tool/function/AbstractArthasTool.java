@@ -41,9 +41,9 @@ public abstract class AbstractArthasTool {
                 this.exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
                 Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
                 this.progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
-                this.mcpTransportContext = null;
-                this.authSubject = null;
-                this.userId = null;
+                this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
+                this.authSubject = mcpTransportContext != null ? mcpTransportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY) : null;
+                this.userId = mcpTransportContext != null ? (String) mcpTransportContext.get(McpAuthExtractor.MCP_USER_ID_KEY) : null;
             } else {
                 this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
                 this.authSubject = mcpTransportContext != null ? mcpTransportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY) : null;
@@ -110,6 +110,11 @@ public abstract class AbstractArthasTool {
             ToolExecutionContext execContext = new ToolExecutionContext(toolContext, true);
             
             logger.info("Starting streamable execution: {}", commandStr);
+
+            // Set userId to session before async execution for stat reporting
+            if (execContext.getUserId() != null) {
+                execContext.getCommandContext().setSessionUserId(execContext.getUserId());
+            }
 
             Map<String, Object> asyncResult = execContext.getCommandContext().executeAsync(commandStr);
             logger.debug("Async execution started: {}", asyncResult);

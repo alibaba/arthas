@@ -7,9 +7,9 @@ import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 
 import java.lang.instrument.Instrumentation;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,7 +20,7 @@ public class SessionImpl implements Session {
     private final static int LOCK_TX_EMPTY = -1;
     private final AtomicInteger lock = new AtomicInteger(LOCK_TX_EMPTY);
 
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private Map<String, Object> data = new ConcurrentHashMap<String, Object>();
 
     public SessionImpl() {
         long now = System.currentTimeMillis();

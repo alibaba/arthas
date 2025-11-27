@@ -39,10 +39,6 @@ public class ArthasCommandContext {
         }
     }
 
-    public boolean isSessionSupported() {
-        return sessionBinding != null;
-    }
-
     public Map<String, Object> executeSync(String commandLine) {
         return executeSync(commandLine, DEFAULT_SYNC_TIMEOUT);
     }
