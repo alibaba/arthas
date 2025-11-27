@@ -19,6 +19,7 @@ public interface Session {
     String INSTRUMENTATION = "instrumentation";
     String ID = "id";
     String SERVER = "server";
+    String USER_ID = "userId";
     /**
      * The tty this session related to.
      */
@@ -168,4 +169,16 @@ public interface Session {
      * Whether the session is tty term
      */
     boolean isTty();
+
+    /**
+     * Get user id
+     * @return user id
+     */
+    String getUserId();
+
+    /**
+     * Set user id
+     * @param userId user id
+     */
+    void setUserId(String userId);
 }

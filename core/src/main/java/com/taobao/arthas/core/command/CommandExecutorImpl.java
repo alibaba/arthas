@@ -82,10 +82,11 @@ public class CommandExecutorImpl implements CommandExecutor {
      * @param timeout 超时时间
      * @param sessionId session ID，如果为null则创建临时session
      * @param authSubject 认证主体，如果不为null则应用到session
+     * @param userId 用户 ID，用于统计上报
      * @return 执行结果
      */
     @Override
-    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject) {
+    public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId, Object authSubject, String userId) {
         Session session = null;
         boolean oneTimeAccess = false;
         
@@ -96,6 +97,12 @@ public class CommandExecutorImpl implements CommandExecutor {
                 session.put(SUBJECT_KEY, authSubject);
                 logger.debug("Applied auth subject to session: {} (authSubject: {})", 
                            session.getSessionId(), authSubject.getClass().getSimpleName());
+            }
+            
+            // 设置 userId 到 session，用于统计上报
+            if (userId != null && !userId.trim().isEmpty()) {
+                session.setUserId(userId);
+                logger.debug("Set userId to session: {} (userId: {})", session.getSessionId(), userId);
             }
             
             if (session.get(ONETIME_SESSION_KEY) != null) {
@@ -333,6 +340,19 @@ public class CommandExecutorImpl implements CommandExecutor {
             }
         } catch (SessionNotFoundException e) {
             logger.warn("Cannot set auth for non-existent session: {}", sessionId);
+        }
+    }
+
+    @Override
+    public void setSessionUserId(String sessionId, String userId) {
+        try {
+            Session session = getCurrentSession(sessionId, false);
+            if (userId != null && !userId.trim().isEmpty()) {
+                session.setUserId(userId);
+                logger.debug("Set userId for session {}: {}", sessionId, userId);
+            }
+        } catch (SessionNotFoundException e) {
+            logger.warn("Cannot set userId for non-existent session: {}", sessionId);
         }
     }
 

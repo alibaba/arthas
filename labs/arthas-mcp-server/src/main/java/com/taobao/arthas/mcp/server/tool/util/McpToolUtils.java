@@ -59,6 +59,10 @@ public final class McpToolUtils {
 				contextMap.put(TOOL_CONTEXT_MCP_EXCHANGE_KEY, exchange);
 				contextMap.put(TOOL_CONTEXT_COMMAND_CONTEXT_KEY, commandContext);
                 contextMap.put(PROGRESS_TOKEN, request.progressToken());
+				// Add MCP_TRANSPORT_CONTEXT from exchange for streamable tools to access auth info
+				if (exchange != null && exchange.getTransportContext() != null) {
+					contextMap.put(MCP_TRANSPORT_CONTEXT, exchange.getTransportContext());
+				}
 				ToolContext toolContext = new ToolContext(contextMap);
 
 				String requestJson = convertParametersToString(request.getArguments());

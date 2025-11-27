@@ -162,6 +162,16 @@ public class HttpApiHandler {
                 if (subject != null) {
                     session.put(ArthasConstants.SUBJECT_KEY, subject);
                 }
+                // get userId from httpSession
+                Object userId = httpSession.getAttribute(ArthasConstants.USER_ID_KEY);
+                if (userId != null && session.getUserId() == null) {
+                    session.setUserId((String) userId);
+                }
+            }
+
+            // set userId from apiRequest if provided
+            if (!StringUtils.isBlank(apiRequest.getUserId())) {
+                session.setUserId(apiRequest.getUserId());
             }
 
             //dispatch requests
@@ -209,6 +219,11 @@ public class HttpApiHandler {
         //create session
         Session session = sessionManager.createSession();
         if (session != null) {
+
+            // set userId if provided
+            if (!StringUtils.isBlank(apiRequest.getUserId())) {
+                session.setUserId(apiRequest.getUserId());
+            }
 
             //Result Distributor
             SharingResultDistributorImpl resultDistributor = new SharingResultDistributorImpl(session);

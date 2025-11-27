@@ -231,6 +231,10 @@ public class McpStreamableHttpRequestHandler {
         Object authSubject = McpAuthExtractor.extractAuthSubjectFromContext(ctx);
         transportContext.put(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY, authSubject);
 
+        // 从 HTTP header 中提取 User ID
+        String userId = McpAuthExtractor.extractUserIdFromRequest(request);
+        transportContext.put(McpAuthExtractor.MCP_USER_ID_KEY, userId);
+
         try {
             // Set up SSE response headers
             HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
@@ -302,6 +306,10 @@ public class McpStreamableHttpRequestHandler {
 
         Object authSubject = McpAuthExtractor.extractAuthSubjectFromContext(ctx);
         transportContext.put(MCP_AUTH_SUBJECT_KEY, authSubject);
+
+        // 从 HTTP header 中提取 User ID
+        String userId = McpAuthExtractor.extractUserIdFromRequest(request);
+        transportContext.put(McpAuthExtractor.MCP_USER_ID_KEY, userId);
 
         try {
             ByteBuf content = request.content();

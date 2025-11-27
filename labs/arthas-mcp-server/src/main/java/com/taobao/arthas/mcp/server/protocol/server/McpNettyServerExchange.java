@@ -98,6 +98,14 @@ public class McpNettyServerExchange {
 	}
 
 	/**
+	 * Get the transport context associated with this exchange.
+	 * @return The transport context
+	 */
+	public McpTransportContext getTransportContext() {
+		return this.transportContext;
+	}
+
+	/**
 	 * Create a new message using client sampling capability. MCP provides a standardized way for servers to request
 	 * LLM sampling ("completion" or "generation") through the client. This flow allows clients to maintain control
 	 * over model access, selection, and permissions while enabling servers to leverage AI capabilities—without server

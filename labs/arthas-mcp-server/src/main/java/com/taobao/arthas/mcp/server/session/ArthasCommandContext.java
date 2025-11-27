@@ -14,6 +14,8 @@ import java.util.Objects;
  */
 public class ArthasCommandContext {
 
+    private static final Logger logger = LoggerFactory.getLogger(ArthasCommandContext.class);
+
     private final CommandExecutor commandExecutor;
 
     private final ArthasCommandSessionManager.CommandSessionBinding sessionBinding;
@@ -37,10 +39,6 @@ public class ArthasCommandContext {
         }
     }
 
-    public boolean isSessionSupported() {
-        return sessionBinding != null;
-    }
-
     public Map<String, Object> executeSync(String commandLine) {
         return executeSync(commandLine, DEFAULT_SYNC_TIMEOUT);
     }
@@ -48,8 +46,21 @@ public class ArthasCommandContext {
     public Map<String, Object> executeSync(String commandLine, long timeout) {
         return commandExecutor.executeSync(commandLine, timeout);
     }
+
     public Map<String, Object> executeSync(String commandStr, Object authSubject) {
-        return commandExecutor.executeSync(commandStr, DEFAULT_SYNC_TIMEOUT, null, authSubject);
+        return commandExecutor.executeSync(commandStr, DEFAULT_SYNC_TIMEOUT, null, authSubject, null);
+    }
+
+    /**
+     * 同步执行命令，支持指定 authSubject 和 userId
+     *
+     * @param commandStr 命令行
+     * @param authSubject 认证主体
+     * @param userId 用户 ID，用于统计上报
+     * @return 执行结果
+     */
+    public Map<String, Object> executeSync(String commandStr, Object authSubject, String userId) {
+        return commandExecutor.executeSync(commandStr, DEFAULT_SYNC_TIMEOUT, null, authSubject, userId);
     }
 
     public Map<String, Object> executeAsync(String commandLine) {
@@ -70,5 +81,17 @@ public class ArthasCommandContext {
     public String getArthasSessionId() {
         requireSessionSupport();
         return sessionBinding.getArthasSessionId();
+    }
+
+    /**
+     * 设置 session 的 userId
+     *
+     * @param userId 用户 ID
+     */
+    public void setSessionUserId(String userId) {
+        if (sessionBinding != null && userId != null) {
+            commandExecutor.setSessionUserId(sessionBinding.getArthasSessionId(), userId);
+            logger.debug("Set userId for session {}: {}", sessionBinding.getArthasSessionId(), userId);
+        }
     }
 }

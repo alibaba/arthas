@@ -38,4 +38,5 @@ public class ArthasConstants {
     public static final String AUTH = "auth";
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+    public static final String USER_ID_KEY = "userId";
 }

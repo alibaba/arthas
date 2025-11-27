@@ -112,6 +112,10 @@ public class McpStatelessHttpRequestHandler {
         Object authSubject = McpAuthExtractor.extractAuthSubjectFromContext(ctx);
         transportContext.put(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY, authSubject);
 
+        // 从 HTTP header 中提取 User ID
+        String userId = McpAuthExtractor.extractUserIdFromRequest(request);
+        transportContext.put(McpAuthExtractor.MCP_USER_ID_KEY, userId);
+
         String accept = request.headers().get(ACCEPT);
         if (accept == null || !(accept.contains(APPLICATION_JSON) && accept.contains(TEXT_EVENT_STREAM))) {
             sendError(ctx, HttpResponseStatus.BAD_REQUEST,
