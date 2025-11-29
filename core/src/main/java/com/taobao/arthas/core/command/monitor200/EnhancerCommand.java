@@ -54,6 +54,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected Long timeout;
 
+    protected boolean lazy = false;
+
     @Option(longName = "exclude-class-pattern")
     @Description("exclude class name pattern, use either '.' or '/' as separator")
     public void setExcludeClassPattern(String excludeClassPattern) {
@@ -87,6 +89,16 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     public Long getTimeout() {
         return timeout;
+    }
+
+    @Option(shortName = "L", longName = "lazy", flag = true)
+    @Description("Enable lazy mode to enhance classes when they are loaded. Useful when the class is not loaded yet.")
+    public void setLazy(boolean lazy) {
+        this.lazy = lazy;
+    }
+
+    public boolean isLazy() {
+        return lazy;
     }
 
     /**
@@ -182,7 +194,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), this.lazy);
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst, this.maxNumOfMatchedClass);
@@ -201,24 +213,33 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                     process.end(-1);
                     return;
                 }
-                // might be method code too large
-                process.appendResult(new EnhancerModel(effect, false, "No class or method is affected"));
+                
+                // 懒加载模式：即使没有匹配的类也不立即结束，等待类加载
+                if (this.lazy) {
+                    String lazyMsg = "Lazy mode is enabled, waiting for class to be loaded. Press Q or Ctrl+C to abort.\n"
+                            + "When the target class is loaded, it will be automatically enhanced.";
+                    process.write(lazyMsg + "\n");
+                } else {
+                    // might be method code too large
+                    process.appendResult(new EnhancerModel(effect, false, "No class or method is affected"));
 
-                String smCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("sm CLASS_NAME METHOD_NAME").reset().toString();
-                String optionsCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("options unsafe true").reset().toString();
-                String javaPackage = Ansi.ansi().fg(Ansi.Color.GREEN).a("java.*").reset().toString();
-                String resetCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("reset CLASS_NAME").reset().toString();
-                String logStr = Ansi.ansi().fg(Ansi.Color.GREEN).a(LogUtil.loggingFile()).reset().toString();
-                String issueStr = Ansi.ansi().fg(Ansi.Color.GREEN).a("https://github.com/alibaba/arthas/issues/47").reset().toString();
-                String msg = "No class or method is affected, try:\n"
-                        + "1. Execute `" + smCommand + "` to make sure the method you are tracing actually exists (it might be in your parent class).\n"
-                        + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
-                        + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
-                        + "4. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
-                        + "5. Check arthas log: " + logStr + "\n"
-                        + "6. Visit " + issueStr + " for more details.";
-                process.end(-1, msg);
-                return;
+                    String smCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("sm CLASS_NAME METHOD_NAME").reset().toString();
+                    String optionsCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("options unsafe true").reset().toString();
+                    String javaPackage = Ansi.ansi().fg(Ansi.Color.GREEN).a("java.*").reset().toString();
+                    String resetCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("reset CLASS_NAME").reset().toString();
+                    String logStr = Ansi.ansi().fg(Ansi.Color.GREEN).a(LogUtil.loggingFile()).reset().toString();
+                    String issueStr = Ansi.ansi().fg(Ansi.Color.GREEN).a("https://github.com/alibaba/arthas/issues/47").reset().toString();
+                    String msg = "No class or method is affected, try:\n"
+                            + "1. Execute `" + smCommand + "` to make sure the method you are tracing actually exists (it might be in your parent class).\n"
+                            + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
+                            + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
+                            + "4. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
+                            + "5. Check arthas log: " + logStr + "\n"
+                            + "6. Visit " + issueStr + " for more details.\n"
+                            + "7. If the class is not loaded yet, try to use `--lazy` or `-L` option to enable lazy mode.";
+                    process.end(-1, msg);
+                    return;
+                }
             }
 
             // 这里做个补偿,如果在enhance期间,unLock被调用了,则补偿性放弃

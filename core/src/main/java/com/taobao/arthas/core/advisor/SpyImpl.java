@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.system.ExecStatus;
+import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.util.StringUtils;
 
@@ -177,7 +178,11 @@ public class SpyImpl extends AbstractSpy {
     private static boolean skipAdviceListener(AdviceListener adviceListener) {
         if (adviceListener instanceof ProcessAware) {
             ProcessAware processAware = (ProcessAware) adviceListener;
-            ExecStatus status = processAware.getProcess().status();
+            Process process = processAware.getProcess();
+            if (process == null) {
+                return true;
+            }
+            ExecStatus status = process.status();
             if (status.equals(ExecStatus.TERMINATED) || status.equals(ExecStatus.STOPPED)) {
                 return true;
             }

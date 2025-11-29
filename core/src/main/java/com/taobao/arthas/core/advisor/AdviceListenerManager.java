@@ -170,6 +170,9 @@ public class AdviceListenerManager {
         classLoader = wrap(classLoader);
         className = className.replace('/', '.');
 
+        logger.info("registerAdviceListener: classLoader={}, className={}, methodName={}, methodDesc={}, listener={}",
+                classLoader, className, methodName, methodDesc, listener.id());
+
         ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
 
         if (manager == null) {
