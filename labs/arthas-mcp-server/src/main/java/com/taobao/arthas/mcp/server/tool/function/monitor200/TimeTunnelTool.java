@@ -48,11 +48,15 @@ public class TimeTunnelTool extends AbstractArthasTool {
             @ToolParam(description = "Class最大匹配数量，防止匹配到的Class数量太多导致JVM挂起，默认50", required = false)
             Integer maxMatchCount,
 
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出（仅record操作）", required = false)
+            Integer timeout,
+
             ToolContext toolContext
     ) {
         String ttAction = normalizeAction(action);
         int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
         int maxMatch = getDefaultValue(maxMatchCount, DEFAULT_MAX_MATCH_COUNT);
+        int timeoutSeconds = getDefaultValue(timeout, DEFAULT_TIMEOUT_SECONDS);
 
         validateParameters(ttAction, classPattern, methodPattern, index, searchExpression);
 
@@ -60,7 +64,7 @@ public class TimeTunnelTool extends AbstractArthasTool {
 
         switch (ttAction) {
             case "record":
-                cmd = buildRecordCommand(cmd, classPattern, methodPattern, condition, execCount, maxMatch, regex);
+                cmd = buildRecordCommand(cmd, classPattern, methodPattern, condition, execCount, maxMatch, regex, timeoutSeconds);
                 break;
             case "list":
                 cmd = buildListCommand(cmd, searchExpression);
@@ -180,10 +184,11 @@ public class TimeTunnelTool extends AbstractArthasTool {
     }
 
     private StringBuilder buildRecordCommand(StringBuilder cmd, String classPattern, String methodPattern,
-                                             String condition, int execCount, int maxMatch, Boolean regex) {
+                                             String condition, int execCount, int maxMatch, Boolean regex, int timeoutSeconds) {
 
         cmd.append(" -t");
 
+        cmd.append(" --timeout ").append(timeoutSeconds);
         cmd.append(" -n ").append(execCount);
         cmd.append(" -m ").append(maxMatch);
 

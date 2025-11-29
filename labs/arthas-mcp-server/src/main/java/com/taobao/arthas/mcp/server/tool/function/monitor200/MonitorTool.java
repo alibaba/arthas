@@ -51,14 +51,19 @@ public class MonitorTool extends AbstractArthasTool {
             @ToolParam(description = "最大匹配类数量，防止匹配过多类影响性能，默认50", required = false)
             Integer maxMatch,
 
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            Integer timeout,
+
             ToolContext toolContext
     ) {
         int interval = getDefaultValue(intervalMs, DEFAULT_REFRESH_INTERVAL_MS);
         int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
         int maxMatchCount = getDefaultValue(maxMatch, DEFAULT_MAX_MATCH_COUNT);
+        int timeoutSeconds = getDefaultValue(timeout, DEFAULT_TIMEOUT_SECONDS);
 
         StringBuilder cmd = buildCommand("monitor");
 
+        cmd.append(" --timeout ").append(timeoutSeconds);
         cmd.append(" -c ").append(interval / 1000);
         cmd.append(" -n ").append(execCount);
         cmd.append(" -m ").append(maxMatchCount);

@@ -20,6 +20,8 @@ import static com.taobao.arthas.mcp.server.tool.function.StreamableToolUtils.*;
 public abstract class AbstractArthasTool {
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public static final int DEFAULT_TIMEOUT_SECONDS = 200;
     
     /**
      * 工具执行上下文，包含所有必要的上下文信息
