@@ -39,13 +39,18 @@ public class TraceTool extends AbstractArthasTool {
             @ToolParam(description = "指定Class最大匹配数量，默认50", required = false)
             Integer maxMatchCount,
 
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            Integer timeout,
+
             ToolContext toolContext
     ) {
         int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
         int maxMatch = getDefaultValue(maxMatchCount, DEFAULT_MAX_MATCH_COUNT);
+        int timeoutSeconds = getDefaultValue(timeout, DEFAULT_TIMEOUT_SECONDS);
 
         StringBuilder cmd = buildCommand("trace");
 
+        cmd.append(" --timeout ").append(timeoutSeconds);
         cmd.append(" -n ").append(execCount);
         cmd.append(" -m ").append(maxMatch);
 
