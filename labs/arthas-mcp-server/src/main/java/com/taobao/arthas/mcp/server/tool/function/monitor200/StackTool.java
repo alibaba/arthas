@@ -42,11 +42,16 @@ public class StackTool extends AbstractArthasTool {
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
             Boolean regex,
 
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            Integer timeout,
+
             ToolContext toolContext
     ) {
         int execCount = getDefaultValue(numberOfExecutions, DEFAULT_NUMBER_OF_EXECUTIONS);
+        int timeoutSeconds = getDefaultValue(timeout, DEFAULT_TIMEOUT_SECONDS);
 
         StringBuilder cmd = buildCommand("stack");
+        cmd.append(" --timeout ").append(timeoutSeconds);
         cmd.append(" -n ").append(execCount);
         
         addFlag(cmd, "-E", regex);

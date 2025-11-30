@@ -3,6 +3,8 @@ package com.taobao.arthas.core.command.monitor200;
 import java.lang.instrument.Instrumentation;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
 import com.taobao.arthas.core.command.model.EnhancerModel;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -49,6 +52,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected int maxNumOfMatchedClass;
 
+    protected Long timeout;
+
     @Option(longName = "exclude-class-pattern")
     @Description("exclude class name pattern, use either '.' or '/' as separator")
     public void setExcludeClassPattern(String excludeClassPattern) {
@@ -72,6 +77,16 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     @Description("The maximum of matched class.")
     public void setMaxNumOfMatchedClass(int maxNumOfMatchedClass) {
         this.maxNumOfMatchedClass = maxNumOfMatchedClass;
+    }
+
+    @Option(longName = "timeout")
+    @Description("Timeout value in seconds for the command to exit automatically.")
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
+    }
+
+    public Long getTimeout() {
+        return timeout;
     }
 
     /**
@@ -215,6 +230,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             process.appendResult(new EnhancerModel(effect, true));
 
+            // 设置超时任务
+            scheduleTimeoutTask(process);
+
             //异步执行，在AdviceListener中结束
         } catch (Throwable e) {
             String msg = "error happens when enhancing class: "+e.getMessage();
@@ -235,5 +253,35 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     public String getExcludeClassPattern() {
         return excludeClassPattern;
+    }
+
+    /**
+     * Schedule a timeout task to end the command after the specified timeout.
+     *
+     * @param process the command process
+     */
+    private void scheduleTimeoutTask(final CommandProcess process) {
+        if (timeout == null || timeout <= 0) {
+            return;
+        }
+
+        final ScheduledFuture<?> timeoutFuture = ArthasBootstrap.getInstance().getScheduledExecutorService()
+                .schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (process.isRunning()) {
+                            process.write("Command execution timeout after " + timeout + " seconds.\n");
+                            process.end();
+                        }
+                    }
+                }, timeout, TimeUnit.SECONDS);
+
+        // Cancel the timeout task if the process ends normally
+        process.endHandler(new com.taobao.arthas.core.shell.handlers.Handler<Void>() {
+            @Override
+            public void handle(Void event) {
+                timeoutFuture.cancel(false);
+            }
+        });
     }
 }
