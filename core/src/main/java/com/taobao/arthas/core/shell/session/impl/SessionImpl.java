@@ -109,7 +109,11 @@ public class SessionImpl implements Session {
 
     @Override
     public void setResultDistributor(SharingResultDistributor resultDistributor) {
-        data.put(RESULT_DISTRIBUTOR, resultDistributor);
+        if (resultDistributor == null) {
+            data.remove(RESULT_DISTRIBUTOR);
+        } else {
+            data.put(RESULT_DISTRIBUTOR, resultDistributor);
+        }
     }
 
     @Override
@@ -119,7 +123,11 @@ public class SessionImpl implements Session {
 
     @Override
     public void setForegroundJob(Job job) {
-        data.put(FOREGROUND_JOB, job);
+        if (job == null) {
+            data.remove(FOREGROUND_JOB);
+        } else {
+            data.put(FOREGROUND_JOB, job);
+        }
     }
 
     @Override
