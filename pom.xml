@@ -205,6 +205,41 @@
                 <artifactId>netty-codec-http</artifactId>
                 <version>${netty.version}</version>
             </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-codec</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-codec-dns</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-codec-http2</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-codec-socks</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-handler-proxy</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-resolver</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-resolver-dns</artifactId>
+              <version>${netty.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>jline</groupId>
