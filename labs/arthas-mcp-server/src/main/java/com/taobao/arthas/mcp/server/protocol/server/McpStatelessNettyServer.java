@@ -7,6 +7,10 @@ package com.taobao.arthas.mcp.server.protocol.server;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.mcp.server.CommandExecutor;
+import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
+import com.taobao.arthas.mcp.server.tool.validator.FastJsonJsonSchemaValidator;
+import com.taobao.arthas.mcp.server.protocol.spec.JsonSchemaValidator;
+import com.taobao.arthas.mcp.server.util.Assert;
 import com.taobao.arthas.mcp.server.protocol.spec.McpError;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.protocol.spec.McpStatelessServerTransport;
@@ -50,18 +54,28 @@ public class McpStatelessNettyServer {
 
 	private List<String> protocolVersions;
 
+	private final JsonSchemaValidator jsonSchemaValidator;
+
 	public McpStatelessNettyServer(
 			McpStatelessServerTransport mcpTransport,
 			ObjectMapper objectMapper,
 			Duration requestTimeout,
 			McpStatelessServerFeatures.McpServerConfig features,
-			CommandExecutor commandExecutor) {
+			CommandExecutor commandExecutor,
+			JsonSchemaValidator jsonSchemaValidator) {
 		this.mcpTransportProvider = mcpTransport;
 		this.objectMapper = objectMapper;
 		this.serverInfo = features.getServerInfo();
 		this.serverCapabilities = features.getServerCapabilities();
 		this.instructions = features.getInstructions();
-		this.tools.addAll(features.getTools());
+		this.jsonSchemaValidator = jsonSchemaValidator != null ? jsonSchemaValidator : new FastJsonJsonSchemaValidator();
+
+		if (features.getTools() != null) {
+			for (McpStatelessServerFeatures.ToolSpecification toolSpec : features.getTools()) {
+				this.tools.add(withStructuredOutputHandling(this.jsonSchemaValidator, toolSpec));
+			}
+		}
+
 		this.resources.putAll(features.getResources());
 		this.resourceTemplates.addAll(features.getResourceTemplates());
 		this.prompts.putAll(features.getPrompts());
@@ -453,6 +467,67 @@ public class McpStatelessNettyServer {
 
 	public void setProtocolVersions(List<String> protocolVersions) {
 		this.protocolVersions = protocolVersions;
+	}
+
+	private McpStatelessServerFeatures.ToolSpecification withStructuredOutputHandling(
+			JsonSchemaValidator jsonSchemaValidator,
+			McpStatelessServerFeatures.ToolSpecification toolSpecification) {
+
+		if (toolSpecification.getCall() instanceof StructuredOutputCallToolHandler) {
+			return toolSpecification;
+		}
+
+		Map<String, Object> outputSchema = toolSpecification.getTool().getOutputSchema();
+		if (outputSchema == null || outputSchema.isEmpty()) {
+			return toolSpecification;
+		}
+
+		return new McpStatelessServerFeatures.ToolSpecification(toolSpecification.getTool(),
+				new StructuredOutputCallToolHandler(jsonSchemaValidator, outputSchema,
+						toolSpecification.getCall()));
+	}
+
+	private static class StructuredOutputCallToolHandler
+			implements McpStatelessServerFeatures.ToolCallFunction {
+
+		private final McpStatelessServerFeatures.ToolCallFunction delegate;
+		private final JsonSchemaValidator jsonSchemaValidator;
+		private final Map<String, Object> outputSchema;
+
+		public StructuredOutputCallToolHandler(JsonSchemaValidator jsonSchemaValidator,
+											   Map<String, Object> outputSchema,
+											   McpStatelessServerFeatures.ToolCallFunction delegate) {
+			Assert.notNull(jsonSchemaValidator, "JsonSchemaValidator must not be null");
+			Assert.notNull(delegate, "Delegate call tool result handler must not be null");
+			this.delegate = delegate;
+			this.outputSchema = outputSchema;
+			this.jsonSchemaValidator = jsonSchemaValidator;
+		}
+
+		@Override
+		public CompletableFuture<McpSchema.CallToolResult> apply(McpTransportContext context, ArthasCommandContext commandContext, Map<String, Object> arguments) {
+			return delegate.apply(context, commandContext, arguments).thenApply(result -> {
+				if (Boolean.TRUE.equals(result.getIsError())) {
+					return result;
+				}
+
+				Object structuredContent = result.getStructuredContent();
+				if (structuredContent == null) {
+					return result;
+				}
+
+				JsonSchemaValidator.ValidationResponse validation = jsonSchemaValidator.validate(outputSchema, structuredContent);
+				if (!validation.isValid()) {
+					return new McpSchema.CallToolResult(
+							Collections.singletonList(new McpSchema.TextContent("Output validation failed: " + validation.getErrorMessage())),
+							true,
+							null
+					);
+				}
+
+				return result;
+			});
+		}
 	}
 
 }
