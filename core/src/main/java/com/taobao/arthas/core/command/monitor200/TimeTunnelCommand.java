@@ -372,6 +372,9 @@ public class TimeTunnelCommand extends EnhancerCommand {
         } catch (ExpressException e) {
             logger.warn("tt failed.", e);
             process.end(1, e.getMessage() + ", visit " + LogUtil.loggingFile() + " for more detail");
+        } finally {
+            // Ensure thread-local express instances are cleared
+            ExpressFactory.cleanUp();
         }
     }
 
@@ -417,6 +420,9 @@ public class TimeTunnelCommand extends EnhancerCommand {
         } catch (ExpressException e) {
             logger.warn("tt failed.", e);
             process.end(1, e.getMessage() + ", visit " + LogUtil.loggingFile() + " for more detail");
+        } finally {
+            // Ensure thread-local express instances are cleared
+            ExpressFactory.cleanUp();
         }
     }
 
