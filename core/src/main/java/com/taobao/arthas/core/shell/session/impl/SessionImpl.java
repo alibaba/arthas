@@ -94,7 +94,7 @@ public class SessionImpl implements Session {
 
     @Override
     public void setLastAccessTime(long time) {
-        data.put(LAST_ACCESS_TIME, time);
+        this.put(LAST_ACCESS_TIME, time);
     }
 
     @Override
