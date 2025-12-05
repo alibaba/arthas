@@ -34,7 +34,7 @@ public class FastJsonJsonSchemaValidator implements JsonSchemaValidator {
                 try {
                     contentToValidate = JSON.parse((String) structuredContent);
                 } catch (Exception e) {
-                     return ValidationResponse.asInvalid("Invalid JSON string content: " + e.getMessage());
+                     return ValidationResponse.asInvalid("Failed to parse JSON string content");
                 }
             } else {
                 // Ensure it is compatible with fastjson2 validation
