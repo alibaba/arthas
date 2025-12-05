@@ -84,8 +84,8 @@ public class McpHttpRequestHandler {
         }
 
         if (protocol == null) {
-            logger.warn("Protocol not configured, defaulting to STREAMABLE");
-            protocol = ServerProtocol.STREAMABLE;
+            logger.warn("Protocol not configured, defaulting to STATELESS");
+            protocol = ServerProtocol.STATELESS;
         }
 
         logger.debug("Request {} {} -> using {} transport",
