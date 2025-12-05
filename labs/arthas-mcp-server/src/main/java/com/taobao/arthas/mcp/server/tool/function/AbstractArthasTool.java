@@ -110,6 +110,7 @@ public abstract class AbstractArthasTool {
 
     protected String executeStreamable(ToolContext toolContext, String commandStr, 
                                      Integer expectedResultCount, Integer pollIntervalMs, 
+                                     Integer timeoutMs,
                                      String successMessage) {
         try {
             ToolExecutionContext execContext = new ToolExecutionContext(toolContext, true);
@@ -129,11 +130,22 @@ public abstract class AbstractArthasTool {
                 execContext.getCommandContext(), 
                 expectedResultCount, 
                 pollIntervalMs, 
+                timeoutMs,
                 execContext.getProgressToken()
             );
             
             if (results != null) {
                 String message = successMessage != null ? successMessage : "Command execution completed successfully";
+
+                if (Boolean.TRUE.equals(results.get("timedOut"))) {
+                    Integer count = (Integer) results.get("resultCount");
+                    if (count != null && count > 0) {
+                        message = "Command execution ended (Timed out). Captured " + count + " results.";
+                    } else {
+                        message = "Command execution ended (Timed out). No results captured within the time limit.";
+                    }
+                }
+                
                 return JsonParser.toJson(createCompletedResponse(message, results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Command execution failed due to timeout or error limits exceeded"));

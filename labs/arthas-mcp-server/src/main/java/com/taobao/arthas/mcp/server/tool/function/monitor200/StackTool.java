@@ -63,7 +63,7 @@ public class StackTool extends AbstractArthasTool {
         
         addQuotedParameter(cmd, condition);
 
-        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS, 
+        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS, timeoutSeconds * 1000,
                                 "Stack execution completed successfully");
     }
 }

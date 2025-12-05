@@ -89,7 +89,7 @@ public class TimeTunnelTool extends AbstractArthasTool {
                         ". Supported actions: record(t), list(l), info(i), search(s), replay(p), delete(d), deleteAll(da)");
         }
 
-        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS,
+        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS, timeoutSeconds * 1000,
                 "TimeTunnel recording completed successfully");
     }
 

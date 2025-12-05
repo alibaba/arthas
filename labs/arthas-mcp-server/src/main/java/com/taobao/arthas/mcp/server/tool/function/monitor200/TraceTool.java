@@ -64,7 +64,7 @@ public class TraceTool extends AbstractArthasTool {
 
         addQuotedParameter(cmd, condition);
 
-        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS, 
+        return executeStreamable(toolContext, cmd.toString(), execCount, DEFAULT_POLL_INTERVAL_MS, timeoutSeconds * 1000,
                                 "Trace execution completed successfully");
     }
 }
