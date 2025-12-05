@@ -65,10 +65,13 @@ public class McpStatelessNettyServer {
 		this.resources.putAll(features.getResources());
 		this.resourceTemplates.addAll(features.getResourceTemplates());
 		this.prompts.putAll(features.getPrompts());
+		
+		this.protocolVersions = new ArrayList<>(mcpTransport.protocolVersions());
 
 		Map<String, McpStatelessRequestHandler<?>> requestHandlers = new HashMap<>();
 
 		// Initialize request handlers for standard MCP methods
+        requestHandlers.put(McpSchema.METHOD_INITIALIZE, initializeRequestHandler());
 
 		// Ping MUST respond with an empty data, but not NULL response.
 		requestHandlers.put(McpSchema.METHOD_PING,
@@ -93,18 +96,20 @@ public class McpStatelessNettyServer {
 			requestHandlers.put(McpSchema.METHOD_PROMPT_GET, promptsGetRequestHandler());
 		}
 
-        this.protocolVersions = new ArrayList<>(mcpTransport.protocolVersions());
+		Map<String, McpStatelessNotificationHandler> notificationHandlers = new HashMap<>();
+		notificationHandlers.put(McpSchema.METHOD_NOTIFICATION_INITIALIZED, (ctx, params) -> CompletableFuture.completedFuture(null));
 
-		McpStatelessServerHandler handler = new DefaultMcpStatelessServerHandler(requestHandlers, new HashMap<>(), commandExecutor);
+		McpStatelessServerHandler handler = new DefaultMcpStatelessServerHandler(requestHandlers, notificationHandlers, commandExecutor);
 		mcpTransport.setMcpHandler(handler);
 	}
 
 	// ---------------------------------------
 	// Lifecycle Management
 	// ---------------------------------------
-	private CompletableFuture<McpSchema.InitializeResult> initializeRequestHandler(
-			McpSchema.InitializeRequest initializeRequest) {
-		return CompletableFuture.supplyAsync(() -> {
+	private McpStatelessRequestHandler<McpSchema.InitializeResult> initializeRequestHandler() {
+		return (exchange, commandContext, params) -> CompletableFuture.supplyAsync(() -> {
+			McpSchema.InitializeRequest initializeRequest = objectMapper.convertValue(params, McpSchema.InitializeRequest.class);
+			
 			logger.info("Client initialize request - Protocol: {}, Capabilities: {}, Info: {}",
 					initializeRequest.getProtocolVersion(), initializeRequest.getCapabilities(),
 					initializeRequest.getClientInfo());
@@ -116,8 +121,7 @@ public class McpStatelessNettyServer {
 
 			if (protocolVersions.contains(initializeRequest.getProtocolVersion())) {
 				serverProtocolVersion = initializeRequest.getProtocolVersion();
-			}
-			else {
+			} else {
 				logger.warn(
 						"Client requested unsupported protocol version: {}, " + "so the server will suggest {} instead",
 						initializeRequest.getProtocolVersion(), serverProtocolVersion);
@@ -205,8 +209,6 @@ public class McpStatelessNettyServer {
 					throw new CompletionException(cause);
 				});
 	}
-
-
 
 	public CompletableFuture<Void> removeTool(String toolName) {
 		if (toolName == null) {

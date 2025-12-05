@@ -41,7 +41,6 @@ public final class McpToolUtils {
 				))
 				.values()
 				.stream()
-				.filter(McpToolUtils::isStreamableTool)
 				.map(McpToolUtils::toToolSpecification)
 				.collect(Collectors.toList());
 	}
@@ -120,11 +119,6 @@ public final class McpToolUtils {
 
 		return new McpStatelessServerFeatures.ToolSpecification(tool, callFunction);
 	}
-
-	public static boolean isStreamableTool(ToolCallback toolCallback) {
-		return toolCallback.getToolDefinition().isStreamable();
-	}
-
 
 	private static String convertParametersToString(Map<String, Object> parameters) {
 		if (parameters == null) {

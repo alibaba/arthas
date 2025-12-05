@@ -39,6 +39,8 @@ public class McpServerProperties {
 
     private final ObjectMapper objectMapper;
 
+    private final ServerProtocol protocol;
+
     /**
      * (Optional) response MIME type per tool name.
      */
@@ -59,6 +61,7 @@ public class McpServerProperties {
         this.requestTimeout = builder.requestTimeout;
         this.initializationTimeout = builder.initializationTimeout;
         this.objectMapper = builder.objectMapper;
+        this.protocol = builder.protocol;
     }
 
     /**
@@ -66,6 +69,10 @@ public class McpServerProperties {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    public enum ServerProtocol {
+        STREAMABLE, STATELESS
     }
 
     /**
@@ -156,6 +163,10 @@ public class McpServerProperties {
         return objectMapper;
     }
 
+    public ServerProtocol getProtocol() {
+        return protocol;
+    }
+
     public Map<String, String> getToolResponseMimeType() {
         return toolResponseMimeType;
     }
@@ -182,6 +193,7 @@ public class McpServerProperties {
         private Duration requestTimeout = Duration.ofSeconds(10);
         private Duration initializationTimeout = Duration.ofSeconds(30);
         private ObjectMapper objectMapper;
+        private ServerProtocol protocol = ServerProtocol.STREAMABLE;
 
         public Builder() {
             // Private constructor to prevent direct instantiation
@@ -239,6 +251,11 @@ public class McpServerProperties {
 
         public Builder objectMapper(ObjectMapper objectMapper) {
             this.objectMapper = objectMapper;
+            return this;
+        }
+
+        public Builder protocol(ServerProtocol protocol) {
+            this.protocol = protocol;
             return this;
         }
 
