@@ -46,7 +46,7 @@ public abstract class AbstractArthasTool {
             Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
             this.progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
             
-            // 尝试获取 Transport Context (在两种模式下都应该可用)
+            // 尝试获取 Transport Context (在 Stateless 模式下可能为 null)
             this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
             
             // 从 Transport Context 中提取认证信息

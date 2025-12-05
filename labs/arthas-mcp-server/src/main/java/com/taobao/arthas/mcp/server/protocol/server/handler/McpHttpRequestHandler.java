@@ -83,11 +83,6 @@ public class McpHttpRequestHandler {
             return;
         }
 
-        if (protocol == null) {
-            logger.warn("Protocol not configured, defaulting to STATELESS");
-            protocol = ServerProtocol.STATELESS;
-        }
-
         logger.debug("Request {} {} -> using {} transport",
             request.method(), request.uri(), protocol);
 
@@ -203,6 +198,10 @@ public class McpHttpRequestHandler {
         public McpHttpRequestHandler build() {
             Assert.notNull(this.objectMapper, "ObjectMapper must be set");
             Assert.notNull(this.mcpEndpoint, "MCP endpoint must be set");
+
+            if (this.protocol == null) {
+                this.protocol = ServerProtocol.STATELESS;
+            }
 
             McpHttpRequestHandler handler = new McpHttpRequestHandler(this.mcpEndpoint, this.objectMapper, this.contextExtractor);
             handler.setProtocol(this.protocol);
