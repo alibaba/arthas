@@ -6,6 +6,7 @@ import com.taobao.arthas.mcp.server.protocol.server.McpStatelessServerFeatures;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolCallback;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
+import com.taobao.arthas.mcp.server.util.JsonParser;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -49,7 +50,8 @@ public final class McpToolUtils {
 		McpSchema.Tool tool = new McpSchema.Tool(
 				toolCallback.getToolDefinition().getName(),
 				toolCallback.getToolDefinition().getDescription(),
-				toolCallback.getToolDefinition().getInputSchema()
+				toolCallback.getToolDefinition().getInputSchema(),
+				toolCallback.getToolDefinition().getOutputSchema()
 		);
 
 		McpServerFeatures.ToolCallFunction callFunction = (exchange, commandContext, request) -> {
@@ -67,7 +69,7 @@ public final class McpToolUtils {
 				String requestJson = convertParametersToString(request.getArguments());
 
 				String callResult = toolCallback.call(requestJson, toolContext);
-				return CompletableFuture.completedFuture(createSuccessResult(callResult));
+				return CompletableFuture.completedFuture(createSuccessResult(callResult, tool.getOutputSchema() != null));
 			} catch (Exception e) {
 				return CompletableFuture.completedFuture(createErrorResult(e.getMessage()));
 			}
@@ -99,7 +101,8 @@ public final class McpToolUtils {
 		McpSchema.Tool tool = new McpSchema.Tool(
 				toolCallback.getToolDefinition().getName(),
 				toolCallback.getToolDefinition().getDescription(),
-				toolCallback.getToolDefinition().getInputSchema()
+				toolCallback.getToolDefinition().getInputSchema(),
+				toolCallback.getToolDefinition().getOutputSchema()
 		);
 
 		McpStatelessServerFeatures.ToolCallFunction callFunction = (context, commandContext, arguments) -> {
@@ -111,7 +114,7 @@ public final class McpToolUtils {
 
 				String argumentsJson = convertParametersToString(arguments);
 				String callResult = toolCallback.call(argumentsJson, toolContext);
-				return CompletableFuture.completedFuture(createSuccessResult(callResult));
+				return CompletableFuture.completedFuture(createSuccessResult(callResult, tool.getOutputSchema() != null));
 			} catch (Exception e) {
 				return CompletableFuture.completedFuture(createErrorResult("Error executing tool: " + e.getMessage()));
 			}
@@ -131,14 +134,26 @@ public final class McpToolUtils {
 		}
 	}
 
-	private static McpSchema.CallToolResult createSuccessResult(String content) {
+	private static McpSchema.CallToolResult createSuccessResult(String content, boolean hasOutputSchema) {
 		List<McpSchema.Content> contents = new ArrayList<>();
 		String safeContent = (content != null && !content.trim().isEmpty()) ? content : "{}";
 		contents.add(new McpSchema.TextContent(safeContent));
-        return McpSchema.CallToolResult.builder()
-                .content(contents)
-                .isError(false)
-                .build();
+		
+		McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
+				.content(contents)
+				.isError(false);
+
+		if (hasOutputSchema && content != null && !content.trim().isEmpty()) {
+			try {
+				Object structured = JsonParser.fromJson(content, Object.class);
+				builder.structuredContent(structured);
+			} catch (Exception e) {
+				// If parsing fails, we just don't add structuredContent, 
+				// or we could log a warning. For now, we'll rely on text content.
+			}
+		}
+
+		return builder.build();
 	}
 
 	private static McpSchema.CallToolResult createErrorResult(String errorMessage) {

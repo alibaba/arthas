@@ -5,6 +5,7 @@
 package com.taobao.arthas.mcp.server.protocol.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.mcp.server.protocol.spec.JsonSchemaValidator;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 import com.taobao.arthas.mcp.server.CommandExecutor;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
@@ -45,6 +46,8 @@ public interface McpServer {
 		String instructions;
 
 		CommandExecutor commandExecutor;
+
+		JsonSchemaValidator validator;
 
 		private final McpStreamableServerTransportProvider transportProvider;
 
@@ -90,6 +93,11 @@ public interface McpServer {
 
 		public StreamableServerNettySpecification capabilities(McpSchema.ServerCapabilities serverCapabilities) {
 			this.serverCapabilities = serverCapabilities;
+			return this;
+		}
+
+		public StreamableServerNettySpecification validator(JsonSchemaValidator validator) {
+			this.validator = validator;
 			return this;
 		}
 
@@ -210,7 +218,7 @@ public interface McpServer {
 					this.transportProvider, mapper, this.requestTimeout,
 					new McpServerFeatures.McpServerConfig(this.serverInfo, this.serverCapabilities, this.tools,
 							this.resources, this.resourceTemplates, this.prompts, this.rootsChangeHandlers, this.instructions
-					), this.commandExecutor
+					), this.commandExecutor, this.validator
 			);
 		}
 	}
@@ -228,6 +236,8 @@ public interface McpServer {
 		String instructions;
 
 		CommandExecutor commandExecutor;
+
+		JsonSchemaValidator validator;
 
 		final List<McpStatelessServerFeatures.ToolSpecification> tools = new ArrayList<>();
 
@@ -271,6 +281,11 @@ public interface McpServer {
 
 		public StatelessServerNettySpecification capabilities(McpSchema.ServerCapabilities serverCapabilities) {
 			this.serverCapabilities = serverCapabilities;
+			return this;
+		}
+
+		public StatelessServerNettySpecification validator(JsonSchemaValidator validator) {
+			this.validator = validator;
 			return this;
 		}
 
@@ -391,7 +406,8 @@ public interface McpServer {
 							this.prompts,
 							this.instructions
 					),
-					this.commandExecutor
+					this.commandExecutor,
+					this.validator
 			);
 		}
 

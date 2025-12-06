@@ -2,6 +2,8 @@ package com.taobao.arthas.mcp.server.tool.definition;
 
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 
+import java.util.Map;
+
 public class ToolDefinition {
     private String name;
 
@@ -9,14 +11,23 @@ public class ToolDefinition {
 
     private McpSchema.JsonSchema inputSchema;
 
+    private Map<String, Object> outputSchema;
+
     private boolean streamable;
 
     public ToolDefinition(String name, String description,
-                          McpSchema.JsonSchema inputSchema, boolean streamable) {
+                          McpSchema.JsonSchema inputSchema, Map<String, Object> outputSchema, boolean streamable) {
         this.name = name;
         this.description = description;
         this.inputSchema = inputSchema;
+        this.outputSchema = outputSchema;
         this.streamable = streamable;
+    }
+    
+    // Backwards compatibility constructor
+    public ToolDefinition(String name, String description,
+                          McpSchema.JsonSchema inputSchema, boolean streamable) {
+        this(name, description, inputSchema, null, streamable);
     }
 
     public String getName() {
@@ -29,6 +40,10 @@ public class ToolDefinition {
 
     public McpSchema.JsonSchema getInputSchema() {
         return inputSchema;
+    }
+    
+    public Map<String, Object> getOutputSchema() {
+        return outputSchema;
     }
 
     public boolean isStreamable() {
@@ -46,6 +61,8 @@ public class ToolDefinition {
         private String description;
 
         private McpSchema.JsonSchema inputSchema;
+
+        private Map<String, Object> outputSchema;
 
         private boolean streamable;
 
@@ -67,13 +84,18 @@ public class ToolDefinition {
             return this;
         }
 
+        public Builder outputSchema(Map<String, Object> outputSchema) {
+            this.outputSchema = outputSchema;
+            return this;
+        }
+
         public Builder streamable(boolean streamable) {
             this.streamable = streamable;
             return this;
         }
 
         public ToolDefinition build() {
-            return new ToolDefinition(this.name, this.description, this.inputSchema, this.streamable);
+            return new ToolDefinition(this.name, this.description, this.inputSchema, this.outputSchema, this.streamable);
         }
 
     }

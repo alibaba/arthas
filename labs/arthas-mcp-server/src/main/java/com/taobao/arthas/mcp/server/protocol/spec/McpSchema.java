@@ -1361,14 +1361,21 @@ public final class McpSchema {
 		private final String name;
 		private final String description;
 		private final JsonSchema inputSchema;
+		private final Map<String, Object> outputSchema;
 
 		public Tool(
 				@JsonProperty("name") String name,
 				@JsonProperty("description") String description,
-				@JsonProperty("inputSchema") JsonSchema inputSchema) {
+				@JsonProperty("inputSchema") JsonSchema inputSchema,
+				@JsonProperty("outputSchema") Map<String, Object> outputSchema) {
 			this.name = name;
 			this.description = description;
 			this.inputSchema = inputSchema;
+			this.outputSchema = outputSchema;
+		}
+
+		public Tool(String name, String description, JsonSchema inputSchema) {
+			this(name, description, inputSchema, null);
 		}
 
 		public String getName() {
@@ -1381,6 +1388,10 @@ public final class McpSchema {
 
 		public JsonSchema getInputSchema() {
 			return inputSchema;
+		}
+
+		public Map<String, Object> getOutputSchema() {
+			return outputSchema;
 		}
 	}
 
@@ -1489,19 +1500,26 @@ public final class McpSchema {
     public static class CallToolResult implements Result {
         private final List<Content> content;
         private final Boolean isError;
+        private final Object structuredContent;
         private final Map<String, Object> meta;
 
         public CallToolResult(
                 @JsonProperty("content") List<Content> content,
                 @JsonProperty("isError") Boolean isError,
+                @JsonProperty("structuredContent") Object structuredContent,
                 @JsonProperty("_meta") Map<String, Object> meta) {
             this.content = content;
             this.isError = isError;
+            this.structuredContent = structuredContent;
             this.meta = meta;
         }
 
+        public CallToolResult(List<Content> content, Boolean isError, Map<String, Object> meta) {
+            this(content, isError, null, meta);
+        }
+
         public CallToolResult(String content, Boolean isError, Map<String, Object> meta) {
-            this(Collections.singletonList(new TextContent(content)), isError, meta);
+            this(Collections.singletonList(new TextContent(content)), isError, null, meta);
         }
 
         public List<Content> getContent() {
@@ -1510,6 +1528,10 @@ public final class McpSchema {
 
         public Boolean getIsError() {
             return isError;
+        }
+
+        public Object getStructuredContent() {
+            return structuredContent;
         }
 
         @Override
@@ -1528,6 +1550,7 @@ public final class McpSchema {
         public static class Builder {
             private List<Content> content = new ArrayList<>();
             private Boolean isError;
+            private Object structuredContent;
             private Map<String, Object> meta;
 
             public Builder content(List<Content> content) {
@@ -1564,13 +1587,19 @@ public final class McpSchema {
                 return this;
             }
 
+            public Builder structuredContent(Object structuredContent) {
+                Assert.notNull(structuredContent, "structuredContent must not be null");
+                this.structuredContent = structuredContent;
+                return this;
+            }
+
             public Builder meta(Map<String, Object> meta) {
                 this.meta = meta;
                 return this;
             }
 
             public CallToolResult build() {
-                return new CallToolResult(content, isError, meta);
+                return new CallToolResult(content, isError, structuredContent, meta);
             }
         }
     }
