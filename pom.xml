@@ -54,6 +54,7 @@
         <module>web-ui</module>
         <module>math-game</module>
         <module>common</module>
+        <module>arthas-model</module>
         <module>spy</module>
         <module>arthas-vmtool</module>
         <module>tunnel-common</module>
@@ -69,11 +70,11 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
-        <module>labs/arthas-grpc-web-proxy</module>
+        <!-- <module>labs/arthas-grpc-web-proxy</module>
         <module>labs/cluster-management/native-agent</module>
         <module>labs/cluster-management/native-agent-management-web</module>
         <module>labs/cluster-management/native-agent-proxy</module>
-        <module>labs/cluster-management/native-agent-common</module>
+        <module>labs/cluster-management/native-agent-common</module> -->
         <module>labs/arthas-grpc-server</module>
         <!-- <module>labs/arthas-jfr-frontend</module> -->
 <!--        <module>labs/arthas-jfr-backend</module>-->

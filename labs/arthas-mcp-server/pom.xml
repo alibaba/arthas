@@ -24,6 +24,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
         </dependency>

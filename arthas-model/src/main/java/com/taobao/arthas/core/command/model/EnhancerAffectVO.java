@@ -1,46 +1,23 @@
 package com.taobao.arthas.core.command.model;
 
-import com.taobao.arthas.core.GlobalOptions;
-import com.taobao.arthas.core.util.affect.EnhancerAffect;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class enhance affect vo
+ * Class enhance affect vo - pure data transfer object
  * @author gongdewei 2020/6/22
  */
 public class EnhancerAffectVO {
 
-    private final long cost;
-    private final int methodCount;
-    private final int classCount;
-    private final long listenerId;
+    private long cost;
+    private int methodCount;
+    private int classCount;
+    private long listenerId;
     private Throwable throwable;
     private List<String> classDumpFiles;
     private List<String> methods;
     private String overLimitMsg;
 
-    public EnhancerAffectVO(EnhancerAffect affect) {
-        this.cost = affect.cost();
-        this.classCount = affect.cCnt();
-        this.methodCount = affect.mCnt();
-        this.listenerId = affect.getListenerId();
-        this.throwable = affect.getThrowable();
-        this.overLimitMsg = affect.getOverLimitMsg();
-
-        if (GlobalOptions.isDump) {
-            classDumpFiles = new ArrayList<String>();
-            for (File classDumpFile : affect.getClassDumpFiles()) {
-                classDumpFiles.add(classDumpFile.getAbsolutePath());
-            }
-        }
-
-        if (GlobalOptions.verbose) {
-            methods = new ArrayList<String>();
-            methods.addAll(affect.getMethods());
-        }
+    public EnhancerAffectVO() {
     }
 
     public EnhancerAffectVO(long cost, int methodCount, int classCount, long listenerId) {
@@ -54,16 +31,32 @@ public class EnhancerAffectVO {
         return cost;
     }
 
+    public void setCost(long cost) {
+        this.cost = cost;
+    }
+
     public int getClassCount() {
         return classCount;
+    }
+
+    public void setClassCount(int classCount) {
+        this.classCount = classCount;
     }
 
     public int getMethodCount() {
         return methodCount;
     }
 
+    public void setMethodCount(int methodCount) {
+        this.methodCount = methodCount;
+    }
+
     public long getListenerId() {
         return listenerId;
+    }
+
+    public void setListenerId(long listenerId) {
+        this.listenerId = listenerId;
     }
 
     public Throwable getThrowable() {

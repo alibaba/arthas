@@ -440,7 +440,7 @@ public class HttpApiHandler {
             response.setState(ApiState.SCHEDULED);
 
             //add command before exec job
-            CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState());
+            CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState().name());
             commandRequestModel.setJobId(job.id());
             SharingResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
@@ -456,7 +456,7 @@ public class HttpApiHandler {
         } catch (Throwable e) {
             logger.error("Async exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
             response.setState(ApiState.FAILED).setMessage("Async exec command failed:" + e.getMessage());
-            CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(), response.getMessage());
+            CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState().name(), response.getMessage());
             session.getResultDistributor().appendResult(commandRequestModel);
             return response;
         } finally {

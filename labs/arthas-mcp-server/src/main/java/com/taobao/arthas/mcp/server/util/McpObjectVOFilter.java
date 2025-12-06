@@ -4,11 +4,12 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONFactory;
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.filter.ValueFilter;
+import com.taobao.arthas.core.command.model.ObjectVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * mcp specific objectVO serialization filter
+ * mcp specific ObjectVO serialization filter
  */
 public class McpObjectVOFilter implements ValueFilter {
     
@@ -19,24 +20,25 @@ public class McpObjectVOFilter implements ValueFilter {
         if (value == null) {
             return null;
         }
-        String className = value.getClass().getName();
-        if (className.endsWith(".ObjectVO")) {
-            return handleObjectVO(value);
+        
+        // Direct type check instead of reflection
+        if (value instanceof ObjectVO) {
+            return handleObjectVO((ObjectVO) value);
         }
         
         return value;
     }
 
-    private Object handleObjectVO(Object objectVO) {
+    private Object handleObjectVO(ObjectVO objectVO) {
         try {
-            Object innerObject = getFieldValue(objectVO, "object");
-            Integer expand = (Integer) getFieldValue(objectVO, "expand");
+            Object innerObject = objectVO.getObject();
+            Integer expand = objectVO.getExpand();
             
             if (innerObject == null) {
                 return "null";
             }
 
-            return needExpand(expand) ? drawObjectView(innerObject) : objectToString(innerObject);
+            return objectVO.needExpand() ? drawObjectView(innerObject) : objectToString(innerObject);
         } catch (Exception e) {
             logger.warn("Failed to handle ObjectVO: {}", e.getMessage());
             return "{\"error\":\"ObjectVO serialization failed\"}";
@@ -66,21 +68,6 @@ public class McpObjectVOFilter implements ValueFilter {
             return object.toString();
         } catch (Exception e) {
             return object.getClass().getSimpleName() + "@" + Integer.toHexString(object.hashCode());
-        }
-    }
-
-    private boolean needExpand(Integer expand) {
-        return expand != null && expand > 0;
-    }
-
-    private Object getFieldValue(Object obj, String fieldName) {
-        try {
-            java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(obj);
-        } catch (Exception e) {
-            logger.debug("Failed to get field {} from {}: {}", fieldName, obj.getClass().getSimpleName(), e.getMessage());
-            return null;
         }
     }
 }
