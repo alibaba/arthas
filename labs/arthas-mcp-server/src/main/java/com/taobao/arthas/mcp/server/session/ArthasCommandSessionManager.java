@@ -5,20 +5,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Arthas命令执行Session管理器
- * 
- * @author Yeaury
+ * Manager for MCP-to-Command session bindings.
+ * Handles the lifecycle of command sessions associated with MCP sessions.
  */
 public class ArthasCommandSessionManager {
-    
     private static final Logger logger = LoggerFactory.getLogger(ArthasCommandSessionManager.class);
     
     private final CommandExecutor commandExecutor;
     private final ConcurrentHashMap<String, CommandSessionBinding> sessionBindings = new ConcurrentHashMap<>();
-    
+
     public ArthasCommandSessionManager(CommandExecutor commandExecutor) {
         this.commandExecutor = commandExecutor;
     }
