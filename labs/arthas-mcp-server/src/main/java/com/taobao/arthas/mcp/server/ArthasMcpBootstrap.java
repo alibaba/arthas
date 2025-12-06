@@ -14,11 +14,13 @@ public class ArthasMcpBootstrap {
     private ArthasMcpServer mcpServer;
     private final CommandExecutor commandExecutor;
     private final String mcpEndpoint;
+    private final String protocol;
     private static ArthasMcpBootstrap instance;
 
-    public ArthasMcpBootstrap(CommandExecutor commandExecutor, String mcpEndpoint) {
+    public ArthasMcpBootstrap(CommandExecutor commandExecutor, String mcpEndpoint, String protocol) {
         this.commandExecutor = commandExecutor;
         this.mcpEndpoint = mcpEndpoint;
+        this.protocol = protocol;
         instance = this;
     }
 
@@ -37,7 +39,7 @@ public class ArthasMcpBootstrap {
                     commandExecutor.getClass().getSimpleName());
             
             // Create and start MCP server with CommandExecutor and custom endpoint
-            mcpServer = new ArthasMcpServer(mcpEndpoint, commandExecutor);
+            mcpServer = new ArthasMcpServer(mcpEndpoint, commandExecutor, protocol);
             logger.debug("MCP server instance created successfully");
             
             mcpServer.start();

@@ -22,9 +22,11 @@ public final class StreamableToolUtils {
     private static final Logger logger = LoggerFactory.getLogger(StreamableToolUtils.class);
 
     private static final int DEFAULT_POLL_INTERVAL_MS = 100;    // 默认轮询间隔100ms
+
     private static final int ERROR_RETRY_INTERVAL_MS = 500;     // 错误重试间隔500ms
 
-    private static final int MAX_POLL_ATTEMPTS = 20;           // 最大轮询尝试次数，避免无限循环
+    private static final long DEFAULT_TIMEOUT_MS = 200000L;      // 默认超时时间200秒
+
     private static final int MAX_ERROR_RETRIES = 10;            // 最大错误重试次数
 
     public static final int MIN_ALLOW_INPUT_COUNT_TO_COMPLETE = 2;
@@ -39,15 +41,16 @@ public final class StreamableToolUtils {
      * @param commandContext 命令上下文
      * @param expectedResultCount 预期结果数量
      * @param intervalMs 轮询间隔
+     * @param timeoutMs 超时时间(毫秒)
      * @param progressToken 进度令牌
      * @return 包含所有结果的Map，如果执行失败返回null
      */
     public static Map<String, Object> executeAndCollectResults(McpNettyServerExchange exchange, 
                                                              ArthasCommandContext commandContext, 
                                                              Integer expectedResultCount, Integer intervalMs, 
+                                                             Integer timeoutMs,
                                                              String progressToken) {
         List<Object> allResults = new ArrayList<>();
-        int pollAttempts = 0;
         int errorRetries = 0;
         int allowInputCount = 0;
         int totalResultCount = 0;
@@ -55,11 +58,15 @@ public final class StreamableToolUtils {
         // 轮询间隔使用命令执行间隙的 1/10,事件驱动则在命令中自定义默认轮询间隔
         // 工具中默认轮询间隔为200ms
         int pullIntervalMs = (intervalMs != null && intervalMs > 0) ? intervalMs : DEFAULT_POLL_INTERVAL_MS;
+        
+        // 计算截止时间
+        // 如果没有指定超时时间，默认使用 200 秒
+        long executionTimeoutMs = (timeoutMs != null && timeoutMs > 0) ? timeoutMs : DEFAULT_TIMEOUT_MS;
+        long deadline = System.currentTimeMillis() + executionTimeoutMs;
+        boolean timedOut = false;
 
         try {
-            while (pollAttempts < MAX_POLL_ATTEMPTS) {
-                pollAttempts++;
-                
+            while (System.currentTimeMillis() < deadline) {
                 try {
                     Map<String, Object> results = commandContext.pullResults();
                     if (results == null) {
@@ -124,8 +131,13 @@ public final class StreamableToolUtils {
                     }
                 }
             }
+            
+            // 检查是否超时
+            if (System.currentTimeMillis() >= deadline) {
+                timedOut = true;
+            }
 
-            return createFinalResult(allResults, totalResultCount, pollAttempts >= MAX_POLL_ATTEMPTS);
+            return createFinalResult(allResults, totalResultCount, timedOut, executionTimeoutMs);
             
         } catch (Exception e) {
             logger.error("Error in command execution", e);
@@ -295,16 +307,17 @@ public final class StreamableToolUtils {
         return response;
     }
 
-    private static Map<String, Object> createFinalResult(List<Object> allResults, int totalResultCount, boolean reachedMaxAttempts) {
+    private static Map<String, Object> createFinalResult(List<Object> allResults, int totalResultCount, boolean timedOut, long timeoutMs) {
         Map<String, Object> finalResult = new HashMap<>();
         finalResult.put("results", allResults);
         finalResult.put("resultCount", totalResultCount);
         finalResult.put("status", "completed");
         finalResult.put("stage", "final");
+        finalResult.put("timedOut", timedOut);
         
-        if (reachedMaxAttempts) {
-            logger.warn("Command execution reached maximum poll attempts: {}", MAX_POLL_ATTEMPTS);
-            finalResult.put("warning", "Execution reached maximum poll attempts");
+        if (timedOut) {
+            logger.warn("Command execution timed out after {} ms", timeoutMs);
+            finalResult.put("warning", "Command execution timed out after " + timeoutMs + " ms.");
         }
         
         return finalResult;

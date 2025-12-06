@@ -39,20 +39,23 @@ public abstract class AbstractArthasTool {
             this.commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
             this.isStreamable = isStreamable;
             
-            if (isStreamable) {
-                this.exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
-                Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
-                this.progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
-                this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
-                this.authSubject = mcpTransportContext != null ? mcpTransportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY) : null;
-                this.userId = mcpTransportContext != null ? (String) mcpTransportContext.get(McpAuthExtractor.MCP_USER_ID_KEY) : null;
+            // 尝试获取 Exchange (在 Stateless 模式下为 null)
+            this.exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
+            
+            // 尝试获取 Progress Token
+            Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
+            this.progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
+            
+            // 尝试获取 Transport Context (在 Stateless 模式下可能为 null)
+            this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
+            
+            // 从 Transport Context 中提取认证信息
+            if (this.mcpTransportContext != null) {
+                this.authSubject = mcpTransportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY);
+                this.userId = (String) mcpTransportContext.get(McpAuthExtractor.MCP_USER_ID_KEY);
             } else {
-                this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
-                this.authSubject = mcpTransportContext != null ? mcpTransportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY) : null;
-                // 从 McpTransportContext 中获取 userId
-                this.userId = mcpTransportContext != null ? (String) mcpTransportContext.get(McpAuthExtractor.MCP_USER_ID_KEY) : null;
-                this.exchange = null;
-                this.progressToken = null;
+                this.authSubject = null;
+                this.userId = null;
             }
         }
         
@@ -107,6 +110,7 @@ public abstract class AbstractArthasTool {
 
     protected String executeStreamable(ToolContext toolContext, String commandStr, 
                                      Integer expectedResultCount, Integer pollIntervalMs, 
+                                     Integer timeoutMs,
                                      String successMessage) {
         try {
             ToolExecutionContext execContext = new ToolExecutionContext(toolContext, true);
@@ -126,11 +130,22 @@ public abstract class AbstractArthasTool {
                 execContext.getCommandContext(), 
                 expectedResultCount, 
                 pollIntervalMs, 
+                timeoutMs,
                 execContext.getProgressToken()
             );
             
             if (results != null) {
                 String message = successMessage != null ? successMessage : "Command execution completed successfully";
+
+                if (Boolean.TRUE.equals(results.get("timedOut"))) {
+                    Integer count = (Integer) results.get("resultCount");
+                    if (count != null && count > 0) {
+                        message = "Command execution ended (Timed out). Captured " + count + " results.";
+                    } else {
+                        message = "Command execution ended (Timed out). No results captured within the time limit.";
+                    }
+                }
+                
                 return JsonParser.toJson(createCompletedResponse(message, results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Command execution failed due to timeout or error limits exceeded"));

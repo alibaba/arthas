@@ -2,6 +2,7 @@ package com.taobao.arthas.mcp.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.mcp.server.protocol.config.McpServerProperties;
+import com.taobao.arthas.mcp.server.protocol.config.McpServerProperties.ServerProtocol;
 import com.taobao.arthas.mcp.server.protocol.server.McpNettyServer;
 import com.taobao.arthas.mcp.server.protocol.server.McpServer;
 import com.taobao.arthas.mcp.server.protocol.server.McpStatelessNettyServer;
@@ -35,6 +36,7 @@ public class ArthasMcpServer {
     private McpStatelessNettyServer statelessServer;
 
     private final String mcpEndpoint;
+    private final ServerProtocol protocol;
 
     private final CommandExecutor commandExecutor;
 
@@ -46,9 +48,19 @@ public class ArthasMcpServer {
 
     public static final String DEFAULT_MCP_ENDPOINT = "/mcp";
     
-    public ArthasMcpServer(String mcpEndpoint, CommandExecutor commandExecutor) {
+    public ArthasMcpServer(String mcpEndpoint, CommandExecutor commandExecutor, String protocol) {
         this.mcpEndpoint = mcpEndpoint != null ? mcpEndpoint : DEFAULT_MCP_ENDPOINT;
         this.commandExecutor = commandExecutor;
+        
+        ServerProtocol resolvedProtocol = ServerProtocol.STATELESS;
+        if (protocol != null && !protocol.trim().isEmpty()) {
+            try {
+                resolvedProtocol = ServerProtocol.valueOf(protocol.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                logger.warn("Invalid MCP protocol: {}. Using default: STATELESS", protocol);
+            }
+        }
+        this.protocol = resolvedProtocol;
     }
 
     public McpHttpRequestHandler getMcpRequestHandler() {
@@ -68,6 +80,7 @@ public class ArthasMcpServer {
                     .resourceChangeNotification(true)
                     .promptChangeNotification(true)
                     .objectMapper(JsonParser.getObjectMapper())
+                    .protocol(this.protocol)
                     .build();
 
             ToolCallbackProvider toolCallbackProvider = new DefaultToolCallbackProvider();
@@ -76,50 +89,51 @@ public class ArthasMcpServer {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
-            // Create transport for both streamable and stateless servers
-            McpStreamableServerTransportProvider transportProvider = createStreamableHttpTransportProvider(properties);
-            streamableHandler = transportProvider.getMcpRequestHandler();
-
-            NettyStatelessServerTransport statelessTransport = createStatelessHttpTransport(properties);
-            statelessHandler = statelessTransport.getMcpRequestHandler();
-
             unifiedMcpHandler = McpHttpRequestHandler.builder()
                     .mcpEndpoint(properties.getMcpEndpoint())
                     .objectMapper(properties.getObjectMapper())
-                    .tools(Arrays.asList(callbacks))
+                    .protocol(properties.getProtocol())
                     .build();
-            unifiedMcpHandler.setStreamableHandler(streamableHandler);
-            unifiedMcpHandler.setStatelessHandler(statelessHandler);
 
-            // Set up unified MCP handler for both streamable and stateless servers
-            McpServer.StreamableServerNettySpecification streamableServerNettySpecification = McpServer.netty(transportProvider)
-                    .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
-                    .capabilities(buildServerCapabilities(properties))
-                    .instructions(properties.getInstructions())
-                    .requestTimeout(properties.getRequestTimeout())
-                    .commandExecutor(commandExecutor)
-                    .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
+            if (properties.getProtocol() == ServerProtocol.STREAMABLE) {
+                McpStreamableServerTransportProvider transportProvider = createStreamableHttpTransportProvider(properties);
+                streamableHandler = transportProvider.getMcpRequestHandler();
+                unifiedMcpHandler.setStreamableHandler(streamableHandler);
 
-            // Set up unified MCP handler for both streamable and stateless servers
-            McpServer.StatelessServerNettySpecification statelessServerNettySpecification = McpServer.netty(statelessTransport)
-                    .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
-                    .capabilities(buildServerCapabilities(properties))
-                    .instructions(properties.getInstructions())
-                    .requestTimeout(properties.getRequestTimeout())
-                    .commandExecutor(commandExecutor)
-                    .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
+                McpServer.StreamableServerNettySpecification streamableServerNettySpecification = McpServer.netty(transportProvider)
+                        .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
+                        .capabilities(buildServerCapabilities(properties))
+                        .instructions(properties.getInstructions())
+                        .requestTimeout(properties.getRequestTimeout())
+                        .commandExecutor(commandExecutor)
+                        .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
 
-            streamableServerNettySpecification.tools(
-                    McpToolUtils.toStreamableToolSpecifications(providerToolCallbacks));
-            statelessServerNettySpecification.tools(
-                    McpToolUtils.toStatelessToolSpecifications(providerToolCallbacks));
+                streamableServerNettySpecification.tools(
+                        McpToolUtils.toStreamableToolSpecifications(providerToolCallbacks));
 
-            streamableServer = streamableServerNettySpecification.build();
-            statelessServer = statelessServerNettySpecification.build();
-            
+                streamableServer = streamableServerNettySpecification.build();
+            } else {
+                NettyStatelessServerTransport statelessTransport = createStatelessHttpTransport(properties);
+                statelessHandler = statelessTransport.getMcpRequestHandler();
+                unifiedMcpHandler.setStatelessHandler(statelessHandler);
+
+                McpServer.StatelessServerNettySpecification statelessServerNettySpecification = McpServer.netty(statelessTransport)
+                        .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
+                        .capabilities(buildServerCapabilities(properties))
+                        .instructions(properties.getInstructions())
+                        .requestTimeout(properties.getRequestTimeout())
+                        .commandExecutor(commandExecutor)
+                        .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
+
+                statelessServerNettySpecification.tools(
+                        McpToolUtils.toStatelessToolSpecifications(providerToolCallbacks));
+
+                statelessServer = statelessServerNettySpecification.build();
+            }
+
             logger.info("Arthas MCP server started successfully");
             logger.info("- MCP Endpoint: {}", properties.getMcpEndpoint());
-            logger.info("- Transport modes: Streamable + Stateless");
+            logger.info("- Transport mode: {}", properties.getProtocol());
             logger.info("- Available tools: {}", providerToolCallbacks.size());
             logger.info("- Server ready to accept connections");
         } catch (Exception e) {

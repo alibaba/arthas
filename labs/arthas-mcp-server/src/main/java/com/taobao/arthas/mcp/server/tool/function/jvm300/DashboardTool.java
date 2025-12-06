@@ -37,7 +37,11 @@ public class DashboardTool extends AbstractArthasTool {
         cmd.append(" -i ").append(interval);
         cmd.append(" -n ").append(execCount);
 
-        return executeStreamable(toolContext, cmd.toString(), execCount, interval / 10,
+        // Dashboards typically run a fixed number of times,
+        // and the timeout is based on (number * interval) + buffer time
+        int calculatedTimeoutMs = execCount * interval + 5000;
+
+        return executeStreamable(toolContext, cmd.toString(), execCount, interval / 10, calculatedTimeoutMs,
                 "Dashboard execution completed successfully");
     }
 }

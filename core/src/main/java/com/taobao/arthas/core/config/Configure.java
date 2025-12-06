@@ -79,6 +79,11 @@ public class Configure {
      */
     private String mcpEndpoint;
 
+    /**
+     * MCP Server Protocol: STREAMABLE or STATELESS
+     */
+    private String mcpProtocol;
+
     public String getIp() {
         return ip;
     }
@@ -221,6 +226,14 @@ public class Configure {
 
     public void setMcpEndpoint(String mcpEndpoint) {
         this.mcpEndpoint = mcpEndpoint;
+    }
+
+    public String getMcpProtocol() {
+        return mcpProtocol;
+    }
+
+    public void setMcpProtocol(String mcpProtocol) {
+        this.mcpProtocol = mcpProtocol;
     }
 
     /**

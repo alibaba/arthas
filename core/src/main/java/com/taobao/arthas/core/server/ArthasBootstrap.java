@@ -470,14 +470,15 @@ public class ArthasBootstrap {
 
             // Mcp Server
             String mcpEndpoint = configure.getMcpEndpoint();
+            String mcpProtocol = configure.getMcpProtocol();
             if (mcpEndpoint != null && !mcpEndpoint.trim().isEmpty()) {
-                logger().info("try to start mcp server, endpoint: {}.", mcpEndpoint);
+                logger().info("try to start mcp server, endpoint: {}, protocol: {}.", mcpEndpoint, mcpProtocol);
                 CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
-                ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint);
+                ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint, mcpProtocol);
                 this.mcpRequestHandler = arthasMcpBootstrap.start().getMcpRequestHandler();
             }
-            logger().info("as-server listening on network={};telnet={};http={};timeout={};mcp={};", configure.getIp(),
-                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout(), configure.getMcpEndpoint());
+            logger().info("as-server listening on network={};telnet={};http={};timeout={};mcp={};mcpProtocol={};", configure.getIp(),
+                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout(), configure.getMcpEndpoint(), configure.getMcpProtocol());
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {

@@ -77,7 +77,7 @@ public class MonitorTool extends AbstractArthasTool {
         
         addQuotedParameter(cmd, condition);
 
-        return executeStreamable(toolContext, cmd.toString(), execCount, interval / 10, 
+        return executeStreamable(toolContext, cmd.toString(), execCount, interval / 10, timeoutSeconds * 1000,
                                 "Monitor execution completed successfully");
     }
 }
