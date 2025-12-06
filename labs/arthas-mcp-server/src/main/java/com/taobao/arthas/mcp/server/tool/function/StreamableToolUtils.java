@@ -1,5 +1,6 @@
 package com.taobao.arthas.mcp.server.tool.function;
 
+import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 同步工具的工具类
@@ -157,20 +159,13 @@ public final class StreamableToolUtils {
         }
 
         for (Object result : resultList) {
-            if ("com.taobao.arthas.mcp.server.model.InputStatusModel".equals(result.getClass().getName())) {
-                try {
-                    java.lang.reflect.Method getInputStatusMethod = result.getClass().getMethod("getInputStatus");
-                    Object inputStatusObj = getInputStatusMethod.invoke(result);
-                    if (inputStatusObj != null) {
-                        String inputStatusName = inputStatusObj.getClass().getSimpleName().equals("InputStatus") ? 
-                            inputStatusObj.toString() : String.valueOf(inputStatusObj);
-                        if ("ALLOW_INPUT".equals(inputStatusName)) {
-                            logger.debug("Command completion detected via InputStatusModel: ALLOW_INPUT (count: {})", currentAllowInputCount + 1);
-                            return true;
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.debug("Failed to get inputStatus from InputStatusModel", e);
+            // Direct type check instead of reflection
+            if (result instanceof InputStatusModel) {
+                InputStatusModel inputStatusModel = (InputStatusModel) result;
+                InputStatus inputStatus = inputStatusModel.getInputStatus();
+                if (inputStatus == InputStatus.ALLOW_INPUT) {
+                    logger.debug("Command completion detected: ALLOW_INPUT (count: {})", currentAllowInputCount + 1);
+                    return true;
                 }
             }
         }
@@ -193,34 +188,34 @@ public final class StreamableToolUtils {
         }
 
         for (Object result : resultList) {
-            String resultClassName = result.getClass().getName();
-
-            if ("com.taobao.arthas.mcp.server.model.MessageModel".equals(resultClassName) || 
-                "com.taobao.arthas.mcp.server.model.EnhancerModel".equals(resultClassName) || 
-                "com.taobao.arthas.mcp.server.model.StatusModel".equals(resultClassName) || 
-                "com.taobao.arthas.mcp.server.model.CommandRequestModel".equals(resultClassName)) {
-                
-                try {
-                    java.lang.reflect.Method getMessageMethod = result.getClass().getMethod("getMessage");
-                    Object messageObj = getMessageMethod.invoke(result);
-                    if (messageObj != null) {
-                        String message = String.valueOf(messageObj);
-                        if (message.matches(".*\\b(failed|error|exception)\\b.*") || 
-                            message.contains("Malformed OGNL expression") || 
-                            message.contains("ParseException") || 
-                            message.contains("ExpressionSyntaxException") ||
-                            message.matches(".*Exception.*") ||
-                            message.matches(".*Error.*")) {
-                            return message;
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.debug("Failed to get message from {}", resultClassName, e);
-                }
+            String message = null;
+            
+            // Direct type checks instead of reflection
+            if (result instanceof MessageModel) {
+                message = ((MessageModel) result).getMessage();
+            } else if (result instanceof EnhancerModel) {
+                message = ((EnhancerModel) result).getMessage();
+            } else if (result instanceof StatusModel) {
+                message = ((StatusModel) result).getMessage();
+            } else if (result instanceof CommandRequestModel) {
+                message = ((CommandRequestModel) result).getMessage();
+            }
+            
+            if (message != null && isErrorMessage(message)) {
+                return message;
             }
         }
         
         return null;
+    }
+    
+    private static boolean isErrorMessage(String message) {
+        return message.matches(".*\\b(failed|error|exception)\\b.*") || 
+               message.contains("Malformed OGNL expression") || 
+               message.contains("ParseException") || 
+               message.contains("ExpressionSyntaxException") ||
+               message.matches(".*Exception.*") ||
+               message.matches(".*Error.*");
     }
 
     private static Map<String, Object> filterCommandSpecificResults(Map<String, Object> results) {
@@ -236,30 +231,28 @@ public final class StreamableToolUtils {
             return filteredResults;
         }
         
-        // 定义需要排除的辅助模型类型
-        String[] auxiliaryModelTypes = {
-            "InputStatusModel", "StatusModel", "WelcomeModel", "MessageModel", 
-            "CommandRequestModel", "SessionModel", "EnhancerModel"
-        };
-        
+        // Filter out auxiliary model types using direct type checks
         List<Object> filteredResultList = resultList.stream()
-            .filter(result -> {
-                String resultClassName = result.getClass().getSimpleName();
- 
-                for (String auxiliaryType : auxiliaryModelTypes) {
-                    if (resultClassName.equals(auxiliaryType)) {
-                        return false;
-                    }
-                }
-                
-                return true;
-            })
-            .collect(java.util.stream.Collectors.toList());
+            .filter(result -> !isAuxiliaryModel(result))
+            .collect(Collectors.toList());
         
         filteredResults.put("results", filteredResultList);
         filteredResults.put("resultCount", filteredResultList.size());
         
         return filteredResults;
+    }
+    
+    /**
+     * Check if the result is an auxiliary model type that should be filtered out
+     */
+    private static boolean isAuxiliaryModel(Object result) {
+        return result instanceof InputStatusModel
+            || result instanceof StatusModel
+            || result instanceof WelcomeModel
+            || result instanceof MessageModel
+            || result instanceof CommandRequestModel
+            || result instanceof SessionModel
+            || result instanceof EnhancerModel;
     }
 
     private static List<Object> getCommandSpecificResults(Map<String, Object> filteredResults) {

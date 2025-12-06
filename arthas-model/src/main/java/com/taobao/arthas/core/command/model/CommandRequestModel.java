@@ -1,23 +1,24 @@
 package com.taobao.arthas.core.command.model;
 
-import com.taobao.arthas.core.shell.term.impl.http.api.ApiState;
-
 /**
  * Command async exec process result, not the command exec result
  * @author gongdewei 2020/4/2
  */
 public class CommandRequestModel extends ResultModel {
 
-    private ApiState state;
+    private String state;
     private String command;
     private String message;
 
-    public CommandRequestModel(String command, ApiState state) {
+    public CommandRequestModel() {
+    }
+
+    public CommandRequestModel(String command, String state) {
         this.command = command;
         this.state = state;
     }
 
-    public CommandRequestModel(String command, ApiState state, String message) {
+    public CommandRequestModel(String command, String state, String message) {
         this.state = state;
         this.command = command;
         this.message = message;
@@ -31,11 +32,11 @@ public class CommandRequestModel extends ResultModel {
         this.command = command;
     }
 
-    public ApiState getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(ApiState state) {
+    public void setState(String state) {
         this.state = state;
     }
 

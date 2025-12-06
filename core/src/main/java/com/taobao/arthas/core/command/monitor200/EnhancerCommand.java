@@ -13,6 +13,7 @@ import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
 import com.taobao.arthas.core.command.model.EnhancerModel;
+import com.taobao.arthas.core.command.model.EnhancerModelFactory;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -173,7 +174,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         Session session = process.session();
         if (!session.tryLock()) {
             String msg = "someone else is enhancing classes, pls. wait.";
-            process.appendResult(new EnhancerModel(null, false, msg));
+            process.appendResult(EnhancerModelFactory.create(null, false, msg));
             process.end(-1, msg);
             return;
         }
@@ -185,7 +186,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             if (listener == null) {
                 logger.error("advice listener is null");
                 String msg = "advice listener is null, check arthas log";
-                process.appendResult(new EnhancerModel(effect, false, msg));
+                process.appendResult(EnhancerModelFactory.create(effect, false, msg));
                 process.end(-1, msg);
                 return;
             }
@@ -201,7 +202,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             if (effect.getThrowable() != null) {
                 String msg = "error happens when enhancing class: "+effect.getThrowable().getMessage();
-                process.appendResult(new EnhancerModel(effect, false, msg));
+                process.appendResult(EnhancerModelFactory.create(effect, false, msg));
                 process.end(1, msg + ", check arthas log: " + LogUtil.loggingFile());
                 return;
             }
@@ -209,7 +210,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
                 if (!StringUtils.isEmpty(effect.getOverLimitMsg())) {
-                    process.appendResult(new EnhancerModel(effect, false));
+                    process.appendResult(EnhancerModelFactory.create(effect, false));
                     process.end(-1);
                     return;
                 }
@@ -221,7 +222,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                     process.write(lazyMsg + "\n");
                 } else {
                     // might be method code too large
-                    process.appendResult(new EnhancerModel(effect, false, "No class or method is affected"));
+                    process.appendResult(EnhancerModelFactory.create(effect, false, "No class or method is affected"));
 
                     String smCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("sm CLASS_NAME METHOD_NAME").reset().toString();
                     String optionsCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("options unsafe true").reset().toString();
@@ -249,7 +250,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 }
             }
 
-            process.appendResult(new EnhancerModel(effect, true));
+            process.appendResult(EnhancerModelFactory.create(effect, true));
 
             // 设置超时任务
             scheduleTimeoutTask(process);
@@ -258,7 +259,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         } catch (Throwable e) {
             String msg = "error happens when enhancing class: "+e.getMessage();
             logger.error(msg, e);
-            process.appendResult(new EnhancerModel(effect, false, msg));
+            process.appendResult(EnhancerModelFactory.create(effect, false, msg));
             process.end(-1, msg);
         } finally {
             if (session.getLock() == lock) {
