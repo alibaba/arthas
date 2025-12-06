@@ -108,6 +108,11 @@
     <dependencies>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-spy</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

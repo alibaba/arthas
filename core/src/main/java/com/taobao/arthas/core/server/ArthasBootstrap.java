@@ -78,7 +78,7 @@ import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
-import com.taobao.arthas.mcp.server.ArthasMcpBootstrap;
+import com.taobao.arthas.core.mcp.ArthasMcpBootstrap;
 import com.taobao.arthas.mcp.server.CommandExecutor;
 import com.taobao.arthas.mcp.server.protocol.server.handler.McpHttpRequestHandler;
 import io.netty.channel.ChannelFuture;

@@ -14,7 +14,7 @@ public class ResetModel extends ResultModel {
     }
 
     public ResetModel(EnhancerAffect affect) {
-        this.affect = new EnhancerAffectVO(affect);
+        this.affect = EnhancerModelFactory.createEnhancerAffectVO(affect);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ResetModel extends ResultModel {
     }
 
     public ResetModel affect(EnhancerAffect affect) {
-        this.affect = new EnhancerAffectVO(affect);
+        this.affect = EnhancerModelFactory.createEnhancerAffectVO(affect);
         return this;
     }
 

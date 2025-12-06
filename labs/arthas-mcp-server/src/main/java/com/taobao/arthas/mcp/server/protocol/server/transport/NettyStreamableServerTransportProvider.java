@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.taobao.arthas.mcp.server.ArthasMcpServer.DEFAULT_MCP_ENDPOINT;
-
 /**
  * Server-side implementation of the Model Context Protocol (MCP) streamable transport
  * layer using HTTP with Server-Sent Events (SSE) through Netty. This implementation
@@ -29,6 +27,8 @@ import static com.taobao.arthas.mcp.server.ArthasMcpServer.DEFAULT_MCP_ENDPOINT;
  */
 public class NettyStreamableServerTransportProvider implements McpStreamableServerTransportProvider {
 
+    public static final String DEFAULT_MCP_ENDPOINT = "/mcp";
+    
     private final McpStreamableHttpRequestHandler requestHandler;
 
     /**

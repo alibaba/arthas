@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
 
 /**
  * Utilities to perform parsing operations between JSON and Java.
@@ -22,7 +24,23 @@ public final class JsonParser {
 
 	private static final Logger logger = LoggerFactory.getLogger(JsonParser.class);
 	private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
-	private static final ValueFilter[] JSON_FILTERS = new ValueFilter[] { new McpObjectVOFilter() };
+	private static final List<ValueFilter> JSON_FILTERS = new CopyOnWriteArrayList<>();
+
+	/**
+	 * Register a custom JSON value filter
+	 */
+	public static void registerFilter(ValueFilter filter) {
+		if (filter != null) {
+			JSON_FILTERS.add(filter);
+		}
+	}
+
+	/**
+	 * Clear all registered filters
+	 */
+	public static void clearFilters() {
+		JSON_FILTERS.clear();
+	}
 
 
 	private static ObjectMapper createObjectMapper() {
@@ -95,7 +113,12 @@ public final class JsonParser {
 		}
 
 		try {
-			String result = JSON.toJSONString(object, JSON_FILTERS);
+			String result;
+			if (JSON_FILTERS.isEmpty()) {
+				result = JSON.toJSONString(object);
+			} else {
+				result = JSON.toJSONString(object, JSON_FILTERS.toArray(new ValueFilter[0]));
+			}
 			return (result != null) ? result : "{}";
 		}
 		catch (Exception ex) {

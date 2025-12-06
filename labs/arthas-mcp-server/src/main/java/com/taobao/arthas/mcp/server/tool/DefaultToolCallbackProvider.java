@@ -25,11 +25,13 @@ import java.util.jar.JarFile;
 /**
  * Default tool callback provider implementation
  * <p>
- * Scan methods with @Tool annotations in the classpath and register them as tool callbacks
+ * Scan methods with @Tool annotations in the classpath and register them as tool callbacks.
+ * <p>
+ * Users must call {@link #setToolBasePackage(String)} to configure the package to scan before calling
+ * {@link #getToolCallbacks()}.
  */
 public class DefaultToolCallbackProvider implements ToolCallbackProvider {
     private static final Logger logger = LoggerFactory.getLogger(DefaultToolCallbackProvider.class);
-    private static final String DEFAULT_TOOL_BASE_PACKAGE = "com.taobao.arthas.mcp.server.tool.function";
 
     private final ToolCallResultConverter toolCallResultConverter;
     private ToolCallback[] toolCallbacks;
@@ -37,7 +39,6 @@ public class DefaultToolCallbackProvider implements ToolCallbackProvider {
 
     public DefaultToolCallbackProvider() {
         this.toolCallResultConverter = new DefaultToolCallResultConverter();
-        this.toolBasePackage = DEFAULT_TOOL_BASE_PACKAGE;
     }
 
     public void setToolBasePackage(String toolBasePackage) {
