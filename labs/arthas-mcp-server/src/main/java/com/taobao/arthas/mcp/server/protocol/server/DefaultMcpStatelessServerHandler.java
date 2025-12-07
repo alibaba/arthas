@@ -9,6 +9,7 @@ import com.taobao.arthas.mcp.server.protocol.spec.McpError;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandSessionManager;
+import com.taobao.arthas.mcp.server.util.McpAuthExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,20 @@ class DefaultMcpStatelessServerHandler implements McpStatelessServerHandler {
 		String tempSessionId = UUID.randomUUID().toString();
 		ArthasCommandSessionManager.CommandSessionBinding binding = commandSessionManager.createCommandSession(tempSessionId);
 		ArthasCommandContext commandContext = new ArthasCommandContext(commandExecutor, binding);
+
+		// Extract auth subject from transport context and apply to session
+		Object authSubject = ctx.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY);
+		if (authSubject != null) {
+			commandExecutor.setSessionAuth(binding.getArthasSessionId(), authSubject);
+			logger.debug("Applied auth subject to stateless session: {}", binding.getArthasSessionId());
+		}
+
+		// Extract userId from transport context and apply to session
+		String userId = (String) ctx.get(McpAuthExtractor.MCP_USER_ID_KEY);
+		if (userId != null) {
+			commandExecutor.setSessionUserId(binding.getArthasSessionId(), userId);
+			logger.debug("Applied userId to stateless session: {}", binding.getArthasSessionId());
+		}
 
 		McpStatelessRequestHandler<?> handler = requestHandlers.get(req.getMethod());
 		if (handler == null) {
