@@ -7,7 +7,7 @@ import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 
 public class MonitorTool extends AbstractArthasTool {
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 1;
     public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
 
@@ -19,7 +19,7 @@ public class MonitorTool extends AbstractArthasTool {
      * - methodPattern: 方法名表达式匹配，支持通配符
      * - condition: OGNL条件表达式，满足条件的调用才会被监控
      * - intervalMs: 监控统计输出间隔，默认3000ms
-     * - numberOfExecutions: 监控执行次数，默认3次
+     * - numberOfExecutions: 监控执行次数，默认1次
      * - regex: 是否开启正则表达式匹配，默认false
      * - excludeClassPattern: 排除的类名模式
      * - maxMatch: 最大匹配类数量，防止匹配过多类影响性能，默认50

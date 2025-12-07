@@ -7,7 +7,7 @@ import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 
 public class WatchTool extends AbstractArthasTool {
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 1;
     public static final int DEFAULT_POLL_INTERVAL_MS = 50;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
     public static final int DEFAULT_EXPAND_LEVEL = 1;
@@ -45,7 +45,7 @@ public class WatchTool extends AbstractArthasTool {
             @ToolParam(description = "在方法正常返回后观察(-s)，默认false", required = false)
             Boolean successOnly,
 
-            @ToolParam(description = "执行次数限制，默认值为 3。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为 1。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)

@@ -7,7 +7,7 @@ import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 
 public class TimeTunnelTool extends AbstractArthasTool {
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 1;
     public static final int DEFAULT_POLL_INTERVAL_MS = 100;
     public static final int DEFAULT_MAX_MATCH_COUNT = 50;
 
@@ -33,7 +33,7 @@ public class TimeTunnelTool extends AbstractArthasTool {
             @ToolParam(description = "OGNL条件表达式，满足条件的调用才会被记录，如params[0]<0或'params.length==1'", required = false)
             String condition,
 
-            @ToolParam(description = "记录次数限制，默认值为 3。达到指定次数后自动停止（仅record操作）", required = false)
+            @ToolParam(description = "记录次数限制，默认值为 1。达到指定次数后自动停止（仅record操作）", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)

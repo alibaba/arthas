@@ -7,7 +7,7 @@ import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 
 public class MBeanTool extends AbstractArthasTool {
 
-    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 3;
+    public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 1;
     public static final int DEFAULT_REFRESH_INTERVAL_MS = 3000;
 
     /**
@@ -37,7 +37,7 @@ public class MBeanTool extends AbstractArthasTool {
             @ToolParam(description = "刷新间隔，单位为毫秒，默认 3000ms。用于控制输出频率", required = false)
             Integer intervalMs,
 
-            @ToolParam(description = "执行次数限制，默认值为 3。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为 1。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
