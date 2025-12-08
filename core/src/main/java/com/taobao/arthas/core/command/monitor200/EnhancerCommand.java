@@ -132,6 +132,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         if (listenerId != 0) {
             AdviceListener listener = AdviceWeaver.listener(listenerId);
             if (listener != null) {
+                if (listenerId == -1) {
+                    process.echoTips("found listenerId: " + listener.id() + "\n");
+                }
                 return listener;
             }
         }
