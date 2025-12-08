@@ -42,7 +42,7 @@ public class MonitorTool extends AbstractArthasTool {
             @ToolParam(description = "监控统计输出间隔，单位为毫秒，默认 3000ms。用于控制输出频率", required = false)
             Integer intervalMs,
 
-            @ToolParam(description = "执行次数限制，默认值为3。达到指定次数后自动停止", required = false)
+            @ToolParam(description = "执行次数限制，默认值为" + DEFAULT_NUMBER_OF_EXECUTIONS + "。达到指定次数后自动停止", required = false)
             Integer numberOfExecutions,
 
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
@@ -51,7 +51,7 @@ public class MonitorTool extends AbstractArthasTool {
             @ToolParam(description = "最大匹配类数量，防止匹配过多类影响性能，默认50", required = false)
             Integer maxMatch,
 
-            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出", required = false)
             Integer timeout,
 
             ToolContext toolContext

@@ -39,7 +39,7 @@ public class TraceTool extends AbstractArthasTool {
             @ToolParam(description = "指定Class最大匹配数量，默认50", required = false)
             Integer maxMatchCount,
 
-            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出", required = false)
             Integer timeout,
 
             ToolContext toolContext

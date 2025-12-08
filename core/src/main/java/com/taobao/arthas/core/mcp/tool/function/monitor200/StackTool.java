@@ -42,7 +42,7 @@ public class StackTool extends AbstractArthasTool {
             @ToolParam(description = "开启正则表达式匹配，默认为通配符匹配，默认false", required = false)
             Boolean regex,
 
-            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出", required = false)
             Integer timeout,
 
             ToolContext toolContext

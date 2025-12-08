@@ -57,7 +57,7 @@ public class WatchTool extends AbstractArthasTool {
             @ToolParam(description = "指定输出结果的属性遍历深度，默认1，最大4", required = false)
             Integer expandLevel,
 
-            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出", required = false)
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出", required = false)
             Integer timeout,
 
             ToolContext toolContext

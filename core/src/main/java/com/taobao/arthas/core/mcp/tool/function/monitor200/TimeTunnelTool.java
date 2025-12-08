@@ -48,7 +48,7 @@ public class TimeTunnelTool extends AbstractArthasTool {
             @ToolParam(description = "Class最大匹配数量，防止匹配到的Class数量太多导致JVM挂起，默认50", required = false)
             Integer maxMatchCount,
 
-            @ToolParam(description = "命令执行超时时间，单位为秒，默认200秒。超时后命令自动退出（仅record操作）", required = false)
+            @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出（仅record操作）", required = false)
             Integer timeout,
 
             ToolContext toolContext

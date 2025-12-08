@@ -2,7 +2,6 @@ package com.taobao.arthas.core.mcp.tool.function;
 
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.core.mcp.util.McpAuthExtractor;
-import com.taobao.arthas.core.mcp.tool.util.McpToolUtils;
 import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
@@ -22,7 +21,7 @@ public abstract class AbstractArthasTool {
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public static final int DEFAULT_TIMEOUT_SECONDS = 200;
+    public static final int DEFAULT_TIMEOUT_SECONDS = (int) (StreamableToolUtils.DEFAULT_TIMEOUT_MS / 1000);
     
     /**
      * 工具执行上下文，包含所有必要的上下文信息

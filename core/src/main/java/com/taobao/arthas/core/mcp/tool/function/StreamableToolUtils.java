@@ -27,7 +27,7 @@ public final class StreamableToolUtils {
 
     private static final int ERROR_RETRY_INTERVAL_MS = 500;     // 错误重试间隔500ms
 
-    private static final long DEFAULT_TIMEOUT_MS = 200000L;      // 默认超时时间200秒
+    public static final long DEFAULT_TIMEOUT_MS = 30000L;      // 默认超时时间30秒
 
     private static final int MAX_ERROR_RETRIES = 10;            // 最大错误重试次数
 
@@ -62,7 +62,7 @@ public final class StreamableToolUtils {
         int pullIntervalMs = (intervalMs != null && intervalMs > 0) ? intervalMs : DEFAULT_POLL_INTERVAL_MS;
         
         // 计算截止时间
-        // 如果没有指定超时时间，默认使用 200 秒
+        // 如果没有指定超时时间，则使用默认超时时间
         long executionTimeoutMs = (timeoutMs != null && timeoutMs > 0) ? timeoutMs : DEFAULT_TIMEOUT_MS;
         long deadline = System.currentTimeMillis() + executionTimeoutMs;
         boolean timedOut = false;
