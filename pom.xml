@@ -59,6 +59,7 @@
         <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
+        <module>arthas-mcp-server</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -78,7 +79,6 @@
         <module>labs/arthas-grpc-server</module>
         <!-- <module>labs/arthas-jfr-frontend</module> -->
 <!--        <module>labs/arthas-jfr-backend</module>-->
-        <module>labs/arthas-mcp-server</module>
     </modules>
 
     <properties>
