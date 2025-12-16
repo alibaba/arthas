@@ -55,7 +55,7 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
 - 命令参数解析
   - `-t`
 
-    tt 命令有很多个主参数，`-t` 就是其中之一。这个参数的表明希望记录下类 `*Test` 的 `print` 方法的每次执行情况。
+    tt 命令有很多个主参数，`-t` 就是其中之一。这个参数的表明希望记录下类 `demo.MathGame` 的 `primeFactors` 方法的每次执行情况。
 
   - `-n 3`
 
