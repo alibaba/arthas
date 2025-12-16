@@ -98,10 +98,10 @@ public class PackageInternalsFinder {
             String jarUri = packageFolderURL.toExternalForm().substring(0, packageFolderURL.toExternalForm().lastIndexOf("!/"));
 
             URLConnection urlConnection = packageFolderURL.openConnection();
-            int rootEnd = 0;
             Enumeration<JarEntry> entryEnum;
             if (urlConnection instanceof JarURLConnection){
                 try {
+                    int rootEnd = 0;
                     JarURLConnection jarConn = (JarURLConnection) urlConnection;
                     String rootEntryName = jarConn.getEntryName();
                     //可能为 null（自己没有类文件时）
