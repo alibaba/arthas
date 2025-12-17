@@ -129,7 +129,23 @@ public class PackageInternalsFinder {
             }else {
                 //是否可以在硬盘上找到对应的文件
                 try {
-                    File file = new File(new URI(jarUri));
+                    URI uri1 = new URI(jarUri);
+                    // 获取 authority（host:port） + path + query + fragment
+                    StringBuilder sb = new StringBuilder();
+                    if (uri1.getAuthority() != null) {
+                        sb.append(uri1.getAuthority());
+                    }
+                    if (uri1.getPath() != null) {
+                        sb.append(uri1.getPath());
+                    }
+                    if (uri1.getQuery() != null) {
+                        sb.append('?').append(uri1.getQuery());
+                    }
+                    if (uri1.getFragment() != null) {
+                        sb.append('#').append(uri1.getFragment());
+                    }
+
+                    File file = new File(sb.toString());
                     if (file.exists()) {
                         //可能是文件或目录
                         if (file.isDirectory()) {
