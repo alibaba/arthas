@@ -4,25 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.mcp.server.protocol.config.McpServerProperties.ServerProtocol;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContextExtractor;
 import com.taobao.arthas.mcp.server.protocol.spec.McpError;
-import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
-import com.taobao.arthas.mcp.server.tool.ToolCallback;
 import com.taobao.arthas.mcp.server.util.Assert;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.taobao.arthas.mcp.server.protocol.spec.McpSchema.*;
 
 /**
  * MCP HTTP请求处理器，分发请求到无状态或流式处理器。
@@ -146,7 +139,7 @@ public class McpHttpRequestHandler {
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
             response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
-            ctx.writeAndFlush(response);
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         } catch (Exception e) {
             logger.error("Failed to send error response: {}", e.getMessage());
             FullHttpResponse response = new DefaultFullHttpResponse(
@@ -154,7 +147,7 @@ public class McpHttpRequestHandler {
                     HttpResponseStatus.INTERNAL_SERVER_ERROR
             );
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
-            ctx.writeAndFlush(response);
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         }
     }
 

@@ -167,7 +167,8 @@ public class McpStreamableServerSession implements McpSession {
                 logger.warn("Failed to store error response event: {}", e.getMessage());
             }
 
-            return transport.sendMessage(errorResponse, null);
+            return transport.sendMessage(errorResponse, null)
+                    .thenCompose(v -> transport.closeGracefully());
         }
         ArthasCommandContext commandContext = createCommandContext(transportContext.get(MCP_AUTH_SUBJECT_KEY));
         
