@@ -352,7 +352,7 @@ public class McpStreamableHttpRequestHandler {
                                         response.headers().set(HttpHeaders.MCP_SESSION_ID, init.session().getId());
                                         response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
-                                        ctx.writeAndFlush(response);
+                                        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                                     } catch (Exception e) {
                                         logger.error("Failed to serialize init response: {}", e.getMessage());
                                         sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR,
@@ -402,7 +402,7 @@ public class McpStreamableHttpRequestHandler {
                                     HttpResponseStatus.ACCEPTED
                             );
                             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
-                            ctx.writeAndFlush(response);
+                            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                         })
                         .exceptionally(e -> {
                             logger.error("Failed to accept response: {}", e.getMessage());
@@ -418,7 +418,7 @@ public class McpStreamableHttpRequestHandler {
                                     HttpResponseStatus.ACCEPTED
                             );
                             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
-                            ctx.writeAndFlush(response);
+                            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                         })
                         .exceptionally(e -> {
                             logger.error("Failed to accept notification: {}", e.getMessage());
@@ -442,14 +442,15 @@ public class McpStreamableHttpRequestHandler {
 
                 try {
                     session.responseStream(jsonrpcRequest, sessionTransport, transportContext)
-                            .exceptionally(e -> {
-                                logger.error("Failed to handle request stream: {}", e.getMessage());
-                                ctx.close();
-                                return null;
+                            .whenComplete((result, e) -> {
+                                if (e != null) {
+                                    logger.error("Failed to handle request stream: {}", e.getMessage());
+                                    sessionTransport.close();
+                                }
                             });
                 } catch (Exception e) {
                     logger.error("Failed to handle request stream: {}", e.getMessage());
-                    ctx.close();
+                    sessionTransport.close();
                 }
             } else {
                 sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR,
@@ -532,7 +533,7 @@ public class McpStreamableHttpRequestHandler {
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
             response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
-            ctx.writeAndFlush(response);
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         } catch (Exception e) {
             logger.error(FAILED_TO_SEND_ERROR_RESPONSE, e.getMessage());
             FullHttpResponse response = new DefaultFullHttpResponse(
@@ -540,7 +541,7 @@ public class McpStreamableHttpRequestHandler {
                     HttpResponseStatus.INTERNAL_SERVER_ERROR
             );
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
-            ctx.writeAndFlush(response);
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         }
     }
 
