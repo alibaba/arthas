@@ -22,6 +22,17 @@
 |             `[c: r:]` | 用 ClassLoader 去查找 resource             |
 |          `[c: load:]` | 用 ClassLoader 去加载指定的类              |
 
+### `--url-classes` 参数说明
+
+|                 参数名称 | 参数说明                                                                 |
+| -----------------------: | :----------------------------------------------------------------------- |
+|          `--url-classes` | 统计指定 ClassLoader 中，已加载类与 `codeSource(URL/jar)` 的关系          |
+|        `-d, --details`   | 详情模式：列出每个 URL/jar 加载的类名（建议配合 `-n/--limit` 控制输出量） |
+|          `--jar <kw>`    | 按 jar 包名/URL 关键字过滤（默认包含匹配）                                |
+|         `--class <kw>`   | 按类名/包名关键字过滤（默认包含匹配）                                     |
+|          `-E, --regex`   | `--jar/--class` 使用正则匹配（默认关键字包含匹配）                        |
+|        `-n, --limit <N>` | 详情模式下，每个 URL/jar 最多展示 N 个类（100 默认）                      |
+
 ## 使用参考
 
 ### 按类加载类型查看统计信息
@@ -159,4 +170,29 @@ $ classloader --url-stat
  file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunpkcs11.jar
  file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/jaccess.jar
  file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/zipfs.jar
+```
+
+### 查看指定 ClassLoader 的类与 jar(URL) 的关系列表
+
+`--url-classes` 用于统计指定 ClassLoader 中，类来自哪个 jar(URL)，以及每个 jar(URL) 加载了多少类。
+
+```bash
+$ classloader -c 3d4eac69 --url-classes
+sun.misc.Launcher$AppClassLoader@3d4eac69, hash:3d4eac69
+ url                                            loadedClassCount
+ file:/private/tmp/math-game.jar                 42
+ file:/Users/hengyunabc/.arthas/lib/arthas-agent.jar  15
+Affect(row-cnt:2) cost in 3 ms.
+```
+
+按 jar 包名关键字过滤并查看详情（列出类名）：
+
+```bash
+$ classloader -c 3d4eac69 --url-classes -d --jar math-game
+```
+
+进一步按包名/关键字过滤（同时会输出 `matchedClassCount` 便于统计）：
+
+```bash
+$ classloader -c 3d4eac69 --url-classes --jar spring-core --class org.springframework
 ```

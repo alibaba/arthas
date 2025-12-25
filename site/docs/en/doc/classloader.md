@@ -20,6 +20,17 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 |             `[c: r:]` | using ClassLoader to search resource                                                                         |
 |          `[c: load:]` | using ClassLoader to load class                                                                              |
 
+### `--url-classes` options
+
+|              Name | Specification                                                                 |
+| ----------------: | :---------------------------------------------------------------------------- |
+|  `--url-classes`  | Show relationship between loaded classes and `codeSource(URL/jar)` in a specific ClassLoader |
+| `-d, --details`   | Details mode: list class names for each URL/jar (use `-n/--limit` to control output) |
+|  `--jar <kw>`     | Filter jar(URL) by keyword (contains match by default)                        |
+| `--class <kw>`    | Filter classes by keyword/package (contains match by default)                 |
+| `-E, --regex`     | Treat `--jar/--class` as regular expression (keyword match by default)        |
+| `-n, --limit <N>` | In details mode, show at most N classes per URL/jar (100 by default)          |
+
 ## Usage
 
 ### View statistics categorized by class type
@@ -156,5 +167,30 @@ $ classloader --url-stat
  file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/openjsse.jar
  file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunpkcs11.jar
  file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/jaccess.jar
- file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/zipfs.jar
+file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/zipfs.jar
+```
+
+### Show class-to-jar(URL) relationship for a specific ClassLoader
+
+`--url-classes` shows which jar(URL) the classes come from, and how many classes are loaded for each jar(URL) in the specified ClassLoader.
+
+```bash
+$ classloader -c 3d4eac69 --url-classes
+sun.misc.Launcher$AppClassLoader@3d4eac69, hash:3d4eac69
+ url                                            loadedClassCount
+ file:/private/tmp/math-game.jar                 42
+ file:/Users/hengyunabc/.arthas/lib/arthas-agent.jar  15
+Affect(row-cnt:2) cost in 3 ms.
+```
+
+Filter by jar name keyword and show details (list class names):
+
+```bash
+$ classloader -c 3d4eac69 --url-classes -d --jar math-game
+```
+
+Filter further by package/keyword (will also output `matchedClassCount` for statistics):
+
+```bash
+$ classloader -c 3d4eac69 --url-classes --jar spring-core --class org.springframework
 ```

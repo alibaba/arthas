@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 @Name("classloader")
 @Summary("Show classloader info")
@@ -54,10 +55,15 @@ import java.util.TreeSet;
         "  classloader -a -c 327a647b\n" +
         "  classloader -c 659e0bfd --load demo.MathGame\n" +
         "  classloader -u      # url statistics\n" +
+        "  classloader -c 659e0bfd --url-classes\n" +
+        "  classloader -c 659e0bfd --url-classes -d\n" +
+        "  classloader -c 659e0bfd --url-classes --jar spring-core --class org.springframework\n" +
         Constants.WIKI + Constants.WIKI_HOME + "classloader")
 public class ClassLoaderCommand extends AnnotatedCommand {
 
     private static Logger logger = LoggerFactory.getLogger(ClassLoaderCommand.class);
+    private static final int DEFAULT_URL_CLASSES_LIMIT = 100;
+    private static final String UNKNOWN_CODE_SOURCE = "<unknown>";
     private boolean isTree = false;
     private String hashCode;
     private String classLoaderClass;
@@ -67,6 +73,13 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private boolean listClassLoader = false;
 
     private boolean urlStat = false;
+
+    private boolean urlClasses = false;
+    private boolean urlClassesDetail = false;
+    private boolean urlClassesRegEx = false;
+    private int urlClassesLimit = DEFAULT_URL_CLASSES_LIMIT;
+    private String jarFilter;
+    private String classFilter;
 
     private String loadClass = null;
 
@@ -126,6 +139,42 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         this.urlStat = urlStat;
     }
 
+    @Option(longName = "url-classes", flag = true)
+    @Description("Display relationship between jar(URL) and loaded classes in the specified ClassLoader")
+    public void setUrlClasses(boolean urlClasses) {
+        this.urlClasses = urlClasses;
+    }
+
+    @Option(shortName = "d", longName = "details", flag = true)
+    @Description("Display class list for each jar(URL), only works with --url-classes")
+    public void setUrlClassesDetail(boolean urlClassesDetail) {
+        this.urlClassesDetail = urlClassesDetail;
+    }
+
+    @Option(shortName = "E", longName = "regex", flag = true)
+    @Description("Enable regular expression to match for --jar/--class, only works with --url-classes")
+    public void setUrlClassesRegEx(boolean urlClassesRegEx) {
+        this.urlClassesRegEx = urlClassesRegEx;
+    }
+
+    @Option(shortName = "n", longName = "limit")
+    @Description("Maximum number of classes to display per jar(URL) in details mode (100 by default), only works with --url-classes -d")
+    public void setUrlClassesLimit(int urlClassesLimit) {
+        this.urlClassesLimit = urlClassesLimit;
+    }
+
+    @Option(longName = "jar")
+    @Description("Filter jar(URL) by keyword (or regex with -E), only works with --url-classes")
+    public void setJarFilter(String jarFilter) {
+        this.jarFilter = jarFilter;
+    }
+
+    @Option(longName = "class")
+    @Description("Filter classes by keyword/package (or regex with -E), only works with --url-classes")
+    public void setClassFilter(String classFilter) {
+        this.classFilter = StringUtils.normalizeClassName(classFilter);
+    }
+
     @Override
     public void process(CommandProcess process) {
         // ctrl-C support
@@ -141,6 +190,12 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             model.setUrlStats(urlStats);
             process.appendResult(model);
             process.end();
+            return;
+        }
+
+        if (!urlClasses && (urlClassesDetail || urlClassesRegEx || jarFilter != null || classFilter != null
+                || urlClassesLimit != DEFAULT_URL_CLASSES_LIMIT)) {
+            process.end(-1, "Options -d/-E/-n/--jar/--class only work with --url-classes.");
             return;
         }
         
@@ -172,6 +227,19 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
                 return;
             }
+        }
+
+        if (urlClasses) {
+            if (!classLoaderSpecified) {
+                process.end(-1, "Please specify classloader with '-c <classloader hash>' or '--classLoaderClass <classloader class name>' for --url-classes.");
+                return;
+            }
+            if (targetClassLoader == null) {
+                process.end(-1, "Can not find classloader by hashcode: " + hashCode + ".");
+                return;
+            }
+            processUrlClasses(process, inst, targetClassLoader);
+            return;
         }
 
         if (all) {
@@ -407,6 +475,172 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
     }
 
+    private void processUrlClasses(CommandProcess process, Instrumentation inst, ClassLoader targetClassLoader) {
+        if (!urlClassesDetail && urlClassesLimit != DEFAULT_URL_CLASSES_LIMIT) {
+            process.end(-1, "Option -n/--limit only works with --url-classes -d.");
+            return;
+        }
+        if (urlClassesDetail && urlClassesLimit <= 0) {
+            process.end(-1, "Option -n/--limit must be greater than 0.");
+            return;
+        }
+
+        Pattern jarPattern = null;
+        Pattern classPattern = null;
+        if (urlClassesRegEx) {
+            try {
+                if (jarFilter != null) {
+                    jarPattern = Pattern.compile(jarFilter);
+                }
+                if (classFilter != null) {
+                    classPattern = Pattern.compile(classFilter);
+                }
+            } catch (Throwable e) {
+                process.end(-1, "Regex compile error: " + e.getMessage());
+                return;
+            }
+        }
+
+        Map<String, UrlClassStatBuilder> statsMap = new HashMap<String, UrlClassStatBuilder>();
+        Class<?>[] allLoadedClasses = inst.getAllLoadedClasses();
+        for (int i = 0; i < allLoadedClasses.length; i++) {
+            if ((i & 0x3FFF) == 0 && checkInterrupted(process)) {
+                return;
+            }
+            Class<?> clazz = allLoadedClasses[i];
+            if (clazz == null) {
+                continue;
+            }
+            if (clazz.getClassLoader() != targetClassLoader) {
+                continue;
+            }
+
+            String url = codeSourceLocation(clazz);
+            if (!matchJarFilter(url, jarPattern)) {
+                continue;
+            }
+
+            UrlClassStatBuilder builder = statsMap.get(url);
+            if (builder == null) {
+                builder = new UrlClassStatBuilder(url, classFilter != null, urlClassesDetail ? urlClassesLimit : 0);
+                statsMap.put(url, builder);
+            }
+            builder.increaseLoadedCount();
+
+            if (classFilter != null) {
+                if (matchClassFilter(clazz.getName(), classPattern)) {
+                    builder.increaseMatchedCount();
+                    builder.tryAddClass(clazz.getName());
+                }
+            } else {
+                builder.tryAddClass(clazz.getName());
+            }
+        }
+
+        boolean hasClassFilter = classFilter != null;
+        List<UrlClassStat> stats = new ArrayList<UrlClassStat>(statsMap.size());
+        for (UrlClassStatBuilder builder : statsMap.values()) {
+            if (hasClassFilter && builder.getMatchedClassCount() == 0) {
+                continue;
+            }
+            stats.add(builder.build());
+        }
+
+        Collections.sort(stats, new Comparator<UrlClassStat>() {
+            @Override
+            public int compare(UrlClassStat o1, UrlClassStat o2) {
+                int c1 = hasClassFilter ? safeInt(o1.getMatchedClassCount()) : o1.getLoadedClassCount();
+                int c2 = hasClassFilter ? safeInt(o2.getMatchedClassCount()) : o2.getLoadedClassCount();
+                int diff = c2 - c1;
+                if (diff != 0) {
+                    return diff;
+                }
+                return o1.getUrl().compareTo(o2.getUrl());
+            }
+        });
+
+        RowAffect affect = new RowAffect();
+        affect.rCnt(stats.size());
+        ClassLoaderModel model = new ClassLoaderModel()
+                .setClassLoader(ClassUtils.createClassLoaderVO(targetClassLoader))
+                .setUrlClassStats(stats)
+                .setUrlClassStatsDetail(urlClassesDetail);
+        process.appendResult(model);
+        process.appendResult(new RowAffectModel(affect));
+        process.end();
+    }
+
+    private static int safeInt(Integer v) {
+        return v == null ? 0 : v.intValue();
+    }
+
+    private boolean matchJarFilter(String url, Pattern jarPattern) {
+        if (jarFilter == null) {
+            return true;
+        }
+        String jarName = guessJarName(url);
+        if (urlClassesRegEx) {
+            return jarPattern != null && (jarPattern.matcher(url).find() || jarPattern.matcher(jarName).find());
+        }
+        return containsIgnoreCase(url, jarFilter) || containsIgnoreCase(jarName, jarFilter);
+    }
+
+    private boolean matchClassFilter(String className, Pattern classPattern) {
+        if (classFilter == null) {
+            return true;
+        }
+        if (urlClassesRegEx) {
+            return classPattern != null && classPattern.matcher(className).find();
+        }
+        return containsIgnoreCase(className, classFilter);
+    }
+
+    static boolean containsIgnoreCase(String text, String keyword) {
+        if (text == null || keyword == null) {
+            return false;
+        }
+        return text.toLowerCase().contains(keyword.toLowerCase());
+    }
+
+    private static String codeSourceLocation(Class<?> clazz) {
+        try {
+            ProtectionDomain protectionDomain = clazz.getProtectionDomain();
+            if (protectionDomain == null) {
+                return UNKNOWN_CODE_SOURCE;
+            }
+            CodeSource codeSource = protectionDomain.getCodeSource();
+            if (codeSource == null) {
+                return UNKNOWN_CODE_SOURCE;
+            }
+            URL location = codeSource.getLocation();
+            if (location == null) {
+                return UNKNOWN_CODE_SOURCE;
+            }
+            return location.toString();
+        } catch (Throwable t) {
+            return UNKNOWN_CODE_SOURCE;
+        }
+    }
+
+    static String guessJarName(String url) {
+        if (url == null) {
+            return com.taobao.arthas.core.util.Constants.EMPTY_STRING;
+        }
+        String s = url;
+        int bangIndex = s.lastIndexOf('!');
+        if (bangIndex >= 0) {
+            s = s.substring(0, bangIndex);
+        }
+        while (s.endsWith("/")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        int slash = Math.max(s.lastIndexOf('/'), s.lastIndexOf('\\'));
+        if (slash >= 0 && slash < s.length() - 1) {
+            s = s.substring(slash + 1);
+        }
+        return s;
+    }
+
     private Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats(Instrumentation inst) {
         Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats = new HashMap<ClassLoaderVO, ClassLoaderUrlStat>();
         Map<ClassLoader, Set<String>> usedUrlsMap = new HashMap<ClassLoader, Set<String>>();
@@ -636,6 +870,110 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         @Override
         public boolean accept(ClassLoader classLoader) {
             return !REFLECTION_CLASSLOADERS.contains(classLoader.getClass().getName());
+        }
+    }
+
+    public static class UrlClassStat {
+        private String url;
+        private int loadedClassCount;
+        private Integer matchedClassCount;
+        private List<String> classes;
+        private boolean truncated;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public int getLoadedClassCount() {
+            return loadedClassCount;
+        }
+
+        public void setLoadedClassCount(int loadedClassCount) {
+            this.loadedClassCount = loadedClassCount;
+        }
+
+        public Integer getMatchedClassCount() {
+            return matchedClassCount;
+        }
+
+        public void setMatchedClassCount(Integer matchedClassCount) {
+            this.matchedClassCount = matchedClassCount;
+        }
+
+        public List<String> getClasses() {
+            return classes;
+        }
+
+        public void setClasses(List<String> classes) {
+            this.classes = classes;
+        }
+
+        public boolean isTruncated() {
+            return truncated;
+        }
+
+        public void setTruncated(boolean truncated) {
+            this.truncated = truncated;
+        }
+    }
+
+    private static class UrlClassStatBuilder {
+        private final String url;
+        private final boolean hasClassFilter;
+        private final int limit;
+        private int loadedClassCount;
+        private int matchedClassCount;
+        private SortedSet<String> classNames;
+        private boolean truncated;
+
+        UrlClassStatBuilder(String url, boolean hasClassFilter, int limit) {
+            this.url = url;
+            this.hasClassFilter = hasClassFilter;
+            this.limit = limit;
+            if (limit > 0) {
+                this.classNames = new TreeSet<String>();
+            }
+        }
+
+        void increaseLoadedCount() {
+            loadedClassCount++;
+        }
+
+        void increaseMatchedCount() {
+            matchedClassCount++;
+        }
+
+        int getMatchedClassCount() {
+            return matchedClassCount;
+        }
+
+        void tryAddClass(String className) {
+            if (classNames == null) {
+                return;
+            }
+            if (classNames.size() >= limit) {
+                truncated = true;
+                return;
+            }
+            classNames.add(className);
+        }
+
+        UrlClassStat build() {
+            UrlClassStat stat = new UrlClassStat();
+            stat.setUrl(url);
+            stat.setLoadedClassCount(loadedClassCount);
+            if (hasClassFilter) {
+                stat.setMatchedClassCount(matchedClassCount);
+            }
+            if (classNames != null) {
+                stat.setClasses(new ArrayList<String>(classNames));
+            }
+            stat.setTruncated(truncated);
+            return stat;
         }
     }
 
