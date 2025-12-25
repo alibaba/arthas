@@ -22,14 +22,14 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 
 ### `--url-classes` options
 
-|              Name | Specification                                                                 |
-| ----------------: | :---------------------------------------------------------------------------- |
-|  `--url-classes`  | Show relationship between loaded classes and `codeSource(URL/jar)` in a specific ClassLoader |
-| `-d, --details`   | Details mode: list class names for each URL/jar (use `-n/--limit` to control output) |
-|  `--jar <kw>`     | Filter jar(URL) by keyword (contains match by default)                        |
-| `--class <kw>`    | Filter classes by keyword/package (contains match by default)                 |
-| `-E, --regex`     | Treat `--jar/--class` as regular expression (keyword match by default)        |
-| `-n, --limit <N>` | In details mode, show at most N classes per URL/jar (100 by default)          |
+|              Name | Specification                                                                                |
+| ----------------: | :------------------------------------------------------------------------------------------- |
+|   `--url-classes` | Show relationship between loaded classes and `codeSource(URL/jar)` in a specific ClassLoader |
+|   `-d, --details` | Details mode: list class names for each URL/jar (use `-n/--limit` to control output)         |
+|      `--jar <kw>` | Filter jar(URL) by keyword (contains match by default)                                       |
+|    `--class <kw>` | Filter classes by keyword/package (contains match by default)                                |
+|     `-E, --regex` | Treat `--jar/--class` as regular expression (keyword match by default)                       |
+| `-n, --limit <N>` | In details mode, show at most N classes per URL/jar (100 by default)                         |
 
 ## Usage
 
