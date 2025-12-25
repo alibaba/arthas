@@ -15,7 +15,7 @@ public class ClassLoaderTool extends AbstractArthasTool {
 
     @Tool(
             name = "classloader",
-            description = "ClassLoader 诊断工具，可以查看类加载器统计信息、继承树、URLs，以及进行资源查找和类加载操作"
+            description = "ClassLoader 诊断工具，可以查看类加载器统计信息、继承树、URLs，以及进行资源查找和类加载操作。搜索类的场景优先使用 sc 工具"
     )
     public String classloader(
             @ToolParam(description = "显示模式：stats(统计信息，默认), instances(实例详情), tree(继承树), all-classes(所有类，慎用), url-stats(URL统计)", required = false)
