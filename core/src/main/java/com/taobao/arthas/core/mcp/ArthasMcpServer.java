@@ -23,6 +23,7 @@ import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,12 +156,18 @@ public class ArthasMcpServer {
     }
     
     /**
+     * Default keep-alive interval for MCP server (15 seconds)
+     */
+    public static final Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(15);
+    
+    /**
      * Create HTTP transport provider
      */
     private NettyStreamableServerTransportProvider createStreamableHttpTransportProvider(McpServerProperties properties) {
         return NettyStreamableServerTransportProvider.builder()
                 .mcpEndpoint(properties.getMcpEndpoint())
                 .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : new ObjectMapper())
+                .keepAliveInterval(DEFAULT_KEEP_ALIVE_INTERVAL)
                 .build();
     }
 
