@@ -186,7 +186,8 @@ class ArthasMcpJavaSdkIT {
             if (node != null && node.isObject()) {
                 JsonNode resultCount = node.get("resultCount");
                 if (resultCount != null && resultCount.canConvertToInt()) {
-                    assertThat(resultCount.asInt()).as("tool=%s resultCount", toolName).isGreaterThan(0);
+                    int count = resultCount.asInt();
+                    assertThat(count).as("tool=%s resultCount, body=%s", toolName, body).isGreaterThan(0);
                 } else {
                     Assertions.fail("streamable tool 未返回 resultCount: tool=" + toolName + ", body=" + body);
                 }
