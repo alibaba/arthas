@@ -1,8 +1,5 @@
 package com.taobao.arthas.core.mcp.util;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONFactory;
-import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.filter.ValueFilter;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.ObjectVO;
@@ -93,13 +90,7 @@ public class McpObjectVOFilter implements ValueFilter {
      */
     private String drawJsonView(Object object) {
         try {
-            JSONWriter.Context context = JSONFactory.createWriteContext();
-            context.setMaxLevel(4097);
-            context.config(JSONWriter.Feature.IgnoreErrorGetter, true);
-            context.config(JSONWriter.Feature.ReferenceDetection, true);
-            context.config(JSONWriter.Feature.IgnoreNonFieldGetter, true);
-            context.config(JSONWriter.Feature.WriteNonStringKeyAsString, true);
-            return JSON.toJSONString(object, context);
+            return ObjectView.toJsonString(object);
         } catch (Exception e) {
             logger.debug("ObjectView-style serialization failed, using toString: {}", e.getMessage());
             return objectToString(object);
