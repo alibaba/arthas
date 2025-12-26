@@ -59,12 +59,12 @@ public class ArthasMcpServer {
         this.mcpEndpoint = mcpEndpoint != null ? mcpEndpoint : DEFAULT_MCP_ENDPOINT;
         this.commandExecutor = commandExecutor;
         
-        ServerProtocol resolvedProtocol = ServerProtocol.STATELESS;
+        ServerProtocol resolvedProtocol = ServerProtocol.STREAMABLE;
         if (protocol != null && !protocol.trim().isEmpty()) {
             try {
                 resolvedProtocol = ServerProtocol.valueOf(protocol.toUpperCase());
             } catch (IllegalArgumentException e) {
-                logger.warn("Invalid MCP protocol: {}. Using default: STATELESS", protocol);
+                logger.warn("Invalid MCP protocol: {}. Using default: STREAMABLE", protocol);
             }
         }
         this.protocol = resolvedProtocol;
