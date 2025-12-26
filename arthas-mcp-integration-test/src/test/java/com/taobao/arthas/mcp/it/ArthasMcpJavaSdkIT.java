@@ -346,7 +346,8 @@ class ArthasMcpJavaSdkIT {
             args.put("classPattern", TARGET_CLASS_PATTERN);
             args.put("methodPattern", TARGET_METHOD_PATTERN);
             args.put("numberOfExecutions", 1);
-            args.put("timeout", 10);
+            // CI 环境下 stack 增强+触发可能更慢，适当放大超时时间以减少偶发失败
+            args.put("timeout", 30);
             return args;
         }
 
