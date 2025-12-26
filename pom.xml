@@ -212,6 +212,12 @@
                 <artifactId>zt-zip</artifactId>
                 <version>1.16</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp</artifactId>
+                <version>0.17.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -234,6 +240,16 @@
                     <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
                 </dependency>
             </dependencies>
+        </profile>
+
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <modules>
+                <module>arthas-mcp-integration-test</module>
+            </modules>
         </profile>
 
         <profile>

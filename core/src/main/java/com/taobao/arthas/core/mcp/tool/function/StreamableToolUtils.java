@@ -108,9 +108,13 @@ public final class StreamableToolUtils {
                     
                     // 判断是否应该结束
                     // 如果是TERMINATED状态，或者命令已完成且允许输入次数大于等于2，或者实际结果数量达到预期结果数量
-                    if ("TERMINATED".equals(jobStatus)
-                            || (commandCompleted && allowInputCount >= MIN_ALLOW_INPUT_COUNT_TO_COMPLETE)
-                            || (expectedResultCount != null && totalResultCount >= expectedResultCount)) {
+                    boolean hasExpectedResultCount = (expectedResultCount != null);
+                    boolean reachedExpectedResultCount = hasExpectedResultCount && totalResultCount >= expectedResultCount;
+                    boolean allowInputCompletion = !hasExpectedResultCount
+                            && commandCompleted
+                            && allowInputCount >= MIN_ALLOW_INPUT_COUNT_TO_COMPLETE;
+
+                    if ("TERMINATED".equals(jobStatus) || allowInputCompletion || reachedExpectedResultCount) {
                         logger.info("Command completed. Total results collected: {}, Expected: {}", totalResultCount, expectedResultCount);
                         break;
                     }

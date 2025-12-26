@@ -22,6 +22,9 @@ public abstract class AbstractArthasTool {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static final int DEFAULT_TIMEOUT_SECONDS = (int) (StreamableToolUtils.DEFAULT_TIMEOUT_MS / 1000);
+
+    private static final long DEFAULT_ASYNC_START_RETRY_INTERVAL_MS = 100L;
+    private static final long DEFAULT_ASYNC_START_MAX_WAIT_MS = 3000L;
     
     /**
      * 工具执行上下文，包含所有必要的上下文信息
@@ -112,8 +115,9 @@ public abstract class AbstractArthasTool {
                                      Integer expectedResultCount, Integer pollIntervalMs, 
                                      Integer timeoutMs,
                                      String successMessage) {
+        ToolExecutionContext execContext = null;
         try {
-            ToolExecutionContext execContext = new ToolExecutionContext(toolContext, true);
+            execContext = new ToolExecutionContext(toolContext, true);
             
             logger.info("Starting streamable execution: {}", commandStr);
 
@@ -122,7 +126,11 @@ public abstract class AbstractArthasTool {
                 execContext.getCommandContext().setSessionUserId(execContext.getUserId());
             }
 
-            Map<String, Object> asyncResult = execContext.getCommandContext().executeAsync(commandStr);
+            Map<String, Object> asyncResult = executeAsyncWithRetry(execContext, commandStr, timeoutMs);
+            if (!isAsyncExecutionStarted(asyncResult)) {
+                String errorMessage = asyncResult != null ? String.valueOf(asyncResult.get("error")) : "unknown error";
+                return JsonParser.toJson(createErrorResponse("Failed to start command: " + errorMessage));
+            }
             logger.debug("Async execution started: {}", asyncResult);
 
             Map<String, Object> results = executeAndCollectResults(
@@ -154,7 +162,74 @@ public abstract class AbstractArthasTool {
         } catch (Exception e) {
             logger.error("Error executing streamable command: {}", commandStr, e);
             return JsonParser.toJson(createErrorResponse("Error executing command: " + e.getMessage()));
+        } finally {
+            if (execContext != null) {
+                try {
+                    // 确保前台任务被及时释放，避免占用 session 影响后续 streamable 工具执行
+                    execContext.getCommandContext().interruptJob();
+                } catch (Exception ignored) {
+                }
+            }
         }
+    }
+
+    private static boolean isAsyncExecutionStarted(Map<String, Object> asyncResult) {
+        if (asyncResult == null) {
+            return false;
+        }
+        Object success = asyncResult.get("success");
+        return Boolean.TRUE.equals(success);
+    }
+
+    private static boolean isRetryableAsyncStartError(Map<String, Object> asyncResult) {
+        if (asyncResult == null) {
+            return false;
+        }
+        Object success = asyncResult.get("success");
+        if (Boolean.TRUE.equals(success)) {
+            return false;
+        }
+        Object error = asyncResult.get("error");
+        if (error == null) {
+            return false;
+        }
+        String message = String.valueOf(error);
+        return message.contains("Another job is running") || message.contains("Another command is executing");
+    }
+
+    private static Map<String, Object> executeAsyncWithRetry(ToolExecutionContext execContext, String commandStr, Integer timeoutMs) {
+        long maxWaitMs = DEFAULT_ASYNC_START_MAX_WAIT_MS;
+        if (timeoutMs != null && timeoutMs > 0) {
+            maxWaitMs = Math.min(maxWaitMs, timeoutMs);
+        }
+
+        long deadline = System.currentTimeMillis() + maxWaitMs;
+        Map<String, Object> asyncResult = null;
+
+        while (System.currentTimeMillis() < deadline) {
+            asyncResult = execContext.getCommandContext().executeAsync(commandStr);
+            if (isAsyncExecutionStarted(asyncResult)) {
+                return asyncResult;
+            }
+
+            if (isRetryableAsyncStartError(asyncResult)) {
+                try {
+                    execContext.getCommandContext().interruptJob();
+                } catch (Exception ignored) {
+                }
+                try {
+                    Thread.sleep(DEFAULT_ASYNC_START_RETRY_INTERVAL_MS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return asyncResult;
+                }
+                continue;
+            }
+
+            return asyncResult;
+        }
+
+        return asyncResult;
     }
 
     protected StringBuilder buildCommand(String baseCommand) {

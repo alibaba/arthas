@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [8, 11, 17, 19]
+        java: [8, 11, 17, 21, 25]
     steps:
       - uses: actions/checkout@v3
       - name: Setup java
@@ -17,7 +17,7 @@ jobs:
           distribution: "zulu"
           cache: "maven"
       - name: Build with Maven
-        run: mvn -V -ntp clean install -P full
+        run: mvn -V -ntp clean install -P full verify
 
   windows_build:
     runs-on: windows-2022
