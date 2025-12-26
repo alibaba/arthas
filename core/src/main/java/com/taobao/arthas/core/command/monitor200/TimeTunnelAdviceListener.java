@@ -6,6 +6,7 @@ import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.express.ExpressException;
+import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.TimeFragmentVO;
 import com.taobao.arthas.core.command.model.TimeTunnelModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -41,6 +42,14 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
         this.command = command;
         this.process = process;
         super.setVerbose(verbose);
+    }
+
+    @Override
+    public void destroy() {
+        // Clear ThreadLocal data to avoid leaks when session/command ends
+        threadLocalWatch.cleanUp();
+        ExpressFactory.cleanUp();
+        super.destroy();
     }
 
     @Override
