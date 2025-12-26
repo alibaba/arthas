@@ -17,7 +17,7 @@ jobs:
           distribution: "zulu"
           cache: "maven"
       - name: Build with Maven
-        run: mvn -V -ntp clean install -P full
+        run: mvn -V -ntp clean install -P full verify
 
   windows_build:
     runs-on: windows-2022

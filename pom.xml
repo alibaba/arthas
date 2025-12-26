@@ -245,7 +245,7 @@
         <profile>
             <id>jdk17</id>
             <activation>
-                <jdk>17</jdk>
+                <jdk>[17,)</jdk>
             </activation>
             <modules>
                 <module>arthas-mcp-integration-test</module>
