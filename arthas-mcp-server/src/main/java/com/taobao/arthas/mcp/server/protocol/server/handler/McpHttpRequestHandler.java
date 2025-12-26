@@ -193,7 +193,7 @@ public class McpHttpRequestHandler {
             Assert.notNull(this.mcpEndpoint, "MCP endpoint must be set");
 
             if (this.protocol == null) {
-                this.protocol = ServerProtocol.STATELESS;
+                this.protocol = ServerProtocol.STREAMABLE;
             }
 
             McpHttpRequestHandler handler = new McpHttpRequestHandler(this.mcpEndpoint, this.objectMapper, this.contextExtractor);
