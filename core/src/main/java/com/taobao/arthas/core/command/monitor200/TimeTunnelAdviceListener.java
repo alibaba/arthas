@@ -21,12 +21,22 @@ import java.util.Collections;
  */
 public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(TimeTunnelAdviceListener.class);
-    private final ThreadLocal<ObjectStack> argsRef = new ThreadLocal<ObjectStack>() {
-        @Override
-        protected ObjectStack initialValue() {
-            return new ObjectStack(512);
-        }
-    };
+    /**
+     * 用 JDK 的 Object[] 做一个固定大小的 ring stack（只存业务对象），避免把 ArthasClassLoader 加载的 ObjectStack 放进
+     * 业务线程的 ThreadLocalMap 里，导致 stop/detach 后 ArthasClassLoader 无法被 GC 回收。
+     *
+     * <pre>
+     * 约定：
+     * - store[0] 存储 int[1] 的 pos（0..cap）
+     * - store[1..cap] 存储 args（Object[]）
+     * </pre>
+     */
+    private static final int ARGS_STACK_SIZE = 512;
+    private final ThreadLocal<Object[]> argsRef = ThreadLocal.withInitial(() -> {
+        Object[] store = new Object[ARGS_STACK_SIZE + 1];
+        store[0] = new int[1];
+        return store;
+    });
 
     private TimeTunnelCommand command;
     private CommandProcess process;
@@ -46,7 +56,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
-        argsRef.get().push(args);
+        pushArgs(args);
         threadLocalWatch.start();
     }
 
@@ -54,7 +64,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
         //取出入参时的 args，因为在函数执行过程中 args可能被修改
-        args = (Object[]) argsRef.get().pop();
+        args = popArgs();
         afterFinishing(Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject));
     }
 
@@ -62,8 +72,44 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                               Throwable throwable) {
         //取出入参时的 args，因为在函数执行过程中 args可能被修改
-        args = (Object[]) argsRef.get().pop();
+        args = popArgs();
         afterFinishing(Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable));
+    }
+
+    private void pushArgs(Object[] args) {
+        Object[] store = argsRef.get();
+        int[] posHolder = (int[]) store[0];
+
+        int cap = store.length - 1;
+        int pos = posHolder[0];
+        if (pos < cap) {
+            pos++;
+        } else {
+            // if stack is full, reset pos
+            pos = 1;
+        }
+        store[pos] = args;
+        posHolder[0] = pos;
+    }
+
+    private Object[] popArgs() {
+        Object[] store = argsRef.get();
+        int[] posHolder = (int[]) store[0];
+
+        int cap = store.length - 1;
+        int pos = posHolder[0];
+        if (pos > 0) {
+            Object[] args = (Object[]) store[pos];
+            store[pos] = null;
+            posHolder[0] = pos - 1;
+            return args;
+        }
+
+        pos = cap;
+        Object[] args = (Object[]) store[pos];
+        store[pos] = null;
+        posHolder[0] = pos - 1;
+        return args;
     }
 
     private void afterFinishing(Advice advice) {
@@ -101,59 +147,6 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
         process.times().incrementAndGet();
         if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
             abortProcess(process, command.getNumberOfLimit());
-        }
-    }
-
-    /**
-     * 
-     * <pre>
-     * 一个特殊的stack，为了追求效率，避免扩容。
-     * 因为这个stack的push/pop 并不一定成对调用，比如可能push执行了，但是后面的流程被中断了，pop没有被执行。
-     * 如果不固定大小，一直增长的话，极端情况下可能应用有内存问题。
-     * 如果到达容量，pos会重置，循环存储数据。所以使用这个Stack如果在极端情况下统计的数据会不准确，只用于monitor/watch等命令的计时。
-     * 
-     * </pre>
-     * 
-     * @author hengyunabc 2020-05-20
-     *
-     */
-    static class ObjectStack {
-        private Object[] array;
-        private int pos = 0;
-        private int cap;
-
-        public ObjectStack(int maxSize) {
-            array = new Object[maxSize];
-            cap = array.length;
-        }
-
-        public int size() {
-            return pos;
-        }
-
-        public void push(Object value) {
-            if (pos < cap) {
-                array[pos++] = value;
-            } else {
-                // if array is full, reset pos
-                pos = 0;
-                array[pos++] = value;
-            }
-        }
-
-        public Object pop() {
-            if (pos > 0) {
-                pos--;
-                Object object = array[pos];
-                array[pos] = null;
-                return object;
-            } else {
-                pos = cap;
-                pos--;
-                Object object = array[pos];
-                array[pos] = null;
-                return object;
-            }
         }
     }
 }
