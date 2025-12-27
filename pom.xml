@@ -162,6 +162,11 @@
                 <version>3.3.5</version>
             </dependency>
             <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>qlexpress4</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.10.0</version>

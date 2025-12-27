@@ -16,6 +16,7 @@
 - [thread](thread.md) - show java thread information
 - [vmoption](vmoption.md) - view/modify the vm diagnostic options.
 - [vmtool](vmtool.md) - jvm tool, getInstances in jvm, forceGc
+- [qlexpress](qlexpress.md) - execute qlexpress expression
 
 ## class/classloader - related
 
