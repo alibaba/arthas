@@ -20,11 +20,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -141,6 +143,7 @@ class ArthasMcpJavaSdkIT {
         Environment stopEnv = null;
         try {
             stopEnv = Environment.start("arthas-mcp-java-sdk-stop-it", "arthas-mcp-java-sdk-stop-it-home");
+            long targetPid = ProcessPid.pidOf(stopEnv.targetJvm);
             Map<String, Object> args = new HashMap<String, Object>();
             args.put("delayMs", 200);
 
@@ -148,6 +151,7 @@ class ArthasMcpJavaSdkIT {
             assertCallToolSuccess("stop", result);
 
             waitForPortClosed("127.0.0.1", stopEnv.httpPort, Duration.ofSeconds(15));
+            waitForThreadGone(targetPid, "mcp-keep-alive-scheduler", Duration.ofSeconds(15));
         } finally {
             if (stopEnv != null) {
                 stopEnv.close();
@@ -607,6 +611,89 @@ class ArthasMcpJavaSdkIT {
             }
         }
         throw new IllegalStateException("等待端口关闭超时: " + host + ":" + port);
+    }
+
+    private static void waitForThreadGone(long pid, String threadName, Duration timeout) throws Exception {
+        Path jcmd = resolveJcmd();
+        Assumptions.assumeTrue(jcmd != null, "需要 jcmd 才能检查线程是否残留");
+
+        String needle = "\"" + threadName + "\"";
+        long deadline = System.nanoTime() + timeout.toNanos();
+        while (System.nanoTime() < deadline) {
+            String dump;
+            try {
+                dump = jcmdThreadDump(jcmd, pid);
+            } catch (Exception e) {
+                Assumptions.assumeTrue(false, "jcmd Thread.print 执行失败，跳过线程检查: " + e.getMessage());
+                return;
+            }
+            if (!dump.contains(needle)) {
+                return;
+            }
+            Thread.sleep(200);
+        }
+        Assertions.fail("stop 后仍存在线程: " + threadName);
+    }
+
+    private static Path resolveJcmd() {
+        String javaHome = System.getProperty("java.home");
+        if (javaHome == null || javaHome.trim().isEmpty()) {
+            return null;
+        }
+
+        String exe = isWindows() ? "jcmd.exe" : "jcmd";
+        Path candidate = Paths.get(javaHome, "bin", exe);
+        if (Files.exists(candidate)) {
+            return candidate;
+        }
+
+        // 兼容部分环境 java.home 指向 $JAVA_HOME/jre
+        Path parent = Paths.get(javaHome).getParent();
+        if (parent != null) {
+            Path candidate2 = parent.resolve("bin").resolve(exe);
+            if (Files.exists(candidate2)) {
+                return candidate2;
+            }
+        }
+        return null;
+    }
+
+    private static String jcmdThreadDump(Path jcmd, long pid) throws Exception {
+        List<String> command = new ArrayList<String>();
+        command.add(jcmd.toString());
+        command.add(String.valueOf(pid));
+        command.add("Thread.print");
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Thread reader = new Thread(() -> {
+            try (InputStream in = process.getInputStream()) {
+                byte[] buffer = new byte[8192];
+                for (int read; (read = in.read(buffer)) != -1; ) {
+                    out.write(buffer, 0, read);
+                }
+            } catch (Exception ignored) {
+            }
+        }, "jcmd-thread-dump-reader");
+        reader.setDaemon(true);
+        reader.start();
+
+        if (!process.waitFor(10, TimeUnit.SECONDS)) {
+            process.destroyForcibly();
+            if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("jcmd Thread.print 超时: pid=" + pid);
+            }
+        }
+        reader.join(5000);
+
+        String output = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        if (process.exitValue() != 0) {
+            throw new IllegalStateException("jcmd Thread.print 失败(exit=" + process.exitValue() + "): " + output);
+        }
+        return output;
     }
 
     private static boolean isWindows() {
