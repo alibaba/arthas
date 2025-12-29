@@ -200,6 +200,16 @@ public class McpStreamableHttpRequestHandler {
      * Handles GET requests to establish SSE connections and message replay.
      */
     private void handleGetRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
+        // TODO support last-event-id #3118
+        // MCP 客户端在 SSE 断线重连时，可能会带上 last-event-id 尝试做消息回放。
+        // Arthas MCP Server 不支持基于 last-event-id 的恢复逻辑：直接返回 404，
+        // 让客户端触发完整重置并重新走 Initialize 握手申请新的会话。
+        if (request.headers().get(HttpHeaders.LAST_EVENT_ID) != null) {
+            sendError(ctx, HttpResponseStatus.NOT_FOUND,
+                    new McpError("Session not found, please re-initialize"));
+            return;
+        }
+
         List<String> badRequestErrors = new ArrayList<>();
 
         String accept = request.headers().get(ACCEPT);
