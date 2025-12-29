@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 
-ARG ARTHAS_VERSION="4.1.3"
+ARG ARTHAS_VERSION="4.1.4"
 ARG MIRROR=false
 
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
