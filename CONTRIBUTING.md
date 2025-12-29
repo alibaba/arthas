@@ -27,6 +27,8 @@ Please refer to [README.MD at killercoda branch](https://github.com/alibaba/arth
 
 Recommend to use [`as-package.sh`](as-package.sh) to package, which will auto-install the latest Arthas to local `~/.arthas` and when debugging, Arthas will auto-load the latest version.
 
+Tip: for faster local iteration, you can use `./as-package.sh --fast` (skip `clean` and skip documentation front-end build in `site` module). If you need to rebuild docs, run without `--fast` or use `./mvnw clean package -DskipTests -P full`.
+
 * To support jni, cpp compiling environment support is required
 * mac needs to install xcode
 * windows need to install gcc
@@ -91,6 +93,8 @@ Tip: you can use `--versions` to list all available versions.
 > 注意： 修改`arthas-vmtool`相关代码后，打包结果需要手动复制到本仓库的 `lib/` 路径下，不会自动复制。
 
 本地开发时，推荐执行`as-package.sh`来打包，会自动安装最新版本的arthas到`~/.arthas`目录里。debug时会自动使用最新版本。
+
+提示：本地快速迭代可以执行 `./as-package.sh --fast`（跳过 `clean`，并跳过 `site` 模块的文档前端构建）。如果需要重建文档，请不要使用 `--fast`，或者执行 `./mvnw clean package -DskipTests -P full`。
 
 * 代码里要编译jni，需要cpp编译环境支持
 * mac需要安装xcode
