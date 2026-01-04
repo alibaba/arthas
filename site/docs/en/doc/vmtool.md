@@ -90,6 +90,32 @@ vmtool --action forceGc
 
 - Use the [`vmoption`](vmoption.md) command to dynamically turn on the `PrintGC` option.
 
+## Analyze heap usage
+
+`heapAnalyze` starts from objects reachable from GC Root, counts instance numbers and bytes per class, and prints the top objects/classes by heap usage.
+
+```bash
+$ vmtool --action heapAnalyze --classNum 5 --objectNum 3
+```
+
+::: tip
+Use `--classNum` to specify how many classes will be shown, and use `--objectNum` to specify how many objects will be shown.
+:::
+
+## Analyze reference chain
+
+`referenceAnalyze` analyzes instances of a specific class and prints the largest objects and their backtrace chain (from the object back to GC Root) to help locate them.
+
+```bash
+$ vmtool --action referenceAnalyze --className java.lang.String --objectNum 5 --backtraceNum 3
+```
+
+::: tip
+- Use `--objectNum` to specify how many objects will be shown
+- Use `--backtraceNum` to specify how many steps of backtrace will be done, set `-1` to backtrace until root, set `0` to disable backtrace output
+- `--classLoaderClass` and `--classloader` from `getInstances` are also applicable here
+:::
+
 ## interrupt 指定线程
 
 The thread id is specified by the `-t` parameter. It can be obtained using the `thread` command.

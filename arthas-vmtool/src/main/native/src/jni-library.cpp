@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <jni.h>
 #include <jni_md.h>
 #include <jvmti.h>
 #include "arthas_VmTool.h" // under target/native/javah/
+#include "heap_analyzer.h"
 
 #ifdef __GLIBC__
 #include <malloc.h>
@@ -227,4 +229,30 @@ JNIEXPORT jboolean JNICALL Java_arthas_VmTool_mallocStats0
 #else
     return JNI_FALSE;
 #endif
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_arthas_VmTool_heapAnalyze0
+        (JNIEnv *env, jclass thisClass, jint classNum, jint objectNum) {
+    (void)thisClass;
+    char *result = arthas_vmtool_heap_analyze(jvmti, classNum, objectNum);
+    if (!result) {
+        return env->NewStringUTF("ERROR: heapAnalyze failed (native OOM or JVMTI error)\n");
+    }
+    jstring s = env->NewStringUTF(result);
+    free(result);
+    return s;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_arthas_VmTool_referenceAnalyze0
+        (JNIEnv *env, jclass thisClass, jclass klass, jint objectNum, jint backtraceNum) {
+    (void)thisClass;
+    char *result = arthas_vmtool_reference_analyze(jvmti, klass, objectNum, backtraceNum);
+    if (!result) {
+        return env->NewStringUTF("ERROR: referenceAnalyze failed (native OOM or JVMTI error)\n");
+    }
+    jstring s = env->NewStringUTF(result);
+    free(result);
+    return s;
 }
