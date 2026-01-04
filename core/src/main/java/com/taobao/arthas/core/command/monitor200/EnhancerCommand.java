@@ -57,10 +57,25 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected boolean lazy = false;
 
+    /**
+     * 指定 classloader hash，只增强该 classloader 加载的类。
+     */
+    protected String hashCode;
+
     @Option(longName = "exclude-class-pattern")
     @Description("exclude class name pattern, use either '.' or '/' as separator")
     public void setExcludeClassPattern(String excludeClassPattern) {
         this.excludeClassPattern = excludeClassPattern;
+    }
+
+    @Option(longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
+    public String getHashCode() {
+        return hashCode;
     }
 
     @Option(longName = "listenerId")
@@ -195,7 +210,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), this.lazy);
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace,
+                    getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), this.lazy, this.hashCode);
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst, this.maxNumOfMatchedClass);

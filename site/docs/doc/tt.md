@@ -67,6 +67,10 @@ Affect(class count:1 , method count:1) cost in 130 ms, listenerId: 1.
 
     通过 `-m` 参数指定 Class 匹配的最大数量，防止匹配到的 Class 数量太多导致 JVM 挂起，默认值是 50。
 
+  - `-c <classloader hash>`
+
+    当同名类被多个 classloader 加载时，可以用 `-c` 指定只增强某个 classloader 加载的类。可以先用 `sc -d className` 查看具体的 classloader hash。
+
 - 表格字段说明
 
 | 表格字段  | 字段解释                                                                                                                          |

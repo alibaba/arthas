@@ -136,6 +136,13 @@ public class TimeTunnelCommand extends EnhancerCommand {
         this.sizeLimit = sizeLimit;
     }
 
+    @Override
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        super.setHashCode(hashCode);
+    }
+
     @Option(shortName = "w", longName = "watch-express")
     @Description(value = "watch the time fragment by ognl express.\n" + Constants.EXPRESS_EXAMPLES)
     public void setWatchExpress(String watchExpress) {

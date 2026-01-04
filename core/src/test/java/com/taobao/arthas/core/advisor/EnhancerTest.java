@@ -2,6 +2,8 @@ package com.taobao.arthas.core.advisor;
 
 import java.arthas.SpyAPI;
 import java.lang.instrument.Instrumentation;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 import com.taobao.arthas.core.bytecode.TestHelper;
 import com.taobao.arthas.core.server.ArthasBootstrap;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.matcher.EqualsMatcher;
 
 import demo.MathGame;
@@ -90,6 +93,43 @@ public class EnhancerTest {
         String string = Decompiler.decompile(result);
 
         System.err.println(string);
+    }
+
+    @Test
+    public void testEnhanceWithClassLoaderHash() throws Throwable {
+        Instrumentation instrumentation = ByteBuddyAgent.install();
+        TestHelper.appendSpyJar(instrumentation);
+        ArthasBootstrap.getInstance(instrumentation, "ip=127.0.0.1");
+
+        URL codeSource = MathGame.class.getProtectionDomain().getCodeSource().getLocation();
+        URLClassLoader anotherClassLoader = new URLClassLoader(new URL[] { codeSource }, null);
+        try {
+            Class<?> anotherMathGame = Class.forName(MathGame.class.getName(), true, anotherClassLoader);
+            Assertions.assertThat(anotherMathGame.getClassLoader()).isNotSameAs(MathGame.class.getClassLoader());
+
+            AdviceListener listener = Mockito.mock(AdviceListener.class);
+            EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
+            EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
+
+            String targetClassLoaderHash = Integer.toHexString(MathGame.class.getClassLoader().hashCode());
+            Enhancer enhancer = new Enhancer(listener, false, false, classNameMatcher, null, methodNameMatcher, false,
+                    targetClassLoaderHash);
+
+            com.taobao.arthas.core.util.affect.EnhancerAffect affect = enhancer.enhance(instrumentation, 50);
+
+            String expectedMethodPrefix = ClassLoaderUtils.classLoaderHash(MathGame.class.getClassLoader()) + "|"
+                    + MathGame.class.getName() + "#print|";
+            String anotherMethodPrefix = ClassLoaderUtils.classLoaderHash(anotherClassLoader) + "|" + MathGame.class.getName()
+                    + "#print|";
+
+            Assertions.assertThat(affect.cCnt()).isEqualTo(1);
+            Assertions.assertThat(affect.mCnt()).isEqualTo(1);
+            Assertions.assertThat(affect.getMethods()).hasSize(1);
+            Assertions.assertThat(affect.getMethods()).allMatch(m -> m.startsWith(expectedMethodPrefix));
+            Assertions.assertThat(affect.getMethods()).noneMatch(m -> m.startsWith(anotherMethodPrefix));
+        } finally {
+            anotherClassLoader.close();
+        }
     }
 
 }

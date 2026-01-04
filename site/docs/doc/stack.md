@@ -17,6 +17,7 @@
 | _condition-express_ | 条件表达式                                                         |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配                               |
 |              `[n:]` | 执行次数限制                                                       |
+|              `[c:]` | 指定 classloader hash，只增强该 classloader 加载的类               |
 |         `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为`[maxMatch <arg>]`。 |
 
 这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
@@ -55,6 +56,15 @@ ts=2022-12-25 21:07:07;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
     @demo.MathGame.primeFactors()
         at demo.MathGame.run(MathGame.java:46)
         at demo.MathGame.main(MathGame.java:38)
+```
+
+### 指定 ClassLoader 增强
+
+当同名类被多个 classloader 加载时，可以先用 `sc -d` 查看 classloader hash，然后用 `-c` 指定增强的 classloader：
+
+```bash
+sc -d com.example.Foo
+stack -c 3d4eac69 com.example.Foo bar
 ```
 
 ### 据条件表达式来过滤

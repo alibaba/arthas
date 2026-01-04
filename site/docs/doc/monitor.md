@@ -38,6 +38,7 @@
 | _condition-express_ | 条件表达式                                                         |
 |                 [E] | 开启正则表达式匹配，默认为通配符匹配                               |
 |              `[c:]` | 统计周期，默认值为 60 秒                                           |
+|    `--classloader`  | 指定 classloader hash，只增强该 classloader 加载的类               |
 |                 [b] | 在**方法调用之前**计算 condition-express                           |
 |         `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为`[maxMatch <arg>]`。 |
 
@@ -85,6 +86,15 @@ Affect(class count:1 , method count:1) cost in 384 ms, listenerId: 6.
  timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
  2022-12-25 21:12:59  demo.MathGame  primeFactors  0      0        0     0.00       0.00%
+```
+
+### 指定 ClassLoader 增强
+
+当同名类被多个 classloader 加载时，可以先用 `sc -d` 查看 classloader hash，然后用 `--classloader` 指定增强的 classloader（注意 `-c` 在 monitor 里表示统计周期）：
+
+```bash
+sc -d com.example.Foo
+monitor --classloader 3d4eac69 com.example.Foo bar
 ```
 
 ### 计算条件表达式过滤统计结果(方法执行完毕之后)

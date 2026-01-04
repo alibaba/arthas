@@ -38,6 +38,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 | _condition-expression_ | condition expression for filtering method calls                                                        |
 |                  `[E]` | turn on regex matching while the default is wildcard matching                                          |
 |                 `[c:]` | cycle of statistics, the default value: `60`s                                                          |
+|          `--classloader` | Specify classloader hash, only enhance classes loaded by it                                          |
 |                  `[b]` | evaluate the condition-expression before method invoke                                                 |
 |            `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
@@ -85,6 +86,15 @@ Affect(class count:1 , method count:1) cost in 384 ms, listenerId: 6.
  timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
  2022-12-25 21:12:59  demo.MathGame  primeFactors  0      0        0     0.00       0.00%
+```
+
+### Specify ClassLoader to enhance
+
+If the same class is loaded by multiple classloaders, you can use `sc -d` to find the classloader hash and then use `--classloader` to enhance only the specified one (note that `-c` in `monitor` means the output cycle):
+
+```bash
+sc -d com.example.Foo
+monitor --classloader 3d4eac69 com.example.Foo bar
 ```
 
 ### Evaluate condition-express to filter method (after method call)
