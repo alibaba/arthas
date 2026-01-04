@@ -90,6 +90,33 @@ vmtool --action forceGc
 
 - 可以结合 [`vmoption`](vmoption.md) 命令动态打开`PrintGC`开关。
 
+## 分析堆内存占用
+
+`heapAnalyze` 会从 GC Root 可达对象出发，统计各个类的实例数量与占用字节数，并输出占用最大的若干对象与类。
+
+```bash
+$ vmtool --action heapAnalyze --classNum 5 --objectNum 3
+```
+
+::: tip
+通过 `--classNum` 参数指定展示的类数量，通过 `--objectNum` 参数指定展示的对象数量。
+:::
+
+## 分析对象引用链
+
+`referenceAnalyze` 用于分析某个类的实例对象，并输出占用最大的若干对象及其引用回溯链（从对象回溯到 GC Root），用于辅助定位对象来源。
+
+```bash
+$ vmtool --action referenceAnalyze --className java.lang.String --objectNum 5 --backtraceNum 3
+```
+
+::: tip
+
+- 通过 `--objectNum` 参数指定展示的对象数量
+- 通过 `--backtraceNum` 参数指定回溯层数，设置为 `-1` 表示一直回溯到 root，设置为 `0` 表示不输出引用链
+- `getInstances` 支持的 `--classLoaderClass` / `--classloader` 参数同样适用于 `referenceAnalyze`
+  :::
+
 ## interrupt 指定线程
 
 thread id 通过`-t`参数指定，可以使用 `thread`命令获取。

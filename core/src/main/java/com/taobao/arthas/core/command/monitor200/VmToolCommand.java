@@ -55,6 +55,8 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
+        + "  vmtool --action heapAnalyze --classNum 20 --objectNum 20\n"
+        + "  vmtool --action referenceAnalyze --className java.lang.String --objectNum 20 --backtraceNum 2\n"
         + "  vmtool --action interruptThread -t 1\n"
         + "  vmtool --action mallocTrim\n"
         + "  vmtool --action mallocStats\n"
@@ -78,6 +80,21 @@ public class VmToolCommand extends AnnotatedCommand {
      * default value 10
      */
     private int limit;
+
+    /**
+     * default value 20
+     */
+    private int classNum = 20;
+
+    /**
+     * default value 20
+     */
+    private int objectNum = 20;
+
+    /**
+     * default value 2
+     */
+    private int backtraceNum = 2;
 
     private String libPath;
     private static String defaultLibPath;
@@ -140,6 +157,24 @@ public class VmToolCommand extends AnnotatedCommand {
         this.limit = limit;
     }
 
+    @Option(longName = "classNum", required = false)
+    @Description("The number of classes to be shown.")
+    public void setClassNum(int classNum) {
+        this.classNum = classNum;
+    }
+
+    @Option(longName = "objectNum", required = false)
+    @Description("The number of objects to be shown.")
+    public void setObjectNum(int objectNum) {
+        this.objectNum = objectNum;
+    }
+
+    @Option(longName = "backtraceNum", required = false)
+    @Description("The steps of backtrace by reference.")
+    public void setBacktraceNum(int backtraceNum) {
+        this.backtraceNum = backtraceNum;
+    }
+
     @Option(longName = "libPath")
     @Description("The specify lib path.")
     public void setLibPath(String path) {
@@ -159,7 +194,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     public enum VmToolAction {
-        getInstances, forceGc, interruptThread, mallocTrim, mallocStats
+        getInstances, forceGc, heapAnalyze, referenceAnalyze, interruptThread, mallocTrim, mallocStats
     }
 
     @Override
@@ -167,7 +202,7 @@ public class VmToolCommand extends AnnotatedCommand {
         try {
             Instrumentation inst = process.session().getInstrumentation();
 
-            if (VmToolAction.getInstances.equals(action)) {
+            if (VmToolAction.getInstances.equals(action) || VmToolAction.referenceAnalyze.equals(action)) {
                 if (className == null) {
                     process.end(-1, "The className option cannot be empty!");
                     return;
@@ -213,26 +248,37 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Found more than one class: " + matchedClasses + ", please specify classloader with '-c <classloader hash>'");
                     return;
                 } else {
-                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
-                    Object value = instances;
-                    if (express != null) {
-                        Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
-                        try {
-                            value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
-                        } catch (ExpressException e) {
-                            logger.warn("ognl: failed execute express: " + express, e);
-                            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
-                                    + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+                    if (VmToolAction.getInstances.equals(action)) {
+                        Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
+                        Object value = instances;
+                        if (express != null) {
+                            Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
+                            try {
+                                value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
+                            } catch (ExpressException e) {
+                                logger.warn("ognl: failed execute express: " + express, e);
+                                process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                                        + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+                            }
                         }
-                    }
 
-                    VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
-                    process.appendResult(vmToolModel);
-                    process.end();
+                        VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
+                        process.appendResult(vmToolModel);
+                        process.end();
+                    } else {
+                        String result = vmToolInstance().referenceAnalyze(matchedClasses.get(0), objectNum, backtraceNum);
+                        process.write(result);
+                        process.end();
+                    }
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
                 vmToolInstance().forceGc();
                 process.write("\n");
+                process.end();
+                return;
+            } else if (VmToolAction.heapAnalyze.equals(action)) {
+                String result = vmToolInstance().heapAnalyze(classNum, objectNum);
+                process.write(result);
                 process.end();
                 return;
             } else if (VmToolAction.interruptThread.equals(action)) {
