@@ -111,10 +111,11 @@ $ vmtool --action referenceAnalyze --className java.lang.String --objectNum 5 --
 ```
 
 ::: tip
+
 - 通过 `--objectNum` 参数指定展示的对象数量
 - 通过 `--backtraceNum` 参数指定回溯层数，设置为 `-1` 表示一直回溯到 root，设置为 `0` 表示不输出引用链
 - `getInstances` 支持的 `--classLoaderClass` / `--classloader` 参数同样适用于 `referenceAnalyze`
-:::
+  :::
 
 ## interrupt 指定线程
 
