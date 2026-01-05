@@ -68,6 +68,7 @@ class ArthasMcpJavaSdkIT {
             "ognl",
             "options",
             "perfcounter",
+            "profiler",
             "redefine",
             "retransform",
             "sc",
@@ -81,6 +82,7 @@ class ArthasMcpJavaSdkIT {
             "tt",
             "vmoption",
             "vmtool",
+            "viewfile",
             "watch"
     );
 
@@ -309,6 +311,23 @@ class ArthasMcpJavaSdkIT {
         if ("heapdump".equals(toolName)) {
             Path heapdumpFile = env.tempHome.resolve("heapdump.hprof");
             args.put("filePath", heapdumpFile.toString());
+            return args;
+        }
+
+        if ("profiler".equals(toolName)) {
+            args.put("action", "actions");
+            return args;
+        }
+
+        if ("viewfile".equals(toolName)) {
+            Path outputDir = env.tempHome.resolve("arthas-output");
+            Files.createDirectories(outputDir);
+            Path viewFile = outputDir.resolve("viewfile-test.txt");
+            Files.write(viewFile, "hello viewfile\n".getBytes(StandardCharsets.UTF_8));
+
+            args.put("path", "viewfile-test.txt");
+            args.put("offset", 0L);
+            args.put("maxBytes", 1024);
             return args;
         }
 
