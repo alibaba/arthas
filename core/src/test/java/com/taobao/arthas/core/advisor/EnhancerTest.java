@@ -111,22 +111,24 @@ public class EnhancerTest {
             EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
             EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
 
-            String targetClassLoaderHash = Integer.toHexString(MathGame.class.getClassLoader().hashCode());
+            // Enhancer 会过滤与自身 ClassLoader 相同的类（认为是 Arthas 自身加载的类）。
+            // 这里用另一个 ClassLoader 加载一份同名类，并用 classloader hash 精确指定只增强这一份。
+            String targetClassLoaderHash = Integer.toHexString(anotherClassLoader.hashCode());
             Enhancer enhancer = new Enhancer(listener, false, false, classNameMatcher, null, methodNameMatcher, false,
                     targetClassLoaderHash);
 
             com.taobao.arthas.core.util.affect.EnhancerAffect affect = enhancer.enhance(instrumentation, 50);
 
-            String expectedMethodPrefix = ClassLoaderUtils.classLoaderHash(MathGame.class.getClassLoader()) + "|"
+            String expectedMethodPrefix = ClassLoaderUtils.classLoaderHash(anotherClassLoader) + "|"
                     + MathGame.class.getName() + "#print|";
-            String anotherMethodPrefix = ClassLoaderUtils.classLoaderHash(anotherClassLoader) + "|" + MathGame.class.getName()
+            String nonTargetMethodPrefix = ClassLoaderUtils.classLoaderHash(MathGame.class.getClassLoader()) + "|" + MathGame.class.getName()
                     + "#print|";
 
             Assertions.assertThat(affect.cCnt()).isEqualTo(1);
             Assertions.assertThat(affect.mCnt()).isEqualTo(1);
             Assertions.assertThat(affect.getMethods()).hasSize(1);
             Assertions.assertThat(affect.getMethods()).allMatch(m -> m.startsWith(expectedMethodPrefix));
-            Assertions.assertThat(affect.getMethods()).noneMatch(m -> m.startsWith(anotherMethodPrefix));
+            Assertions.assertThat(affect.getMethods()).noneMatch(m -> m.startsWith(nonTargetMethodPrefix));
         } finally {
             anotherClassLoader.close();
         }
