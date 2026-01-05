@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.mcp.tool.function.basic1000;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.junit.*;
@@ -16,6 +17,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * ViewFileTool 单元测试
+ * 仅在 JDK 8 下运行，因为测试中使用反射修改环境变量的方式在高版本 JDK 中不可用
+ */
 public class ViewFileToolTest {
 
     @Rule
@@ -27,6 +32,10 @@ public class ViewFileToolTest {
 
     @Before
     public void setUp() {
+        // 仅在 JDK 8 下运行测试
+        Assume.assumeTrue("此测试仅在 JDK 8 下运行", JavaVersionUtils.isJava8());
+        // Windows 下环境变量的内部实现不同，跳过测试
+        Assume.assumeFalse("此测试在 Windows 下不运行", System.getProperty("os.name").toLowerCase().contains("win"));
         clearEnv(ViewFileTool.ALLOWED_DIRS_ENV);
     }
 
