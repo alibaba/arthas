@@ -37,6 +37,20 @@ public class Advice {
 |   isThrow | 辅助判断标记，当前的方法调用以抛异常的形式结束。                                                                                                                                     |
 |  isReturn | 辅助判断标记，当前的方法调用以正常返回的形式结束。                                                                                                                                   |
 
+## 额外上下文变量
+
+除了上面 `Advice` 里的字段，Arthas 还会在 OGNL 上下文里额外注入一些变量：
+
+| 变量名 | 说明 |
+| ---: | :--- |
+| `#cost` | 本次调用耗时（毫秒） |
+| `#ref` | 对象引用存储器（弱引用，支持命名空间） |
+
+示例：
+
+- 存入：`#ref.ns("case-123").put("obj", returnObj)`
+- 取出：`#ref.ns("case-123").get("obj")`（对象可能已被 GC，返回 `null` 是正常行为）
+
 所有变量都可以在表达式中直接使用，如果在表达式中编写了不符合 OGNL 脚本语法或者引入了不在表格中的变量，则退出命令的执行；用户可以根据当前的异常信息修正`条件表达式`或`观察表达式`
 
 - 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
