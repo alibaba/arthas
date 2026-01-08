@@ -208,7 +208,7 @@ def main() -> int:
     target_env["HOME"] = str(home_dir)
     with open(target_log, "wb") as out:
         target_proc = subprocess.Popen(
-            [java_bin, f"-Duser.home={home_dir}", "-jar", str(math_game_jar)],
+            [java_bin, "-Xmx50m", f"-Duser.home={home_dir}", "-jar", str(math_game_jar)],
             stdout=out,
             stderr=subprocess.STDOUT,
             env=target_env,
