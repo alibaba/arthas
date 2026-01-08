@@ -1,0 +1,12 @@
+# 这些命令用于覆盖常见路径（查询类命令 + 触发增强命令），最后由 expect 脚本统一执行 stop。
+help
+version
+session
+dashboard -n 1
+thread -n 3
+sc -d demo.MathGame
+sm demo.MathGame
+jad demo.MathGame
+watch demo.MathGame primeFactors "{params,returnObj,throwExp}" -n 1 -x 1
+reset
+
