@@ -68,7 +68,7 @@ jobs:
       - name: Install expect/telnet
         run: sudo apt-get update && sudo apt-get install -y expect telnet
       - name: Build packaging
-        run: mvn -V -ntp -pl packaging -am package -DskipTests
+        run: mvn -V -ntp clean install -P full -DskipTests
       - name: Run telnet stop leak test
         run: python3 integration-test/telnet-stop-leak/run_telnet_stop_leak_test.py --iterations 10 --warmup 2 --threshold 1 --work-dir integration-test/telnet-stop-leak/work
       - name: Upload artifacts on failure
