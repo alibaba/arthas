@@ -39,10 +39,10 @@ Description for the variables in the class `Advice`:
 
 Besides the fields in `Advice`, Arthas also injects extra variables into OGNL context:
 
-| Name | Specification |
-| ---: | :--- |
-| `#cost` | time cost in milliseconds |
-| `#ref` | object reference store (weak reference, with namespaces) |
+|    Name | Specification                                            |
+| ------: | :------------------------------------------------------- |
+| `#cost` | time cost in milliseconds                                |
+|  `#ref` | object reference store (weak reference, with namespaces) |
 
 Examples:
 
