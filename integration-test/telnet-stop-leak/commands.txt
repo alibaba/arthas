@@ -8,5 +8,16 @@ sc -d demo.MathGame
 sm demo.MathGame
 jad demo.MathGame
 watch demo.MathGame primeFactors "{params,returnObj,throwExp}" -n 1 -x 1
+# trace 命令：追踪方法调用路径及耗时
+trace demo.MathGame run -n 1
+trace demo.MathGame primeFactors '#cost>0' -n 1
+# ognl 命令：执行 OGNL 表达式
+ognl '@java.lang.System@getProperty("java.version")'
+ognl '@java.lang.Runtime@getRuntime().availableProcessors()'
+ognl -x 2 '@java.lang.System@getProperties()'
+# vmtool 命令：JVM 工具
+vmtool --action getInstances --className demo.MathGame --limit 5
+vmtool --action getInstances --className demo.MathGame --express 'instances.length'
+vmtool --action forceGc
 reset
 
