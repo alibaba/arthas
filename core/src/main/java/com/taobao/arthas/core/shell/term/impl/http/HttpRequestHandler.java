@@ -76,11 +76,13 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 }
 
                 //handle mcp request
-                String mcpEndpoint = mcpRequestHandler.getMcpEndpoint();
-                if (mcpEndpoint.equals(path)) {
-                    mcpRequestHandler.handle(ctx, request);
-                    isMcpHandled = true;
-                    return;
+                if (mcpRequestHandler != null) {
+                    String mcpEndpoint = mcpRequestHandler.getMcpEndpoint();
+                    if (mcpEndpoint.equals(path)) {
+                        mcpRequestHandler.handle(ctx, request);
+                        isMcpHandled = true;
+                        return;
+                    }
                 }
 
                 //handle webui requests
