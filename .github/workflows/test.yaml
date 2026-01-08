@@ -1,6 +1,10 @@
 name: JavaCI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   ubuntu_build:
