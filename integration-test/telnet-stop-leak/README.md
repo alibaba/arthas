@@ -18,11 +18,13 @@ mvn -V -ntp -pl packaging -am package -DskipTests
 
 2. 运行测试（默认会创建临时目录保存日志；建议指定 `--work-dir` 便于排查）：
 
+`threshold` 可以考虑设置更高，JVM不能保证 ArthasClassLoader 必定会被回收。
+
 ```bash
 python3 integration-test/telnet-stop-leak/run_telnet_stop_leak_test.py \
   --iterations 10 \
   --warmup 2 \
-  --threshold 1 \
+  --threshold 3 \
   --work-dir integration-test/telnet-stop-leak/work
 ```
 
