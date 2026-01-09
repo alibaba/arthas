@@ -2,6 +2,7 @@ package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.shell.term.impl.http.session.LRUCache;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * 正则表达式缓存管理器
@@ -10,14 +11,14 @@ import java.util.regex.Pattern;
 public class RegexCacheManager {
     private static final RegexCacheManager INSTANCE = new RegexCacheManager();
     
-    // 使用 LRUCache 替代 ConcurrentHashMap
+    // 使用LRUCache缓存编译后的正则表达式
     private final LRUCache<String, Pattern> regexCache;
     
     // 缓存大小限制
     private static final int MAX_CACHE_SIZE = 100;
     
     private RegexCacheManager() {
-        // 初始化 LRUCache，设置最大缓存大小
+        // 初始化LRUCache，设置最大缓存大小
         this.regexCache = new LRUCache<>(MAX_CACHE_SIZE);
     }
 
@@ -32,18 +33,27 @@ public class RegexCacheManager {
         if (regex == null || regex.isEmpty()) {
             return null;
         }
-
-        // 从 LRUCache 获取
+        
+        // 从LRUCache获取
         Pattern pattern = regexCache.get(regex);
         if (pattern != null) {
             return pattern;
         }
 
-        // 缓存未命中，编译正则表达式
-        pattern = Pattern.compile(regex);
-        
-        // 缓存编译结果
-        regexCache.put(regex, pattern);
+        // 使用双重检查锁，避免并发情况下重复编译相同的正则
+        synchronized (regexCache) {
+            pattern = regexCache.get(regex);
+            if (pattern == null) {
+                try {
+                    // 缓存未命中，编译正则表达式
+                    pattern = Pattern.compile(regex);
+                    regexCache.put(regex, pattern);
+                } catch (PatternSyntaxException e) {
+                    // 捕获正则表达式语法错误，返回null，保持与原来相同的错误处理行为
+                    return null;
+                }
+            }
+        }
         
         return pattern;
     }

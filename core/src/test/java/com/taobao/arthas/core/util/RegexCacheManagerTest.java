@@ -65,9 +65,9 @@ public class RegexCacheManagerTest {
         }
 
         // 缓存大小应该等于最大缓存大小
-        Assert.assertTrue(cacheManager.getCacheSize() <= 100); // 100 是实际的最大缓存大小
+        Assert.assertEquals(maxCacheSize, cacheManager.getCacheSize()); // 100 是实际的最大缓存大小
 
-        // 测试访问顺序，确保 LRU 策略生效
+        // 测试访问顺序，确保LRU策略生效
         String firstRegex = "TestRegex0";
 
         // 再次访问第一个正则表达式，使其成为最近使用的
@@ -102,6 +102,25 @@ public class RegexCacheManagerTest {
         Pattern pattern = cacheManager.getPattern(".*Test3");
         Assert.assertNotNull(pattern);
         Assert.assertEquals(1, cacheManager.getCacheSize());
+    }
+
+    /**
+     * 测试无效正则表达式处理
+     */
+    @Test
+    public void testInvalidRegexHandling() {
+        // 测试无效的正则表达式
+        String invalidRegex = "[a-z";
+        Pattern pattern = cacheManager.getPattern(invalidRegex);
+        Assert.assertNull(pattern);
+        
+        // 测试另一个无效的正则表达式
+        String anotherInvalidRegex = "(a-z";
+        Pattern anotherPattern = cacheManager.getPattern(anotherInvalidRegex);
+        Assert.assertNull(anotherPattern);
+        
+        // 确保缓存大小没有增加
+        Assert.assertEquals("无效正则表达式不应该被缓存", 0, cacheManager.getCacheSize());
     }
 
 }
