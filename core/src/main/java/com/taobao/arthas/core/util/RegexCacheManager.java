@@ -2,7 +2,6 @@ package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.shell.term.impl.http.session.LRUCache;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * 正则表达式缓存管理器
@@ -44,14 +43,11 @@ public class RegexCacheManager {
         synchronized (regexCache) {
             pattern = regexCache.get(regex);
             if (pattern == null) {
-                try {
-                    // 缓存未命中，编译正则表达式
-                    pattern = Pattern.compile(regex);
-                    regexCache.put(regex, pattern);
-                } catch (PatternSyntaxException e) {
-                    // 捕获正则表达式语法错误，返回null，保持与原来相同的错误处理行为
-                    return null;
-                }
+                // 缓存未命中，编译正则表达式
+                // 不捕获PatternSyntaxException，让异常向上抛出，以便及时发现无效的正则表达式
+                pattern = Pattern.compile(regex);
+                // 缓存编译结果
+                regexCache.put(regex, pattern);
             }
         }
         
