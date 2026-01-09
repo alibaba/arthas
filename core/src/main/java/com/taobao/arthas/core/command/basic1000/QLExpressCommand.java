@@ -1,8 +1,4 @@
-package com.taobao.arthas.core.command.klass100;
-
-import java.lang.instrument.Instrumentation;
-import java.util.Collection;
-import java.util.List;
+package com.taobao.arthas.core.command.basic1000;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -12,34 +8,31 @@ import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ObjectVO;
-import com.taobao.arthas.core.command.model.OgnlModel;
+import com.taobao.arthas.core.command.model.QLExpressModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.middleware.cli.annotations.Argument;
-import com.taobao.middleware.cli.annotations.Description;
-import com.taobao.middleware.cli.annotations.Name;
-import com.taobao.middleware.cli.annotations.Option;
-import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.middleware.cli.annotations.*;
+
+import java.lang.instrument.Instrumentation;
+import java.util.Collection;
+import java.util.List;
 
 /**
- *
- * @author hengyunabc 2018-10-18
- *
+ * @Author TaoKan
+ * @Date 2025/3/23 8:59 PM
  */
-@Name("ognl")
-@Summary("Execute ognl expression.")
+@Name("qlexpress")
+@Summary("Execute qlexpress expression.")
 @Description(Constants.EXAMPLE
-        + "  ognl '@java.lang.System@out.println(\"hello \\u4e2d\\u6587\")' \n"
-        + "  ognl -x 2 '@Singleton@getInstance()' \n"
-        + "  ognl '@Demo@staticFiled' \n"
-        + "  ognl '#value1=@System@getProperty(\"java.home\"), #value2=@System@getProperty(\"java.runtime.name\"), {#value1, #value2}'\n"
-        + "  ognl -c 5d113a51 '@com.taobao.arthas.core.GlobalOptions@isDump' \n"
-        + Constants.WIKI + Constants.WIKI_HOME + "ognl\n"
-        + "  https://commons.apache.org/proper/commons-ognl/language-guide.html")
-public class OgnlCommand extends AnnotatedCommand {
-    private static final Logger logger = LoggerFactory.getLogger(OgnlCommand.class);
+        + "  qlexpress 'java.lang.System.out.println(\"hello~\")' \n"
+        + "  qlexpress -x 2 'java.lang.Math.abs(1)' \n"
+        + "  qlexpress -c 5d113a51 'com.taobao.arthas.core.GlobalOptions.isDump' \n"
+        + Constants.WIKI + Constants.WIKI_HOME + "qlexpress\n"
+        + "  https://github.com/alibaba/QLExpress/tree/v4.0.0-beta.1")
+public class QLExpressCommand extends AnnotatedCommand {
+    private static final Logger logger = LoggerFactory.getLogger(QLExpressCommand.class);
 
     private String express;
     private String hashCode;
@@ -47,7 +40,7 @@ public class OgnlCommand extends AnnotatedCommand {
     private int expand = 1;
 
     @Argument(argName = "express", index = 0, required = true)
-    @Description("The ognl expression.")
+    @Description("The qlexpress expression.")
     public void setExpress(String express) {
         this.express = express;
     }
@@ -58,18 +51,19 @@ public class OgnlCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+
     @Option(longName = "classLoaderClass")
     @Description("The class name of the special class's classLoader.")
     public void setClassLoaderClass(String classLoaderClass) {
         this.classLoaderClass = classLoaderClass;
     }
 
+
     @Option(shortName = "x", longName = "expand")
     @Description("Expand level of object (1 by default).")
     public void setExpand(Integer expand) {
         this.expand = expand;
     }
-
     @Override
     public void process(CommandProcess process) {
         Instrumentation inst = process.session().getInstrumentation();
@@ -86,10 +80,10 @@ public class OgnlCommand extends AnnotatedCommand {
                 classLoader = matchedClassLoaders.get(0);
             } else if (matchedClassLoaders.size() > 1) {
                 Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
-                OgnlModel ognlModel = new OgnlModel()
+                QLExpressModel qlModel = new QLExpressModel()
                         .setClassLoaderClass(classLoaderClass)
                         .setMatchedClassLoaders(classLoaderVOList);
-                process.appendResult(ognlModel);
+                process.appendResult(qlModel);
                 process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
                 return;
             } else {
@@ -100,17 +94,16 @@ public class OgnlCommand extends AnnotatedCommand {
             classLoader = ClassLoader.getSystemClassLoader();
         }
 
-        Express unpooledExpress = ExpressFactory.unpooledExpressByOGNL(classLoader);
+        Express unpooledExpress = ExpressFactory.unpooledExpressByQL(classLoader);
         try {
-            // https://github.com/alibaba/arthas/issues/2892
             Object value = unpooledExpress.bind(new Object()).get(express);
-            OgnlModel ognlModel = new OgnlModel()
+            QLExpressModel qlModel = new QLExpressModel()
                     .setValue(new ObjectVO(value, expand));
-            process.appendResult(ognlModel);
+            process.appendResult(qlModel);
             process.end();
         } catch (ExpressException e) {
-            logger.warn("ognl: failed execute express: " + express, e);
-            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+            logger.warn("qlexpress: failed execute express: " + express, e);
+            process.end(-1, "Failed to execute qlexpress, exception message: " + e.getMessage()
                     + ", please check $HOME/logs/arthas/arthas.log for more details. ");
         }
     }

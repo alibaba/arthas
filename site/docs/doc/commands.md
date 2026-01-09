@@ -16,6 +16,7 @@
 - [thread](thread.md) - 查看当前 JVM 的线程堆栈信息
 - [vmoption](vmoption.md) - 查看和修改 JVM 里诊断相关的 option
 - [vmtool](vmtool.md) - 从 jvm 里查询对象，执行 forceGc
+- [qlexpress](qlexpress.md) - 执行 qlexpress 表达式
 
 ## class/classloader 相关
 

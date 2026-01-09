@@ -2,6 +2,9 @@ package com.taobao.arthas.core.command.express;
 
 import java.lang.ref.WeakReference;
 
+import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.command.model.ExpressTypeEnum;
+
 /**
  * ExpressFactory
  * @author ralf0131 2017-01-04 14:40.
@@ -17,6 +20,8 @@ public class ExpressFactory {
      */
     private static final ThreadLocal<WeakReference<Express>> expressRef = ThreadLocal
             .withInitial(() -> new WeakReference<Express>(new OgnlExpress()));
+    private static final ThreadLocal<WeakReference<Express>> expressRefQLExpress = ThreadLocal
+            .withInitial(() -> new WeakReference<Express>(new QLExpress()));
 
     /**
      * get ThreadLocal Express Object
@@ -24,16 +29,45 @@ public class ExpressFactory {
      * @return
      */
     public static Express threadLocalExpress(Object object) {
-        WeakReference<Express> reference = expressRef.get();
+        if (GlobalOptions.ExpressType.equals(ExpressTypeEnum.QLEXPRESS.getExpressType())) {
+            return getOrCreateExpress(expressRefQLExpress, QLExpress::new).reset().bind(object);
+        }
+        return getOrCreateExpress(expressRef, OgnlExpress::new).reset().bind(object);
+    }
+
+    /**
+     * 从 WeakReference 中获取 Express，如果已被 GC 回收则重新创建
+     */
+    private static Express getOrCreateExpress(ThreadLocal<WeakReference<Express>> threadLocal,
+            java.util.function.Supplier<Express> supplier) {
+        WeakReference<Express> reference = threadLocal.get();
         Express express = reference == null ? null : reference.get();
         if (express == null) {
-            express = new OgnlExpress();
-            expressRef.set(new WeakReference<Express>(express));
+            express = supplier.get();
+            threadLocal.set(new WeakReference<Express>(express));
         }
-        return express.reset().bind(object);
+        return express;
     }
 
     public static Express unpooledExpress(ClassLoader classloader) {
+        if (classloader == null) {
+            classloader = ClassLoader.getSystemClassLoader();
+        }
+        if (GlobalOptions.ExpressType.equals(ExpressTypeEnum.QLEXPRESS.getExpressType())) {
+            return new QLExpress(new QLExpressClassLoaderClassResolver(classloader));
+        }
+        return new OgnlExpress(new ClassLoaderClassResolver(classloader));
+    }
+
+
+    public static Express unpooledExpressByQL(ClassLoader classloader) {
+        if (classloader == null) {
+            classloader = ClassLoader.getSystemClassLoader();
+        }
+        return new QLExpress(new QLExpressClassLoaderClassResolver(classloader));
+    }
+
+    public static Express unpooledExpressByOGNL(ClassLoader classloader) {
         if (classloader == null) {
             classloader = ClassLoader.getSystemClassLoader();
         }

@@ -56,6 +56,7 @@ public class ResultViewResolver {
             registerView(JadView.class);
             registerView(MemoryCompilerView.class);
             registerView(OgnlView.class);
+            registerView(QLExpressView.class);
             registerView(RedefineView.class);
             registerView(RetransformView.class);
             registerView(SearchClassView.class);
