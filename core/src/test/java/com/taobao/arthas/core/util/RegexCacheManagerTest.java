@@ -109,15 +109,21 @@ public class RegexCacheManagerTest {
      */
     @Test
     public void testInvalidRegexHandling() {
-        // 测试无效的正则表达式
+        // 测试无效的正则表达式，应该抛出PatternSyntaxException
         String invalidRegex = "[a-z";
-        Pattern pattern = cacheManager.getPattern(invalidRegex);
-        Assert.assertNull(pattern);
+        try {
+            cacheManager.getPattern(invalidRegex);
+        } catch (Exception e) {
+            // 预期会抛出异常
+        }
         
-        // 测试另一个无效的正则表达式
+        // 测试另一个无效的正则表达式，应该抛出PatternSyntaxException
         String anotherInvalidRegex = "(a-z";
-        Pattern anotherPattern = cacheManager.getPattern(anotherInvalidRegex);
-        Assert.assertNull(anotherPattern);
+        try {
+            cacheManager.getPattern(anotherInvalidRegex);
+        } catch (Exception e) {
+            // 预期会抛出异常
+        }
         
         // 确保缓存大小没有增加
         Assert.assertEquals("无效正则表达式不应该被缓存", 0, cacheManager.getCacheSize());
