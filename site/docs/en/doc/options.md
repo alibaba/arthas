@@ -7,7 +7,7 @@ Global options
 :::
 
 | Name                   | Default Value | Description                                                                                                                                                                                           |
-|------------------------| ------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | unsafe                 | false         | whether to enhance to system-level class. Use it with caution since JVM may hang                                                                                                                      |
 | dump                   | false         | whether to dump enhanced class to the external files. If it's on, enhanced class will be dumped into `/${application dir}/arthas-class-dump/`, the specific output path will be output in the console |
 | batch-re-transform     | true          | whether to re-transform matched classes in batch                                                                                                                                                      |
@@ -20,6 +20,7 @@ Global options
 | verbose                | false         | This option enables print verbose information                                                                                                                                                         |
 | strict                 | true          | whether to enable strict mode                                                                                                                                                                         |
 | el                     | ognl          | Option to use ognl/qlexpress in commands, default ognl, can change to qlexpress                                                                                                                       |
+
 ## View all options
 
 ```bash
@@ -62,7 +63,7 @@ $ options
         n                             e                     ed to set object properties. Want to set o
                                                             bject properties, execute `options strict
                                                             false`
- 1      String  el  ognl   expression language  Option to use ognl/qlexpress in commands, 
+ 1      String  el  ognl   expression language  Option to use ognl/qlexpress in commands,
                                      express                default ognl, can change to qlexpress.
 ```
 

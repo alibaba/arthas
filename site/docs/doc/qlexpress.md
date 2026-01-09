@@ -8,12 +8,12 @@
 
 ## 参数说明
 
-|                   参数名称 | 参数说明                                                         |
-|-----------------------:| :--------------------------------------------------------------- |
-|              _express_ | 执行的表达式                                                     |
-|                 `[c:]` | 执行表达式的 ClassLoader 的 hashcode，默认值是 SystemClassLoader |
-|  `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name                       |
-|                  `[x]` | 结果对象的展开层次，默认值 1                                     |
+|              参数名称 | 参数说明                                                         |
+| --------------------: | :--------------------------------------------------------------- |
+|             _express_ | 执行的表达式                                                     |
+|                `[c:]` | 执行表达式的 ClassLoader 的 hashcode，默认值是 SystemClassLoader |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name                       |
+|                 `[x]` | 结果对象的展开层次，默认值 1                                     |
 
 ## 使用参考
 
@@ -37,7 +37,6 @@ $ qlexpress 'com.taobao.arthas.core.GlobalOptions.isDump'
 ```bash
 $ qlexpress 'import com.alibaba.qlexpress4.QLImportTester; QLImportTester.add(1,2);'
 ```
-
 
 通过 hashcode 指定 ClassLoader：
 
