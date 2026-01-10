@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * RegexCacheManager测试类
@@ -114,7 +115,8 @@ public class RegexCacheManagerTest {
         try {
             cacheManager.getPattern(invalidRegex);
         } catch (Exception e) {
-            // 预期会抛出异常
+            // 验证抛出的是PatternSyntaxException
+            Assert.assertTrue("Expected PatternSyntaxException but got " + e.getClass().getName(), e instanceof PatternSyntaxException);
         }
         
         // 测试另一个无效的正则表达式，应该抛出PatternSyntaxException
@@ -122,7 +124,8 @@ public class RegexCacheManagerTest {
         try {
             cacheManager.getPattern(anotherInvalidRegex);
         } catch (Exception e) {
-            // 预期会抛出异常
+            // 验证抛出的是PatternSyntaxException
+            Assert.assertTrue("Expected PatternSyntaxException but got " + e.getClass().getName(), e instanceof PatternSyntaxException);
         }
         
         // 确保缓存大小没有增加

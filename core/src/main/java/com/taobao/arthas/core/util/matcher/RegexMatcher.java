@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class RegexMatcher implements Matcher<String> {
 
     private final String pattern;
-    private Pattern compiledPattern;
+    private volatile Pattern compiledPattern;
 
     public RegexMatcher(String pattern) {
         this.pattern = pattern;
