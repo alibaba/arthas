@@ -39,17 +39,11 @@ public class RegexCacheManager {
             return pattern;
         }
 
-        // 使用双重检查锁，避免并发情况下重复编译相同的正则
-        synchronized (regexCache) {
-            pattern = regexCache.get(regex);
-            if (pattern == null) {
-                // 缓存未命中，编译正则表达式
-                // 不捕获PatternSyntaxException，让异常向上抛出，以便及时发现无效的正则表达式
-                pattern = Pattern.compile(regex);
-                // 缓存编译结果
-                regexCache.put(regex, pattern);
-            }
-        }
+        // 缓存未命中，编译正则表达式
+        // 不捕获PatternSyntaxException，让异常向上抛出，以便及时发现无效的正则表达式
+        pattern = Pattern.compile(regex);
+        // 缓存编译结果
+        regexCache.put(regex, pattern);
         
         return pattern;
     }
