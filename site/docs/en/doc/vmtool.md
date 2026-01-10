@@ -82,6 +82,13 @@ The return result of the `getInstances` action is bound to the `instances` varia
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express'instances[0].getBeanDefinitionNames()'
 ```
 
+`#ref` (weak reference object store) is also available in `--express` OGNL context, so you can store intermediate objects and reuse them in other commands:
+
+```bash
+vmtool --action getInstances --className org.springframework.context.ApplicationContext --express '#ref.ns("case-123").put("ctx", instances[0])'
+ognl '#ref.ns("case-123").get("ctx")'
+```
+
 ## Force GC
 
 ```bash
