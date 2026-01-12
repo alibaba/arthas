@@ -22,6 +22,28 @@ Since 3.0.5.
 - [Special usages](https://github.com/alibaba/arthas/issues/71)
 - [OGNL official guide](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
+## Object Reference Store (#ref)
+
+Arthas provides a built-in `#ref` variable in OGNL context, which can be used to share object references across multiple commands.
+
+`#ref` stores **weak references**, so it will not prevent the target JVM from garbage collecting the objects. `get()` may return `null` (the object has been GC'ed), which is expected.
+
+`#ref` is global and shared across all connections in the same Arthas process. Use namespaces to isolate/share:
+
+- To avoid unbounded key growth, `#ref` has a size limit and uses LRU eviction.
+- Put: `#ref.ns("case-123").put("name", obj)`
+- Get: `#ref.ns("case-123").get("name")`
+- List: `#ref.ns("case-123").ls()`
+- Remove: `#ref.ns("case-123").remove("name")`
+- Clear namespace: `#ref.ns("case-123").clear()`
+
+Example: store `returnObj` from `watch`, then fetch it later in `ognl`:
+
+```bash
+$ watch demo.MathGame primeFactors '{#ref.ns("case-123").put("ret", returnObj), returnObj}' -x 2 -n 1
+$ ognl '#ref.ns("case-123").get("ret")'
+```
+
 Call static method:
 
 ```bash
