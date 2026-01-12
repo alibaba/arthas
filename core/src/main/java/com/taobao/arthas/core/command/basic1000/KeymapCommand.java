@@ -51,7 +51,7 @@ public class KeymapCommand extends AnnotatedCommand {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("#") || "".equals(line)) {
+                if (line.isEmpty() || line.startsWith("#")) {
                     continue;
                 }
                 String[] strings = line.split(":");
