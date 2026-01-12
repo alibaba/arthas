@@ -29,7 +29,7 @@ public class RegexCacheManager {
      * 获取正则表达式Pattern对象，优先从缓存获取，缓存未命中则编译并缓存
      */
     public Pattern getPattern(String regex) {
-        if (regex == null || regex.isEmpty()) {
+        if (regex == null) {
             return null;
         }
         

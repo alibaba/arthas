@@ -49,7 +49,10 @@ public class RegexCacheManagerTest {
         Assert.assertNull(nullPattern);
 
         Pattern emptyPattern = cacheManager.getPattern("");
-        Assert.assertNull(emptyPattern);
+        Assert.assertNotNull(emptyPattern);
+        Assert.assertTrue(emptyPattern.matcher("").matches());
+        Assert.assertFalse(emptyPattern.matcher("non-empty").matches());
+        Assert.assertEquals(3, cacheManager.getCacheSize());
     }
 
     /**
