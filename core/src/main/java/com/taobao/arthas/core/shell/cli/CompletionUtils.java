@@ -1,7 +1,9 @@
 package com.taobao.arthas.core.shell.cli;
 
+import com.taobao.arthas.common.VisibleForTesting;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
+import com.taobao.arthas.core.util.OptionUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
@@ -13,13 +15,7 @@ import io.termd.core.util.Helper;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author beiwei30 on 09/11/2016.
@@ -255,8 +251,19 @@ public class CompletionUtils {
      * @return
      */
     public static int detectArgumentIndex(Completion completion) {
-        List<CliToken> tokens = completion.lineTokens();
+       return detectArgumentIndex(completion.lineTokens(), null);
+    }
+
+    public static int detectArgumentIndex(Completion completion, Class<?> commandClazz) {
+        return detectArgumentIndex(completion.lineTokens(), commandClazz);
+    }
+
+
+
+    @VisibleForTesting
+    static int detectArgumentIndex(List<CliToken> tokens, Class<?> commandClazz) {
         CliToken lastToken = tokens.get(tokens.size() - 1);
+        List<com.taobao.middleware.cli.annotations.Option> options = OptionUtils.findNonFlagOptions(commandClazz);
 
         if (lastToken.value().startsWith("-") || lastToken.value().startsWith("--")) {
             return -1;
@@ -268,12 +275,27 @@ public class CompletionUtils {
 
         int tokenCount = 0;
 
+        boolean skipNext = false;
         for (CliToken token : tokens) {
-            if (StringUtils.isBlank(token.value()) || token.value().startsWith("-") || token.value().startsWith("--")) {
+            if (StringUtils.isBlank(token.value())) {
                 // filter irrelevant tokens
                 continue;
+            } else if (token.value().startsWith("--")) {
+                if (OptionUtils.containsLongOption(options, token.value().substring(2))) {
+                    skipNext = true;
+                }
+                continue;
+            } else if (token.value().startsWith("-")) {
+                if (OptionUtils.containsShortOption(options, token.value().substring(1))) {
+                    skipNext = true;
+                }
+                continue;
             }
-            tokenCount++;
+            if (skipNext) {
+                skipNext = false;
+            } else {
+                tokenCount++;
+            }
         }
 
         if (StringUtils.isBlank((lastToken.value())) && tokens.size() != 1) {
