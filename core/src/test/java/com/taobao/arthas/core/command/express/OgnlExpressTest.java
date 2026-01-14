@@ -50,4 +50,38 @@ public class OgnlExpressTest {
             Assert.assertTrue(e.getCause() instanceof ognl.ExpressionSyntaxException);
         }
     }
+
+    @Test
+    public void testNullSourcePropertyAccess() throws ExpressException {
+        // Test accessing property on null object - should return null instead of throwing exception
+        Express unpooledExpress = ExpressFactory.unpooledExpress(OgnlExpressTest.class.getClassLoader());
+        
+        // Create a test object with null field
+        TestObject testObj = new TestObject();
+        testObj.nullField = null;
+        
+        // This should not throw "source is null for getProperty" exception
+        Object result = unpooledExpress.bind(testObj).get("nullField.someProperty");
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testNullArrayAccess() throws ExpressException {
+        // Test accessing index on null array - should return null instead of throwing exception
+        Express unpooledExpress = ExpressFactory.unpooledExpress(OgnlExpressTest.class.getClassLoader());
+        
+        // Create a test object with null array
+        TestObject testObj = new TestObject();
+        testObj.nullArray = null;
+        
+        // This should not throw "source is null for getProperty" exception
+        Object result = unpooledExpress.bind(testObj).get("nullArray[2]");
+        Assert.assertNull(result);
+    }
+
+    // Helper class for testing
+    public static class TestObject {
+        public Object nullField;
+        public Object[] nullArray;
+    }
 }
