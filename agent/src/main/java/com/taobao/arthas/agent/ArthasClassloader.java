@@ -18,7 +18,7 @@ public class ArthasClassloader extends URLClassLoader {
             return loadedClass;
         }
 
-        // 优先从parent（SystemClassLoader）里加载系统类，避免抛出ClassNotFoundException
+        // 优先从 parent(ExtClassLoader) 里加载系统类，避免抛出 ClassNotFoundException
         if (name != null && (name.startsWith("sun.") || name.startsWith("java."))) {
             return super.loadClass(name, resolve);
         }
