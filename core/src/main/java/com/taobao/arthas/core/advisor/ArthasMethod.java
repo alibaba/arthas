@@ -159,6 +159,11 @@ public class ArthasMethod {
         return null;
     }
 
+    public Method getTargetMethod() {
+        initMethod();
+        return method;
+    }
+
     public ArthasMethod(Class<?> clazz, String methodName, String methodDesc) {
         this.clazz = clazz;
         this.methodName = methodName;
