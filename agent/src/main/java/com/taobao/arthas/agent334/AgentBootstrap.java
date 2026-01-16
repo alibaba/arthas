@@ -157,6 +157,8 @@ public class AgentBootstrap {
             };
 
             bindingThread.setName("arthas-binding-thread");
+            bindingThread.setPriority(Thread.MIN_PRIORITY);
+            bindingThread.setDaemon(Boolean.TRUE);
             bindingThread.start();
             bindingThread.join();
         } catch (Throwable t) {
