@@ -1,5 +1,6 @@
 package com.taobao.arthas.common;
 
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 
@@ -22,6 +23,11 @@ import java.util.regex.Matcher;
 public abstract class AnsiLog {
 
     static boolean enableColor;
+
+    /**
+     * Output stream for log messages, defaults to System.out.
+     */
+    private static volatile PrintStream out = System.out;
 
     public static java.util.logging.Level LEVEL = java.util.logging.Level.CONFIG;
 
@@ -75,6 +81,27 @@ public abstract class AnsiLog {
 
     public static boolean enableColor() {
         return enableColor;
+    }
+
+    /**
+     * 设置日志输出流
+     *
+     * @param printStream 输出流，传入 null 时使用 System.out
+     * @return 之前的输出流
+     */
+    public static PrintStream out(PrintStream printStream) {
+        PrintStream old = out;
+        out = printStream == null ? System.out : printStream;
+        return old;
+    }
+
+    /**
+     * 获取当前日志输出流
+     *
+     * @return 当前输出流
+     */
+    public static PrintStream out() {
+        return out;
     }
 
     /**
@@ -170,9 +197,9 @@ public abstract class AnsiLog {
     public static void trace(String msg) {
         if (canLog(Level.FINEST)) {
             if (enableColor) {
-                System.out.println(TRACE_COLOR_PREFIX + msg);
+                out.println(TRACE_COLOR_PREFIX + msg);
             } else {
-                System.out.println(TRACE_PREFIX + msg);
+                out.println(TRACE_PREFIX + msg);
             }
         }
     }
@@ -185,16 +212,16 @@ public abstract class AnsiLog {
 
     public static void trace(Throwable t) {
         if (canLog(Level.FINEST)) {
-            t.printStackTrace(System.out);
+            t.printStackTrace(out);
         }
     }
 
     public static void debug(String msg) {
         if (canLog(Level.FINER)) {
             if (enableColor) {
-                System.out.println(DEBUG_COLOR_PREFIX + msg);
+                out.println(DEBUG_COLOR_PREFIX + msg);
             } else {
-                System.out.println(DEBUG_PREFIX + msg);
+                out.println(DEBUG_PREFIX + msg);
             }
         }
     }
@@ -207,16 +234,16 @@ public abstract class AnsiLog {
 
     public static void debug(Throwable t) {
         if (canLog(Level.FINER)) {
-            t.printStackTrace(System.out);
+            t.printStackTrace(out);
         }
     }
 
     public static void info(String msg) {
         if (canLog(Level.CONFIG)) {
             if (enableColor) {
-                System.out.println(INFO_COLOR_PREFIX + msg);
+                out.println(INFO_COLOR_PREFIX + msg);
             } else {
-                System.out.println(INFO_PREFIX + msg);
+                out.println(INFO_PREFIX + msg);
             }
         }
     }
@@ -229,16 +256,16 @@ public abstract class AnsiLog {
 
     public static void info(Throwable t) {
         if (canLog(Level.CONFIG)) {
-            t.printStackTrace(System.out);
+            t.printStackTrace(out);
         }
     }
 
     public static void warn(String msg) {
         if (canLog(Level.WARNING)) {
             if (enableColor) {
-                System.out.println(WARN_COLOR_PREFIX + msg);
+                out.println(WARN_COLOR_PREFIX + msg);
             } else {
-                System.out.println(WARN_PREFIX + msg);
+                out.println(WARN_PREFIX + msg);
             }
         }
     }
@@ -251,16 +278,16 @@ public abstract class AnsiLog {
 
     public static void warn(Throwable t) {
         if (canLog(Level.WARNING)) {
-            t.printStackTrace(System.out);
+            t.printStackTrace(out);
         }
     }
 
     public static void error(String msg) {
         if (canLog(Level.SEVERE)) {
             if (enableColor) {
-                System.out.println(ERROR_COLOR_PREFIX + msg);
+                out.println(ERROR_COLOR_PREFIX + msg);
             } else {
-                System.out.println(ERROR_PREFIX + msg);
+                out.println(ERROR_PREFIX + msg);
             }
         }
     }
@@ -273,7 +300,7 @@ public abstract class AnsiLog {
 
     public static void error(Throwable t) {
         if (canLog(Level.SEVERE)) {
-            t.printStackTrace(System.out);
+            t.printStackTrace(out);
         }
     }
 

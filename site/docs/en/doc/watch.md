@@ -22,6 +22,7 @@ There are four different scenarios for `watch` command, which makes it rather co
 |                    [f] | when method exits (either succeed or fail with exceptions)                                             |
 |                    [E] | turn on regex matching while the default is wildcard matching                                          |
 |                   [x:] | the depth to print the specified property with default value: 1, the max value is 4                    |
+|                   [c:] | Specify classloader hash, only enhance classes loaded by it                                            |
 |            `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 F.Y.I
@@ -104,6 +105,15 @@ ts=2022-12-25 19:58:51; [cost=0.046928ms] result=@ArrayList[
     @MathGame[demo.MathGame@3bf400],
     null,
 ]
+```
+
+### Specify ClassLoader to enhance
+
+If the same class is loaded by multiple classloaders, you can use `sc -d` to find the classloader hash and then use `-c` to enhance only the specified one:
+
+```bash
+sc -d com.example.Foo
+watch -c 3d4eac69 com.example.Foo bar '{params,returnObj}'
 ```
 
 ### Check `in parameters`

@@ -67,6 +67,16 @@ public class VmTool implements VmToolMXBean {
      */
     private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
+    /**
+     * 分析堆内存占用最大的对象与类。
+     */
+    private static synchronized native String heapAnalyze0(int classNum, int objectNum);
+
+    /**
+     * 分析指定类实例的引用回溯链。
+     */
+    private static synchronized native String referenceAnalyze0(Class<?> klass, int objectNum, int backtraceNum);
+
     @Override
     public void forceGc() {
         forceGc0();
@@ -128,4 +138,14 @@ public class VmTool implements VmToolMXBean {
         return mallocStats0();
     }
     private static synchronized native boolean mallocStats0();
+
+    @Override
+    public String heapAnalyze(int classNum, int objectNum) {
+        return heapAnalyze0(classNum, objectNum);
+    }
+
+    @Override
+    public String referenceAnalyze(Class<?> klass, int objectNum, int backtraceNum) {
+        return referenceAnalyze0(klass, objectNum, backtraceNum);
+    }
 }

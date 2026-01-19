@@ -17,6 +17,7 @@ Most often we know one method gets called, but we have no idea on which code pat
 | _condition-expression_ | condition expression                                                                                   |
 |                  `[E]` | turn on regex match, the default behavior is wildcard match                                            |
 |                 `[n:]` | execution times                                                                                        |
+|                 `[c:]` | Specify classloader hash, only enhance classes loaded by it                                            |
 |            `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
@@ -55,6 +56,15 @@ ts=2022-12-25 21:07:07;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
     @demo.MathGame.primeFactors()
         at demo.MathGame.run(MathGame.java:46)
         at demo.MathGame.main(MathGame.java:38)
+```
+
+### Specify ClassLoader to enhance
+
+If the same class is loaded by multiple classloaders, you can use `sc -d` to find the classloader hash and then use `-c` to enhance only the specified one:
+
+```bash
+sc -d com.example.Foo
+stack -c 3d4eac69 com.example.Foo bar
 ```
 
 ### Filtering by condition expression

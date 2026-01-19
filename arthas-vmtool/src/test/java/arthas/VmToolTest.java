@@ -222,4 +222,32 @@ public class VmToolTest {
         VmTool vmtool = initVmTool();
         vmtool.mallocStats();
     }
+
+    static class ByteHolder {
+        byte[] bytes;
+
+        ByteHolder(int sizeMb) {
+            this.bytes = new byte[sizeMb * 1024 * 1024];
+        }
+    }
+
+    @Test
+    public void testHeapAnalyze() {
+        VmTool vmtool = initVmTool();
+        String result = vmtool.heapAnalyze(5, 3);
+        Assertions.assertThat(result).contains("class_number:").contains("object_number:");
+    }
+
+    @Test
+    public void testReferenceAnalyze() {
+        // 通过本地变量制造 root(stack local) 引用，便于回溯链输出
+        ByteHolder bh1 = new ByteHolder(1);
+        ByteHolder bh2 = new ByteHolder(2);
+        Assertions.assertThat(bh1).isNotNull();
+        Assertions.assertThat(bh2).isNotNull();
+
+        VmTool vmtool = initVmTool();
+        String result = vmtool.referenceAnalyze(ByteHolder.class, 2, -1);
+        Assertions.assertThat(result).contains("ByteHolder").contains("root");
+    }
 }

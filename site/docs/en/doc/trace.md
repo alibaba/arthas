@@ -18,6 +18,7 @@ Trace method calling path, and output the time cost for each node in the path.
 |               `[E]` | enable regex match, the default behavior is wildcards match                                            |
 |              `[n:]` | execution times, the default value is 100.                                                             |
 |               #cost | time cost                                                                                              |
+|              `[c:]` | Specify classloader hash, only enhance classes loaded by it                                            |
 |         `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
 
 There's one thing worthy noting here is `condition expression`. The `condition expression` supports OGNL grammar, for example, you can come up a expression like this `"params[0]<0"`. All OGNL expressions are supported as long as they are legal to the grammar.
@@ -79,6 +80,15 @@ Affect(class count: 1 , method count: 1) cost in 412 ms, listenerId: 4
 `---ts=2022-12-25 21:00:10;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@b4aac2
     `---[0.315298ms] demo.MathGame:run()
         `---[13.95% 0.043995ms] demo.MathGame:primeFactors() #46 [throws Exception]
+```
+
+### Specify ClassLoader to enhance
+
+If the same class is loaded by multiple classloaders, you can use `sc -d` to find the classloader hash and then use `-c` to enhance only the specified one:
+
+```bash
+sc -d com.example.Foo
+trace -c 3d4eac69 com.example.Foo bar
 ```
 
 ### Trace times limit

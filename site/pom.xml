@@ -17,6 +17,7 @@
         <node.download.url>https://npmmirror.com/mirrors/node/</node.download.url>
         <node.version>v16.13.2</node.version>
         <yarn.version>v1.22.15</yarn.version>
+        <arthas.site.frontend.skip>false</arthas.site.frontend.skip>
     </properties>
 
     <build>
@@ -75,6 +76,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${arthas.site.frontend.skip}</skip>
                     <nodeVersion>${node.version}</nodeVersion>
                     <yarnVersion>${yarn.version}</yarnVersion>
 

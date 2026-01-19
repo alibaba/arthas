@@ -130,6 +130,7 @@ public class ArthasBootstrap {
     private HttpApiHandler httpApiHandler;
 
     private McpHttpRequestHandler mcpRequestHandler;
+    private ArthasMcpBootstrap arthasMcpBootstrap;
 
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
@@ -474,8 +475,8 @@ public class ArthasBootstrap {
             if (mcpEndpoint != null && !mcpEndpoint.trim().isEmpty()) {
                 logger().info("try to start mcp server, endpoint: {}, protocol: {}.", mcpEndpoint, mcpProtocol);
                 CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
-                ArthasMcpBootstrap arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint, mcpProtocol);
-                this.mcpRequestHandler = arthasMcpBootstrap.start().getMcpRequestHandler();
+                this.arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint, mcpProtocol);
+                this.mcpRequestHandler = this.arthasMcpBootstrap.start().getMcpRequestHandler();
             }
             logger().info("as-server listening on network={};telnet={};http={};timeout={};mcp={};mcpProtocol={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout(), configure.getMcpEndpoint(), configure.getMcpProtocol());
@@ -526,6 +527,17 @@ public class ArthasBootstrap {
      * call reset() before destroy()
      */
     public void destroy() {
+        if (this.arthasMcpBootstrap != null) {
+            try {
+                // stop 时需要主动关闭 mcp keep-alive 调度线程，避免 stop 后残留线程导致 ArthasClassLoader 无法回收
+                this.arthasMcpBootstrap.shutdown();
+            } catch (Throwable e) {
+                logger().error("stop mcp server error", e);
+            } finally {
+                this.arthasMcpBootstrap = null;
+                this.mcpRequestHandler = null;
+            }
+        }
         if (shellServer != null) {
             shellServer.close();
             shellServer = null;

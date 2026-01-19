@@ -4,6 +4,9 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.writer.FieldWriter;
+import com.alibaba.fastjson2.writer.ObjectWriterCreator;
+import com.alibaba.fastjson2.writer.ObjectWriterProvider;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.ObjectVO;
@@ -25,6 +28,25 @@ public class ObjectView implements View {
     public static final int MAX_DEEP = 4;
     private static final Logger logger = LoggerFactory.getLogger(ObjectView.class);
     private final static int MAX_OBJECT_LENGTH = ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
+    private static final ObjectWriterProvider JSON_OBJECT_WRITER_PROVIDER = new ObjectWriterProvider(
+            new ObjectWriterCreator() {
+                @Override
+                protected void setDefaultValue(List<FieldWriter> fieldWriters, Class objectClass) {
+                    // fastjson2 默认会通过无参构造函数创建一个对象来提取字段默认值（用于 NotWriteDefaultValue 等能力），
+                    // 这可能触发目标对象的构造逻辑（比如单例守卫、资源初始化等），在 Arthas 里属于不可接受的副作用。
+                    // 这里直接禁用该行为，只基于现有对象进行序列化。
+                }
+            });
+
+    public static String toJsonString(Object object) {
+        JSONWriter.Context context = new JSONWriter.Context(JSON_OBJECT_WRITER_PROVIDER);
+        context.setMaxLevel(4097);
+        context.config(JSONWriter.Feature.IgnoreErrorGetter,
+                JSONWriter.Feature.ReferenceDetection,
+                JSONWriter.Feature.IgnoreNonFieldGetter,
+                JSONWriter.Feature.WriteNonStringKeyAsString);
+        return JSON.toJSONString(object, context);
+    }
 
     private final Object object;
     private final int deep;
@@ -54,7 +76,7 @@ public class ObjectView implements View {
         StringBuilder buf = new StringBuilder();
         try {
             if (GlobalOptions.isUsingJson) {
-                return JSON.toJSONString(object, JSONWriter.Feature.IgnoreErrorGetter);
+                return toJsonString(object);
             }
             renderObject(object, 0, deep, buf);
             return buf.toString();

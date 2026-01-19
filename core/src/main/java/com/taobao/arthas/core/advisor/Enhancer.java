@@ -75,6 +75,10 @@ public class Enhancer implements ClassFileTransformer {
     private final Matcher classNameMatcher;
     private final Matcher classNameExcludeMatcher;
     private final Matcher methodNameMatcher;
+    /**
+     * 指定增强的 classloader hash，如果为空则不限制。
+     */
+    private final String targetClassLoaderHash;
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
     private boolean isLazy = false;
@@ -99,7 +103,7 @@ public class Enhancer implements ClassFileTransformer {
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher) {
-        this(listener, isTracing, skipJDKTrace, classNameMatcher, classNameExcludeMatcher, methodNameMatcher, false);
+        this(listener, isTracing, skipJDKTrace, classNameMatcher, classNameExcludeMatcher, methodNameMatcher, false, null);
     }
 
     /**
@@ -114,12 +118,19 @@ public class Enhancer implements ClassFileTransformer {
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher, boolean isLazy) {
+        this(listener, isTracing, skipJDKTrace, classNameMatcher, classNameExcludeMatcher, methodNameMatcher, isLazy, null);
+    }
+
+    public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+            Matcher classNameExcludeMatcher,
+            Matcher methodNameMatcher, boolean isLazy, String targetClassLoaderHash) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
         this.classNameMatcher = classNameMatcher;
         this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
+        this.targetClassLoaderHash = targetClassLoaderHash;
         this.affect = new EnhancerAffect();
         affect.setListenerId(listener.id());
         this.isLazy = isLazy;
@@ -152,6 +163,10 @@ public class Enhancer implements ClassFileTransformer {
                     }
                     // 检查是否被排除
                     if (classNameExcludeMatcher != null && classNameExcludeMatcher.matching(classNameDot)) {
+                        return null;
+                    }
+                    // 检查 classloader 是否匹配（指定了 targetClassLoaderHash 时生效）
+                    if (!isTargetClassLoader(inClassLoader)) {
                         return null;
                     }
                     // 检查是否是 arthas 自身的类
@@ -369,6 +384,9 @@ public class Enhancer implements ClassFileTransformer {
             boolean removeFlag = false;
             if (null == clazz) {
                 removeFlag = true;
+            } else if (!isTargetClassLoader(clazz.getClassLoader())) {
+                filteredClasses.add(new Pair<Class<?>, String>(clazz, "classloader is not matched"));
+                removeFlag = true;
             } else if (isSelf(clazz)) {
                 filteredClasses.add(new Pair<Class<?>, String>(clazz, "class loaded by arthas itself"));
                 removeFlag = true;
@@ -457,16 +475,17 @@ public class Enhancer implements ClassFileTransformer {
                 ? SearchUtils.searchClass(inst, classNameMatcher)
                 : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
 
-        if (matchingClasses.size() > maxNumOfMatchedClass) {
-            affect.setOverLimitMsg("The number of matched classes is " +matchingClasses.size()+ ", greater than the limit value " + maxNumOfMatchedClass + ". Try to change the limit with option '-m <arg>'.");
-            return affect;
-        }
         // 过滤掉无法被增强的类
         List<Pair<Class<?>, String>> filtedList = filter(matchingClasses);
         if (!filtedList.isEmpty()) {
             for (Pair<Class<?>, String> filted : filtedList) {
                 logger.info("ignore class: {}, reason: {}", filted.getFirst().getName(), filted.getSecond());
             }
+        }
+
+        if (matchingClasses.size() > maxNumOfMatchedClass) {
+            affect.setOverLimitMsg("The number of matched classes is " +matchingClasses.size()+ ", greater than the limit value " + maxNumOfMatchedClass + ". Try to change the limit with option '-m <arg>'.");
+            return affect;
         }
 
         logger.info("enhance matched classes: {}", matchingClasses);
@@ -516,6 +535,16 @@ public class Enhancer implements ClassFileTransformer {
         }
 
         return affect;
+    }
+
+    private boolean isTargetClassLoader(ClassLoader inClassLoader) {
+        if (targetClassLoaderHash == null || targetClassLoaderHash.isEmpty()) {
+            return true;
+        }
+        if (inClassLoader == null) {
+            return false;
+        }
+        return Integer.toHexString(inClassLoader.hashCode()).equalsIgnoreCase(targetClassLoaderHash);
     }
 
     /**

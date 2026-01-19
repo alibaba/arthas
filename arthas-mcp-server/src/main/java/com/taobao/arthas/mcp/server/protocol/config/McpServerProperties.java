@@ -193,7 +193,7 @@ public class McpServerProperties {
         private Duration requestTimeout = Duration.ofSeconds(10);
         private Duration initializationTimeout = Duration.ofSeconds(30);
         private ObjectMapper objectMapper;
-        private ServerProtocol protocol = ServerProtocol.STATELESS;
+        private ServerProtocol protocol = ServerProtocol.STREAMABLE;
 
         public Builder() {
             // Private constructor to prevent direct instantiation

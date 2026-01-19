@@ -16,6 +16,12 @@ public class RegexMatcherTest {
         Assert.assertTrue(new RegexMatcher("foobar").matching("foobar"));
     }
 
+    @Test
+    public void testMatchingWithEmptyPattern() {
+        Assert.assertTrue(new RegexMatcher("").matching(""));
+        Assert.assertFalse(new RegexMatcher("").matching("foobar"));
+    }
+
     /**
      * test regux with . | * + ? \s \S \w \W and so on...
      */

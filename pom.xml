@@ -82,7 +82,7 @@
     </modules>
 
     <properties>
-        <revision>4.1.3</revision>
+        <revision>4.1.5</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -109,7 +109,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.14</version>
+                <version>1.1.7.15</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -198,19 +198,25 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.14.11</version>
+                <version>1.18.3</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.14.11</version>
+                <version>1.18.3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.zeroturnaround</groupId>
                 <artifactId>zt-zip</artifactId>
                 <version>1.16</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp</artifactId>
+                <version>0.17.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -234,6 +240,16 @@
                     <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
                 </dependency>
             </dependencies>
+        </profile>
+
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <modules>
+                <module>arthas-mcp-integration-test</module>
+            </modules>
         </profile>
 
         <profile>

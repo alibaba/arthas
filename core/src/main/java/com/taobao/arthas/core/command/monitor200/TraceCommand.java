@@ -96,6 +96,13 @@ public class TraceCommand extends EnhancerCommand {
         this.skipJDKTrace = skipJDKTrace;
     }
 
+    @Override
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        super.setHashCode(hashCode);
+    }
+
     public String getClassPattern() {
         return classPattern;
     }

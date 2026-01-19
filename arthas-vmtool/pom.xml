@@ -133,6 +133,7 @@
                                     <directory>src/main/native/src</directory>
                                     <fileNames>
                                         <fileName>jni-library.cpp</fileName>
+                                        <fileName>heap_analyzer.c</fileName>
                                     </fileNames>
                                 </source>
                             </sources>
@@ -218,6 +219,7 @@
                             <directory>src/main/native/src</directory>
                             <fileNames>
                                 <fileName>jni-library.cpp</fileName>
+                                <fileName>heap_analyzer.c</fileName>
                             </fileNames>
                         </source>
                     </sources>

@@ -23,6 +23,7 @@ import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,12 +59,12 @@ public class ArthasMcpServer {
         this.mcpEndpoint = mcpEndpoint != null ? mcpEndpoint : DEFAULT_MCP_ENDPOINT;
         this.commandExecutor = commandExecutor;
         
-        ServerProtocol resolvedProtocol = ServerProtocol.STATELESS;
+        ServerProtocol resolvedProtocol = ServerProtocol.STREAMABLE;
         if (protocol != null && !protocol.trim().isEmpty()) {
             try {
                 resolvedProtocol = ServerProtocol.valueOf(protocol.toUpperCase());
             } catch (IllegalArgumentException e) {
-                logger.warn("Invalid MCP protocol: {}. Using default: STATELESS", protocol);
+                logger.warn("Invalid MCP protocol: {}. Using default: STREAMABLE", protocol);
             }
         }
         this.protocol = resolvedProtocol;
@@ -83,7 +84,7 @@ public class ArthasMcpServer {
             
             McpServerProperties properties = new McpServerProperties.Builder()
                     .name("arthas-mcp-server")
-                    .version("1.0.0")
+                    .version("4.1.5")
                     .mcpEndpoint(mcpEndpoint)
                     .toolChangeNotification(true)
                     .resourceChangeNotification(true)
@@ -155,12 +156,18 @@ public class ArthasMcpServer {
     }
     
     /**
+     * Default keep-alive interval for MCP server (15 seconds)
+     */
+    public static final Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(15);
+    
+    /**
      * Create HTTP transport provider
      */
     private NettyStreamableServerTransportProvider createStreamableHttpTransportProvider(McpServerProperties properties) {
         return NettyStreamableServerTransportProvider.builder()
                 .mcpEndpoint(properties.getMcpEndpoint())
                 .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : new ObjectMapper())
+                .keepAliveInterval(DEFAULT_KEEP_ALIVE_INTERVAL)
                 .build();
     }
 

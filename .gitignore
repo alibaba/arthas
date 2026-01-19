@@ -28,3 +28,6 @@ pom.xml.versionsBackup
 
 # VSCode
 .vscode/
+
+# integration-test (python/expect)
+integration-test/telnet-stop-leak/work*/
