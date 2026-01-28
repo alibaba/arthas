@@ -23,10 +23,7 @@ package com.taobao.arthas.compiler;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
-import java.net.JarURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,8 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 
 public class PackageInternalsFinder {
     private final ClassLoader classLoader;
@@ -88,32 +89,87 @@ public class PackageInternalsFinder {
             // ignore
         }
         // 保底
-        return fuse(packageFolderURL);
+        return fuse(packageFolderURL, packageName);
     }
 
-    private List<JavaFileObject> fuse(URL packageFolderURL) {
+    private List<JavaFileObject> fuse(URL packageFolderURL, String packageName) {
         List<JavaFileObject> result = new ArrayList<JavaFileObject>();
         try {
             String jarUri = packageFolderURL.toExternalForm().substring(0, packageFolderURL.toExternalForm().lastIndexOf("!/"));
 
-            JarURLConnection jarConn = (JarURLConnection) packageFolderURL.openConnection();
-            String rootEntryName = jarConn.getEntryName();
-
-            if (rootEntryName != null) {
-                //可能为 null（自己没有类文件时）
-                int rootEnd = rootEntryName.length() + 1;
-
-                Enumeration<JarEntry> entryEnum = jarConn.getJarFile().entries();
-                while (entryEnum.hasMoreElements()) {
-                    JarEntry jarEntry = entryEnum.nextElement();
-                    String name = jarEntry.getName();
-                    if (name.startsWith(rootEntryName) && name.indexOf('/', rootEnd) == -1 && name.endsWith(CLASS_FILE_EXTENSION)) {
-                        URI uri = URI.create(jarUri + "!/" + name);
-                        String binaryName = name.replaceAll("/", ".");
-                        binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
-
-                        result.add(new CustomJavaFileObject(binaryName, uri));
+            URLConnection urlConnection = packageFolderURL.openConnection();
+            Enumeration<JarEntry> entryEnum;
+            if (urlConnection instanceof JarURLConnection){
+                try {
+                    int rootEnd = 0;
+                    JarURLConnection jarConn = (JarURLConnection) urlConnection;
+                    String rootEntryName = jarConn.getEntryName();
+                    //可能为 null（自己没有类文件时）
+                    if (rootEntryName != null) {
+                        rootEnd = rootEntryName.length() + 1;
+                        entryEnum = jarConn.getJarFile().entries();
+                    } else {
+                        return result;
                     }
+
+                    while (entryEnum.hasMoreElements()) {
+                        JarEntry jarEntry = entryEnum.nextElement();
+                        String name = jarEntry.getName();
+                        if (name.startsWith(rootEntryName) && name.indexOf('/', rootEnd) == -1 && name.endsWith(CLASS_FILE_EXTENSION)) {
+                            URI uri = URI.create(jarUri + "!/" + name);
+                            String binaryName = name.replaceAll("/", ".");
+                            binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
+
+                            result.add(new CustomJavaFileObject(binaryName, uri));
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to open " + packageFolderURL + " as a jar file", e);
+                }
+            }else {
+                //是否可以在硬盘上找到对应的文件
+                try {
+                    URI uri1 = new URI(jarUri);
+                    // 获取 authority（host:port） + path + query + fragment
+                    StringBuilder sb = new StringBuilder();
+                    if (uri1.getAuthority() != null) {
+                        sb.append(uri1.getAuthority());
+                    }
+                    if (uri1.getPath() != null) {
+                        sb.append(uri1.getPath());
+                    }
+                    if (uri1.getQuery() != null) {
+                        sb.append('?').append(uri1.getQuery());
+                    }
+                    if (uri1.getFragment() != null) {
+                        sb.append('#').append(uri1.getFragment());
+                    }
+
+                    File file = new File(sb.toString());
+                    if (file.exists()) {
+                        //可能是文件或目录
+                        if (file.isDirectory()) {
+                            result.addAll(processDir(packageName, file));
+                        } else {
+                            try {
+                                GetZipFile zipFile = new GetZipFile(file);
+                                zipFile.stream().forEach(e -> {
+                                    String name = e.getName();
+                                    if (name.startsWith(packageName) && name.endsWith(CLASS_FILE_EXTENSION)) {
+                                        URI uri = URI.create(jarUri + "!/" + name);
+                                        String binaryName = name.replaceAll("/", ".");
+                                        binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
+
+                                        result.add(zipFile.new ZipJavaFileObject(binaryName, uri, e));
+                                    }
+                                });
+                            }catch (ZipException e) {
+                                // ignore
+                            }
+                        }
+                    }
+                }catch (SecurityException e) {
+                    throw new RuntimeException("Failed to open " + packageFolderURL + " as a jar file", e);
                 }
             }
         } catch (Exception e) {
