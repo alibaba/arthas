@@ -91,7 +91,7 @@
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-        <netty-bom.version>4.1.128.Final</netty-bom.version>
+        <netty-bom.version>4.1.130.Final</netty-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -124,12 +124,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.2.13</version>
+                <version>1.5.25</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.2.13</version>
+                <version>1.5.25</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
