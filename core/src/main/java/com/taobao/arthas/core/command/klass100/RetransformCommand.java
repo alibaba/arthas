@@ -17,6 +17,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -293,6 +294,7 @@ public class RetransformCommand extends AnnotatedCommand {
 
             inst.retransformClasses(classList.toArray(new Class[0]));
 
+            retransformModel.setIds(retransformEntryList.stream().map(RetransformEntry::getId).collect(Collectors.toList()));
             process.appendResult(retransformModel);
             process.end();
         } catch (Throwable e) {
