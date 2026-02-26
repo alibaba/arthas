@@ -1,0 +1,20 @@
+name: Sync to Gitee
+
+on:
+  push:
+    branches:
+      - master
+      - gh-pages
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync to Gitee
+        uses: Yikun/hub-mirror-action@v1.5
+        with:
+          src: github/alibaba
+          dst: gitee/arthas
+          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+          dst_token: ${{ secrets.GITEE_TOKEN }}
+          static_list: "arthas"

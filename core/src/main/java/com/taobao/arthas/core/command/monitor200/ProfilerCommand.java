@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
@@ -55,6 +57,7 @@ import one.profiler.Counter;
         + "  profiler start --loop 300s -f /tmp/result-%t.html"
         + "  profiler start --duration 300"
         + "  profiler stop --format html   # output file format, support flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr\n"
+        + "  profiler stop --format md     # output Markdown report (LLM friendly), support md[=N]\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
         + "  profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*'\n"
@@ -326,13 +329,17 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "o", longName = "format")
-    @Description("dump output content format(flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr)")
+    @Description("dump output content format(flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr|md[=N])")
     public void setFormat(String format) {
         // only for backward compatibility
         if ("html".equals(format)) {
             format = "flamegraph";
         }
         this.format = format;
+    }
+
+    private boolean isMarkdownFormat() {
+        return this.format != null && this.format.toLowerCase().startsWith("md");
     }
 
     @Option(shortName = "e", longName = "event")
@@ -619,10 +626,16 @@ public class ProfilerCommand extends AnnotatedCommand {
             this.format = "jfr";
             sb.append("jfrsync=").append(this.jfrsync).append(COMMA);
         }
-        if (this.file != null) {
+        boolean markdown = isMarkdownFormat();
+        // md 是 Arthas 侧的后处理格式，不应传递给 async-profiler（避免识别失败/输出到文件导致数据丢失等问题）
+        boolean passFile = this.file != null;
+        if (markdown && (action == ProfilerAction.start || action == ProfilerAction.resume || action == ProfilerAction.check)) {
+            passFile = false;
+        }
+        if (passFile) {
             sb.append("file=").append(this.file).append(COMMA);
         }
-        if (this.format != null) {
+        if (this.format != null && !markdown) {
             sb.append(this.format).append(COMMA);
         }
         if (this.interval != null) {
@@ -865,6 +878,15 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     private ProfilerModel processStop(AsyncProfiler asyncProfiler, ProfilerAction profilerAction) throws IOException {
+        // profiler stop --file xxx.md：自动推断为 Markdown 输出
+        if (this.format == null && this.file != null && this.file.toLowerCase().endsWith(".md")) {
+            this.format = "md";
+        }
+
+        if (isMarkdownFormat() && (profilerAction == ProfilerAction.stop || profilerAction == ProfilerAction.dump)) {
+            return processStopMarkdown(asyncProfiler, profilerAction);
+        }
+
         String outputFile = null;
 
         // If we're stopping and a file was specified during start, don't generate a new
@@ -889,6 +911,79 @@ public class ProfilerCommand extends AnnotatedCommand {
         return profilerModel;
     }
 
+    private ProfilerModel processStopMarkdown(AsyncProfiler asyncProfiler, ProfilerAction profilerAction) throws IOException {
+        // Markdown 输出：先让 async-profiler 输出 collapsed 文本，再在 Arthas 侧做结构化汇总。
+        String userFormat = this.format;
+        String userFile = this.file;
+        int topN = mdTopN(userFormat);
+
+        // stop 时如果 start 阶段指定过 file，需要清理掉，避免影响后续 stop 行为
+        if (profilerAction == ProfilerAction.stop) {
+            fileSpecifiedAtStart = null;
+        }
+
+        File collapsedFile = File.createTempFile("arthas-profiler-collapsed", ".txt");
+        String collapsed;
+        try {
+            // 为避免 async-profiler 由于历史 file 配置导致返回 OK 而非 collapsed 文本，这里强制输出到临时文件后再读取。
+            this.file = collapsedFile.getAbsolutePath();
+            this.format = "collapsed";
+
+            String executeArgs = executeArgs(profilerAction);
+            execute(asyncProfiler, executeArgs);
+
+            collapsed = FileUtils.readFileToString(collapsedFile, StandardCharsets.UTF_8);
+        } finally {
+            // best-effort cleanup
+            try {
+                collapsedFile.delete();
+            } catch (Throwable ignore) {
+                // ignore
+            }
+            this.format = userFormat;
+            this.file = userFile;
+        }
+
+        String markdown = ProfilerMarkdown.toMarkdown(new ProfilerMarkdown.Options()
+                .action(profilerAction.name())
+                .event(this.event)
+                .threads(this.threads)
+                .topN(topN)
+                .collapsed(collapsed));
+
+        String outputFile = null;
+        if (userFile != null && !userFile.trim().isEmpty()) {
+            outputFile = userFile;
+            FileUtils.writeByteArrayToFile(new File(outputFile), markdown.getBytes(StandardCharsets.UTF_8));
+        }
+
+        ProfilerModel profilerModel = createProfilerModel(markdown);
+        profilerModel.setFormat(userFormat);
+        profilerModel.setOutputFile(outputFile);
+        return profilerModel;
+    }
+
+    private int mdTopN(String format) {
+        final int defaultTopN = 10;
+        if (format == null) {
+            return defaultTopN;
+        }
+        String f = format.trim().toLowerCase();
+        if (!f.startsWith("md")) {
+            return defaultTopN;
+        }
+        int idx = f.indexOf('=');
+        if (idx < 0 || idx == f.length() - 1) {
+            return defaultTopN;
+        }
+        try {
+            int n = Integer.parseInt(f.substring(idx + 1).trim());
+            return n > 0 ? n : defaultTopN;
+        } catch (Throwable e) {
+            return defaultTopN;
+        }
+    }
+
     private String outputFile() throws IOException {
         if (this.file == null) {
             String fileExt = outputFileExt();
@@ -911,6 +1006,8 @@ public class ProfilerCommand extends AnnotatedCommand {
         String fileExt = "";
         if (this.format == null) {
             fileExt = "html";
+        } else if (this.format.toLowerCase().startsWith("md")) {
+            fileExt = "md";
         } else if (this.format.startsWith("flat") || this.format.startsWith("traces") 
                 || this.format.equals("collapsed")) {
             fileExt = "txt";
@@ -934,6 +1031,7 @@ public class ProfilerCommand extends AnnotatedCommand {
         ProfilerModel profilerModel = new ProfilerModel();
         profilerModel.setAction(action);
         profilerModel.setActionArg(actionArg);
+        profilerModel.setFormat(format);
         profilerModel.setExecuteResult(result);
         return profilerModel;
     }
@@ -989,8 +1087,12 @@ public class ProfilerCommand extends AnnotatedCommand {
                 if (token_2.equals("-e") || token_2.equals("--event")) {
                     CompletionUtils.complete(completion, events());
                     return;
-                } else if (token_2.equals("-f") || token_2.equals("--format")) {
-                    CompletionUtils.complete(completion, Arrays.asList("html", "jfr"));
+                } else if (token_2.equals("-o") || token_2.equals("--format")) {
+                    CompletionUtils.complete(completion, Arrays.asList(
+                            "flamegraph", "tree", "jfr",
+                            "flat", "traces", "collapsed",
+                            "md", "md=10"
+                    ));
                     return;
                 }
             }

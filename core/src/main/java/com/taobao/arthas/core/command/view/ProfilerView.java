@@ -26,7 +26,10 @@ public class ProfilerView extends ResultView<ProfilerModel> {
                 process.write("profiler output file will be: " + model.getOutputFile() + "\n");
             }
         } else if (ProfilerAction.stop.name().equals(model.getAction())) {
-            process.write("profiler output file: " + model.getOutputFile() + "\n");
+            // markdown 输出时，额外的提示行会影响复制粘贴给 LLM 的效果
+            if (model.getOutputFile() != null && !isMarkdown(model.getFormat())) {
+                process.write("profiler output file: " + model.getOutputFile() + "\n");
+            }
         }
 
     }
@@ -38,5 +41,9 @@ public class ProfilerView extends ResultView<ProfilerModel> {
                 process.write("\n");
             }
         }
+    }
+
+    private boolean isMarkdown(String format) {
+        return format != null && format.toLowerCase().startsWith("md");
     }
 }

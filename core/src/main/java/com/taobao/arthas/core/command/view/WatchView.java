@@ -19,7 +19,13 @@ public class WatchView extends ResultView<WatchModel> {
         ObjectVO objectVO = model.getValue();
         String result = StringUtils.objectToString(
                 objectVO.needExpand() ? new ObjectView(model.getSizeLimit(), objectVO).draw() : objectVO.getObject());
-        process.write("method=" + model.getClassName() + "." + model.getMethodName() + " location=" + model.getAccessPoint() + "\n");
-        process.write("ts=" + DateUtils.formatDateTime(model.getTs()) + "; [cost=" + model.getCost() + "ms] result=" + result + "\n");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("method=").append(model.getClassName()).append(".").append(model.getMethodName())
+                .append(" location=").append(model.getAccessPoint()).append("\n");
+        sb.append("ts=").append(DateUtils.formatDateTime(model.getTs()))
+                .append("; [cost=").append(model.getCost()).append("ms] result=").append(result).append("\n");
+
+        process.write(sb.toString());
     }
 }

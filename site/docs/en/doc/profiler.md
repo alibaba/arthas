@@ -65,7 +65,37 @@ Call trace storage:   10244 KB
 
 ### Generating flame graph results
 
-By default, the result file is `html` file in [Flame Graph](https://github.com/BrendanGregg/FlameGraph) format. You can also specify other format with the `-o` or `--format` parameter, including flat, traces, collapsed, flamegraph, tree, jfr:
+By default, the result file is `html` file in [Flame Graph](https://github.com/BrendanGregg/FlameGraph) format. You can also specify other format with the `-o` or `--format` parameter, including flat, traces, collapsed, flamegraph, tree, jfr, md:
+
+### Generate LLM-friendly Markdown report
+
+When `--format md` (or `md=N`) is specified, Arthas generates a structured Markdown report based on async-profiler `collapsed` output, which is easy to copy/paste to an LLM or grep in terminal. The report includes:
+
+- Top N Hotspots (self)
+- Call Tree (truncated by samples)
+- Function Details (top stacks per hotspot)
+
+```bash
+$ profiler stop --format md
+```
+
+Write to file (optional):
+
+```bash
+$ profiler stop --format md --file /tmp/profile.md
+```
+
+If `--file` ends with `.md` and `--format` is not specified, Arthas will infer Markdown output automatically:
+
+```bash
+$ profiler stop --file /tmp/profile.md
+```
+
+Set TopN (optional, default 10):
+
+```bash
+$ profiler stop --format md=20
+```
 
 ```bash
 $ profiler stop --format flamegraph

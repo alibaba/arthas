@@ -16,6 +16,8 @@ public class TermResultDistributorImpl implements ResultDistributor {
     private final CommandProcess commandProcess;
     private final ResultViewResolver resultViewResolver;
 
+    private final Object outputLock = new Object();
+
     public TermResultDistributorImpl(CommandProcess commandProcess, ResultViewResolver resultViewResolver) {
         this.commandProcess = commandProcess;
         this.resultViewResolver = resultViewResolver;
@@ -25,7 +27,9 @@ public class TermResultDistributorImpl implements ResultDistributor {
     public void appendResult(ResultModel model) {
         ResultView resultView = resultViewResolver.getResultView(model);
         if (resultView != null) {
-            resultView.draw(commandProcess, model);
+            synchronized (outputLock) {
+                resultView.draw(commandProcess, model);
+            }
         }
     }
 

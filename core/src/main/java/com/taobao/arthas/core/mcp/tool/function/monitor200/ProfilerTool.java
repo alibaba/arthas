@@ -59,7 +59,7 @@ public class ProfilerTool extends AbstractArthasTool {
             @ToolParam(description = "输出文件路径 (--file)。如果以 .html/.jfr 结尾可推断 format；也可包含 %t 等占位符（如 /tmp/result-%t.html）", required = false)
             String file,
 
-            @ToolParam(description = "输出格式 (--format)，支持 flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr（兼容传入 html）", required = false)
+            @ToolParam(description = "输出格式 (--format)，支持 flat[=N]|traces[=N]|collapsed|flamegraph|tree|jfr|md[=N]（兼容传入 html）", required = false)
             String format,
 
             @ToolParam(description = "alloc 事件采样间隔字节数 (--alloc)，如 1m/512k/1000 等", required = false)
@@ -276,4 +276,3 @@ public class ProfilerTool extends AbstractArthasTool {
         }
     }
 }
-

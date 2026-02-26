@@ -65,7 +65,37 @@ Call trace storage:   10244 KB
 
 ### 生成火焰图格式结果
 
-默认情况下，结果是 [Flame Graph](https://github.com/BrendanGregg/FlameGraph) 格式的 `html` 文件，也可以用 `-o` 或 `--format` 参数指定其他内容格式，包括 flat、traces、collapsed、flamegraph、tree、jfr。
+默认情况下，结果是 [Flame Graph](https://github.com/BrendanGregg/FlameGraph) 格式的 `html` 文件，也可以用 `-o` 或 `--format` 参数指定其他内容格式，包括 flat、traces、collapsed、flamegraph、tree、jfr、md。
+
+### 生成 LLM 友好的 Markdown 报告
+
+当 `--format md`（或 `md=N`）时，Arthas 会基于 async-profiler 的 `collapsed` 输出生成结构化的 Markdown，便于直接复制到 LLM 或在终端里 grep。报告包含：
+
+- Top N Hotspots（self）
+- Call Tree（调用树，按采样占比排序截断）
+- Function Details（每个热点函数的 Top stacks）
+
+```bash
+$ profiler stop --format md
+```
+
+指定输出文件（可选）：
+
+```bash
+$ profiler stop --format md --file /tmp/profile.md
+```
+
+如果 `--file` 以 `.md` 结尾且未指定 `--format`，将自动推断为 Markdown 输出：
+
+```bash
+$ profiler stop --file /tmp/profile.md
+```
+
+指定 TopN（可选，默认 10）：
+
+```bash
+$ profiler stop --format md=20
+```
 
 ```bash
 $ profiler stop --format flamegraph
