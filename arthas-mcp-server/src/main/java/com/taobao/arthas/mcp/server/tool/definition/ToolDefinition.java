@@ -1,6 +1,7 @@
 package com.taobao.arthas.mcp.server.tool.definition;
 
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.TaskSupportMode;
 
 public class ToolDefinition {
     private String name;
@@ -11,10 +12,10 @@ public class ToolDefinition {
 
     private boolean streamable;
     
-    private String taskSupport;
+    private TaskSupportMode taskSupport;
 
     public ToolDefinition(String name, String description,
-                          McpSchema.JsonSchema inputSchema, boolean streamable, String taskSupport) {
+                          McpSchema.JsonSchema inputSchema, boolean streamable, TaskSupportMode taskSupport) {
         this.name = name;
         this.description = description;
         this.inputSchema = inputSchema;
@@ -24,7 +25,7 @@ public class ToolDefinition {
     
     public ToolDefinition(String name, String description,
                           McpSchema.JsonSchema inputSchema, boolean streamable) {
-        this(name, description, inputSchema, streamable, "forbidden");
+        this(name, description, inputSchema, streamable, TaskSupportMode.FORBIDDEN);
     }
 
     public String getName() {
@@ -42,8 +43,8 @@ public class ToolDefinition {
     public boolean isStreamable() {
         return streamable;
     }
-    
-    public String taskSupport() {
+
+    public TaskSupportMode taskSupport() {
         return taskSupport;
     }
 
@@ -61,7 +62,7 @@ public class ToolDefinition {
 
         private boolean streamable;
         
-        private String taskSupport = "forbidden";
+        private TaskSupportMode taskSupport = TaskSupportMode.FORBIDDEN;
 
         private Builder() {
         }
@@ -86,7 +87,7 @@ public class ToolDefinition {
             return this;
         }
         
-        public Builder taskSupport(String taskSupport) {
+        public Builder taskSupport(TaskSupportMode taskSupport) {
             this.taskSupport = taskSupport;
             return this;
         }

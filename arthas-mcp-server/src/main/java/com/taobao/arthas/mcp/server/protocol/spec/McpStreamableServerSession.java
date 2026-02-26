@@ -13,6 +13,8 @@ import com.taobao.arthas.mcp.server.protocol.server.McpRequestHandler;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandSessionManager;
+import com.taobao.arthas.mcp.server.task.TaskMessageQueue;
+import com.taobao.arthas.mcp.server.task.TaskStore;
 import com.taobao.arthas.mcp.server.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,11 +63,16 @@ public class McpStreamableServerSession implements McpSession {
     
     private final EventStore eventStore;
 
+    private final TaskStore<McpSchema.ServerTaskPayloadResult> taskStore;
+
+    private final TaskMessageQueue taskMessageQueue;
+
     public McpStreamableServerSession(String id, McpSchema.ClientCapabilities clientCapabilities,
                                       McpSchema.Implementation clientInfo, Duration requestTimeout,
                                       Map<String, McpRequestHandler<?>> requestHandlers,
                                       Map<String, McpNotificationHandler> notificationHandlers,
-                                      CommandExecutor commandExecutor, EventStore eventStore) {
+                                      CommandExecutor commandExecutor, EventStore eventStore,
+                                      TaskStore<McpSchema.ServerTaskPayloadResult> taskStore, TaskMessageQueue taskMessageQueue) {
         this.id = id;
         this.missingMcpTransportSession = new MissingMcpTransportSession(id);
         this.listeningStreamRef = new AtomicReference<>(this.missingMcpTransportSession);
@@ -77,6 +84,8 @@ public class McpStreamableServerSession implements McpSession {
         this.commandExecutor = commandExecutor;
         this.commandSessionManager = new ArthasCommandSessionManager(commandExecutor);
         this.eventStore = eventStore;
+        this.taskStore = taskStore;
+        this.taskMessageQueue = taskMessageQueue;
     }
 
     /**
@@ -171,10 +180,11 @@ public class McpStreamableServerSession implements McpSession {
                     .thenCompose(v -> transport.closeGracefully());
         }
         ArthasCommandContext commandContext = createCommandContext(transportContext.get(MCP_AUTH_SUBJECT_KEY));
-        
+
         return requestHandler
                 .handle(new McpNettyServerExchange(this.id, stream, clientCapabilities.get(), 
-                        clientInfo.get(), transportContext), commandContext, jsonrpcRequest.getParams())
+                        clientInfo.get(), transportContext, taskMessageQueue, taskStore), 
+                        commandContext, jsonrpcRequest.getParams())
                 .handle((result, ex) -> {
                     if (ex != null) {
                         Throwable cause = ex;
@@ -213,7 +223,8 @@ public class McpStreamableServerSession implements McpSession {
         ArthasCommandContext commandContext = createCommandContext(transportContext.get(MCP_AUTH_SUBJECT_KEY));
         McpSession listeningStream = this.listeningStreamRef.get();
         return notificationHandler.handle(new McpNettyServerExchange(this.id, listeningStream,
-                this.clientCapabilities.get(), this.clientInfo.get(), transportContext), commandContext, notification.getParams());
+                this.clientCapabilities.get(), this.clientInfo.get(), transportContext, taskMessageQueue, taskStore), 
+                commandContext, notification.getParams());
     }
 
     public CompletableFuture<Void> accept(McpSchema.JSONRPCResponse response) {

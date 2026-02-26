@@ -1,5 +1,7 @@
 package com.taobao.arthas.mcp.server.tool.annotation;
 
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.TaskSupportMode;
+
 import java.lang.annotation.*;
 
 @Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
@@ -14,11 +16,17 @@ public @interface Tool {
     boolean streamable() default false;
     
     /**
-     * Task support negotiation.
-     * "required": Must be called as a task.
-     * "optional": Can be called as a task.
-     * "forbidden": Cannot be called as a task (default).
+     * 任务支持模式。
+     *
+     * <ul>
+     *   <li>{@link TaskSupportMode#FORBIDDEN FORBIDDEN} - 不支持任务（默认）</li>
+     *   <li>{@link TaskSupportMode#OPTIONAL OPTIONAL} - 可选支持任务</li>
+     *   <li>{@link TaskSupportMode#REQUIRED REQUIRED} - 必须以任务模式调用</li>
+     * </ul>
+     *
+     * @return 任务支持模式
+     * @see <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks">MCP Tasks Specification</a>
      */
-    String taskSupport() default "forbidden";
+    TaskSupportMode taskSupport() default TaskSupportMode.FORBIDDEN;
 
 }

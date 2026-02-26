@@ -1,5 +1,6 @@
 package com.taobao.arthas.mcp.server.tool.definition;
 
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.util.JsonSchemaGenerator;
 import com.taobao.arthas.mcp.server.util.Assert;
@@ -49,11 +50,11 @@ public class ToolDefinitions {
 		return tool.streamable();
 	}
 
-    public static String getTaskSupport(Method method) {
+    public static McpSchema.TaskSupportMode getTaskSupport(Method method) {
         Assert.notNull(method, "method cannot be null");
         Tool tool = method.getAnnotation(Tool.class);
         if (tool == null) {
-            return "forbidden";
+            return McpSchema.TaskSupportMode.FORBIDDEN;
         }
         return tool.taskSupport();
     }

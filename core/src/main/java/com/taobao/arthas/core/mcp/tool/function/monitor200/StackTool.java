@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.mcp.tool.function.monitor200;
 
 import com.taobao.arthas.core.mcp.tool.function.AbstractArthasTool;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
@@ -25,7 +26,7 @@ public class StackTool extends AbstractArthasTool {
         name = "stack",
         description = "Stack 调用堆栈跟踪工具: 输出当前方法被调用的调用路径，帮助分析方法的调用链路。对应 Arthas 的 stack 命令。",
         streamable = true,
-        taskSupport = "required"
+        taskSupport = McpSchema.TaskSupportMode.OPTIONAL
     )
     public String stack(
             @ToolParam(description = "类名表达式匹配，支持通配符，如demo.MathGame")

@@ -21,7 +21,8 @@ public interface McpStatelessServerTransport {
 	CompletableFuture<Void> closeGracefully();
 
     default List<String> protocolVersions() {
-        return Arrays.asList(ProtocolVersions.MCP_2025_03_26, ProtocolVersions.MCP_2025_06_18);
+        return Arrays.asList(ProtocolVersions.MCP_2025_03_26, ProtocolVersions.MCP_2025_06_18,
+                ProtocolVersions.MCP_2025_11_25);
     }
 
 }

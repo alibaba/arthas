@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.mcp.tool.function.monitor200;
 
 import com.taobao.arthas.core.mcp.tool.function.AbstractArthasTool;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
@@ -22,7 +23,7 @@ public class WatchTool extends AbstractArthasTool {
         name = "watch",
         description = "Watch 方法执行观察工具: 观察指定方法的调用情况，包括入参、返回值和抛出异常等信息，支持实时流式输出。对应 Arthas 的 watch 命令。",
         streamable = true,
-        taskSupport = "required"
+        taskSupport = McpSchema.TaskSupportMode.OPTIONAL
     )
     public String watch(
             @ToolParam(description = "类名表达式匹配，支持通配符，如demo.MathGame")
