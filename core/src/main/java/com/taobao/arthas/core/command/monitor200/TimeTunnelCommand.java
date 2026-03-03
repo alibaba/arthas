@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.ArthasMethod;
@@ -68,7 +67,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     // expand of TimeTunnel
     private Integer expand = 1;
     // upper size limit
-    private Integer sizeLimit = 10 * 1024 * 1024;
+    private Integer sizeLimit;
     // watch the index TimeTunnel
     private String watchExpress = com.taobao.arthas.core.util.Constants.EMPTY_STRING;
     private String searchExpress = com.taobao.arthas.core.util.Constants.EMPTY_STRING;
@@ -131,7 +130,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
-    @Description("Upper size limit in bytes for the result (10 * 1024 * 1024 by default)")
+    @Description("Upper size limit in bytes for the result (default value comes from options object-size-limit)")
     public void setSizeLimit(Integer sizeLimit) {
         this.sizeLimit = sizeLimit;
     }

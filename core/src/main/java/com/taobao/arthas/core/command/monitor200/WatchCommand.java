@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.monitor200;
 
 import java.util.Arrays;
 
-import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -43,7 +42,7 @@ public class WatchCommand extends EnhancerCommand {
     private boolean isException = false;
     private boolean isSuccess = false;
     private Integer expand = 1;
-    private Integer sizeLimit = 10 * 1024 * 1024;
+    private Integer sizeLimit;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
     
@@ -97,7 +96,7 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
-    @Description("Upper size limit in bytes for the result (10 * 1024 * 1024 by default)")
+    @Description("Upper size limit in bytes for the result (default value comes from options object-size-limit)")
     public void setSizeLimit(Integer sizeLimit) {
         this.sizeLimit = sizeLimit;
     }

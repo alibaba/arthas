@@ -12,6 +12,7 @@
 | dump                   | false  | 是否支持被增强了的类 dump 到外部文件中，如果打开开关，class 文件会被 dump 到`/${application working dir}/arthas-class-dump/`目录下，具体位置详见控制台输出 |
 | batch-re-transform     | true   | 是否支持批量对匹配到的类执行 retransform 操作                                                                                                              |
 | json-format            | false  | 是否支持 json 化的输出                                                                                                                                     |
+| object-size-limit      | 10485760 | ObjectView 输出大小上限（字节），默认 10 * 1024 * 1024                                                                                                        |
 | disable-sub-class      | false  | 是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关                                                                 |
 | support-default-method | true   | 是否支持匹配到 default method， 默认会查找 interface，匹配里面的 default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105)               |
 | save-result            | false  | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中                                                         |
@@ -40,6 +41,8 @@ $ options
  2      boolea  json-format   false   Option to support JS  This option enables to format object outpu
         n                             ON format of object   t with JSON when -x option selected.
                                       output
+ 1      int     object-size-  10485760 Option to control O  Upper size limit in bytes for ObjectView o
+         limit                          bjectView output    utput. Default value is 10 * 1024 * 1024.
  1      boolea  disable-sub-  false   Option to control in  This option disable to include sub class w
         n       class                 clude sub class when  hen matching class.
                                        class matching

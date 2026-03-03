@@ -224,6 +224,19 @@ public class ObjectViewTest {
     }
 
     @Test
+    public void testDefaultSizeLimitFromGlobalOptions() {
+        int old = GlobalOptions.objectSizeLimit;
+        try {
+            GlobalOptions.objectSizeLimit = 5;
+            ObjectView objectView = new ObjectView("123456", 1);
+            String output = objectView.draw();
+            Assert.assertTrue(output.contains("Object size exceeds size limit: 5"));
+        } finally {
+            GlobalOptions.objectSizeLimit = old;
+        }
+    }
+
+    @Test
     public void testDate() {
         Date d = new Date(1531204354961L - TimeZone.getDefault().getRawOffset()
                         + TimeZone.getTimeZone("GMT+8").getRawOffset());
@@ -276,7 +289,7 @@ public class ObjectViewTest {
                 "    c1=@NestedClass[\n" +
                 "        code=@Integer[1],\n" +
                 "        c1=...\n" +
-                "... Object size exceeds size limit: 100, try to specify -M size_limit in your command, check the help command for more.";
+                "... Object size exceeds size limit: 100, try to specify -M size_limit in your command or use options object-size-limit.";
         Assert.assertEquals(expected, objectView.draw());
     }
 

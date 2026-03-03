@@ -27,7 +27,6 @@ import static java.lang.String.format;
 public class ObjectView implements View {
     public static final int MAX_DEEP = 4;
     private static final Logger logger = LoggerFactory.getLogger(ObjectView.class);
-    private final static int MAX_OBJECT_LENGTH = ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
     private static final ObjectWriterProvider JSON_OBJECT_WRITER_PROVIDER = new ObjectWriterProvider(
             new ObjectWriterCreator() {
                 @Override
@@ -53,7 +52,7 @@ public class ObjectView implements View {
     private final int maxObjectLength;
 
     public ObjectView(ObjectVO objectVO) {
-        this(MAX_OBJECT_LENGTH, objectVO);
+        this(defaultMaxObjectLength(), objectVO);
     }
 
     // int参数在前面，防止构造函数二义性
@@ -62,7 +61,7 @@ public class ObjectView implements View {
     }
  
     public ObjectView(Object object, int deep) {
-        this(object, deep, MAX_OBJECT_LENGTH);
+        this(object, deep, defaultMaxObjectLength());
     }
 
     public ObjectView(Object object, int deep, int maxObjectLength) {
@@ -83,7 +82,7 @@ public class ObjectView implements View {
         } catch (ObjectTooLargeException e) {
             buf.append(" Object size exceeds size limit: ")
                     .append(maxObjectLength)
-                    .append(", try to specify -M size_limit in your command, check the help command for more.");
+                    .append(", try to specify -M size_limit in your command or use options object-size-limit.");
             return buf.toString();
         } catch (Throwable t) {
             logger.error("ObjectView draw error, object class: {}", object.getClass(), t);
@@ -699,5 +698,9 @@ public class ObjectView implements View {
         }
     }
 
+    private static int defaultMaxObjectLength() {
+        int limit = GlobalOptions.objectSizeLimit;
+        return limit > 0 ? limit : ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
+    }
 
 }
