@@ -82,7 +82,7 @@ public class ObjectView implements View {
         } catch (ObjectTooLargeException e) {
             buf.append(" Object size exceeds size limit: ")
                     .append(maxObjectLength)
-                    .append(", try to specify -M size_limit in your command or use options object-size-limit.");
+                    .append(", try to specify -M <sizeLimit> or --sizeLimit in your command, or use options object-size-limit.");
             return buf.toString();
         } catch (Throwable t) {
             logger.error("ObjectView draw error, object class: {}", object.getClass(), t);
@@ -698,12 +698,19 @@ public class ObjectView implements View {
         }
     }
 
-    private static int defaultMaxObjectLength() {
-        int limit = GlobalOptions.objectSizeLimit;
-        if (limit > 0) {
+    public static int normalizeMaxObjectLength(Integer limit) {
+        if (limit != null && limit > 0) {
             return limit;
         }
+        int globalLimit = GlobalOptions.objectSizeLimit;
+        if (globalLimit > 0) {
+            return globalLimit;
+        }
         return ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
+    }
+
+    private static int defaultMaxObjectLength() {
+        return normalizeMaxObjectLength(null);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.view;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.GlobalOptions;
 import org.junit.Assert;
 import org.junit.Test;
@@ -237,6 +238,24 @@ public class ObjectViewTest {
     }
 
     @Test
+    public void testNormalizeMaxObjectLength() {
+        int old = GlobalOptions.objectSizeLimit;
+        try {
+            GlobalOptions.objectSizeLimit = 9;
+            Assert.assertEquals(9, ObjectView.normalizeMaxObjectLength(null));
+            Assert.assertEquals(9, ObjectView.normalizeMaxObjectLength(0));
+            Assert.assertEquals(9, ObjectView.normalizeMaxObjectLength(-1));
+            Assert.assertEquals(8, ObjectView.normalizeMaxObjectLength(8));
+
+            GlobalOptions.objectSizeLimit = 0;
+            Assert.assertEquals(ArthasConstants.MAX_HTTP_CONTENT_LENGTH, ObjectView.normalizeMaxObjectLength(null));
+            Assert.assertEquals(ArthasConstants.MAX_HTTP_CONTENT_LENGTH, ObjectView.normalizeMaxObjectLength(-1));
+        } finally {
+            GlobalOptions.objectSizeLimit = old;
+        }
+    }
+
+    @Test
     public void testDate() {
         Date d = new Date(1531204354961L - TimeZone.getDefault().getRawOffset()
                         + TimeZone.getTimeZone("GMT+8").getRawOffset());
@@ -289,7 +308,7 @@ public class ObjectViewTest {
                 "    c1=@NestedClass[\n" +
                 "        code=@Integer[1],\n" +
                 "        c1=...\n" +
-                "... Object size exceeds size limit: 100, try to specify -M size_limit in your command or use options object-size-limit.";
+                "... Object size exceeds size limit: 100, try to specify -M <sizeLimit> or --sizeLimit in your command, or use options object-size-limit.";
         Assert.assertEquals(expected, objectView.draw());
     }
 

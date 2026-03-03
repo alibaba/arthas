@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.TimeFragmentVO;
 import com.taobao.arthas.core.command.model.TimeTunnelModel;
@@ -23,11 +22,7 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
 
     @Override
     public void draw(CommandProcess process, TimeTunnelModel timeTunnelModel) {
-        int sizeLimitValue = GlobalOptions.objectSizeLimit;
-        Integer sizeLimit = timeTunnelModel.getSizeLimit();
-        if (sizeLimit != null) {
-            sizeLimitValue = sizeLimit.intValue();
-        }
+        int sizeLimitValue = ObjectView.normalizeMaxObjectLength(timeTunnelModel.getSizeLimit());
 
         if (timeTunnelModel.getTimeFragmentList() != null) {
             //show list table: tt -l / tt -t

@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -18,11 +17,7 @@ public class WatchView extends ResultView<WatchModel> {
     @Override
     public void draw(CommandProcess process, WatchModel model) {
         ObjectVO objectVO = model.getValue();
-        int sizeLimit = GlobalOptions.objectSizeLimit;
-        Integer modelSizeLimit = model.getSizeLimit();
-        if (modelSizeLimit != null) {
-            sizeLimit = modelSizeLimit.intValue();
-        }
+        int sizeLimit = ObjectView.normalizeMaxObjectLength(model.getSizeLimit());
         String result = StringUtils.objectToString(
                 objectVO.needExpand() ? new ObjectView(sizeLimit, objectVO).draw() : objectVO.getObject());
 
