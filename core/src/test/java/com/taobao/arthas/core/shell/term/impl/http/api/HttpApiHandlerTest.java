@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
 import net.bytebuddy.agent.ByteBuddyAgent;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,8 @@ import java.lang.instrument.Instrumentation;
 class HttpApiHandlerTest {
 
     @Test
-    void testExecRetransform_ReturnsSuccess() throws Throwable {
+    @DisplayName("http api exec retransform enhance class should return ids in response")
+    void testExecRetransform_ReturnsIdsSuccess() throws Throwable {
         Instrumentation instrumentation = ByteBuddyAgent.install();
         TestHelper.appendSpyJar(instrumentation);
 

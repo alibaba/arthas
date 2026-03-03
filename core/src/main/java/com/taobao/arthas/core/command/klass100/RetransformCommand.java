@@ -294,7 +294,13 @@ public class RetransformCommand extends AnnotatedCommand {
 
             inst.retransformClasses(classList.toArray(new Class[0]));
 
-            retransformModel.setIds(retransformEntryList.stream().map(RetransformEntry::getId).collect(Collectors.toList()));
+            
+            List<Integer> ids  = new ArrayList<Integer>();
+            for (RetransformEntry retransformEntry : retransformEntryList) {
+                ids.add(retransformEntry.getId());
+            }
+            retransformModel.setIds(ids);
+
             process.appendResult(retransformModel);
             process.end();
         } catch (Throwable e) {
