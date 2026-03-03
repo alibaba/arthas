@@ -73,7 +73,7 @@ public class GlobalOptions {
     @Option(level = 1,
             name = "object-size-limit",
             summary = "Option to control ObjectView output size limit",
-            description = "Upper size limit in bytes for ObjectView output. Default value is 10 * 1024 * 1024."
+            description = "Upper size limit in bytes for ObjectView output, must be greater than 0. Default value is 10 * 1024 * 1024."
     )
     public static volatile int objectSizeLimit = ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
 

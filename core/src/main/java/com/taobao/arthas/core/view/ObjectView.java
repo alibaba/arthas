@@ -82,7 +82,7 @@ public class ObjectView implements View {
         } catch (ObjectTooLargeException e) {
             buf.append(" Object size exceeds size limit: ")
                     .append(maxObjectLength)
-                    .append(", try to specify -M <sizeLimit> or --sizeLimit in your command, or use options object-size-limit.");
+                    .append(", try to use `options object-size-limit <bytes>` to increase the limit.");
             return buf.toString();
         } catch (Throwable t) {
             logger.error("ObjectView draw error, object class: {}", object.getClass(), t);

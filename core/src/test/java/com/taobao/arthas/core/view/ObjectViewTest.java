@@ -308,7 +308,7 @@ public class ObjectViewTest {
                 "    c1=@NestedClass[\n" +
                 "        code=@Integer[1],\n" +
                 "        c1=...\n" +
-                "... Object size exceeds size limit: 100, try to specify -M <sizeLimit> or --sizeLimit in your command, or use options object-size-limit.";
+                "... Object size exceeds size limit: 100, try to use `options object-size-limit <bytes>` to increase the limit.";
         Assert.assertEquals(expected, objectView.draw());
     }
 
