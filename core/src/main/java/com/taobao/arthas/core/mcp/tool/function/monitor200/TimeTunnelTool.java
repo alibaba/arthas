@@ -48,6 +48,9 @@ public class TimeTunnelTool extends AbstractArthasTool {
             @ToolParam(description = "Class最大匹配数量，防止匹配到的Class数量太多导致JVM挂起，默认50", required = false)
             Integer maxMatchCount,
 
+            @ToolParam(description = "输出结果大小上限(字节)。对应 tt -M/--sizeLimit，默认 10 * 1024 * 1024", required = false)
+            Integer sizeLimit,
+
             @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出（仅record操作）", required = false)
             Integer timeout,
 
@@ -61,6 +64,9 @@ public class TimeTunnelTool extends AbstractArthasTool {
         validateParameters(ttAction, classPattern, methodPattern, index, searchExpression);
 
         StringBuilder cmd = buildCommand("tt");
+        if (sizeLimit != null && sizeLimit > 0) {
+            cmd.append(" -M ").append(sizeLimit);
+        }
 
         switch (ttAction) {
             case "record":
