@@ -23,8 +23,11 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
 
     @Override
     public void draw(CommandProcess process, TimeTunnelModel timeTunnelModel) {
+        int sizeLimitValue = GlobalOptions.objectSizeLimit;
         Integer sizeLimit = timeTunnelModel.getSizeLimit();
-        int sizeLimitValue = sizeLimit != null ? sizeLimit : GlobalOptions.objectSizeLimit;
+        if (sizeLimit != null) {
+            sizeLimitValue = sizeLimit.intValue();
+        }
 
         if (timeTunnelModel.getTimeFragmentList() != null) {
             //show list table: tt -l / tt -t

@@ -18,7 +18,11 @@ public class WatchView extends ResultView<WatchModel> {
     @Override
     public void draw(CommandProcess process, WatchModel model) {
         ObjectVO objectVO = model.getValue();
-        int sizeLimit = model.getSizeLimit() != null ? model.getSizeLimit() : GlobalOptions.objectSizeLimit;
+        int sizeLimit = GlobalOptions.objectSizeLimit;
+        Integer modelSizeLimit = model.getSizeLimit();
+        if (modelSizeLimit != null) {
+            sizeLimit = modelSizeLimit.intValue();
+        }
         String result = StringUtils.objectToString(
                 objectVO.needExpand() ? new ObjectView(sizeLimit, objectVO).draw() : objectVO.getObject());
 

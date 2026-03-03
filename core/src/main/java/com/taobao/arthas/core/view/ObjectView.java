@@ -700,7 +700,10 @@ public class ObjectView implements View {
 
     private static int defaultMaxObjectLength() {
         int limit = GlobalOptions.objectSizeLimit;
-        return limit > 0 ? limit : ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
+        if (limit > 0) {
+            return limit;
+        }
+        return ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
     }
 
 }
