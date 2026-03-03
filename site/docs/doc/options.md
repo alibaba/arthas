@@ -12,7 +12,7 @@
 | dump                   | false    | 是否支持被增强了的类 dump 到外部文件中，如果打开开关，class 文件会被 dump 到`/${application working dir}/arthas-class-dump/`目录下，具体位置详见控制台输出 |
 | batch-re-transform     | true     | 是否支持批量对匹配到的类执行 retransform 操作                                                                                                              |
 | json-format            | false    | 是否支持 json 化的输出                                                                                                                                     |
-| object-size-limit      | 10485760 | ObjectView 输出大小上限（字节），必须大于 0，默认 `10 * 1024 * 1024`                                                                                           |
+| object-size-limit      | 10485760 | ObjectView 输出大小上限（字节），必须大于 0，默认 `10 * 1024 * 1024`                                                                                       |
 | disable-sub-class      | false    | 是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关                                                                 |
 | support-default-method | true     | 是否支持匹配到 default method， 默认会查找 interface，匹配里面的 default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105)               |
 | save-result            | false    | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中                                                         |
