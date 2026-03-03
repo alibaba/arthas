@@ -43,7 +43,7 @@ public class WatchCommand extends EnhancerCommand {
     private boolean isException = false;
     private boolean isSuccess = false;
     private Integer expand = 1;
-    private Integer sizeLimit = 10 * 1024 * 1024;
+    private Integer sizeLimit;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
     
@@ -97,7 +97,7 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
-    @Description("Upper size limit in bytes for the result (10 * 1024 * 1024 by default)")
+    @Description("Upper size limit in bytes for the result (must be greater than 0, default value comes from options object-size-limit)")
     public void setSizeLimit(Integer sizeLimit) {
         this.sizeLimit = sizeLimit;
     }
@@ -200,6 +200,16 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Override
+    public void process(CommandProcess process) {
+        String validateError = validateSizeLimit(sizeLimit);
+        if (validateError != null) {
+            process.end(-1, validateError);
+            return;
+        }
+        super.process(process);
+    }
+
+    @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         return new WatchAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
     }
@@ -207,5 +217,12 @@ public class WatchCommand extends EnhancerCommand {
     @Override
     protected void completeArgument3(Completion completion) {
         CompletionUtils.complete(completion, Arrays.asList(EXPRESS_EXAMPLES));
+    }
+
+    static String validateSizeLimit(Integer sizeLimit) {
+        if (sizeLimit != null && sizeLimit.intValue() <= 0) {
+            return "sizeLimit must be greater than 0.";
+        }
+        return null;
     }
 }

@@ -22,7 +22,7 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
 
     @Override
     public void draw(CommandProcess process, TimeTunnelModel timeTunnelModel) {
-        Integer sizeLimit = timeTunnelModel.getSizeLimit();
+        int sizeLimitValue = ObjectView.normalizeMaxObjectLength(timeTunnelModel.getSizeLimit());
 
         if (timeTunnelModel.getTimeFragmentList() != null) {
             //show list table: tt -l / tt -t
@@ -35,7 +35,7 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
             TableElement table = TimeTunnelTable.createDefaultTable();
             TimeTunnelTable.drawTimeTunnel(table, tf);
             TimeTunnelTable.drawParameters(table, tf.getParams());
-            TimeTunnelTable.drawReturnObj(table, tf, sizeLimit);
+            TimeTunnelTable.drawReturnObj(table, tf, sizeLimitValue);
             TimeTunnelTable.drawThrowException(table, tf);
             process.write(RenderUtil.render(table, process.width()));
 
@@ -43,7 +43,7 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
             //watch single TimeFragment: tt -i 1000 -w 'params'
             ObjectVO valueVO = timeTunnelModel.getWatchValue();
             if (valueVO.needExpand()) {
-                process.write(new ObjectView(sizeLimit, valueVO).draw()).write("\n");
+                process.write(new ObjectView(sizeLimitValue, valueVO).draw()).write("\n");
             } else {
                 process.write(StringUtils.objectToString(valueVO.getObject())).write("\n");
             }
@@ -52,7 +52,7 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
             //search & watch: tt -s 'returnObj!=null' -w 'returnObj'
             TableElement table = TimeTunnelTable.createDefaultTable();
             TimeTunnelTable.drawWatchTableHeader(table);
-            TimeTunnelTable.drawWatchResults(table, timeTunnelModel.getWatchResults(), sizeLimit);
+            TimeTunnelTable.drawWatchResults(table, timeTunnelModel.getWatchResults(), sizeLimitValue);
             process.write(RenderUtil.render(table, process.width()));
 
         } else if (timeTunnelModel.getReplayResult() != null) {
@@ -63,7 +63,7 @@ public class TimeTunnelView extends ResultView<TimeTunnelModel> {
             TimeTunnelTable.drawPlayHeader(replayResult.getClassName(), replayResult.getMethodName(), replayResult.getObject(), replayResult.getIndex(), table);
             TimeTunnelTable.drawParameters(table, replayResult.getParams());
             if (replayResult.isReturn()) {
-                TimeTunnelTable.drawPlayResult(table, replayResult.getReturnObj(), sizeLimit, replayResult.getCost());
+                TimeTunnelTable.drawPlayResult(table, replayResult.getReturnObj(), sizeLimitValue, replayResult.getCost());
             } else {
                 TimeTunnelTable.drawPlayException(table, replayResult.getThrowExp());
             }

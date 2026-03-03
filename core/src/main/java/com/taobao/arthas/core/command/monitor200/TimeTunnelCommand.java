@@ -68,7 +68,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     // expand of TimeTunnel
     private Integer expand = 1;
     // upper size limit
-    private Integer sizeLimit = 10 * 1024 * 1024;
+    private Integer sizeLimit;
     // watch the index TimeTunnel
     private String watchExpress = com.taobao.arthas.core.util.Constants.EMPTY_STRING;
     private String searchExpress = com.taobao.arthas.core.util.Constants.EMPTY_STRING;
@@ -131,7 +131,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
-    @Description("Upper size limit in bytes for the result (10 * 1024 * 1024 by default)")
+    @Description("Upper size limit in bytes for the result (must be greater than 0, default value comes from options object-size-limit)")
     public void setSizeLimit(Integer sizeLimit) {
         this.sizeLimit = sizeLimit;
     }
@@ -234,10 +234,22 @@ public class TimeTunnelCommand extends EnhancerCommand {
         return !StringUtils.isEmpty(searchExpress);
     }
 
+    static String validateSizeLimit(Integer sizeLimit) {
+        if (sizeLimit != null && sizeLimit.intValue() <= 0) {
+            return "sizeLimit must be greater than 0.";
+        }
+        return null;
+    }
+
     /**
      * 检查参数是否合法
      */
     private void checkArguments() {
+        String validateError = validateSizeLimit(sizeLimit);
+        if (validateError != null) {
+            throw new IllegalArgumentException(validateError);
+        }
+
         // 检查d/p参数是否有i参数配套
         if ((isDelete || isPlay) && null == index) {
             throw new IllegalArgumentException("Time fragment index is expected, please type -i to specify");

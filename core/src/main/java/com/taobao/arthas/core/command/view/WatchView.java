@@ -17,8 +17,9 @@ public class WatchView extends ResultView<WatchModel> {
     @Override
     public void draw(CommandProcess process, WatchModel model) {
         ObjectVO objectVO = model.getValue();
+        int sizeLimit = ObjectView.normalizeMaxObjectLength(model.getSizeLimit());
         String result = StringUtils.objectToString(
-                objectVO.needExpand() ? new ObjectView(model.getSizeLimit(), objectVO).draw() : objectVO.getObject());
+                objectVO.needExpand() ? new ObjectView(sizeLimit, objectVO).draw() : objectVO.getObject());
 
         StringBuilder sb = new StringBuilder();
         sb.append("method=").append(model.getClassName()).append(".").append(model.getMethodName())

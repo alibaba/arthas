@@ -12,6 +12,7 @@ Global options
 | dump                   | false         | whether to dump enhanced class to the external files. If it's on, enhanced class will be dumped into `/${application dir}/arthas-class-dump/`, the specific output path will be output in the console |
 | batch-re-transform     | true          | whether to re-transform matched classes in batch                                                                                                                                                      |
 | json-format            | false         | whether to output in JSON format                                                                                                                                                                      |
+| object-size-limit      | 10485760      | upper size limit in bytes for ObjectView output (must be greater than 0, default is `10 * 1024 * 1024`)                                                                                               |
 | disable-sub-class      | false         | whether to enable matching child classes. The default value is `true`. If exact match is desire, turn off this flag                                                                                   |
 | support-default-method | true          | whether to enable matching default method in interface. The default value is `true`. Refer to [#1105](https://github.com/alibaba/arthas/issues/1105)                                                  |
 | save-result            | false         | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on                                                                         |
@@ -40,6 +41,9 @@ $ options
  2      boolea  json-format   false   Option to support JS  This option enables to format object outpu
         n                             ON format of object   t with JSON when -x option selected.
                                       output
+ 1      int     object-size-  10485760 Option to control O  Upper size limit in bytes for ObjectView o
+         limit                          bjectView output    utput, must be greater than 0. Default val
+                                                             ue is 10 * 1024 * 1024.
  1      boolea  disable-sub-  false   Option to control in  This option disable to include sub class w
         n       class                 clude sub class when  hen matching class.
                                        class matching

@@ -2,6 +2,7 @@ package com.taobao.arthas.core;
 
 import java.lang.reflect.Field;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.UnsafeUtils;
 
@@ -65,6 +66,16 @@ public class GlobalOptions {
             description = "This option enables to format object output with JSON when -x option selected."
     )
     public static volatile boolean isUsingJson = false;
+
+    /**
+     * ObjectView 输出大小限制（字节）
+     */
+    @Option(level = 1,
+            name = "object-size-limit",
+            summary = "Option to control ObjectView output size limit",
+            description = "Upper size limit in bytes for ObjectView output, must be greater than 0. Default value is 10 * 1024 * 1024."
+    )
+    public static volatile int objectSizeLimit = ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
 
     /**
      * 是否关闭子类
