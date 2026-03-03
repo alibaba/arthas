@@ -74,6 +74,29 @@ class ArthasMcpToolsIT {
                 toolNames.add(tool.getName());
             }
             assertThat(toolNames).contains("jvm", "jad", "thread");
+            assertThat(toolNames).contains("watch", "tt");
+
+            McpSchema.Tool watchTool = toolsResult.getTools().stream()
+                    .filter(t -> "watch".equals(t.getName()))
+                    .findFirst()
+                    .orElse(null);
+            assertThat(watchTool).as("watch tool should exist in listTools").isNotNull();
+            assertThat(watchTool.getInputSchema()).isNotNull();
+            assertThat(watchTool.getInputSchema().getProperties()).containsKey("sizeLimit");
+            if (watchTool.getInputSchema().getRequired() != null) {
+                assertThat(watchTool.getInputSchema().getRequired()).doesNotContain("sizeLimit");
+            }
+
+            McpSchema.Tool ttTool = toolsResult.getTools().stream()
+                    .filter(t -> "tt".equals(t.getName()))
+                    .findFirst()
+                    .orElse(null);
+            assertThat(ttTool).as("tt tool should exist in listTools").isNotNull();
+            assertThat(ttTool.getInputSchema()).isNotNull();
+            assertThat(ttTool.getInputSchema().getProperties()).containsKey("sizeLimit");
+            if (ttTool.getInputSchema().getRequired() != null) {
+                assertThat(ttTool.getInputSchema().getRequired()).doesNotContain("sizeLimit");
+            }
 
             McpSchema.CallToolResult callToolResult = client.callTool(sessionId, "jvm", Collections.emptyMap());
             assertThat(callToolResult).isNotNull();

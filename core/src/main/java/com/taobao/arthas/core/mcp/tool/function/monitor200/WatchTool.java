@@ -57,6 +57,9 @@ public class WatchTool extends AbstractArthasTool {
             @ToolParam(description = "指定输出结果的属性遍历深度，默认1，最大4", required = false)
             Integer expandLevel,
 
+            @ToolParam(description = "输出结果大小上限(字节)。对应 watch -M/--sizeLimit，默认 10 * 1024 * 1024", required = false)
+            Integer sizeLimit,
+
             @ToolParam(description = "命令执行超时时间，单位为秒，默认" + AbstractArthasTool.DEFAULT_TIMEOUT_SECONDS +  "秒。超时后命令自动退出", required = false)
             Integer timeout,
 
@@ -74,6 +77,9 @@ public class WatchTool extends AbstractArthasTool {
         cmd.append(" -n ").append(execCount);
         cmd.append(" -m ").append(maxMatch);
         cmd.append(" -x ").append(expandDepth);
+        if (sizeLimit != null && sizeLimit > 0) {
+            cmd.append(" -M ").append(sizeLimit);
+        }
 
         addFlag(cmd, "-E", regex);
 
