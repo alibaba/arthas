@@ -30,13 +30,13 @@ public class ExpressFactory {
             express = new OgnlExpress();
             expressRef.set(new WeakReference<Express>(express));
         }
-        return express.reset().bind(object);
+        return express.reset().bind(object).bind("ref", ObjectRefStore.ref());
     }
 
     public static Express unpooledExpress(ClassLoader classloader) {
         if (classloader == null) {
             classloader = ClassLoader.getSystemClassLoader();
         }
-        return new OgnlExpress(new ClassLoaderClassResolver(classloader));
+        return new OgnlExpress(new ClassLoaderClassResolver(classloader)).bind("ref", ObjectRefStore.ref());
     }
 }

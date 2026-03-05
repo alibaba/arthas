@@ -22,6 +22,28 @@
 - OGNL 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
 - OGNL 表达式官方指南：[https://commons.apache.org/dormant/commons-ognl/language-guide.html](https://commons.apache.org/dormant/commons-ognl/language-guide.html)
 
+## 对象引用存储器（#ref）
+
+Arthas 在 OGNL 上下文里内置了 `#ref` 变量，用于在多次命令之间共享对象引用。
+
+`#ref` 保存的是**弱引用**，不会阻止应用 JVM 回收对象，所以 `get()` 可能返回 `null`（对象已被 GC），这是正常行为。
+
+`#ref` 是全局共享的（同一个 Arthas 进程内所有连接可见）。建议使用命名空间隔离/协作：
+
+- 为避免 key 无限制增长，`#ref` 内部有容量上限，超过后会按 LRU（最近最少使用）策略淘汰。
+- 存入：`#ref.ns("case-123").put("name", obj)`
+- 取出：`#ref.ns("case-123").get("name")`
+- 列表：`#ref.ns("case-123").ls()`
+- 删除：`#ref.ns("case-123").remove("name")`
+- 清空命名空间：`#ref.ns("case-123").clear()`
+
+示例：配合 `watch` 暂存返回值，后续 `ognl` 再取出：
+
+```bash
+$ watch demo.MathGame primeFactors '{#ref.ns("case-123").put("ret", returnObj), returnObj}' -x 2 -n 1
+$ ognl '#ref.ns("case-123").get("ret")'
+```
+
 调用静态函数：
 
 ```bash
