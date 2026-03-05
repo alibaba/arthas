@@ -17,6 +17,8 @@ package one.profiler;
  * }</pre>
  */
 public interface AsyncProfilerMXBean {
+    String OBJECT_NAME = "one.profiler:type=AsyncProfiler";
+
     void start(String event, long interval) throws IllegalStateException;
     void resume(String event, long interval) throws IllegalStateException;
     void stop() throws IllegalStateException;

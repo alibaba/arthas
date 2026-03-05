@@ -39,16 +39,22 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
                 // No need to load library, if it has been preloaded with -agentpath
                 profiler.getVersion();
             } catch (UnsatisfiedLinkError e) {
-                File file = extractEmbeddedLib();
-                if (file != null) {
-                    try {
-                        System.load(file.getPath());
-                    } finally {
-                        file.delete();
-                    }
+                String libraryPath = System.getProperty("one.profiler.libraryPath");
+                if (libraryPath != null && !libraryPath.isEmpty()) {
+                    System.load(new File(libraryPath).getAbsolutePath());
                 } else {
-                    System.loadLibrary("asyncProfiler");
+                    File file = extractEmbeddedLib();
+                    if (file != null) {
+                        try {
+                            System.load(file.getAbsolutePath());
+                        } finally {
+                            file.delete();
+                        }
+                    } else {
+                        System.loadLibrary("asyncProfiler");
+                    }
                 }
+
             }
         }
 
@@ -171,7 +177,7 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
 
     /**
      * Execute an agent-compatible profiling command -
-     * the comma-separated list of arguments described in arguments.cpp
+     * the comma-separated list of arguments defined in arguments.cpp
      *
      * @param command Profiling command
      * @return The command result
