@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.mcp.tool.function.monitor200;
 
 import com.taobao.arthas.core.mcp.tool.function.AbstractArthasTool;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
@@ -27,7 +28,8 @@ public class MonitorTool extends AbstractArthasTool {
     @Tool(
         name = "monitor",
         description = "Monitor 方法调用监控工具: 实时监控指定类的指定方法的调用情况，包括调用次数、成功次数、失败次数、平均RT、失败率等统计信息。对应 Arthas 的 monitor 命令。",
-        streamable = true
+        streamable = true,
+        taskSupport = McpSchema.TaskSupportMode.OPTIONAL
     )
     public String monitor(
             @ToolParam(description = "类名表达式匹配，支持通配符，如demo.MathGame")

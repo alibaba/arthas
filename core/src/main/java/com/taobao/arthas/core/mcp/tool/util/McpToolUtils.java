@@ -1,26 +1,18 @@
 package com.taobao.arthas.core.mcp.tool.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.protocol.server.McpServerFeatures;
 import com.taobao.arthas.mcp.server.protocol.server.McpStatelessServerFeatures;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolCallback;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
+import com.taobao.arthas.mcp.server.tool.ToolContextKeys;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public final class McpToolUtils {
-
-	public static final String TOOL_CONTEXT_MCP_EXCHANGE_KEY = "exchange";
-
-    public static final String TOOL_CONTEXT_COMMAND_CONTEXT_KEY = "commandContext";
-
-	public static final String MCP_TRANSPORT_CONTEXT = "mcpTransportContext";
-
-	public static final String PROGRESS_TOKEN = "progressToken";
 
 	private McpToolUtils() {
 	}
@@ -50,18 +42,19 @@ public final class McpToolUtils {
 		McpSchema.Tool tool = new McpSchema.Tool(
 				toolCallback.getToolDefinition().getName(),
 				toolCallback.getToolDefinition().getDescription(),
-				toolCallback.getToolDefinition().getInputSchema()
+				toolCallback.getToolDefinition().getInputSchema(),
+				new McpSchema.ToolExecution(toolCallback.getToolDefinition().taskSupport())
 		);
 
 		McpServerFeatures.ToolCallFunction callFunction = (exchange, commandContext, request) -> {
 			try {
 				Map<String, Object> contextMap = new HashMap<>();
-				contextMap.put(TOOL_CONTEXT_MCP_EXCHANGE_KEY, exchange);
-				contextMap.put(TOOL_CONTEXT_COMMAND_CONTEXT_KEY, commandContext);
-                contextMap.put(PROGRESS_TOKEN, request.progressToken());
+				contextMap.put(ToolContextKeys.EXCHANGE, exchange);
+				contextMap.put(ToolContextKeys.COMMAND_CONTEXT, commandContext);
+                contextMap.put(ToolContextKeys.PROGRESS_TOKEN, request.progressToken());
 				// Add MCP_TRANSPORT_CONTEXT from exchange for streamable tools to access auth info
 				if (exchange != null && exchange.getTransportContext() != null) {
-					contextMap.put(MCP_TRANSPORT_CONTEXT, exchange.getTransportContext());
+					contextMap.put(ToolContextKeys.MCP_TRANSPORT_CONTEXT, exchange.getTransportContext());
 				}
 				ToolContext toolContext = new ToolContext(contextMap);
 
@@ -100,14 +93,15 @@ public final class McpToolUtils {
 		McpSchema.Tool tool = new McpSchema.Tool(
 				toolCallback.getToolDefinition().getName(),
 				toolCallback.getToolDefinition().getDescription(),
-				toolCallback.getToolDefinition().getInputSchema()
+				toolCallback.getToolDefinition().getInputSchema(),
+				new McpSchema.ToolExecution(toolCallback.getToolDefinition().taskSupport())
 		);
 
 		McpStatelessServerFeatures.ToolCallFunction callFunction = (context, commandContext, arguments) -> {
 			try {
 				Map<String, Object> contextMap = new HashMap<>();
-				contextMap.put(MCP_TRANSPORT_CONTEXT, context);
-				contextMap.put(TOOL_CONTEXT_COMMAND_CONTEXT_KEY, commandContext);
+				contextMap.put(ToolContextKeys.MCP_TRANSPORT_CONTEXT, context);
+				contextMap.put(ToolContextKeys.COMMAND_CONTEXT, commandContext);
 				ToolContext toolContext = new ToolContext(contextMap);
 
 				String argumentsJson = convertParametersToString(arguments);
