@@ -84,7 +84,7 @@ public class ArthasMcpServer {
             
             McpServerProperties properties = new McpServerProperties.Builder()
                     .name("arthas-mcp-server")
-                    .version("4.1.7")
+                    .version("4.1.8")
                     .mcpEndpoint(mcpEndpoint)
                     .toolChangeNotification(true)
                     .resourceChangeNotification(true)
