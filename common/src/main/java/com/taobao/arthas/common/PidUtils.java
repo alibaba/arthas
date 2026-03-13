@@ -28,7 +28,11 @@ public class PidUtils {
         }
 
         try {
-            MAIN_CLASS = System.getProperty("sun.java.command", "");
+            String command = System.getProperty("sun.java.command", "");
+            // sun.java.command contains the main class name followed by its arguments,
+            // so only take the first token as the main class name
+            int spaceIndex = command.indexOf(' ');
+            MAIN_CLASS = spaceIndex != -1 ? command.substring(0, spaceIndex) : command;
         } catch (Throwable e) {
             // ignore
         }
