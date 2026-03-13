@@ -9,54 +9,62 @@ MCP (Model Context Protocol) is a standardized protocol proposed by Anthropic fo
 ### Key Features
 
 - **AI-Native Integration**: Supports mainstream AI clients (Claude Desktop, Cherry Studio, Cline, etc.)
-- **Standardized Protocol**: Full implementation of MCP protocol specification (version 2025-03-26), supporting Streamable Http transport
-- **26 Diagnostic Tools**: Covers core functionalities including JVM monitoring, class loading, method tracing, etc.
+- **Standardized Protocol**: Full implementation of MCP protocol specification (version 2025-06-18), supporting Streamable Http transport
+- **29 Diagnostic Tools**: Covers core functionalities including JVM monitoring, class loading, method tracing, etc.
 - **Security Authentication**: Supports Bearer Token authentication mechanism
 
 ## Supported Diagnostic Tools
 
-Arthas MCP Server integrates 26 core diagnostic tools, categorized by functionality:
+Arthas MCP Server integrates 29 diagnostic tools, categorized by functionality:
 
-### JVM-Related Tools (12)
+### JVM-Related Tools (13)
 
-| Tool            | Description                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------- |
-| **dashboard**   | Real-time JVM/application dashboard with customizable refresh interval and count control |
-| **heapdump**    | Generate JVM heap dump file, supports `--live` option to export only live objects        |
-| **jvm**         | View current JVM detailed information                                                    |
-| **mbean**       | View or monitor MBean attributes, supports real-time refresh and pattern matching        |
-| **memory**      | View JVM memory information                                                              |
-| **thread**      | View thread information and stack traces, supports finding blocked and busiest threads   |
-| **sysprop**     | View or modify system properties, supports dynamic JVM system property modification      |
-| **sysenv**      | View system environment variables                                                        |
-| **vmoption**    | View or update VM options, supports dynamic JVM parameter adjustment                     |
-| **perfcounter** | View Perf Counter information, displays JVM performance counters                         |
-| **vmtool**      | VM tool collection, supports forced GC, instance retrieval, thread interruption, etc.    |
-| **getstatic**   | View static field values of a class                                                      |
-| **ognl**        | Execute OGNL expressions, dynamically invoke methods and access fields                   |
+| Tool            | Description                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| **dashboard**   | Real-time JVM/application dashboard with customizable refresh interval and count control  |
+| **heapdump**    | Generate JVM heap dump file, supports `--live` option to export only live objects         |
+| **jvm**         | View current JVM detailed runtime information                                             |
+| **mbean**       | View or monitor MBean attributes, supports real-time refresh and pattern matching         |
+| **memory**      | View JVM memory usage                                                                     |
+| **thread**      | View thread information and stack traces, supports finding blocked and busiest threads    |
+| **sysprop**     | View or modify system properties, supports dynamic JVM system property modification       |
+| **sysenv**      | View system environment variables                                                         |
+| **vmoption**    | View or update VM options, supports dynamic JVM parameter adjustment                      |
+| **perfcounter** | View JVM Perf Counter information                                                         |
+| **vmtool**      | VM tool collection, supports forced GC, instance retrieval, thread interruption, etc.     |
+| **getstatic**   | View static field values of a class, supports specifying ClassLoader and OGNL expressions |
+| **ognl**        | Execute OGNL expressions, dynamically invoke methods and access fields                    |
 
 ### Class/ClassLoader Tools (8)
 
-| Tool            | Description                                                                         |
-| --------------- | ----------------------------------------------------------------------------------- |
-| **sc**          | View loaded class information in JVM, supports detailed info and statistics         |
-| **sm**          | View method information of loaded classes, displays method signatures and modifiers |
-| **jad**         | Decompile loaded class source code, converts bytecode to Java code                  |
-| **classloader** | ClassLoader diagnostic tool, view classloader statistics, hierarchy tree, URLs      |
-| **mc**          | Memory compiler, compiles Java source code to bytecode files                        |
-| **redefine**    | Redefine classes, load external class files to redefine classes in JVM              |
-| **retransform** | Retransform classes, triggers class retransformation and bytecode enhancement       |
-| **dump**        | Dump actual running class bytecode from JVM to specified directory                  |
+| Tool            | Description                                                                                                                                            |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **sc**          | Search loaded classes in JVM, supports wildcard and regex matching, view class details (classloader, interfaces, superclass, annotations, etc.)        |
+| **sm**          | Search methods of loaded classes, supports wildcard and regex matching, view method signatures, parameter types, annotations, etc.                     |
+| **jad**         | Decompile loaded class source code, converts actual running class bytecode in JVM to Java code                                                         |
+| **classloader** | ClassLoader diagnostic tool, view classloader statistics, hierarchy tree, URLs, supports resource lookup and class loading; prefer sc for class search |
+| **mc**          | Memory compiler, compiles `.java` source files to `.class` bytecode files                                                                              |
+| **redefine**    | Reload class bytecode, allows hot-updating existing classes in the JVM at runtime                                                                      |
+| **retransform** | Hot-load class bytecode, apply bytecode modifications to loaded classes and make them effective                                                        |
+| **dump**        | Dump actual running class bytecode from JVM to specified directory, suitable for batch downloading bytecode of specified packages                      |
 
 ### Monitoring and Diagnostic Tools (6)
 
-| Tool        | Description                                                                                     |
-| ----------- | ----------------------------------------------------------------------------------------------- |
-| **monitor** | Monitor invocation of specified methods in real-time                                            |
-| **stack**   | Output call path of current method, helps analyze method call chains                            |
-| **trace**   | Trace internal method call paths, output time cost for each node                                |
-| **tt**      | Time tunnel for method execution data, records parameters and return values for each invocation |
-| **watch**   | Observe method invocations including parameters, return values, and exceptions                  |
+| Tool         | Description                                                                                                                     |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| **monitor**  | Monitor invocation of specified methods in real-time, outputs call count, success rate, average RT, and other statistics        |
+| **stack**    | Output call path of current method, helps analyze method call chains                                                            |
+| **trace**    | Trace internal method call paths, output time cost for each node, supports condition filtering                                  |
+| **tt**       | Time tunnel for method execution data, records parameters and return values for each invocation, supports replay and inspection |
+| **watch**    | Observe method invocations including parameters, return values, and exceptions, supports real-time streaming output             |
+| **profiler** | Async Profiler diagnostic tool, samples CPU/alloc/lock events and outputs flamegraph, JFR, and other formats                    |
+
+### Arthas Utility Tools (2)
+
+| Tool         | Description                                                                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **viewfile** | View file contents (only within configured directory whitelist), supports cursor/offset pagination to avoid returning large content all at once |
+| **options**  | View or modify Arthas global options                                                                                                            |
 
 ## Quick Start
 
@@ -104,11 +112,27 @@ Add MCP server configuration in settings:
 
 ### Arthas Configuration
 
-| Property             | Description                                           | Default                              |
-| -------------------- | ----------------------------------------------------- | ------------------------------------ |
-| `arthas.mcpEndpoint` | MCP service access path                               | None (requires manual configuration) |
-| `arthas.httpPort`    | HTTP service port                                     | 8563                                 |
-| `arthas.password`    | Authentication password (when authentication enabled) | None                                 |
+| Property             | Description                                                                 | Default                              |
+| -------------------- | --------------------------------------------------------------------------- | ------------------------------------ |
+| `arthas.mcpEndpoint` | MCP service access path                                                     | None (requires manual configuration) |
+| `arthas.mcpProtocol` | Transport protocol mode: `STREAMABLE` (stateful) or `STATELESS` (stateless) | `STREAMABLE`                         |
+| `arthas.httpPort`    | HTTP service port                                                           | 8563                                 |
+| `arthas.password`    | Authentication password (when authentication enabled)                       | None                                 |
+
+### Transport Protocol Mode
+
+Arthas MCP Server supports two transport protocol modes:
+
+- **STREAMABLE mode** (default): Stateful mode, maintains persistent connections via HTTP/SSE, supports long-running commands (e.g. watch, trace, monitor and other streaming tools), progress notifications, and session state. Suitable for interactive diagnostic scenarios.
+- **STATELESS mode**: Stateless mode, each request is independent. Suitable for simple one-off query scenarios.
+
+Configure in `arthas.properties`:
+
+```properties
+arthas.mcpEndpoint=/mcp
+# Optional, defaults to STREAMABLE
+arthas.mcpProtocol=STREAMABLE
+```
 
 ### Authentication Configuration
 
@@ -139,6 +163,19 @@ AI client configuration example:
 ::: warning
 **Note**: The token in the Authorization header must exactly match the value configured in `arthas.password`.
 :::
+
+### viewfile Directory Whitelist Configuration
+
+The `viewfile` tool by default only allows viewing files in the following directories:
+
+- The `arthas-output` directory under the current working directory (if it exists)
+- The `~/logs/` directory under the user's home directory (if it exists)
+
+Additional directories can be configured via environment variable:
+
+```bash
+export ARTHAS_MCP_VIEWFILE_ALLOWED_DIRS=/path/to/dir1,/path/to/dir2
+```
 
 ## Feedback & Contribution
 
