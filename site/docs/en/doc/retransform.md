@@ -102,7 +102,7 @@ The `mc` command may fail. You can modify the code locally, compile it, and uplo
 1. Convert the `.class` file to base64 first, then save it as result.txt
 
    ```bash
-   Base64 < Test.class > result.txt
+   base64 < Test.class > result.txt
    ```
 
 2. Login the server, create and edit `result.txt`, copy the local content, paste and save
@@ -110,7 +110,7 @@ The `mc` command may fail. You can modify the code locally, compile it, and uplo
 3. Restore `result.txt` on the server to `.class`
 
    ```
-   Base64 -d < result.txt > Test.class
+   base64 -d < result.txt > Test.class
    ```
 
 4. Use the md5 command to verify that the `.class` files are consistent.
