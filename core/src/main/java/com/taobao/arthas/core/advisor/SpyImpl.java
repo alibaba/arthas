@@ -39,6 +39,7 @@ public class SpyImpl extends AbstractSpy {
     @Override
     public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
         if (DISPATCHING.get()) {
+            logger.debug("Skipping re-entrant atEnter advice dispatch for class: {}, methodInfo: {}", clazz.getName(), methodInfo);
             return;
         }
         DISPATCHING.set(Boolean.TRUE);
@@ -70,6 +71,7 @@ public class SpyImpl extends AbstractSpy {
     @Override
     public void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args, Object returnObject) {
         if (DISPATCHING.get()) {
+            logger.debug("Skipping re-entrant atExit advice dispatch for class: {}, methodInfo: {}", clazz.getName(), methodInfo);
             return;
         }
         DISPATCHING.set(Boolean.TRUE);
@@ -100,6 +102,7 @@ public class SpyImpl extends AbstractSpy {
     @Override
     public void atExceptionExit(Class<?> clazz, String methodInfo, Object target, Object[] args, Throwable throwable) {
         if (DISPATCHING.get()) {
+            logger.debug("Skipping re-entrant atExceptionExit advice dispatch for class: {}, methodInfo: {}", clazz.getName(), methodInfo);
             return;
         }
         DISPATCHING.set(Boolean.TRUE);
@@ -129,79 +132,102 @@ public class SpyImpl extends AbstractSpy {
 
     @Override
     public void atBeforeInvoke(Class<?> clazz, String invokeInfo, Object target) {
-        ClassLoader classLoader = clazz.getClassLoader();
-        String[] info = StringUtils.splitInvokeInfo(invokeInfo);
-        String owner = info[0];
-        String methodName = info[1];
-        String methodDesc = info[2];
+        if (DISPATCHING.get()) {
+            return;
+        }
+        DISPATCHING.set(Boolean.TRUE);
+        try {
+            ClassLoader classLoader = clazz.getClassLoader();
+            String[] info = StringUtils.splitInvokeInfo(invokeInfo);
+            String owner = info[0];
+            String methodName = info[1];
+            String methodDesc = info[2];
 
-        List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
-                owner, methodName, methodDesc);
+            List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
+                    owner, methodName, methodDesc);
 
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+            if (listeners != null) {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                        listener.invokeBeforeTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    } catch (Throwable e) {
+                        logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                     }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeBeforeTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
             }
+        } finally {
+            DISPATCHING.set(Boolean.FALSE);
         }
     }
 
     @Override
     public void atAfterInvoke(Class<?> clazz, String invokeInfo, Object target) {
-        ClassLoader classLoader = clazz.getClassLoader();
-        String[] info = StringUtils.splitInvokeInfo(invokeInfo);
-        String owner = info[0];
-        String methodName = info[1];
-        String methodDesc = info[2];
-        List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
-                owner, methodName, methodDesc);
+        if (DISPATCHING.get()) {
+            return;
+        }
+        DISPATCHING.set(Boolean.TRUE);
+        try {
+            ClassLoader classLoader = clazz.getClassLoader();
+            String[] info = StringUtils.splitInvokeInfo(invokeInfo);
+            String owner = info[0];
+            String methodName = info[1];
+            String methodDesc = info[2];
+            List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
+                    owner, methodName, methodDesc);
 
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+            if (listeners != null) {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                        listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    } catch (Throwable e) {
+                        logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                     }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
             }
+        } finally {
+            DISPATCHING.set(Boolean.FALSE);
         }
-
     }
 
     @Override
     public void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable) {
-        ClassLoader classLoader = clazz.getClassLoader();
-        String[] info = StringUtils.splitInvokeInfo(invokeInfo);
-        String owner = info[0];
-        String methodName = info[1];
-        String methodDesc = info[2];
+        if (DISPATCHING.get()) {
+            return;
+        }
+        DISPATCHING.set(Boolean.TRUE);
+        try {
+            ClassLoader classLoader = clazz.getClassLoader();
+            String[] info = StringUtils.splitInvokeInfo(invokeInfo);
+            String owner = info[0];
+            String methodName = info[1];
+            String methodDesc = info[2];
 
-        List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
-                owner, methodName, methodDesc);
+            List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
+                    owner, methodName, methodDesc);
 
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+            if (listeners != null) {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                        listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    } catch (Throwable e) {
+                        logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                     }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
             }
+        } finally {
+            DISPATCHING.set(Boolean.FALSE);
         }
     }
 
