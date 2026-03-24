@@ -56,7 +56,7 @@ public class VMOptionCommand extends AnnotatedCommand {
                 return bean;
             }
         } catch (Throwable t) {
-            // fall through to JMX fallback
+            logger.debug("Primary HotSpotDiagnosticMXBean lookup failed, trying MBeanServer fallback", t);
         }
         // Fallback: look up via MBeanServer (better module compatibility on JDK 9+)
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
