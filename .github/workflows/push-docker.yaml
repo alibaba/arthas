@@ -13,8 +13,8 @@ jobs:
 
     steps:
       # 步骤 1：检出 master 分支的代码
-      - name: Checkout master branch
-        uses: actions/checkout@v3
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
         with:
           ref: master
 
