@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM eclipse-temurin:8-jdk-alpine
 
 ARG ARTHAS_VERSION="4.1.8"
 ARG MIRROR=false

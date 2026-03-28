@@ -31,7 +31,7 @@ java -jar arthas-boot.jar
 Select the target Java process to attach:
 
 ```bash
-$ $ java -jar arthas-boot.jar
+$ java -jar arthas-boot.jar
 * [1]: 35542
   [2]: 71560 math-game.jar
 ```
