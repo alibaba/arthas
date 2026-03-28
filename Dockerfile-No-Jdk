@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM openjdk:8-jdk-alpine AS builder
+FROM eclipse-temurin:8-jdk-alpine AS builder
 
 ARG ARTHAS_VERSION="4.1.8"
 ARG MIRROR=false
