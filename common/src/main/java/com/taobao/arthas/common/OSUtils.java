@@ -76,6 +76,11 @@ public class OSUtils {
 		return "x86_64".equals(arch);
 	}
 
+       public static boolean isLoongArch64() {
+               return "loongarch_64".equals(arch);
+       }
+
+
 	private static String normalizeArch(String value) {
 		value = normalize(value);
 		if (value.matches("^(x8664|amd64|ia32e|em64t|x64)$")) {

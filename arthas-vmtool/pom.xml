@@ -59,6 +59,21 @@
                 <lib_name>libArthasJniLibrary-aarch64.so</lib_name>
             </properties>
         </profile>
+        <profile>
+            <id>linux-loongarch64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>loongarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <os_arch_option>-march=loongarch64</os_arch_option>
+                <lib_name>libArthasJniLibrary-loongarch64.so</lib_name>
+            </properties>
+        </profile>
+
 
         <!-- linux other-arch-->
         <profile>

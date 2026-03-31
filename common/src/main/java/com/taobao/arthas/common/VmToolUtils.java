@@ -18,6 +18,8 @@ public class VmToolUtils {
                 libName = "libArthasJniLibrary-aarch64.so";
             } else if (OSUtils.isX86_64()) {
                 libName = "libArthasJniLibrary-x64.so";
+            } else if (OSUtils.isLoongArch64()) {
+                libName = "libArthasJniLibrary-loongarch64.so";
             }else {
                 libName = "libArthasJniLibrary-" + OSUtils.arch() + ".so";
             }
