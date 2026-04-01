@@ -19,6 +19,7 @@ public interface Constants {
             "        throwExp : the throw exception of method\n" +
             "        isReturn : the method ended by return\n" +
             "         isThrow : the method ended by throwing exception\n" +
+            "            #ref : global object reference store (weak reference)\n" +
             "           #cost : the execution time in ms of method invocation";
 
     String EXAMPLE = "\nEXAMPLES:\n";

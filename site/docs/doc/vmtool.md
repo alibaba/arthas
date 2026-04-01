@@ -82,6 +82,13 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'
 ```
 
+`--express` 的 OGNL 上下文里同样支持 `#ref` 对象引用存储器（弱引用），可以把中间对象保存下来，后续在其它命令里再取出：
+
+```bash
+vmtool --action getInstances --className org.springframework.context.ApplicationContext --express '#ref.ns("case-123").put("ctx", instances[0])'
+ognl '#ref.ns("case-123").get("ctx")'
+```
+
 ## 强制 GC
 
 ```bash
