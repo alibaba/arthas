@@ -9,6 +9,8 @@ import com.taobao.arthas.mcp.server.protocol.server.McpInitRequestHandler;
 import com.taobao.arthas.mcp.server.protocol.server.McpNotificationHandler;
 import com.taobao.arthas.mcp.server.protocol.server.McpRequestHandler;
 import com.taobao.arthas.mcp.server.protocol.server.store.InMemoryEventStore;
+import com.taobao.arthas.mcp.server.task.TaskMessageQueue;
+import com.taobao.arthas.mcp.server.task.TaskStore;
 
 import java.time.Duration;
 import java.util.Map;
@@ -27,17 +29,23 @@ public class DefaultMcpStreamableServerSessionFactory implements McpStreamableSe
     private final Map<String, McpRequestHandler<?>> requestHandlers;
     private final Map<String, McpNotificationHandler> notificationHandlers;
     private final CommandExecutor commandExecutor;
+    private final TaskStore<McpSchema.ServerTaskPayloadResult> taskStore;
+    private final TaskMessageQueue taskMessageQueue;
 
     public DefaultMcpStreamableServerSessionFactory(Duration requestTimeout,
                                                     McpInitRequestHandler mcpInitRequestHandler,
                                                     Map<String, McpRequestHandler<?>> requestHandlers,
                                                     Map<String, McpNotificationHandler> notificationHandlers,
-                                                    CommandExecutor commandExecutor) {
+                                                    CommandExecutor commandExecutor,
+                                                    TaskStore<McpSchema.ServerTaskPayloadResult> taskStore,
+                                                    TaskMessageQueue taskMessageQueue) {
         this.requestTimeout = requestTimeout;
         this.mcpInitRequestHandler = mcpInitRequestHandler;
         this.requestHandlers = requestHandlers;
         this.notificationHandlers = notificationHandlers;
         this.commandExecutor = commandExecutor;
+        this.taskStore = taskStore;
+        this.taskMessageQueue = taskMessageQueue;
     }
 
     @Override
@@ -53,7 +61,9 @@ public class DefaultMcpStreamableServerSessionFactory implements McpStreamableSe
                 requestHandlers,
                 notificationHandlers,
                 commandExecutor,
-                new InMemoryEventStore());
+                new InMemoryEventStore(),
+                taskStore,
+                taskMessageQueue);
 
         // Handle the initialization request
         CompletableFuture<McpSchema.InitializeResult> initResult = 

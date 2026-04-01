@@ -33,12 +33,23 @@ public final class StreamableToolUtils {
 
     public static final int MIN_ALLOW_INPUT_COUNT_TO_COMPLETE = 2;
 
+    /**
+     * 取消检查器函数式接口。
+     *
+     * <p>用于在轮询循环中定期检查任务是否已被取消。
+     */
+    @FunctionalInterface
+    public interface CancellationChecker {
+
+        boolean isCancelled();
+    }
+
     private StreamableToolUtils() {
     }
 
     /**
      * 同步执行命令并收集所有结果，支持进度通知
-     * 
+     *
      * @param exchange MCP交换器，用于发送进度通知
      * @param commandContext 命令上下文
      * @param expectedResultCount 预期结果数量
@@ -47,11 +58,32 @@ public final class StreamableToolUtils {
      * @param progressToken 进度令牌
      * @return 包含所有结果的Map，如果执行失败返回null
      */
-    public static Map<String, Object> executeAndCollectResults(McpNettyServerExchange exchange, 
-                                                             ArthasCommandContext commandContext, 
-                                                             Integer expectedResultCount, Integer intervalMs, 
+    public static Map<String, Object> executeAndCollectResults(McpNettyServerExchange exchange,
+                                                             ArthasCommandContext commandContext,
+                                                             Integer expectedResultCount, Integer intervalMs,
                                                              Integer timeoutMs,
                                                              String progressToken) {
+        return executeAndCollectResults(exchange, commandContext, expectedResultCount, intervalMs, timeoutMs, progressToken, null);
+    }
+
+    /**
+     * 同步执行命令并收集所有结果，支持进度通知和取消检查
+     *
+     * @param exchange MCP交换器，用于发送进度通知
+     * @param commandContext 命令上下文
+     * @param expectedResultCount 预期结果数量
+     * @param intervalMs 轮询间隔
+     * @param timeoutMs 超时时间(毫秒)
+     * @param progressToken 进度令牌
+     * @param cancellationChecker 取消检查器，为 null 时不检查取消
+     * @return 包含所有结果的Map，取消时返回带 cancelled 标记的结果，执行失败返回null
+     */
+    public static Map<String, Object> executeAndCollectResults(McpNettyServerExchange exchange,
+                                                             ArthasCommandContext commandContext,
+                                                             Integer expectedResultCount, Integer intervalMs,
+                                                             Integer timeoutMs,
+                                                             String progressToken,
+                                                             CancellationChecker cancellationChecker) {
         List<Object> allResults = new ArrayList<>();
         int errorRetries = 0;
         int allowInputCount = 0;
@@ -69,6 +101,12 @@ public final class StreamableToolUtils {
 
         try {
             while (System.currentTimeMillis() < deadline) {
+                // 检查任务是否已被取消
+                if (cancellationChecker != null && cancellationChecker.isCancelled()) {
+                    logger.info("Task cancellation detected, stopping command execution");
+                    return createCancelledResult(allResults, totalResultCount);
+                }
+
                 try {
                     Map<String, Object> results = commandContext.pullResults();
                     if (results == null) {
@@ -302,6 +340,17 @@ public final class StreamableToolUtils {
         response.put("results", collectedResults != null ? collectedResults : new ArrayList<>());
         response.put("resultCount", resultCount);
         return response;
+    }
+
+    private static Map<String, Object> createCancelledResult(List<Object> allResults, int totalResultCount) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("results", allResults);
+        result.put("resultCount", totalResultCount);
+        result.put("status", "cancelled");
+        result.put("stage", "final");
+        result.put("cancelled", true);
+        result.put("message", "Task was cancelled by user");
+        return result;
     }
 
     private static Map<String, Object> createFinalResult(List<Object> allResults, int totalResultCount, boolean timedOut, long timeoutMs) {

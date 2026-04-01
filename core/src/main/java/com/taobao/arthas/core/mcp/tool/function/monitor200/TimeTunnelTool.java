@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.mcp.tool.function.monitor200;
 
 import com.taobao.arthas.core.mcp.tool.function.AbstractArthasTool;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.annotation.Tool;
 import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
@@ -18,7 +19,8 @@ public class TimeTunnelTool extends AbstractArthasTool {
     @Tool(
             name = "tt",
             description = "TimeTunnel 时空隧道工具: 方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，对应 Arthas 的 tt 命令。支持记录、列表、搜索、查看详情、重放、删除等操作。",
-            streamable = true
+            streamable = true,
+            taskSupport = McpSchema.TaskSupportMode.OPTIONAL
     )
     public String timeTunnel(
             @ToolParam(description = "操作类型: record/t(记录), list/l(列表), search/s(搜索), info/i(查看详情), replay/p(重放), delete/d(删除), deleteAll/da(删除所有)，默认record")
