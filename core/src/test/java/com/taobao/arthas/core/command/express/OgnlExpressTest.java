@@ -50,4 +50,78 @@ public class OgnlExpressTest {
             Assert.assertTrue(e.getCause() instanceof ognl.ExpressionSyntaxException);
         }
     }
+
+    @Test
+    public void testNullSourcePropertyAccess() throws ExpressException {
+        // Test accessing property on null object - should return null instead of throwing exception
+        Express unpooledExpress = ExpressFactory.unpooledExpress(OgnlExpressTest.class.getClassLoader());
+        
+        // Create a test object with null field
+        TestObject testObj = new TestObject();
+        testObj.nullField = null;
+        
+        // This should not throw "source is null for getProperty" exception
+        Object result = unpooledExpress.bind(testObj).get("nullField.someProperty");
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testNullArrayAccess() throws ExpressException {
+        // Test accessing index on null array - should return null instead of throwing exception
+        Express unpooledExpress = ExpressFactory.unpooledExpress(OgnlExpressTest.class.getClassLoader());
+        
+        // Create a test object with null array
+        TestObject testObj = new TestObject();
+        testObj.nullArray = null;
+        
+        // This should not throw "source is null for getProperty" exception
+        Object result = unpooledExpress.bind(testObj).get("nullArray[2]");
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testAdviceWithNullParams() throws ExpressException {
+        // Simulate the actual scenario from the issue: accessing params[2] when params is null or short
+        Express unpooledExpress = ExpressFactory.unpooledExpress(OgnlExpressTest.class.getClassLoader());
+        
+        // Simulate Advice object with null params
+        TestAdvice advice1 = new TestAdvice();
+        advice1.params = null;
+        
+        // Accessing params[2] should return null instead of throwing exception
+        Object result1 = unpooledExpress.bind(advice1).get("params[2]");
+        Assert.assertNull(result1);
+        
+        // Simulate Advice object with params array where element is null
+        TestAdvice advice2 = new TestAdvice();
+        advice2.params = new Object[]{null, null, null};
+        
+        // Accessing params[2].someField should return null instead of throwing exception
+        Object result2 = unpooledExpress.bind(advice2).get("params[2].someField");
+        Assert.assertNull(result2);
+        
+        // Test with short array
+        TestAdvice advice3 = new TestAdvice();
+        advice3.params = new Object[]{1};
+        
+        // Accessing params[2] on short array should work normally (OGNL handles array bounds)
+        try {
+            unpooledExpress.bind(advice3).get("params[2]");
+        } catch (ExpressException e) {
+            // ArrayIndexOutOfBoundsException is expected and should not be suppressed
+            Assert.assertTrue(e.getCause() instanceof ArrayIndexOutOfBoundsException ||
+                    e.getMessage().contains("ArrayIndexOutOfBoundsException"));
+        }
+    }
+
+    // Helper class for testing
+    public static class TestObject {
+        public Object nullField;
+        public Object[] nullArray;
+    }
+
+    // Helper class to simulate Advice object
+    public static class TestAdvice {
+        public Object[] params;
+    }
 }

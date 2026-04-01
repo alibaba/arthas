@@ -34,6 +34,16 @@ public class OgnlExpress implements Express {
     public Object get(String express) throws ExpressException {
         try {
             return Ognl.getValue(express, context, bindObject);
+        } catch (ognl.OgnlException e) {
+            // 处理 "source is null for getProperty" 异常
+            // 这种情况发生在表达式尝试访问 null 对象的属性时（例如：params[2].field 其中 params[2] 为 null）
+            // 为了提供类似可选链的行为，返回 null 而不是抛出异常
+            if (e.getMessage() != null && e.getMessage().contains("source is null for getProperty")) {
+                logger.debug("Null-safe property access: {}", e.getMessage());
+                return null;
+            }
+            logger.error("Error during evaluating the expression:", e);
+            throw new ExpressException(express, e);
         } catch (Exception e) {
             logger.error("Error during evaluating the expression:", e);
             throw new ExpressException(express, e);
