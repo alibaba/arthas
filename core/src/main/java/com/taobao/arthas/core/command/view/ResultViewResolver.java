@@ -52,6 +52,7 @@ public class ResultViewResolver {
             //klass100
             registerView(ClassLoaderView.class);
             registerView(DumpClassView.class);
+            registerView(ReflectAnalysisView.class);
             registerView(GetStaticView.class);
             registerView(JadView.class);
             registerView(MemoryCompilerView.class);
