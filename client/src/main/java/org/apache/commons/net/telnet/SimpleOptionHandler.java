@@ -18,22 +18,28 @@
 package org.apache.commons.net.telnet;
 
 /***
- * Simple option handler that can be used for options
- * that don't require subnegotiation.
+ * 简单Telnet选项处理器
+ *
+ * 这是一个简单的选项处理器，可以用于不需要子协商（subnegotiation）的Telnet选项。
+ * 该类继承自TelnetOptionHandler，提供了基本的Telnet选项处理功能。
+ *
+ * Telnet协议允许客户端和服务器协商各种选项，这些选项可以控制会话的各个方面。
+ * 该处理器用于处理那些不需要复杂数据交换的简单选项。
  ***/
 public class SimpleOptionHandler extends TelnetOptionHandler
 {
     /***
-     * Constructor for the SimpleOptionHandler. Allows defining desired
-     * initial setting for local/remote activation of this option and
-     * behaviour in case a local/remote activation request for this
-     * option is received.
+     * SimpleOptionHandler构造函数（完整参数版本）
+     *
+     * 允许定义该选项在本地/远程激活时的初始设置，
+     * 以及接收到本地/远程激活请求时的处理行为。
+     *
      * <p>
-     * @param optcode - option code.
-     * @param initlocal - if set to true, a WILL is sent upon connection.
-     * @param initremote - if set to true, a DO is sent upon connection.
-     * @param acceptlocal - if set to true, any DO request is accepted.
-     * @param acceptremote - if set to true, any WILL request is accepted.
+     * @param optcode - 选项码，标识要处理的Telnet选项
+     * @param initlocal - 如果设置为true，建立连接时会发送WILL（表示本地希望启用该选项）
+     * @param initremote - 如果设置为true，建立连接时会发送DO（表示希望远程启用该选项）
+     * @param acceptlocal - 如果设置为true，接受任何DO请求（远程要求本地启用该选项）
+     * @param acceptremote - 如果设置为true，接受任何WILL请求（本地希望启用该选项）
      ***/
     public SimpleOptionHandler(int optcode,
                                 boolean initlocal,
@@ -41,18 +47,23 @@ public class SimpleOptionHandler extends TelnetOptionHandler
                                 boolean acceptlocal,
                                 boolean acceptremote)
     {
+        // 调用父类TelnetOptionHandler的构造函数，传递所有参数
         super(optcode, initlocal, initremote,
                                       acceptlocal, acceptremote);
     }
 
     /***
-     * Constructor for the SimpleOptionHandler. Initial and accept
-     * behaviour flags are set to false
+     * SimpleOptionHandler构造函数（简化版本）
+     *
+     * 使用默认值创建选项处理器，所有初始和接受行为标志都设置为false。
+     * 这个构造函数用于创建一个被动的选项处理器，不会主动发起协商。
+     *
      * <p>
-     * @param optcode - option code.
+     * @param optcode - 选项码，标识要处理的Telnet选项
      ***/
     public SimpleOptionHandler(int optcode)
     {
+        // 调用父类构造函数，所有行为标志都设置为false
         super(optcode, false, false, false, false);
     }
 

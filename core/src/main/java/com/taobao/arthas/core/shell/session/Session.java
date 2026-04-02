@@ -8,177 +8,200 @@ import java.lang.instrument.Instrumentation;
 import java.util.List;
 
 /**
- * A shell session.
+ * Shell会话接口
+ *
+ * Session代表一个Arthas的Shell会话，用于存储会话相关的数据和状态。
+ * 它提供了键值对存储、锁机制、会话生命周期管理等功能。
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  * @author gongdewei 2020-03-23
  */
 public interface Session {
+    /** 命令管理器的键名 */
     String COMMAND_MANAGER = "arthas-command-manager";
+
+    /** Java进程ID的键名 */
     String PID = "pid";
+
+    /** Java Instrumentation实例的键名 */
     String INSTRUMENTATION = "instrumentation";
+
+    /** 会话ID的键名 */
     String ID = "id";
+
+    /** 服务器对象的键名 */
     String SERVER = "server";
+
+    /** 用户ID的键名 */
     String USER_ID = "userId";
-    /**
-     * The tty this session related to.
-     */
+
+    /** 终端设备的键名 */
     String TTY = "tty";
 
-    /**
-     * Session create time
-     */
+    /** 会话创建时间的键名 */
     String CREATE_TIME = "createTime";
 
-    /**
-     * Session last active time
-     */
+    /** 会话最后访问时间的键名 */
     String LAST_ACCESS_TIME = "lastAccessedTime";
 
-    /**
-     * Command Result Distributor
-     */
+    /** 结果分发器的键名 */
     String RESULT_DISTRIBUTOR = "resultDistributor";
 
-    /**
-     * The executing foreground job
-     */
+    /** 前台作业的键名 */
     String FOREGROUND_JOB = "foregroundJob";
 
 
     /**
-     * Put some data in a session
+     * 向会话中存放数据
      *
-     * @param key the key for the data
-     * @param obj the data
-     * @return a reference to this, so the API can be used fluently
+     * @param key 数据的键
+     * @param obj 要存储的数据对象
+     * @return 当前会话对象，支持链式调用
      */
     Session put(String key, Object obj);
 
     /**
-     * Get some data from the session
+     * 从会话中获取数据
      *
-     * @param key the key of the data
-     * @return the data
+     * @param key 数据的键
+     * @return 数据对象，如果不存在则返回null
+     * @param <T> 返回的数据类型
      */
     <T> T get(String key);
 
     /**
-     * Remove some data from the session
+     * 从会话中移除数据
      *
-     * @param key the key of the data
-     * @return the data that was there or null if none there
+     * @param key 数据的键
+     * @return 被移除的数据，如果不存在则返回null
+     * @param <T> 返回的数据类型
      */
     <T> T remove(String key);
 
     /**
-     * Check if the session has been already locked
+     * 检查会话是否已被锁定
      *
-     * @return locked or not
+     * @return true表示已锁定，false表示未锁定
      */
     boolean isLocked();
 
     /**
-     * Unlock the session
-     *
+     * 解锁会话
+     * 如果会话未被锁定或锁定序列不匹配，将抛出异常
      */
     void unLock();
 
     /**
-     * Try to fetch the current session's lock
+     * 尝试获取会话的锁
+     * 使用CAS操作，只有一个调用者能成功获取锁
      *
-     * @return success or not
+     * @return true表示成功获取锁，false表示锁已被占用
      */
     boolean tryLock();
 
     /**
-     * Check current lock's sequence id
+     * 获取当前锁的序列ID
      *
-     * @return lock's sequence id
+     * @return 锁的序列ID，-1表示未锁定
      */
     int getLock();
 
     /**
-     * Get session id
-     * @return session id
+     * 获取会话ID
+     *
+     * @return 会话ID字符串
      */
     String getSessionId();
 
     /**
-     * Get Java PID
+     * 获取Java进程ID
      *
-     * @return java pid
+     * @return Java进程PID
      */
     long getPid();
 
     /**
-     * Get all registered command resolvers
+     * 获取所有已注册的命令解析器
      *
-     * @return command resolvers
+     * @return 命令解析器列表
      */
     List<CommandResolver> getCommandResolvers();
 
     /**
-     * Get java instrumentation
+     * 获取Java Instrumentation实例
+     * Instrumentation用于字节码增强和类重定义
      *
-     * @return instrumentation instance
+     * @return Instrumentation实例
      */
     Instrumentation getInstrumentation();
 
     /**
-     * Update session last access time
-     * @param time new time
+     * 更新会话的最后访问时间
+     *
+     * @param time 新的访问时间（毫秒时间戳）
      */
     void setLastAccessTime(long time);
 
     /**
-     * Get session last access time
-     * @return session last access time
+     * 获取会话的最后访问时间
+     *
+     * @return 最后访问时间（毫秒时间戳）
      */
     long getLastAccessTime();
 
     /**
-     * Get session create time
-     * @return session create time
+     * 获取会话的创建时间
+     *
+     * @return 创建时间（毫秒时间戳）
      */
     long getCreateTime();
 
     /**
-     * Update session's command result distributor
-     * @param resultDistributor
+     * 更新会话的命令结果分发器
+     *
+     * @param resultDistributor 结果分发器
      */
     void setResultDistributor(SharingResultDistributor resultDistributor);
 
     /**
-     * Get session's command result distributor
-     * @return
+     * 获取会话的命令结果分发器
+     *
+     * @return 结果分发器
      */
     SharingResultDistributor getResultDistributor();
 
     /**
-     * Set the foreground job
+     * 设置前台作业
+     *
+     * @param job 要设置为前台的作业
      */
     void setForegroundJob(Job job);
 
     /**
-     * Get the foreground job
+     * 获取当前的前台作业
+     *
+     * @return 前台作业，如果没有则返回null
      */
     Job getForegroundJob();
 
     /**
-     * Whether the session is tty term
+     * 判断会话是否是TTY终端
+     *
+     * @return true表示是TTY终端
      */
     boolean isTty();
 
     /**
-     * Get user id
-     * @return user id
+     * 获取用户ID
+     *
+     * @return 用户ID字符串
      */
     String getUserId();
 
     /**
-     * Set user id
-     * @param userId user id
+     * 设置用户ID
+     *
+     * @param userId 用户ID
      */
     void setUserId(String userId);
 }

@@ -22,20 +22,54 @@ package com.taobao.arthas.compiler;
 
 import java.net.URI;
 
+/**
+ * 类URI包装器
+ *
+ * <p>用于封装类的全限定名和对应的URI资源位置。这是一个简单的值对象，
+ * 主要用于在动态编译过程中关联类的名称和其资源位置。</p>
+ *
+ * @author arthas
+ * @since 2017-2018
+ */
 public class ClassUriWrapper {
+
+    /**
+     * 类资源的URI标识
+     * 指向类文件的位置，可以是本地文件路径或网络资源
+     */
     private final URI uri;
 
+    /**
+     * 类的全限定名
+     * 例如：com.taobao.arthas.compiler.ClassUriWrapper
+     */
     private final String className;
 
+    /**
+     * 构造函数
+     *
+     * @param className 类的全限定名
+     * @param uri 类资源的URI标识
+     */
     public ClassUriWrapper(String className, URI uri) {
         this.className = className;
         this.uri = uri;
     }
 
+    /**
+     * 获取类资源的URI
+     *
+     * @return 类资源的URI标识
+     */
     public URI getUri() {
         return uri;
     }
 
+    /**
+     * 获取类的全限定名
+     *
+     * @return 类的全限定名
+     */
     public String getClassName() {
         return className;
     }

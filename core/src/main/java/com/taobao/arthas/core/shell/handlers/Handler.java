@@ -1,10 +1,26 @@
 package com.taobao.arthas.core.shell.handlers;
 
+/**
+ * 事件处理器接口
+ *
+ * 该接口定义了事件处理器的基本契约,用于处理各种类型的事件。
+ * 所有需要处理事件的类都应该实现此接口,并提供具体的handle方法实现。
+ * 这是一种观察者模式的实现,允许将事件处理逻辑与事件源解耦。
+ *
+ * @param <E> 事件类型参数,表示该处理器能够处理的事件类型
+ */
 public interface Handler<E> {
     /**
-     * Something has happened, so handle it.
+     * 处理事件的方法
      *
-     * @param event the event to handle
+     * 当事件发生时,该方法会被调用以处理该事件。
+     * 具体的处理逻辑由实现类决定,可以包括:
+     * - 执行业务逻辑
+     * - 转换或转发事件
+     * - 更新状态
+     * - 触发其他操作
+     *
+     * @param event 需要处理的事件对象,类型由泛型参数E指定
      */
     void handle(E event);
 }

@@ -1,14 +1,26 @@
 package com.taobao.arthas.core.command.model;
 
 /**
- * Item countable for ResultModel
+ * 可计数接口
+ * <p>
+ * 用于标记ResultModel可以统计包含的项目数量，实现此接口的模型需要提供size方法返回其包含的项目总数。
+ * 该接口主要用于ResultModel的子类，以便在展示结果时能够知道模型中包含的数据项数量，
+ * 从而支持分页、统计等功能。size方法的返回值必须大于等于1。
+ * </p>
+ *
  * @author gongdewei 2020/6/8
  */
 public interface Countable {
 
     /**
-     * Get item size of this result model, the value of size is greater than or equal to 1
-     * @return item size of this result model
+     * 获取此结果模型中包含的项目数量
+     * <p>
+     * 该方法用于统计当前结果模型中包含的数据项总数，返回值必须大于或等于1。
+     * 实现类需要根据实际情况计算并返回模型中包含的有效项目数量。
+     * 例如，对于列表类型的结果，可以返回列表的大小；对于集合类型的结果，可以返回集合的元素个数。
+     * </p>
+     *
+     * @return 此结果模型中包含的项目数量，值必须大于等于1
      */
     int size();
 

@@ -7,17 +7,38 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
 
 /**
+ * 七月彩蛋命令
+ *
+ * 这是一个隐藏的彩蛋命令，当用户输入 "july" 时会显示一段英文歌词。
+ * 这段歌词来自 Kelly 的歌曲《Because Of You》，表达了深刻的情感。
+ * 命令被标记为 @Hidden，因此在帮助信息中不会显示。
+ *
  * @author vlinux on 02/11/2016.
  */
 @Name("july")
 @Summary("don't ask why")
 @Hidden
 public class JulyCommand extends AnnotatedCommand {
+
+    /**
+     * 处理命令执行
+     * 当用户输入 july 命令时，此方法被调用
+     *
+     * @param process 命令处理上下文对象，用于输出结果和结束命令
+     */
     @Override
     public void process(CommandProcess process) {
+        // 将字节数组转换为字符串并输出
+        // $$() 方法返回包含歌词内容的字节数组
         process.write(new String($$())).write("\n").end();
     }
 
+    /**
+     * 私有方法，返回歌词内容的字节数组
+     * 使用十六进制编码存储字符串，这是一种简单的混淆方式
+     *
+     * @return 包含英文歌词的字节数组
+     */
     private static byte[] $$() {
         return new byte[]{
                 0x49, 0x20, 0x77, 0x69, 0x6c, 0x6c, 0x20, 0x6e, 0x6f, 0x74, 0x20, 0x6d, 0x61, 0x6b, 0x65, 0x20, 0x74, 0x68, 0x65,

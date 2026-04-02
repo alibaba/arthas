@@ -27,12 +27,11 @@ import java.net.UnknownHostException;
 
 import javax.net.SocketFactory;
 
-/***
- * DefaultSocketFactory implements the SocketFactory interface by
- * simply wrapping the java.net.Socket and java.net.ServerSocket
- * constructors.  It is the default SocketFactory used by
- * {@link org.apache.commons.net.SocketClient}
- * implementations.
+/**
+ * DefaultSocketFactory 通过简单地包装 java.net.Socket 和 java.net.ServerSocket
+ * 构造函数来实现 SocketFactory 接口。
+ * 它是 {@link org.apache.commons.net.SocketClient}
+ * 实现使用的默认 SocketFactory。
  *
  *
  * @see SocketFactory
@@ -42,165 +41,184 @@ import javax.net.SocketFactory;
 
 public class DefaultSocketFactory extends SocketFactory
 {
-    /** The proxy to use when creating new sockets. */
+    /**
+     * 创建新套接字时使用的代理。
+     */
     private final Proxy connProxy;
 
     /**
-     * The default constructor.
+     * 默认构造函数。
      */
     public DefaultSocketFactory()
     {
+        // 调用带参数的构造函数，传入 null 表示不使用代理
         this(null);
     }
 
     /**
-     * A constructor for sockets with proxy support.
+     * 支持代理的套接字构造函数。
      *
-     * @param proxy The Proxy to use when creating new Sockets.
+     * @param proxy 创建新套接字时使用的代理。
      * @since 3.2
      */
     public DefaultSocketFactory(Proxy proxy)
     {
+        // 保存代理配置
         connProxy = proxy;
     }
 
     /**
-     * Creates an unconnected Socket.
+     * 创建一个未连接的套接字。
      *
-     * @return A new unconnected Socket.
-     * @exception IOException If an I/O error occurs while creating the Socket.
+     * @return 一个新的未连接的套接字。
+     * @exception IOException 如果创建套接字时发生 I/O 错误。
      * @since 3.2
      */
     @Override
     public Socket createSocket() throws IOException
     {
+        // 如果配置了代理，则使用代理创建套接字
         if (connProxy != null)
         {
             return new Socket(connProxy);
         }
+        // 否则创建普通的套接字
         return new Socket();
     }
 
-    /***
-     * Creates a Socket connected to the given host and port.
+    /**
+     * 创建一个连接到给定主机和端口的套接字。
      *
-     * @param host The hostname to connect to.
-     * @param port The port to connect to.
-     * @return A Socket connected to the given host and port.
-     * @exception UnknownHostException  If the hostname cannot be resolved.
-     * @exception IOException If an I/O error occurs while creating the Socket.
+     * @param host 要连接的主机名。
+     * @param port 要连接的端口。
+     * @return 连接到给定主机和端口的套接字。
+     * @exception UnknownHostException  如果无法解析主机名。
+     * @exception IOException 如果创建套接字时发生 I/O 错误。
      ***/
     @Override
     public Socket createSocket(String host, int port)
     throws UnknownHostException, IOException
     {
+        // 如果配置了代理
         if (connProxy != null)
         {
+            // 使用代理创建套接字
             Socket s = new Socket(connProxy);
+            // 连接到指定的主机和端口
             s.connect(new InetSocketAddress(host, port));
             return s;
         }
+        // 否则直接创建并连接套接字
         return new Socket(host, port);
     }
 
-    /***
-     * Creates a Socket connected to the given host and port.
+    /**
+     * 创建一个连接到给定主机和端口的套接字。
      *
-     * @param address The address of the host to connect to.
-     * @param port The port to connect to.
-     * @return A Socket connected to the given host and port.
-     * @exception IOException If an I/O error occurs while creating the Socket.
+     * @param address 要连接的主机地址。
+     * @param port 要连接的端口。
+     * @return 连接到给定主机和端口的套接字。
+     * @exception IOException 如果创建套接字时发生 I/O 错误。
      ***/
     @Override
     public Socket createSocket(InetAddress address, int port)
     throws IOException
     {
+        // 如果配置了代理
         if (connProxy != null)
         {
+            // 使用代理创建套接字
             Socket s = new Socket(connProxy);
+            // 连接到指定的地址和端口
             s.connect(new InetSocketAddress(address, port));
             return s;
         }
+        // 否则直接创建并连接套接字
         return new Socket(address, port);
     }
 
-    /***
-     * Creates a Socket connected to the given host and port and
-     * originating from the specified local address and port.
+    /**
+     * 创建一个连接到给定主机和端口的套接字，并从指定的本地地址和端口发起。
      *
-     * @param host The hostname to connect to.
-     * @param port The port to connect to.
-     * @param localAddr  The local address to use.
-     * @param localPort  The local port to use.
-     * @return A Socket connected to the given host and port.
-     * @exception UnknownHostException  If the hostname cannot be resolved.
-     * @exception IOException If an I/O error occurs while creating the Socket.
+     * @param host 要连接的主机名。
+     * @param port 要连接的端口。
+     * @param localAddr  使用的本地地址。
+     * @param localPort  使用的本地端口。
+     * @return 连接到给定主机和端口的套接字。
+     * @exception UnknownHostException  如果无法解析主机名。
+     * @exception IOException 如果创建套接字时发生 I/O 错误。
      ***/
     @Override
     public Socket createSocket(String host, int port,
                                InetAddress localAddr, int localPort)
     throws UnknownHostException, IOException
     {
+        // 如果配置了代理
         if (connProxy != null)
         {
+            // 使用代理创建套接字
             Socket s = new Socket(connProxy);
+            // 绑定到指定的本地地址和端口
             s.bind(new InetSocketAddress(localAddr, localPort));
+            // 连接到指定的主机和端口
             s.connect(new InetSocketAddress(host, port));
             return s;
         }
+        // 否则直接创建并连接套接字，同时指定本地地址和端口
         return new Socket(host, port, localAddr, localPort);
     }
 
-    /***
-     * Creates a Socket connected to the given host and port and
-     * originating from the specified local address and port.
+    /**
+     * 创建一个连接到给定主机和端口的套接字，并从指定的本地地址和端口发起。
      *
-     * @param address The address of the host to connect to.
-     * @param port The port to connect to.
-     * @param localAddr  The local address to use.
-     * @param localPort  The local port to use.
-     * @return A Socket connected to the given host and port.
-     * @exception IOException If an I/O error occurs while creating the Socket.
+     * @param address 要连接的主机地址。
+     * @param port 要连接的端口。
+     * @param localAddr  使用的本地地址。
+     * @param localPort  使用的本地端口。
+     * @return 连接到给定主机和端口的套接字。
+     * @exception IOException 如果创建套接字时发生 I/O 错误。
      ***/
     @Override
     public Socket createSocket(InetAddress address, int port,
                                InetAddress localAddr, int localPort)
     throws IOException
     {
+        // 如果配置了代理
         if (connProxy != null)
         {
+            // 使用代理创建套接字
             Socket s = new Socket(connProxy);
+            // 绑定到指定的本地地址和端口
             s.bind(new InetSocketAddress(localAddr, localPort));
+            // 连接到指定的地址和端口
             s.connect(new InetSocketAddress(address, port));
             return s;
         }
+        // 否则直接创建并连接套接字，同时指定本地地址和端口
         return new Socket(address, port, localAddr, localPort);
     }
 
-    /***
-     * Creates a ServerSocket bound to a specified port.  A port
-     * of 0 will create the ServerSocket on a system-determined free port.
+    /**
+     * 创建绑定到指定端口的服务器套接字。
+     * 端口为 0 将在系统确定的空闲端口上创建服务器套接字。
      *
-     * @param port  The port on which to listen, or 0 to use any free port.
-     * @return A ServerSocket that will listen on a specified port.
-     * @exception IOException If an I/O error occurs while creating
-     *                        the ServerSocket.
+     * @param port  要监听的端口号，或 0 表示使用任何空闲端口。
+     * @return 在指定端口上监听的服务器套接字。
+     * @exception IOException 如果创建服务器套接字时发生 I/O 错误。
      ***/
     public ServerSocket createServerSocket(int port) throws IOException
     {
         return new ServerSocket(port);
     }
 
-    /***
-     * Creates a ServerSocket bound to a specified port with a given
-     * maximum queue length for incoming connections.  A port of 0 will
-     * create the ServerSocket on a system-determined free port.
+    /**
+     * 创建绑定到指定端口的服务器套接字，并给定传入连接的最大队列长度。
+     * 端口为 0 将在系统确定的空闲端口上创建服务器套接字。
      *
-     * @param port  The port on which to listen, or 0 to use any free port.
-     * @param backlog  The maximum length of the queue for incoming connections.
-     * @return A ServerSocket that will listen on a specified port.
-     * @exception IOException If an I/O error occurs while creating
-     *                        the ServerSocket.
+     * @param port  要监听的端口号，或 0 表示使用任何空闲端口。
+     * @param backlog  传入连接队列的最大长度。
+     * @return 在指定端口上监听的服务器套接字。
+     * @exception IOException 如果创建服务器套接字时发生 I/O 错误。
      ***/
     public ServerSocket createServerSocket(int port, int backlog)
     throws IOException
@@ -208,18 +226,16 @@ public class DefaultSocketFactory extends SocketFactory
         return new ServerSocket(port, backlog);
     }
 
-    /***
-     * Creates a ServerSocket bound to a specified port on a given local
-     * address with a given maximum queue length for incoming connections.
-     * A port of 0 will
-     * create the ServerSocket on a system-determined free port.
+    /**
+     * 创建绑定到给定本地地址的指定端口上的服务器套接字，
+     * 并给定传入连接的最大队列长度。
+     * 端口为 0 将在系统确定的空闲端口上创建服务器套接字。
      *
-     * @param port  The port on which to listen, or 0 to use any free port.
-     * @param backlog  The maximum length of the queue for incoming connections.
-     * @param bindAddr  The local address to which the ServerSocket should bind.
-     * @return A ServerSocket that will listen on a specified port.
-     * @exception IOException If an I/O error occurs while creating
-     *                        the ServerSocket.
+     * @param port  要监听的端口号，或 0 表示使用任何空闲端口。
+     * @param backlog  传入连接队列的最大长度。
+     * @param bindAddr  服务器套接字应该绑定的本地地址。
+     * @return 在指定端口上监听的服务器套接字。
+     * @exception IOException 如果创建服务器套接字时发生 I/O 错误。
      ***/
     public ServerSocket createServerSocket(int port, int backlog,
                                            InetAddress bindAddr)

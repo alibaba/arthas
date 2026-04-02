@@ -41,91 +41,115 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- * An alternative weak-key {@link ConcurrentMap} which is similar to
- * {@link ConcurrentHashMap}.
- * @param <K> the type of keys maintained by this map
- * @param <V> the type of mapped values
+ * 一个基于弱键（weak-key）的并发映射表，类似于 {@link ConcurrentHashMap}。
+ *
+ * <p>该类实现了一个线程安全的弱引用键哈希映射表，使用分段锁（segmented locking）
+ * 技术来支持高并发访问。键（key）使用弱引用存储，当键不再被外部引用时，
+ * 可以被垃圾回收器自动回收。</p>
+ *
+ * <p>主要特性：</p>
+ * <ul>
+ *   <li>键使用弱引用，允许自动垃圾回收</li>
+ *   <li>使用分段锁机制提供高并发性能</li>
+ *   <li>支持无锁读取操作</li>
+ *   <li>自动清理过期的弱引用</li>
+ * </ul>
+ *
+ * @param <K> 此映射维护的键类型
+ * @param <V> 映射值的类型
  */
 public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V> {
 
     /*
-     * The basic strategy is to subdivide the table among Segments,
-     * each of which itself is a concurrently readable hash table.
+     * 基本策略是将哈希表划分为多个段（Segments），
+     * 每个段本身就是一个可并发读写的哈希表。
      */
 
     /**
-     * The default initial capacity for this table, used when not otherwise
-     * specified in a constructor.
+     * 此表的默认初始容量，当构造函数中未指定时使用。
+     * 默认为16，即表初始包含16个桶（bucket）。
      */
     static final int DEFAULT_INITIAL_CAPACITY = 16;
 
     /**
-     * The default load factor for this table, used when not otherwise specified
-     * in a constructor.
+     * 此表的默认负载因子，当构造函数中未指定时使用。
+     * 负载因子用于控制哈希表的扩容时机，当元素数量达到容量与负载因子的乘积时触发扩容。
+     * 默认值为0.75，这是一个在时间和空间成本上权衡良好的值。
      */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
-     * The default concurrency level for this table, used when not otherwise
-     * specified in a constructor.
+     * 此表的默认并发级别，当构造函数中未指定时使用。
+     * 并发级别决定了表中段（Segment）的数量，影响并发更新的性能。
+     * 默认值为16，表示支持最多16个并发写入线程。
      */
     static final int DEFAULT_CONCURRENCY_LEVEL = 16;
 
     /**
-     * The maximum capacity, used if a higher value is implicitly specified by
-     * either of the constructors with arguments.  MUST be a power of two
-     * &lt;= 1&lt;&lt;30 to ensure that entries are indexable using integers.
+     * 表的最大容量。如果构造函数隐式指定了更高的值，则使用此值。
+     * 必须是2的幂次方且小于等于 1<<30，以确保条目可以使用整数进行索引。
+     * 最大容量为 2^30 = 1073741824。
      */
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
-     * The maximum number of segments to allow; used to bound constructor
-     * arguments.
+     * 允许的最大段数，用于限制构造函数参数。
+     * 最大值为 2^16 = 65536，这个值相对保守，确保在大多数实际场景中足够使用。
      */
-    static final int MAX_SEGMENTS = 1 << 16; // slightly conservative
+    static final int MAX_SEGMENTS = 1 << 16; // 略微保守的值
 
     /**
-     * Number of unsynchronized retries in size and containsValue methods before
-     * resorting to locking. This is used to avoid unbounded retries if tables
-     * undergo continuous modification which would make it impossible to obtain
-     * an accurate result.
+     * 在size()和containsValue()方法中，在加锁之前尝试无同步重试的次数。
+     * 这用于避免在表持续修改的情况下进行无限重试，因为在持续修改的场景下
+     * 无法获得准确的结果。最多重试2次后就会使用加锁方式。
      */
     static final int RETRIES_BEFORE_LOCK = 2;
 
-    /* ---------------- Fields -------------- */
+    /* ---------------- 字段 -------------- */
 
     /**
-     * Mask value for indexing into segments. The upper bits of a key's hash
-     * code are used to choose the segment.
+     * 用于索引到段的掩码值。
+     * 键哈希码的高位用于选择段，这个掩码用于提取这些位。
+     * 例如，如果segmentMask为15（二进制1111），则使用哈希码的低4位来选择段。
      */
     final int segmentMask;
 
     /**
-     * Shift value for indexing within segments.
+     * 用于在段内索引的移位值。
+     * 这个值用于将哈希码右移，以便与segmentMask一起使用来选择正确的段。
+     * 移位值的计算方式是：32 - log2(段数)。
      */
     final int segmentShift;
 
     /**
-     * The segments, each of which is a specialized hash table
+     * 段数组，每个段本身就是一个专门的哈希表。
+     * 表被划分为多个段，每个段维护自己的哈希表和锁，
+     * 这样可以支持多个线程并发访问不同的段，提高并发性能。
      */
     final Segment<K, V>[] segments;
 
+    // 键集合的缓存视图，延迟初始化
     Set<K> keySet;
+    // 条目集合的缓存视图，延迟初始化
     Set<Map.Entry<K, V>> entrySet;
+    // 值集合的缓存视图，延迟初始化
     Collection<V> values;
 
-    /* ---------------- Small Utilities -------------- */
+    /* ---------------- 小工具方法 -------------- */
 
     /**
-     * Applies a supplemental hash function to a given hashCode, which defends
-     * against poor quality hash functions.  This is critical because
-     * ConcurrentReferenceHashMap uses power-of-two length hash tables, that
-     * otherwise encounter collisions for hashCodes that do not differ in lower
-     * or upper bits.
+     * 对给定的哈希码应用补充哈希函数，用于防御低质量的哈希函数。
+     *
+     * <p>这是至关重要的，因为ConcurrentReferenceHashMap使用2的幂次方长度的哈希表，
+     * 否则在哈希码的低位或高位不不同的情况下会遇到碰撞。
+     * 这个函数通过混合哈希码的位来减少碰撞概率。</p>
+     *
+     * @param h 原始哈希码
+     * @return 经过补充哈希处理后的哈希码
      */
     private static int hash(int h) {
-        // Spread bits to regularize both segment and index locations,
-        // using variant of single-word Wang/Jenkins hash.
+        // 扩散位以规范化段和索引位置，
+        // 使用单字Wang/Jenkins哈希的变体。
         h += h << 15 ^ 0xffffcd7d;
         h ^= h >>> 10;
         h += h << 3;
@@ -135,78 +159,138 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
     }
 
     /**
-     * Returns the segment that should be used for key with given hash.
+     * 返回应该用于具有给定哈希码的键的段。
      *
-     * @param hash the hash code for the key
-     * @return the segment
+     * @param hash 键的哈希码
+     * @return 应该包含该键的段
      */
     Segment<K, V> segmentFor(int hash) {
+        // 使用哈希码的高位来选择段
         return segments[hash >>> segmentShift & segmentMask];
     }
 
+    /**
+     * 计算对象的哈希码，并应用补充哈希函数。
+     *
+     * @param key 要计算哈希的对象
+     * @return 经过处理的哈希码
+     */
     private static int hashOf(Object key) {
         return hash(key.hashCode());
     }
 
-    /* ---------------- Inner Classes -------------- */
+    /* ---------------- 内部类 -------------- */
 
     /**
-     * A weak-key reference which stores the key hash needed for reclamation.
+     * 弱键引用，存储回收所需的键哈希码。
+     *
+     * <p>这个类扩展了WeakReference，用于存储键的弱引用。
+     * 当键不再被外部引用时，它可以被垃圾回收器自动回收。
+     * 同时保存了键的哈希码，以便在回收后仍能定位到对应的哈希表位置。</p>
      */
     static final class WeakKeyReference<K> extends WeakReference<K> {
 
+        // 键的哈希码，在键被回收后仍保留用于定位
         final int hash;
 
+        /**
+         * 创建一个新的弱键引用。
+         *
+         * @param key 被引用的键对象
+         * @param hash 键的哈希码
+         * @param refQueue 引用队列，用于通知引用被回收
+         */
         WeakKeyReference(K key, int hash, ReferenceQueue<Object> refQueue) {
             super(key, refQueue);
             this.hash = hash;
         }
 
+        /**
+         * 返回键的哈希码。
+         *
+         * @return 键的哈希码
+         */
         public int keyHash() {
             return hash;
         }
 
+        /**
+         * 返回引用对象本身。
+         *
+         * @return 此引用对象
+         */
         public Object keyRef() {
             return this;
         }
     }
 
     /**
-     * ConcurrentReferenceHashMap list entry. Note that this is never exported
-     * out as a user-visible Map.Entry.
+     * ConcurrentReferenceHashMap的链表条目。
      *
-     * Because the value field is volatile, not final, it is legal wrt
-     * the Java Memory Model for an unsynchronized reader to see null
-     * instead of initial value when read via a data race.  Although a
-     * reordering leading to this is not likely to ever actually
-     * occur, the Segment.readValueUnderLock method is used as a
-     * backup in case a null (pre-initialized) value is ever seen in
-     * an unsynchronized access method.
+     * <p>注意：这个类永远不会作为用户可见的Map.Entry导出。</p>
+     *
+     * <p>因为value字段是volatile而非final的，根据Java内存模型，
+     * 在数据竞争中读取时，未同步的读者可能看到null而不是初始值。
+     * 虽然导致这种情况的重排序不太可能实际发生，
+     * 但Segment.readValueUnderLock方法作为备份，
+     * 以防在未同步访问方法中看到null（预初始化）值。</p>
      */
     static final class HashEntry<K, V> {
+        // 键的引用对象（WeakKeyReference），包含弱引用
         final Object keyRef;
+        // 键的哈希码，不可变
         final int hash;
+        // 值的引用，使用volatile确保可见性
         volatile Object valueRef;
+        // 链表中的下一个节点，不可变
         final HashEntry<K, V> next;
 
+        /**
+         * 创建一个新的哈希条目。
+         *
+         * @param key 键对象
+         * @param hash 键的哈希码
+         * @param next 链表中的下一个节点
+         * @param value 值对象
+         * @param refQueue 引用队列，用于注册弱引用
+         */
         HashEntry(
                 K key, int hash, HashEntry<K, V> next, V value,
                 ReferenceQueue<Object> refQueue) {
             this.hash = hash;
             this.next = next;
+            // 创建键的弱引用并注册到引用队列
             keyRef = new WeakKeyReference<K>(key, hash, refQueue);
             valueRef = value;
         }
 
+        /**
+         * 获取键对象。
+         * 由于键是弱引用，可能已经被回收。
+         *
+         * @return 键对象，如果已被回收则返回null
+         */
         @SuppressWarnings("unchecked")
         K key() {
             return ((Reference<K>) keyRef).get();
         }
 
+        /**
+         * 获取值对象。
+         *
+         * @return 值对象
+         */
         V value() {
             return dereferenceValue(valueRef);
         }
 
+        /**
+         * 解引用值对象。
+         * 如果值是弱引用，则获取其实际值；否则直接返回值。
+         *
+         * @param value 值引用对象
+         * @return 实际的值对象
+         */
         @SuppressWarnings("unchecked")
         V dereferenceValue(Object value) {
             if (value instanceof WeakKeyReference) {
@@ -216,10 +300,21 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             return (V) value;
         }
 
+        /**
+         * 设置值对象。
+         *
+         * @param value 新的值对象
+         */
         void setValue(V value) {
             valueRef = value;
         }
 
+        /**
+         * 创建指定大小的新哈希条目数组。
+         *
+         * @param i 数组大小
+         * @return 新的哈希条目数组
+         */
         @SuppressWarnings("unchecked")
         static <K, V> HashEntry<K, V>[] newArray(int i) {
             return new HashEntry[i];
@@ -227,118 +322,159 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
     }
 
     /**
-     * Segments are specialized versions of hash tables.  This subclasses from
-     * ReentrantLock opportunistically, just to simplify some locking and avoid
-     * separate construction.
+     * 段是哈希表的专门版本。
+     *
+     * <p>这个类继承自ReentrantLock，只是为了简化一些锁操作并避免单独构造。
+     * 每个段维护自己的哈希表，可以独立进行加锁，从而支持并发访问。</p>
+     *
+     * <p>段的主要特性：</p>
+     * <ul>
+     *   <li>维护一个条目链表数组，始终保持一致状态</li>
+     *   <li>支持无锁读取操作</li>
+     *   <li>写操作需要获取锁</li>
+     *   <li>自动清理过期的弱引用</li>
+     * </ul>
      */
     static final class Segment<K, V> extends ReentrantLock {
         /*
-         * Segments maintain a table of entry lists that are ALWAYS kept in a
-         * consistent state, so can be read without locking. Next fields of
-         * nodes are immutable (final).  All list additions are performed at the
-         * front of each bin. This makes it easy to check changes, and also fast
-         * to traverse. When nodes would otherwise be changed, new nodes are
-         * created to replace them. This works well for hash tables since the
-         * bin lists tend to be short. (The average length is less than two for
-         * the default load factor threshold.)
+         * 段维护一个条目链表数组，这些数组始终保持一致状态，因此可以无锁读取。
+         * 节点的next字段是不可变的（final）。所有链表添加操作都在每个桶的前面执行。
+         * 这使得检查变更变得容易，遍历也很快。当节点需要变更时，会创建新节点来替换它们。
+         * 这对哈希表很有效，因为桶链表通常很短。（对于默认负载因子阈值，
+         * 平均长度小于2。）
          *
-         * Read operations can thus proceed without locking, but rely on
-         * selected uses of volatiles to ensure that completed write operations
-         * performed by other threads are noticed. For most purposes, the
-         * "count" field, tracking the number of elements, serves as that
-         * volatile variable ensuring visibility.  This is convenient because
-         * this field needs to be read in many read operations anyway:
+         * 因此，读操作可以在不加锁的情况下进行，但依赖于对volatile的精选使用，
+         * 以确保注意到其他线程完成的写操作。对于大多数目的，
+         * 跟踪元素数量的"count"字段作为确保可见性的volatile变量。
+         * 这很方便，因为许多读操作无论如何都需要读取此字段：
          *
-         *   - All (unsynchronized) read operations must first read the
-         *     "count" field, and should not look at table entries if
-         *     it is 0.
+         *   - 所有（未同步的）读操作必须首先读取"count"字段，
+         *     如果为0，则不应查看表条目。
          *
-         *   - All (synchronized) write operations should write to
-         *     the "count" field after structurally changing any bin.
-         *     The operations must not take any action that could even
-         *     momentarily cause a concurrent read operation to see
-         *     inconsistent data. This is made easier by the nature of
-         *     the read operations in Map. For example, no operation
-         *     can reveal that the table has grown but the threshold
-         *     has not yet been updated, so there are no atomicity
-         *     requirements for this with respect to reads.
+         *   - 所有（同步的）写操作应在结构性改变任何桶后写入"count"字段。
+         *     操作不得采取任何可能甚至暂时导致并发读操作看到不一致数据的操作。
+         *     由于Map中读操作的性质，这变得更容易。例如，没有操作可以揭示
+         *     表已增长但阈值尚未更新的情况，因此对此没有原子性要求。
          *
-         * As a guide, all critical volatile reads and writes to the count field
-         * are marked in code comments.
+         * 作为指导，所有对count字段的关键volatile读写都在代码注释中标记。
          */
 
         private static final long serialVersionUID = -8328104880676891126L;
 
         /**
-         * The number of elements in this segment's region.
+         * 此段区域中的元素数量。
+         * 使用volatile修饰确保在多线程环境下的可见性。
+         * 读操作依赖此字段的volatile读来确保看到写操作的完成。
          */
         transient volatile int count;
 
         /**
-         * Number of updates that alter the size of the table. This is used
-         * during bulk-read methods to make sure they see a consistent snapshot:
-         * If modCounts change during a traversal of segments computing size or
-         * checking containsValue, then we might have an inconsistent view of
-         * state so (usually) must retry.
+         * 改变表大小的更新次数。
+         * 这在批量读取方法中使用，以确保它们看到一致的状态快照：
+         * 如果在遍历段计算大小或检查containsValue时modCount发生变化，
+         * 那么我们可能看到不一致的状态视图，因此（通常）必须重试。
          */
         int modCount;
 
         /**
-         * The table is rehashed when its size exceeds this threshold.
-         * (The value of this field is always <tt>(capacity * loadFactor)</tt>.)
+         * 当表大小超过此阈值时，表将进行重新哈希（扩容）。
+         * 此字段的值始终为 (capacity * loadFactor)。
+         * 当元素数量达到此阈值时，会触发扩容操作。
          */
         int threshold;
 
         /**
-         * The per-segment table.
+         * 每个段的哈希表。
+         * 这是一个数组，每个元素是一个链表的头节点。
+         * 使用volatile修饰确保在多线程环境下的可见性。
          */
         transient volatile HashEntry<K, V>[] table;
 
         /**
-         * The load factor for the hash table.  Even though this value is same
-         * for all segments, it is replicated to avoid needing links to outer
-         * object.
+         * 哈希表的负载因子。
+         * 尽管此值对所有段都是相同的，但它被复制以避免需要链接到外部对象。
+         * 负载因子决定了哈希表何时扩容。
          */
         final float loadFactor;
 
         /**
-         * The collected weak-key reference queue for this segment. This should
-         * be (re)initialized whenever table is assigned,
+         * 此段收集的弱键引用队列。
+         * 每当分配表时，应该（重新）初始化此队列。
+         * 当弱引用的对象被垃圾回收时，GC会将引用放入此队列，
+         * 以便我们可以清理过期的条目。
          */
         transient volatile ReferenceQueue<Object> refQueue;
 
+        /**
+         * 创建一个新段。
+         *
+         * @param initialCapacity 初始容量
+         * @param lf 负载因子
+         */
         Segment(int initialCapacity, float lf) {
             loadFactor = lf;
+            // 初始化哈希表和引用队列
             setTable(HashEntry.<K, V>newArray(initialCapacity));
         }
 
+        /**
+         * 创建指定大小的新段数组。
+         *
+         * @param i 数组大小
+         * @return 新的段数组
+         */
         @SuppressWarnings("unchecked")
         static <K, V> Segment<K, V>[] newArray(int i) {
             return new Segment[i];
         }
 
+        /**
+         * 比较两个键对象是否相等。
+         *
+         * @param src 源键对象
+         * @param dest 目标键对象
+         * @return 如果键相等则返回true，否则返回false
+         */
         private static boolean keyEq(Object src, Object dest) {
             return src.equals(dest);
         }
 
         /**
-         * Sets table to new HashEntry array. Call only while holding lock or in
-         * constructor.
+         * 将表设置为新的哈希条目数组。
+         * 仅在持有锁或在构造函数中调用此方法。
+         * 同时初始化阈值和引用队列。
+         *
+         * @param newTable 新的哈希表数组
          */
         void setTable(HashEntry<K, V>[] newTable) {
+            // 计算扩容阈值
             threshold = (int) (newTable.length * loadFactor);
             table = newTable;
+            // 创建新的引用队列，用于收集过期的弱引用
             refQueue = new ReferenceQueue<Object>();
         }
 
         /**
-         * Returns properly casted first entry of bin for given hash.
+         * 返回给定哈希码对应的桶的第一个条目。
+         *
+         * @param hash 键的哈希码
+         * @return 桶中的第一个条目，如果桶为空则返回null
          */
         HashEntry<K, V> getFirst(int hash) {
             HashEntry<K, V>[] tab = table;
+            // 使用哈希码的低位作为索引
             return tab[hash & tab.length - 1];
         }
 
+        /**
+         * 创建一个新的哈希条目，使用此段的引用队列。
+         *
+         * @param key 键对象
+         * @param hash 哈希码
+         * @param next 链表中的下一个节点
+         * @param value 值对象
+         * @return 新创建的哈希条目
+         */
         HashEntry<K, V> newHashEntry(
                 K key, int hash, HashEntry<K, V> next, V value) {
             return new HashEntry<K, V>(
@@ -346,14 +482,18 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         }
 
         /**
-         * Reads value field of an entry under lock. Called if value field ever
-         * appears to be null. This is possible only if a compiler happens to
-         * reorder a HashEntry initialization with its table assignment, which
-         * is legal under memory model but is not known to ever occur.
+         * 在锁保护下读取条目的值字段。
+         * 当值字段看起来为null时调用此方法。
+         * 这只有在编译器碰巧重排序了HashEntry初始化和表赋值时才可能，
+         * 这在内存模型下是合法的，但不知道是否实际发生过。
+         *
+         * @param e 要读取的哈希条目
+         * @return 条目的值
          */
         V readValueUnderLock(HashEntry<K, V> e) {
             lock();
             try {
+                // 清理过期的条目
                 removeStale();
                 return e.value();
             } finally {
@@ -361,10 +501,17 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             }
         }
 
-        /* Specialized implementations of map methods */
+        /* 映射方法的专门实现 */
 
+        /**
+         * 从此段中获取与键关联的值。
+         *
+         * @param key 要查找的键
+         * @param hash 键的哈希码
+         * @return 与键关联的值，如果不存在则返回null
+         */
         V get(Object key, int hash) {
-            if (count != 0) { // read-volatile
+            if (count != 0) { // read-volatile - 必须首先读取volatile字段
                 HashEntry<K, V> e = getFirst(hash);
                 while (e != null) {
                     if (e.hash == hash && keyEq(key, e.key())) {
@@ -373,6 +520,7 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                             return e.dereferenceValue(opaque);
                         }
 
+                        // 如果值为null，重新检查（可能是重排序导致的）
                         return readValueUnderLock(e); // recheck
                     }
                     e = e.next;
@@ -381,8 +529,15 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             return null;
         }
 
+        /**
+         * 检查此段是否包含指定的键。
+         *
+         * @param key 要查找的键
+         * @param hash 键的哈希码
+         * @return 如果此段包含指定的键则返回true，否则返回false
+         */
         boolean containsKey(Object key, int hash) {
-            if (count != 0) { // read-volatile
+            if (count != 0) { // read-volatile - 必须首先读取volatile字段
                 HashEntry<K, V> e = getFirst(hash);
                 while (e != null) {
                     if (e.hash == hash && keyEq(key, e.key())) {
@@ -394,14 +549,21 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             return false;
         }
 
+        /**
+         * 检查此段是否将一个或多个键映射到指定值。
+         *
+         * @param value 要查找的值
+         * @return 如果此段包含指定的值则返回true，否则返回false
+         */
         boolean containsValue(Object value) {
-            if (count != 0) { // read-volatile
+            if (count != 0) { // read-volatile - 必须首先读取volatile字段
                 for (HashEntry<K, V> e: table) {
                     for (; e != null; e = e.next) {
                         Object opaque = e.valueRef;
                         V v;
 
                         if (opaque == null) {
+                            // 如果值为null，重新检查
                             v = readValueUnderLock(e); // recheck
                         } else {
                             v = e.dereferenceValue(opaque);
@@ -416,9 +578,19 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             return false;
         }
 
+        /**
+         * 仅当当前映射到指定值时，才替换指定键的条目。
+         *
+         * @param key 要替换的键
+         * @param hash 键的哈希码
+         * @param oldValue 预期的当前值
+         * @param newValue 要设置的新值
+         * @return 如果值被替换则返回true，否则返回false
+         */
         boolean replace(K key, int hash, V oldValue, V newValue) {
             lock();
             try {
+                // 清理过期的条目
                 removeStale();
                 HashEntry<K, V> e = getFirst(hash);
                 while (e != null && (e.hash != hash || !keyEq(key, e.key()))) {
@@ -436,9 +608,18 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             }
         }
 
+        /**
+         * 仅当键当前映射到某个值时，才替换该条目。
+         *
+         * @param key 要替换的键
+         * @param hash 键的哈希码
+         * @param newValue 要设置的新值
+         * @return 与键关联的先前值，如果没有则返回null
+         */
         V replace(K key, int hash, V newValue) {
             lock();
             try {
+                // 清理过期的条目
                 removeStale();
                 HashEntry<K, V> e = getFirst(hash);
                 while (e != null && (e.hash != hash || !keyEq(key, e.key()))) {
@@ -456,15 +637,26 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             }
         }
 
+        /**
+         * 将键映射到此段中的值。
+         *
+         * @param key 要映射的键
+         * @param hash 键的哈希码
+         * @param value 要映射的值
+         * @param onlyIfAbsent 如果为true，则仅当键不存在时才映射
+         * @return 与键关联的先前值，如果没有则返回null
+         */
         V put(K key, int hash, V value, boolean onlyIfAbsent) {
             lock();
             try {
+                // 清理过期的条目
                 removeStale();
                 int c = count;
-                if (c ++ > threshold) { // ensure capacity
+                if (c ++ > threshold) { // ensure capacity - 确保容量
+                    // 如果需要，进行扩容
                     int reduced = rehash();
                     if (reduced > 0) {
-                        count = (c -= reduced) - 1; // write-volatile
+                        count = (c -= reduced) - 1; // write-volatile - 必须写入volatile字段
                     }
                 }
 
@@ -472,21 +664,25 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                 int index = hash & tab.length - 1;
                 HashEntry<K, V> first = tab[index];
                 HashEntry<K, V> e = first;
+                // 查找是否已存在该键
                 while (e != null && (e.hash != hash || !keyEq(key, e.key()))) {
                     e = e.next;
                 }
 
                 V oldValue;
                 if (e != null) {
+                    // 键已存在，更新值
                     oldValue = e.value();
                     if (!onlyIfAbsent) {
                         e.setValue(value);
                     }
                 } else {
+                    // 键不存在，添加新条目
                     oldValue = null;
                     ++ modCount;
+                    // 在链表头部插入新条目
                     tab[index] = newHashEntry(key, hash, first, value);
-                    count = c; // write-volatile
+                    count = c; // write-volatile - 必须写入volatile字段
                 }
                 return oldValue;
             } finally {
@@ -494,24 +690,27 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             }
         }
 
+        /**
+         * 扩容并重新哈希表。
+         * 将表大小加倍，并将所有有效条目重新分配到新表中。
+         *
+         * @return 由于垃圾回收而移除的过期条目数量
+         */
         int rehash() {
             HashEntry<K, V>[] oldTable = table;
             int oldCapacity = oldTable.length;
+            // 如果已经达到最大容量，不再扩容
             if (oldCapacity >= MAXIMUM_CAPACITY) {
                 return 0;
             }
 
             /*
-             * Reclassify nodes in each list to new Map.  Because we are using
-             * power-of-two expansion, the elements from each bin must either
-             * stay at same index, or move with a power of two offset. We
-             * eliminate unnecessary node creation by catching cases where old
-             * nodes can be reused because their next fields won't change.
-             * Statistically, at the default threshold, only about one-sixth of
-             * them need cloning when a table doubles. The nodes they replace
-             * will be garbage collectable as soon as they are no longer
-             * referenced by any reader thread that may be in the midst of
-             * traversing table right now.
+             * 将每个链表中的节点重新分类到新表。因为我们使用2的幂次方扩容，
+             * 所以每个桶中的元素必须要么保持在相同的索引，要么以2的幂次方偏移量移动。
+             * 我们通过捕获旧节点可以重用的情况来消除不必要的节点创建，
+             * 因为它们的next字段不会改变。统计上，在默认阈值下，
+             * 当表加倍时只有大约六分之一的节点需要克隆。
+             * 它们替换的节点将可以被垃圾回收，只要它们不再被任何可能正在遍历表的读者线程引用。
              */
 
             HashEntry<K, V>[] newTable = HashEntry.newArray(oldCapacity << 1);
@@ -519,19 +718,20 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             int sizeMask = newTable.length - 1;
             int reduce = 0;
             for (HashEntry<K, V> e: oldTable) {
-                // We need to guarantee that any existing reads of old Map can
-                // proceed. So we cannot yet null out each bin.
+                // 我们需要保证对旧表的任何现有读取都可以继续。
+                // 所以我们还不能将每个桶置为null。
                 if (e != null) {
                     HashEntry<K, V> next = e.next;
                     int idx = e.hash & sizeMask;
 
-                    // Single node on list
+                    // 链表中只有一个节点
                     if (next == null) {
                         newTable[idx] = e;
                     } else {
-                        // Reuse trailing consecutive sequence at same slot
+                        // 重用同一槽位的尾随连续序列
                         HashEntry<K, V> lastRun = e;
                         int lastIdx = idx;
+                        // 找到最后一个需要移动位置的节点
                         for (HashEntry<K, V> last = next; last != null; last = last.next) {
                             int k = last.hash & sizeMask;
                             if (k != lastIdx) {
@@ -540,9 +740,9 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                             }
                         }
                         newTable[lastIdx] = lastRun;
-                        // Clone all remaining nodes
+                        // 克隆所有剩余节点
                         for (HashEntry<K, V> p = e; p != lastRun; p = p.next) {
-                            // Skip GC'd weak references
+                            // 跳过已被垃圾回收的弱引用
                             K key = p.key();
                             if (key == null) {
                                 reduce++;
@@ -560,12 +760,20 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         }
 
         /**
-         * Remove; match on key only if value null, else match both.
+         * 从此段中移除条目。
+         * 如果value为null，则只匹配键；否则同时匹配键和值。
+         *
+         * @param key 要移除的键
+         * @param hash 键的哈希码
+         * @param value 要匹配的值（可以为null）
+         * @param refRemove 是否为引用移除操作
+         * @return 与键关联的先前值，如果没有匹配则返回null
          */
         V remove(Object key, int hash, Object value, boolean refRemove) {
             lock();
             try {
                 if (!refRemove) {
+                    // 如果不是引用移除操作，先清理过期条目
                     removeStale();
                 }
                 int c = count - 1;
@@ -573,7 +781,7 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                 int index = hash & tab.length - 1;
                 HashEntry<K, V> first = tab[index];
                 HashEntry<K, V> e = first;
-                // a reference remove operation compares the Reference instance
+                // 引用移除操作比较引用实例，键移除操作比较键对象
                 while (e != null && key != e.keyRef &&
                         (refRemove || hash != e.hash || !keyEq(key, e.key()))) {
                     e = e.next;
@@ -584,22 +792,23 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                     V v = e.value();
                     if (value == null || value.equals(v)) {
                         oldValue = v;
-                        // All entries following removed node can stay in list,
-                        // but all preceding ones need to be cloned.
+                        // 被移除节点之后的所有条目可以保留在链表中，
+                        // 但之前的所有条目都需要克隆。
                         ++ modCount;
                         HashEntry<K, V> newFirst = e.next;
                         for (HashEntry<K, V> p = first; p != e; p = p.next) {
                             K pKey = p.key();
-                            if (pKey == null) { // Skip GC'd keys
+                            if (pKey == null) { // Skip GC'd keys - 跳过已被垃圾回收的键
                                 c --;
                                 continue;
                             }
 
+                            // 创建新节点
                             newFirst = newHashEntry(
                                     pKey, p.hash, newFirst, p.value());
                         }
                         tab[index] = newFirst;
-                        count = c; // write-volatile
+                        count = c; // write-volatile - 必须写入volatile字段
                     }
                 }
                 return oldValue;
@@ -608,24 +817,32 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             }
         }
 
+        /**
+         * 从此段中移除所有过期的弱引用条目。
+         * 此方法会处理引用队列中的所有过期引用，并从哈希表中移除对应的条目。
+         */
         @SuppressWarnings("rawtypes")
         void removeStale() {
             WeakKeyReference ref;
+            // 从引用队列中取出所有过期的弱引用，并移除对应的条目
             while ((ref = (WeakKeyReference) refQueue.poll()) != null) {
                 remove(ref.keyRef(), ref.keyHash(), null, true);
             }
         }
 
+        /**
+         * 清空此段中的所有条目。
+         */
         void clear() {
             if (count != 0) {
                 lock();
                 try {
+                    // 清空哈希表
                     Arrays.fill(table, null);
                     ++ modCount;
-                    // replace the reference queue to avoid unnecessary stale
-                    // cleanups
+                    // 替换引用队列以避免不必要的过期清理
                     refQueue = new ReferenceQueue<Object>();
-                    count = 0; // write-volatile
+                    count = 0; // write-volatile - 必须写入volatile字段
                 } finally {
                     unlock();
                 }
@@ -633,23 +850,17 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         }
     }
 
-    /* ---------------- Public operations -------------- */
+    /* ---------------- 公共操作 -------------- */
 
     /**
-     * Creates a new, empty map with the specified initial capacity, load factor
-     * and concurrency level.
+     * 创建一个新的、空的映射，具有指定的初始容量、负载因子和并发级别。
      *
-     * @param initialCapacity the initial capacity. The implementation performs
-     *                        internal sizing to accommodate this many elements.
-     * @param loadFactor the load factor threshold, used to control resizing.
-     *                   Resizing may be performed when the average number of
-     *                   elements per bin exceeds this threshold.
-     * @param concurrencyLevel the estimated number of concurrently updating
-     *                         threads. The implementation performs internal
-     *                         sizing to try to accommodate this many threads.
-     * @throws IllegalArgumentException if the initial capacity is negative or
-     *                                  the load factor or concurrencyLevel are
-     *                                  nonpositive.
+     * @param initialCapacity 初始容量。实现执行内部大小调整以容纳这么多元素。
+     * @param loadFactor 负载因子阈值，用于控制调整大小。
+     *                   当每个桶的平均元素数超过此阈值时，可能会执行调整大小。
+     * @param concurrencyLevel 预估的并发更新线程数。实现执行内部大小调整
+     *                         以尝试容纳这么多线程。
+     * @throws IllegalArgumentException 如果初始容量为负数或负载因子或并发级别非正
      */
     public ConcurrentWeakKeyHashMap(
             int initialCapacity, float loadFactor, int concurrencyLevel) {
@@ -661,13 +872,14 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             concurrencyLevel = MAX_SEGMENTS;
         }
 
-        // Find power-of-two sizes best matching arguments
+        // 找到最匹配参数的2的幂次方大小
         int sshift = 0;
         int ssize = 1;
         while (ssize < concurrencyLevel) {
             ++ sshift;
             ssize <<= 1;
         }
+        // 计算段移位和段掩码
         segmentShift = 32 - sshift;
         segmentMask = ssize - 1;
         segments = Segment.newArray(ssize);
@@ -675,15 +887,18 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initialCapacity = MAXIMUM_CAPACITY;
         }
+        // 计算每个段的初始容量
         int c = initialCapacity / ssize;
         if (c * ssize < initialCapacity) {
             ++ c;
         }
+        // 确保容量是2的幂次方
         int cap = 1;
         while (cap < c) {
             cap <<= 1;
         }
 
+        // 初始化所有段
         for (int i = 0; i < segments.length; ++ i) {
             segments[i] = new Segment<K, V>(cap, loadFactor);
         }
@@ -754,12 +969,11 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
     public boolean isEmpty() {
         final Segment<K, V>[] segments = this.segments;
         /*
-         * We keep track of per-segment modCounts to avoid ABA problems in which
-         * an element in one segment was added and in another removed during
-         * traversal, in which case the table was never actually empty at any
-         * point. Note the similar use of modCounts in the size() and
-         * containsValue() methods, which are the only other methods also
-         * susceptible to ABA problems.
+         * 我们跟踪每个段的modCount以避免ABA问题，
+         * 即在一个段中添加元素而在另一个段中删除元素，
+         * 在这种情况下，表在任何时候实际上都不是空的。
+         * 注意在size()和containsValue()方法中modCount的类似使用，
+         * 这些是唯一其他容易受到ABA问题影响的方法。
          */
         int[] mc = new int[segments.length];
         int mcsum = 0;
@@ -770,9 +984,8 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                 mcsum += mc[i] = segments[i].modCount;
             }
         }
-        // If mcsum happens to be zero, then we know we got a snapshot before
-        // any modifications at all were made.  This is probably common enough
-        // to bother tracking.
+        // 如果mcsum恰好为零，那么我们知道在进行任何修改之前得到了快照。
+        // 这可能足够常见，值得跟踪。
         if (mcsum != 0) {
             for (int i = 0; i < segments.length; ++ i) {
                 if (segments[i].count != 0 || mc[i] != segments[i].modCount) {
@@ -1061,15 +1274,12 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
     }
 
     /**
-     * Removes any stale entries whose keys have been finalized. Use of this
-     * method is normally not necessary since stale entries are automatically
-     * removed lazily, when blocking operations are required. However, there are
-     * some cases where this operation should be performed eagerly, such as
-     * cleaning up old references to a ClassLoader in a multi-classloader
-     * environment.
+     * 移除键已被终结的所有过期条目。
      *
-     * Note: this method will acquire locks, one at a time, across all segments
-     * of this table, so if it is to be used, it should be used sparingly.
+     * <p>通常不需要使用此方法，因为过期条目会在需要阻塞操作时延迟自动移除。
+     * 然而，在某些情况下应该主动执行此操作，例如在多类加载器环境中清理对类加载器的旧引用。</p>
+     *
+     * <p>注意：此方法将在表的所有段上逐个获取锁，因此如果要使用，应谨慎使用。</p>
      */
     public void purgeStaleEntries() {
         for (Segment<K, V> segment: segments) {
@@ -1160,22 +1370,40 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         return new ValueIterator();
     }
 
-    /* ---------------- Iterator Support -------------- */
+    /* ---------------- 迭代器支持 -------------- */
 
+    /**
+     * 哈希迭代器的基类。
+     *
+     * <p>此类提供了遍历并发弱键哈希映射的基本功能。
+     * 迭代器是弱一致性的，永远不会抛出ConcurrentModificationException。</p>
+     */
     abstract class HashIterator {
+        // 下一个要访问的段的索引
         int nextSegmentIndex;
+        // 当前表中下一个要访问的桶的索引
         int nextTableIndex;
+        // 当前正在遍历的哈希表
         HashEntry<K, V>[] currentTable;
+        // 下一个要返回的条目
         HashEntry<K, V> nextEntry;
+        // 最后返回的条目，用于remove操作
         HashEntry<K, V> lastReturned;
+        // 当前键的强引用，防止在迭代过程中被垃圾回收
         K currentKey; // Strong reference to weak key (prevents gc)
 
+        /**
+         * 创建一个新的哈希迭代器。
+         */
         HashIterator() {
             nextSegmentIndex = segments.length - 1;
             nextTableIndex = -1;
             advance();
         }
 
+        /**
+         * 将迭代器重置到起始位置。
+         */
         public void rewind() {
             nextSegmentIndex = segments.length - 1;
             nextTableIndex = -1;
@@ -1186,21 +1414,33 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             advance();
         }
 
+        /**
+         * 检查是否还有更多元素。
+         *
+         * @return 如果还有更多元素则返回true，否则返回false
+         */
         public boolean hasMoreElements() {
             return hasNext();
         }
 
+        /**
+         * 推进到下一个有效条目。
+         * 此方法会跳过所有已被垃圾回收的弱引用键。
+         */
         final void advance() {
+            // 尝试移动到当前链表的下一个节点
             if (nextEntry != null && (nextEntry = nextEntry.next) != null) {
                 return;
             }
 
+            // 在当前表中查找下一个非空桶
             while (nextTableIndex >= 0) {
                 if ((nextEntry = currentTable[nextTableIndex --]) != null) {
                     return;
                 }
             }
 
+            // 在其他段中查找下一个非空表
             while (nextSegmentIndex >= 0) {
                 Segment<K, V> seg = segments[nextSegmentIndex --];
                 if (seg.count != 0) {
@@ -1215,8 +1455,14 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             }
         }
 
+        /**
+         * 检查是否还有更多元素。
+         *
+         * @return 如果还有更多元素则返回true，否则返回false
+         */
         public boolean hasNext() {
             while (nextEntry != null) {
+                // 确保键没有被垃圾回收
                 if (nextEntry.key() != null) {
                     return true;
                 }
@@ -1226,6 +1472,12 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             return false;
         }
 
+        /**
+         * 返回下一个哈希条目。
+         *
+         * @return 下一个哈希条目
+         * @throws NoSuchElementException 如果没有更多元素
+         */
         HashEntry<K, V> nextEntry() {
             do {
                 if (nextEntry == null) {
@@ -1235,11 +1487,16 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
                 lastReturned = nextEntry;
                 currentKey = lastReturned.key();
                 advance();
-            } while (currentKey == null); // Skip GC'd keys
+            } while (currentKey == null); // Skip GC'd keys - 跳过已被垃圾回收的键
 
             return lastReturned;
         }
 
+        /**
+         * 从映射中移除最后返回的条目。
+         *
+         * @throws IllegalStateException 如果尚未调用next或已经调用了remove
+         */
         public void remove() {
             if (lastReturned == null) {
                 throw new IllegalStateException();
@@ -1249,57 +1506,115 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         }
     }
 
+    /**
+     * 键迭代器。
+     * 遍历映射中的所有键，跳过已被垃圾回收的弱引用键。
+     */
     final class KeyIterator
             extends HashIterator implements ReusableIterator<K>, Enumeration<K> {
 
+        /**
+         * 返回下一个键。
+         *
+         * @return 下一个键
+         */
         public K next() {
             return nextEntry().key();
         }
 
+        /**
+         * 返回下一个键（作为枚举器）。
+         *
+         * @return 下一个键
+         */
         public K nextElement() {
             return nextEntry().key();
         }
     }
 
+    /**
+     * 值迭代器。
+     * 遍历映射中的所有值。
+     */
     final class ValueIterator
             extends HashIterator implements ReusableIterator<V>, Enumeration<V> {
 
+        /**
+         * 返回下一个值。
+         *
+         * @return 下一个值
+         */
         public V next() {
             return nextEntry().value();
         }
 
+        /**
+         * 返回下一个值（作为枚举器）。
+         *
+         * @return 下一个值
+         */
         public V nextElement() {
             return nextEntry().value();
         }
     }
 
     /*
-     * This class is needed for JDK5 compatibility.
+     * 这个类是为了JDK5兼容性而需要的。
+     * 这是一个简单的Map.Entry实现，保存键值对。
      */
     static class SimpleEntry<K, V> implements Entry<K, V> {
 
+        // 键对象，不可变
         private final K key;
 
+        // 值对象，可变
         private V value;
 
+        /**
+         * 创建一个新的条目。
+         *
+         * @param key 键对象
+         * @param value 值对象
+         */
         public SimpleEntry(K key, V value) {
             this.key = key;
             this.value = value;
         }
 
+        /**
+         * 从现有条目创建一个新条目。
+         *
+         * @param entry 现有条目
+         */
         public SimpleEntry(Entry<? extends K, ? extends V> entry) {
             key = entry.getKey();
             value = entry.getValue();
         }
 
+        /**
+         * 返回与此条目对应的键。
+         *
+         * @return 键对象
+         */
         public K getKey() {
             return key;
         }
 
+        /**
+         * 返回与此条目对应的值。
+         *
+         * @return 值对象
+         */
         public V getValue() {
             return value;
         }
 
+        /**
+         * 将值替换为指定值。
+         *
+         * @param value 新的值
+         * @return 先前的值
+         */
         public V setValue(V value) {
             V oldValue = this.value;
             this.value = value;
@@ -1326,28 +1641,46 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             return key + "=" + value;
         }
 
+        /**
+         * 比较两个对象是否相等。
+         *
+         * @param o1 第一个对象
+         * @param o2 第二个对象
+         * @return 如果对象相等则返回true，否则返回false
+         */
         private static boolean eq(Object o1, Object o2) {
             return o1 == null? o2 == null : o1.equals(o2);
         }
     }
 
     /**
-     * Custom Entry class used by EntryIterator.next(), that relays setValue
-     * changes to the underlying map.
+     * 自定义条目类，由EntryIterator.next()使用，
+     * 将setValue更改传递到底层映射。
+     *
+     * <p>当通过迭代器修改条目的值时，更改会自动反映到底层映射中。</p>
      */
     final class WriteThroughEntry extends SimpleEntry<K, V> {
 
+        /**
+         * 创建一个新的写入条目。
+         *
+         * @param k 键对象
+         * @param v 值对象
+         */
         WriteThroughEntry(K k, V v) {
             super(k, v);
         }
 
         /**
-         * Set our entry's value and write through to the map. The value to
-         * return is somewhat arbitrary here. Since a WriteThroughEntry does not
-         * necessarily track asynchronous changes, the most recent "previous"
-         * value could be different from what we return (or could even have been
-         * removed in which case the put will re-establish). We do not and can
-         * not guarantee more.
+         * 设置条目的值并写入到映射中。
+         *
+         * <p>要返回的值在这里有些随意。由于WriteThroughEntry不一定跟踪异步更改，
+         * 最新的"先前"值可能与我们返回的值不同（甚至可能已被删除，
+         * 在这种情况下put将重新建立）。我们不能也不保证更多。</p>
+         *
+         * @param value 要设置的新值
+         * @return 先前的值
+         * @throws NullPointerException 如果指定的值为null
          */
         @Override
         public V setValue(V value) {
@@ -1355,20 +1688,35 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             if (value == null) {
                 throw new NullPointerException();
             }
+            // 更新本地值
             V v = super.setValue(value);
+            // 将更改写入到底层映射
             put(getKey(), value);
             return v;
         }
     }
 
+    /**
+     * 条目迭代器。
+     * 遍历映射中的所有条目。
+     */
     final class EntryIterator extends HashIterator implements
             ReusableIterator<Entry<K, V>> {
+        /**
+         * 返回下一个条目。
+         *
+         * @return 下一个映射条目
+         */
         public Map.Entry<K, V> next() {
             HashEntry<K, V> e = nextEntry();
             return new WriteThroughEntry(e.key(), e.value());
         }
     }
 
+    /**
+     * 键集合视图。
+     * 提供对映射中所有键的集合视图。
+     */
     final class KeySet extends AbstractSet<K> {
         @Override
         public Iterator<K> iterator() {
@@ -1401,6 +1749,10 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         }
     }
 
+    /**
+     * 值集合视图。
+     * 提供对映射中所有值的集合视图。
+     */
     final class Values extends AbstractCollection<V> {
         @Override
         public Iterator<V> iterator() {
@@ -1428,6 +1780,10 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
         }
     }
 
+    /**
+     * 条目集合视图。
+     * 提供对映射中所有条目的集合视图。
+     */
     final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
         @Override
         public Iterator<Map.Entry<K, V>> iterator() {

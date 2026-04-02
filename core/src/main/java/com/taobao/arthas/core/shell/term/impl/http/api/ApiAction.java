@@ -1,48 +1,84 @@
 package com.taobao.arthas.core.shell.term.impl.http.api;
 
 /**
- * Http api action enums
+ * HTTP API 操作类型枚举
+ * <p>
+ * 该枚举定义了 Arthas HTTP API 支持的所有操作类型，用于指定客户端请求的具体动作。
+ * 每个枚举值对应一种特定的 API 操作，包括命令执行、会话管理、结果获取等功能。
+ * </p>
  *
  * @author gongdewei 2020-03-25
  */
 public enum ApiAction {
     /**
-     * Execute command synchronized
+     * 同步执行命令
+     * <p>
+     * 以同步方式执行 Arthas 命令，客户端会阻塞等待命令执行完成并获取结果。
+     * 适用于需要立即获取执行结果的场景。
+     * </p>
      */
     EXEC,
 
     /**
-     * Execute command async
+     * 异步执行命令
+     * <p>
+     * 以异步方式执行 Arthas 命令，命令提交后立即返回，客户端可以通过轮询或其他方式获取执行结果。
+     * 适用于执行时间较长的命令，避免长时间阻塞请求。
+     * </p>
      */
     ASYNC_EXEC,
 
     /**
-     * Interrupt executing job
+     * 中断正在执行的任务
+     * <p>
+     * 用于中断当前正在运行的异步任务，释放服务器资源。
+     * 当需要取消某个正在执行的命令时使用此操作。
+     * </p>
      */
     INTERRUPT_JOB,
 
     /**
-     * Pull the results from result queue of the session
+     * 从会话的结果队列中拉取结果
+     * <p>
+     * 用于获取异步命令的执行结果。
+     * 客户端可以通过此操作从服务端拉取已完成的命令输出，支持分批获取大量结果数据。
+     * </p>
      */
     PULL_RESULTS,
 
     /**
-     * Create a new session
+     * 创建新会话
+     * <p>
+     * 初始化一个新的 Arthas 会话，为后续的命令执行提供独立的上下文环境。
+     * 每个会话维护自己的状态和结果队列，多个会话之间互不干扰。
+     * </p>
      */
     INIT_SESSION,
 
     /**
-     * Join a exist session
+     * 加入已存在的会话
+     * <p>
+     * 加入到一个已经创建的会话中，允许多个客户端共享同一个会话上下文。
+     * 可以在多个客户端之间协同工作，共享命令执行结果。
+     * </p>
      */
     JOIN_SESSION,
 
     /**
-     * Terminate the session
+     * 终止会话
+     * <p>
+     * 关闭并清理指定的会话，释放相关资源。
+     * 会话关闭后，该会话的所有状态和结果将被清除，无法再继续使用。
+     * </p>
      */
     CLOSE_SESSION,
 
     /**
-     * Get session info
+     * 获取会话信息
+     * <p>
+     * 查询指定会话的详细信息，包括会话状态、配置参数等。
+     * 用于监控和管理会话的生命周期。
+     * </p>
      */
     SESSION_INFO
 }

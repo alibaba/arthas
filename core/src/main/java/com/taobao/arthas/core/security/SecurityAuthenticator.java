@@ -6,65 +6,80 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
 /**
- * A {@link SecurityAuthenticator} allows to plugin custom authenticators, such
- * as JAAS based or custom implementations.
+ * 安全认证器接口
+ *
+ * 一个 {@link SecurityAuthenticator} 允许插入自定义认证器，
+ * 例如基于JAAS的认证器或自定义实现的认证器。
+ *
+ * 该接口定义了用户认证所需的基本方法，包括登录、登出、
+ * 角色管理等核心功能。实现类可以根据实际需求提供不同的
+ * 认证机制，如用户名密码认证、Token认证等。
+ *
+ * @author hengyunabc
+ * @see Subject
+ * @see Principal
+ * @see LoginException
  */
 public interface SecurityAuthenticator {
-    
-    
-    boolean needLogin();
-    
+
+
     /**
-     * Sets the name of the realm to use.
+     * 判断是否需要登录
+     *
+     * @return 如果需要登录返回true，否则返回false
+     */
+    boolean needLogin();
+
+    /**
+     * 设置认证领域的名称
+     *
+     * @param name 认证领域的名称
      */
     void setName(String name);
 
     /**
-     * Gets the name of the realm.
+     * 获取认证领域的名称
+     *
+     * @return 认证领域的名称
      */
     String getName();
 
     /**
-     * Sets the role class names (separated by comma)
+     * 设置角色类名（多个类名用逗号分隔）
      * <p/>
-     * By default if no explicit role class names has been configured, then this
-     * implementation will assume the {@link Subject}
-     * {@link java.security.Principal}s is a role if the classname contains the word
-     * <tt>role</tt> (lower cased).
+     * 如果没有显式配置角色类名，默认实现会假设
+     * {@link Subject} 的 {@link java.security.Principal} 中
+     * 类名包含单词 <tt>role</tt>（小写）的为主体角色。
      *
-     * @param names a list of FQN class names for role
-     *              {@link java.security.Principal} implementations.
+     * @param names 角色 {@link java.security.Principal} 实现类的
+     *              完全限定类名列表，多个类名用逗号分隔
      */
     void setRoleClassNames(String names);
 
     /**
-     * Attempts to login the {@link java.security.Principal} on this realm.
+     * 尝试在该认证领域登录 {@link java.security.Principal}
      * <p/>
-     * The login is a success if no Exception is thrown, and a {@link Subject} is
-     * returned.
+     * 如果没有抛出异常且返回了非空的 {@link Subject}，则表示登录成功。
      *
-     * @param principal the principal
-     * @return the subject for the logged in principal, must <b>not</b> be
-     *         <tt>null</tt>
-     * @throws LoginException is thrown if error logging in the
-     *                        {@link java.security.Principal}
+     * @param principal 要登录的主体对象
+     * @return 登录成功的主体对象，必须 <b>不为</b> <tt>null</tt>
+     * @throws LoginException 如果登录 {@link java.security.Principal} 时发生错误
      */
     Subject login(Principal principal) throws LoginException;
 
     /**
-     * Attempt to logout the subject.
+     * 尝试登出主体
      *
-     * @param subject subject to logout
-     * @throws LoginException is thrown if error logging out subject
+     * @param subject 要登出的主体对象
+     * @throws LoginException 如果登出主体时发生错误
      */
     void logout(Subject subject) throws LoginException;
 
     /**
-     * Gets the user roles from the given {@link Subject}
+     * 从给定的 {@link Subject} 中获取用户角色
      *
-     * @param subject the subject
-     * @return <tt>null</tt> if no roles, otherwise a String with roles separated by
-     *         comma.
+     * @param subject 主体对象
+     * @return 如果没有角色则返回 <tt>null</tt>，否则返回用逗号分隔的角色字符串
      */
     String getUserRoles(Subject subject);
 

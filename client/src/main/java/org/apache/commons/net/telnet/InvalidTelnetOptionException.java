@@ -18,45 +18,56 @@
 package org.apache.commons.net.telnet;
 
 /***
- * The InvalidTelnetOptionException is the exception that is
- * thrown whenever a TelnetOptionHandler with an invlaid
- * option code is registered in TelnetClient with addOptionHandler.
+ * 无效Telnet选项异常
+ *
+ * 当使用TelnetClient的addOptionHandler方法注册TelnetOptionHandler时，
+ * 如果选项码无效，则抛出此异常。
+ *
+ * 该异常用于标识在Telnet协议通信过程中，尝试使用无效或不支持的选项码时的错误情况。
  ***/
 public class InvalidTelnetOptionException extends Exception
 {
 
+    // 序列化版本号，用于保证序列化兼容性
     private static final long serialVersionUID = -2516777155928793597L;
 
     /***
-     * Option code
+     * 选项码
+     *
+     * 存储导致异常的无效Telnet选项码
      ***/
     private final int optionCode;
 
     /***
-     * Error message
+     * 错误消息
+     *
+     * 描述异常原因的详细信息
      ***/
     private final String msg;
 
     /***
-     * Constructor for the exception.
+     * 异常构造函数
      * <p>
-     * @param message - Error message.
-     * @param optcode - Option code.
+     * @param message - 错误消息，描述异常的具体原因
+     * @param optcode - 无效的选项码
      ***/
     public InvalidTelnetOptionException(String message, int optcode)
     {
+        // 保存选项码
         optionCode = optcode;
+        // 保存错误消息
         msg = message;
     }
 
     /***
-     * Gets the error message of ths exception.
+     * 获取异常的完整错误消息
      * <p>
-     * @return the error message.
+     * @return 包含错误描述和选项码的完整错误消息
      ***/
     @Override
     public String getMessage()
     {
+        // 拼接错误消息和选项码，返回完整的错误信息
         return (msg + ": " + optionCode);
     }
 }

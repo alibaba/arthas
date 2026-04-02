@@ -18,61 +18,76 @@
 package org.apache.commons.net.telnet;
 
 /***
- * The TelnetOptionHandler class is the base class to be used
- * for implementing handlers for telnet options.
+ * TelnetOptionHandler类是用于实现telnet选项处理器的基类。
  * <p>
- * TelnetOptionHandler implements basic option handling
- * functionality and defines abstract methods that must be
- * implemented to define subnegotiation behaviour.
+ * TelnetOptionHandler实现了基本的选项处理功能，
+ * 并定义了必须实现的抽象方法来定义子协商行为。
+ *
+ * Telnet协议选项说明：
+ * Telnet协议使用选项协商机制来扩展基本功能。选项协商涉及四种命令：
+ * - WILL（发送方希望启用某个选项）
+ * - WONT（发送方不希望启用某个选项）
+ * - DO（接收方被请求启用某个选项）
+ * - DONT（接收方被请求禁用某个选项）
+ *
+ * 本地端和远程端：
+ * - 本地端：指当前运行的Telnet客户端
+ * - 远程端：指连接的对端Telnet服务器
  ***/
 public abstract class TelnetOptionHandler
 {
     /***
-     * Option code
+     * 选项代码
+     * 用于标识Telnet选项的类型，例如：ECHO(1)、SUPPRESS_GO_AHEAD(3)等
      ***/
     private int optionCode = -1;
 
     /***
-     * true if the option should be activated on the local side
+     * 是否在本地端激活该选项
+     * 如果为true，建立连接时会向对端发送WILL请求，表示本地端希望启用该选项
      ***/
     private boolean initialLocal = false;
 
     /***
-     * true if the option should be activated on the remote side
+     * 是否在远程端激活该选项
+     * 如果为true，建立连接时会向对端发送DO请求，要求远程端启用该选项
      ***/
     private boolean initialRemote = false;
 
     /***
-     * true if the option should be accepted on the local side
+     * 是否接受来自远程端的DO请求
+     * 如果为true，当远程端发送DO请求要求本地端启用该选项时，将被接受
      ***/
     private boolean acceptLocal = false;
 
     /***
-     * true if the option should be accepted on the remote side
+     * 是否接受来自远程端的WILL请求
+     * 如果为true，当远程端发送WILL请求表示希望启用该选项时，将被接受
      ***/
     private boolean acceptRemote = false;
 
     /***
-     * true if the option is active on the local side
+     * 选项在本地端是否已激活
+     * 当本地端发送的DO请求被远程端确认（WILL响应）时，该标志设置为true
      ***/
     private boolean doFlag = false;
 
     /***
-     * true if the option is active on the remote side
+     * 选项在远程端是否已激活
+     * 当本地端发送的WILL请求被远程端确认（DO响应）时，该标志设置为true
      ***/
     private boolean willFlag = false;
 
     /***
-     * Constructor for the TelnetOptionHandler. Allows defining desired
-     * initial setting for local/remote activation of this option and
-     * behaviour in case a local/remote activation request for this
-     * option is received.
+     * TelnetOptionHandler的构造函数。
+     * 允许定义该选项在本地/远程端激活时的初始设置，
+     * 以及接收到本地/远程端激活请求时的行为。
      * <p>
-     * @param optcode - Option code.
-     * @param initlocal - if set to true, a WILL is sent upon connection.
-     * @param initremote - if set to true, a DO is sent upon connection.
-     * @param acceptlocal - if set to true, any DO request is accepted.
-     * @param acceptremote - if set to true, any WILL request is accepted.
+     * @param optcode - 选项代码，用于标识Telnet选项的类型（如ECHO=1、SUPPRESS_GO_AHEAD=3等）
+     * @param initlocal - 如果设置为true，建立连接时会发送WILL请求，表示本地端希望启用该选项
+     * @param initremote - 如果设置为true，建立连接时会发送DO请求，要求远程端启用该选项
+     * @param acceptlocal - 如果设置为true，将接受来自远程端的任何DO请求（要求本地端启用该选项）
+     * @param acceptremote - 如果设置为true，将接受来自远程端的任何WILL请求（远程端希望启用该选项）
      ***/
     public TelnetOptionHandler(int optcode,
                                 boolean initlocal,
@@ -89,9 +104,9 @@ public abstract class TelnetOptionHandler
 
 
     /***
-     * Returns the option code for this option.
+     * 获取此选项的选项代码。
      * <p>
-     * @return Option code.
+     * @return 选项代码，用于标识Telnet选项的类型
      ***/
     public int getOptionCode()
     {
@@ -99,10 +114,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Returns a boolean indicating whether to accept a DO
-     * request coming from the other end.
+     * 返回一个布尔值，指示是否接受来自对端的DO请求。
+     * DO请求表示对端要求本地端启用该选项。
      * <p>
-     * @return true if a DO request shall be accepted.
+     * @return 如果应该接受DO请求则返回true
      ***/
     public boolean getAcceptLocal()
     {
@@ -110,10 +125,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Returns a boolean indicating whether to accept a WILL
-     * request coming from the other end.
+     * 返回一个布尔值，指示是否接受来自对端的WILL请求。
+     * WILL请求表示对端希望启用该选项。
      * <p>
-     * @return true if a WILL request shall be accepted.
+     * @return 如果应该接受WILL请求则返回true
      ***/
     public boolean getAcceptRemote()
     {
@@ -121,10 +136,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Set behaviour of the option for DO requests coming from
-     * the other end.
+     * 设置该选项对来自对端的DO请求的行为。
+     * DO请求表示对端要求本地端启用该选项。
      * <p>
-     * @param accept - if true, subsequent DO requests will be accepted.
+     * @param accept - 如果为true，后续的DO请求将被接受；如果为false，将被拒绝
      ***/
     public void setAcceptLocal(boolean accept)
     {
@@ -132,10 +147,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Set behaviour of the option for WILL requests coming from
-     * the other end.
+     * 设置该选项对来自对端的WILL请求的行为。
+     * WILL请求表示对端希望启用该选项。
      * <p>
-     * @param accept - if true, subsequent WILL requests will be accepted.
+     * @param accept - 如果为true，后续的WILL请求将被接受；如果为false，将被拒绝
      ***/
     public void setAcceptRemote(boolean accept)
     {
@@ -143,10 +158,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Returns a boolean indicating whether to send a WILL request
-     * to the other end upon connection.
+     * 返回一个布尔值，指示是否在建立连接时向对端发送WILL请求。
+     * WILL请求表示本地端希望启用该选项。
      * <p>
-     * @return true if a WILL request shall be sent upon connection.
+     * @return 如果应该在建立连接时发送WILL请求则返回true
      ***/
     public boolean getInitLocal()
     {
@@ -154,10 +169,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Returns a boolean indicating whether to send a DO request
-     * to the other end upon connection.
+     * 返回一个布尔值，指示是否在建立连接时向对端发送DO请求。
+     * DO请求表示要求对端启用该选项。
      * <p>
-     * @return true if a DO request shall be sent upon connection.
+     * @return 如果应该在建立连接时发送DO请求则返回true
      ***/
     public boolean getInitRemote()
     {
@@ -165,10 +180,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Tells this option whether to send a WILL request upon connection.
+     * 设置该选项是否在建立连接时发送WILL请求。
+     * WILL请求表示本地端希望启用该选项。
      * <p>
-     * @param init - if true, a WILL request will be sent upon subsequent
-     * connections.
+     * @param init - 如果为true，后续建立连接时将发送WILL请求
      ***/
     public void setInitLocal(boolean init)
     {
@@ -176,10 +191,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Tells this option whether to send a DO request upon connection.
+     * 设置该选项是否在建立连接时发送DO请求。
+     * DO请求表示要求对端启用该选项。
      * <p>
-     * @param init - if true, a DO request will be sent upon subsequent
-     * connections.
+     * @param init - 如果为true，后续建立连接时将发送DO请求
      ***/
     public void setInitRemote(boolean init)
     {
@@ -187,60 +202,63 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Method called upon reception of a subnegotiation for this option
-     * coming from the other end.
+     * 当接收到来自对端的该选项的子协商数据时调用此方法。
      * <p>
-     * This implementation returns null, and
-     * must be overridden by the actual TelnetOptionHandler to specify
-     * which response must be sent for the subnegotiation request.
+     * 子协商是Telnet协议中用于在选项启用后交换额外数据的机制。
+     * 例如，终端类型选项会使用子协商来协商具体的终端类型。
      * <p>
-     * @param suboptionData - the sequence received, without IAC SB &amp; IAC SE
-     * @param suboptionLength - the length of data in suboption_data
+     * 此实现返回null，实际的TelnetOptionHandler子类必须重写此方法
+     * 以指定对子协商请求的响应。
      * <p>
-     * @return response to be sent to the subnegotiation sequence. TelnetClient
-     * will add IAC SB &amp; IAC SE. null means no response
+     * @param suboptionData - 接收到的子协商数据序列（不包含IAC SB和IAC SE标记）
+     * @param suboptionLength - suboptionData中有效数据的长度
+     * <p>
+     * @return 要发送给子协商序列的响应。TelnetClient会自动添加IAC SB和IAC SE标记。
+     *         返回null表示不发送任何响应
      ***/
     public int[] answerSubnegotiation(int suboptionData[], int suboptionLength) {
         return null;
     }
 
     /***
-     * This method is invoked whenever this option is acknowledged active on
-     * the local end (TelnetClient sent a WILL, remote side sent a DO).
-     * The method is used to specify a subnegotiation sequence that will be
-     * sent by TelnetClient when the option is activated.
+     * 当该选项在本地端被确认为激活状态时调用此方法
+     * （即TelnetClient发送了WILL请求，远程端响应了DO确认）。
      * <p>
-     * This implementation returns null, and must be overridden by
-     * the actual TelnetOptionHandler to specify
-     * which response must be sent for the subnegotiation request.
-     * @return subnegotiation sequence to be sent by TelnetClient. TelnetClient
-     * will add IAC SB &amp; IAC SE. null means no subnegotiation.
+     * 此方法用于指定当选项激活时TelnetClient应该发送的子协商序列。
+     * 某些选项在激活后需要立即进行子协商以交换参数或配置信息。
+     * <p>
+     * 此实现返回null，实际的TelnetOptionHandler子类必须重写此方法
+     * 以指定选项激活时需要发送的子协商内容。
+     * <p>
+     * @return TelnetClient应该发送的子协商序列。TelnetClient会自动添加IAC SB和IAC SE标记。
+     *         返回null表示不发送任何子协商
      ***/
     public int[] startSubnegotiationLocal() {
         return null;
     }
 
     /***
-     * This method is invoked whenever this option is acknowledged active on
-     * the remote end (TelnetClient sent a DO, remote side sent a WILL).
-     * The method is used to specify a subnegotiation sequence that will be
-     * sent by TelnetClient when the option is activated.
+     * 当该选项在远程端被确认为激活状态时调用此方法
+     * （即TelnetClient发送了DO请求，远程端响应了WILL确认）。
      * <p>
-     * This implementation returns null, and must be overridden by
-     * the actual TelnetOptionHandler to specify
-     * which response must be sent for the subnegotiation request.
-     * @return subnegotiation sequence to be sent by TelnetClient. TelnetClient
-     * will add IAC SB &amp; IAC SE. null means no subnegotiation.
+     * 此方法用于指定当选项激活时TelnetClient应该发送的子协商序列。
+     * 某些选项在激活后需要立即进行子协商以交换参数或配置信息。
+     * <p>
+     * 此实现返回null，实际的TelnetOptionHandler子类必须重写此方法
+     * 以指定选项激活时需要发送的子协商内容。
+     * <p>
+     * @return TelnetClient应该发送的子协商序列。TelnetClient会自动添加IAC SB和IAC SE标记。
+     *         返回null表示不发送任何子协商
      ***/
     public int[] startSubnegotiationRemote() {
         return null;
     }
 
     /***
-     * Returns a boolean indicating whether a WILL request sent to the other
-     * side has been acknowledged.
+     * 返回一个布尔值，指示发送到对端的WILL请求是否已被确认。
+     * WILL请求被确认意味着对端响应了DO，同意启用该选项。
      * <p>
-     * @return true if a WILL sent to the other side has been acknowledged.
+     * @return 如果发送到对端的WILL请求已被确认则返回true
      ***/
     boolean getWill()
     {
@@ -248,10 +266,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Tells this option whether a WILL request sent to the other
-     * side has been acknowledged (invoked by TelnetClient).
+     * 设置该选项的WILL请求确认状态
+     * （由TelnetClient内部调用）。
      * <p>
-     * @param state - if true, a WILL request has been acknowledged.
+     * @param state - 如果为true，表示WILL请求已被对端确认
      ***/
     void setWill(boolean state)
     {
@@ -259,10 +277,10 @@ public abstract class TelnetOptionHandler
     }
 
     /***
-     * Returns a boolean indicating whether a DO request sent to the other
-     * side has been acknowledged.
+     * 返回一个布尔值，指示发送到对端的DO请求是否已被确认。
+     * DO请求被确认意味着对端响应了WILL，同意启用该选项。
      * <p>
-     * @return true if a DO sent to the other side has been acknowledged.
+     * @return 如果发送到对端的DO请求已被确认则返回true
      ***/
     boolean getDo()
     {
@@ -271,10 +289,10 @@ public abstract class TelnetOptionHandler
 
 
     /***
-     * Tells this option whether a DO request sent to the other
-     * side has been acknowledged (invoked by TelnetClient).
+     * 设置该选项的DO请求确认状态
+     * （由TelnetClient内部调用）。
      * <p>
-     * @param state - if true, a DO request has been acknowledged.
+     * @param state - 如果为true，表示DO请求已被对端确认
      ***/
     void setDo(boolean state)
     {

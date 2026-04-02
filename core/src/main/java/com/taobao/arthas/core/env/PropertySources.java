@@ -17,7 +17,17 @@
 package com.taobao.arthas.core.env;
 
 /**
- * Holder containing one or more {@link PropertySource} objects.
+ * 属性源持有者接口，包含一个或多个 {@link PropertySource} 对象
+ *
+ * <p>此接口作为属性源（PropertySource）的容器，用于管理和访问多个属性源。
+ * 继承自 Iterable 接口，支持迭代遍历所有包含的属性源。
+ *
+ * <p>使用场景：
+ * <ul>
+ * <li>当需要从多个来源（如配置文件、系统属性、环境变量等）访问属性时</li>
+ * <li>当需要按照优先级顺序查找属性时</li>
+ * <li>当需要统一管理多个配置源时</li>
+ * </ul>
  *
  * @author Chris Beams
  * @author Juergen Hoeller
@@ -27,18 +37,24 @@ package com.taobao.arthas.core.env;
 public interface PropertySources extends Iterable<PropertySource<?>> {
 
     /**
-     * Return whether a property source with the given name is contained.
-     * 
-     * @param name the {@linkplain PropertySource#getName() name of the property
-     *             source} to find
+     * 判断是否包含指定名称的属性源
+     *
+     * <p>此方法用于检查容器中是否存在具有特定名称的属性源。
+     * 属性源的名称通常是唯一的，用于标识不同的配置来源。
+     *
+     * @param name 要查找的属性源名称（参考 {@link PropertySource#getName()}）
+     * @return 如果包含指定名称的属性源则返回 true，否则返回 false
      */
     boolean contains(String name);
 
     /**
-     * Return the property source with the given name, {@code null} if not found.
-     * 
-     * @param name the {@linkplain PropertySource#getName() name of the property
-     *             source} to find
+     * 获取指定名称的属性源
+     *
+     * <p>此方法根据名称从容器中获取对应的属性源对象。
+     * 如果未找到匹配的属性源，则返回 null。
+     *
+     * @param name 要查找的属性源名称（参考 {@link PropertySource#getName()}）
+     * @return 返回匹配的属性源对象，如果未找到则返回 null
      */
     PropertySource<?> get(String name);
 

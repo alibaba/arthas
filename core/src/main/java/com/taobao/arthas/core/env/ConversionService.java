@@ -17,9 +17,20 @@
 package com.taobao.arthas.core.env;
 
 /**
- * A service interface for type conversion. This is the entry point into the
- * convert system. Call {@link #convert(Object, Class)} to perform a thread-safe
- * type conversion using this system.
+ * 类型转换服务接口
+ * <p>
+ * 这是类型转换系统的入口点。调用 {@link #convert(Object, Class)} 方法
+ * 可以使用该系统执行线程安全的类型转换
+ * <p>
+ * 该接口提供了以下核心功能：
+ * <ul>
+ * <li>检查是否可以从源类型转换为目标类型</li>
+ * <li>执行实际的类型转换操作</li>
+ * <li>支持多种数据类型之间的转换</li>
+ * </ul>
+ * <p>
+ * 注意：对于集合、数组和 Map 类型的转换，即使基础元素不可转换，
+ * canConvert 方法也可能返回 true。调用者需要处理这种异常情况
  *
  * @author Keith Donald
  * @author Phillip Webb
@@ -28,35 +39,36 @@ package com.taobao.arthas.core.env;
 public interface ConversionService {
 
     /**
-     * Return {@code true} if objects of {@code sourceType} can be converted to the
-     * {@code targetType}.
+     * 检查是否可以将 {@code sourceType} 类型的对象转换为 {@code targetType}
      * <p>
-     * If this method returns {@code true}, it means {@link #convert(Object, Class)}
-     * is capable of converting an instance of {@code sourceType} to
-     * {@code targetType}.
+     * 如果该方法返回 {@code true}，表示 {@link #convert(Object, Class)}
+     * 方法能够将 {@code sourceType} 的实例转换为 {@code targetType}
      * <p>
-     * Special note on collections, arrays, and maps types: For conversion between
-     * collection, array, and map types, this method will return {@code true} even
-     * though a convert invocation may still generate a {@link ConversionException}
-     * if the underlying elements are not convertible. Callers are expected to
-     * handle this exceptional case when working with collections and maps.
-     * 
-     * @param sourceType the source type to convert from (may be {@code null} if
-     *                   source is {@code null})
-     * @param targetType the target type to convert to (required)
-     * @return {@code true} if a conversion can be performed, {@code false} if not
-     * @throws IllegalArgumentException if {@code targetType} is {@code null}
+     * 关于集合、数组和 Map 类型的特别说明：
+     * 对于集合、数组和 Map 类型之间的转换，即使基础元素不可转换，
+     * 该方法也可能返回 {@code true}，因为转换调用可能会生成 {@link ConversionException}
+     * 调用者在处理集合和 Map 时需要处理这种异常情况
+     *
+     * @param sourceType 要转换的源类型（如果源为 {@code null}，可能为 {@code null}）
+     * @param targetType 要转换的目标类型（必需）
+     * @return 如果可以执行转换返回 {@code true}，否则返回 {@code false}
+     * @throws IllegalArgumentException 如果 {@code targetType} 为 {@code null}
      */
     boolean canConvert(Class<?> sourceType, Class<?> targetType);
 
     /**
-     * Convert the given {@code source} to the specified {@code targetType}.
-     * 
-     * @param source     the source object to convert (may be {@code null})
-     * @param targetType the target type to convert to (required)
-     * @return the converted object, an instance of targetType
-     * @throws ConversionException      if a conversion exception occurred
-     * @throws IllegalArgumentException if targetType is {@code null}
+     * 将给定的 {@code source} 对象转换为指定的 {@code targetType}
+     * <p>
+     * 该方法执行实际的类型转换操作
+     * 如果转换失败，将抛出 ConversionException 异常
+     * 如果目标类型为 null，将抛出 IllegalArgumentException 异常
+     *
+     * @param source     要转换的源对象（可能为 {@code null}）
+     * @param targetType 要转换的目标类型（必需）
+     * @param <T>        目标类型的泛型参数
+     * @return 转换后的对象，是 targetType 的实例
+     * @throws ConversionException      如果发生转换异常
+     * @throws IllegalArgumentException 如果 targetType 为 {@code null}
      */
     <T> T convert(Object source, Class<T> targetType);
 

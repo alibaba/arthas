@@ -19,15 +19,12 @@ package org.apache.commons.net;
 
 import java.io.IOException;
 
-/***
- * This exception is used to indicate that the reply from a server
- * could not be interpreted.  Most of the NetComponents classes attempt
- * to be as lenient as possible when receiving server replies.  Many
- * server implementations deviate from IETF protocol specifications, making
- * it necessary to be as flexible as possible.  However, there will be
- * certain situations where it is not possible to continue an operation
- * because the server reply could not be interpreted in a meaningful manner.
- * In these cases, a MalformedServerReplyException should be thrown.
+/**
+ * 此异常用于指示服务器的回复无法被解释。
+ * 大多数 NetComponents 类在接收服务器回复时尝试尽可能宽容。
+ * 许多服务器实现偏离了 IETF 协议规范，因此需要尽可能灵活。
+ * 然而，在某些情况下，由于服务器回复无法以有意义的方式解释，
+ * 无法继续操作。在这些情况下，应该抛出 MalformedServerReplyException。
  *
  *
  ***/
@@ -35,21 +32,28 @@ import java.io.IOException;
 public class MalformedServerReplyException extends IOException
 {
 
+    /**
+     * 序列化版本 UID，用于类的序列化兼容性。
+     */
     private static final long serialVersionUID = 6006765264250543945L;
 
-    /*** Constructs a MalformedServerReplyException with no message ***/
+    /**
+     * 构造一个没有详细消息的 MalformedServerReplyException。
+     ***/
     public MalformedServerReplyException()
     {
+        // 调用父类构造函数，创建无消息的异常
         super();
     }
 
-    /***
-     * Constructs a MalformedServerReplyException with a specified message.
+    /**
+     * 构造一个带有指定消息的 MalformedServerReplyException。
      *
-     * @param message  The message explaining the reason for the exception.
+     * @param message  解释异常原因的消息。
      ***/
     public MalformedServerReplyException(String message)
     {
+        // 调用父类构造函数，创建带消息的异常
         super(message);
     }
 

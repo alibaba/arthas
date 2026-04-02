@@ -21,16 +21,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-/***
- * The DatagramSocketFactory interface provides a means for the
- * programmer to control the creation of datagram sockets and
- * provide his own DatagramSocket implementations for use by all
- * classes derived from
+/**
+ * DatagramSocketFactory 接口为程序员提供了一种控制数据报套接字创建的方式，
+ * 并允许程序员提供自己的 DatagramSocket 实现，供所有派生自
  * {@link org.apache.commons.net.DatagramSocketClient}
- * .
- * This allows you to provide your own DatagramSocket implementations and
- * to perform security checks or browser capability requests before
- * creating a DatagramSocket.
+ * 的类使用。
+ * 这允许你提供自己的 DatagramSocket 实现，并在创建 DatagramSocket 之前
+ * 执行安全检查或浏览器能力请求。
  *
  *
  ***/
@@ -38,31 +35,30 @@ import java.net.SocketException;
 public interface DatagramSocketFactory
 {
 
-    /***
-     * Creates a DatagramSocket on the local host at the first available port.
-     * @return the socket
+    /**
+     * 在本地主机的第一个可用端口上创建一个 DatagramSocket。
+     * @return 创建的套接字。
      *
-     * @exception SocketException If the socket could not be created.
+     * @exception SocketException 如果无法创建套接字。
      ***/
     public DatagramSocket createDatagramSocket() throws SocketException;
 
-    /***
-     * Creates a DatagramSocket on the local host at a specified port.
+    /**
+     * 在本地主机的指定端口上创建一个 DatagramSocket。
      *
-     * @param port The port to use for the socket.
-     * @return the socket
-     * @exception SocketException If the socket could not be created.
+     * @param port 套接字使用的端口号。
+     * @return 创建的套接字。
+     * @exception SocketException 如果无法创建套接字。
      ***/
     public DatagramSocket createDatagramSocket(int port) throws SocketException;
 
-    /***
-     * Creates a DatagramSocket at the specified address on the local host
-     * at a specified port.
+    /**
+     * 在本地主机的指定地址和端口上创建一个 DatagramSocket。
      *
-     * @param port The port to use for the socket.
-     * @param laddr  The local address to use.
-     * @return the socket
-     * @exception SocketException If the socket could not be created.
+     * @param port 套接字使用的端口号。
+     * @param laddr 使用的本地地址。
+     * @return 创建的套接字。
+     * @exception SocketException 如果无法创建套接字。
      ***/
     public DatagramSocket createDatagramSocket(int port, InetAddress laddr)
     throws SocketException;

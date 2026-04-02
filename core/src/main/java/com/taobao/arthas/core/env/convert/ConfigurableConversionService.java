@@ -19,14 +19,21 @@ package com.taobao.arthas.core.env.convert;
 import com.taobao.arthas.core.env.ConversionService;
 
 /**
- * Configuration interface to be implemented by most if not all
- * {@link ConversionService} types. Consolidates the read-only operations
- * exposed by {@link ConversionService} and the mutating operations of
- * {@link ConverterRegistry} to allow for convenient ad-hoc addition and removal
- * of {@link org.springframework.core.convert.converter.Converter Converters}
- * through. The latter is particularly useful when working against a
- * {@link org.springframework.core.env.ConfigurableEnvironment
- * ConfigurableEnvironment} instance in application context bootstrapping code.
+ * 可配置的类型转换服务接口
+ *
+ * 这是一个配置接口，由大多数（如果不是全部）{@link ConversionService} 类型实现。
+ * 它整合了 {@link ConversionService} 暴露的只读操作和 {@link ConverterRegistry} 的可变操作，
+ * 允许方便地临时添加和删除 {@link org.springframework.core.convert.converter.Converter 转换器}。
+ *
+ * 后者在应用程序上下文引导代码中处理 {@link org.springframework.core.env.ConfigurableEnvironment
+ * ConfigurableEnvironment} 实例时特别有用。
+ *
+ * <p>此接口的主要作用：</p>
+ * <ul>
+ *   <li>扩展了 ConversionService 接口，继承类型转换的基本功能</li>
+ *   <li>允许动态添加和移除转换器</li>
+ *   <li>提供了更灵活的类型转换配置能力</li>
+ * </ul>
  *
  * @author Chris Beams
  * @since 3.1

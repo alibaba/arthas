@@ -6,113 +6,157 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
 
 /**
- * A job executed in a {@link JobController}, grouping one or several process.<p/>
+ * 任务（Job）接口
  *
- * The job life cycle can be controlled with the {@link #run}, {@link #resume} and {@link #suspend} and {@link #interrupt}
- * methods.
+ * 表示在JobController中执行的一个任务，可以包含一个或多个进程
+ * 任务的生命周期可以通过run、resume、suspend和interrupt方法来控制
+ *
+ * 支持前台和后台运行模式，可以动态切换
+ * 每个任务都有唯一ID、执行状态和对应的命令行
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public interface Job {
 
     /**
-     * @return the job id
+     * 获取任务ID
+     *
+     * @return 任务ID，在同一个JobController中唯一
      */
     int id();
 
     /**
-     * @return the job exec status
+     * 获取任务的执行状态
+     *
+     * @return 任务执行状态枚举值
      */
     ExecStatus status();
 
     /**
-     * @return the execution line of the job, i.e the shell command line that launched this job
+     * 获取任务的执行命令行
+     *
+     * 即启动该任务的shell命令行内容
+     *
+     * @return 命令行字符串
      */
     String line();
 
 
     /**
-     * Run the job, before running the job a {@link Tty} must be set.
+     * 运行任务（默认前台运行）
      *
-     * @return this object
+     * 在运行任务之前必须先设置Tty
+     *
+     * @return this对象，支持链式调用
      */
     Job run();
 
     /**
-     * Run the job, before running the job a {@link Tty} must be set.
+     * 运行任务，可以指定前台或后台运行
      *
-     * @return this object
+     * 在运行任务之前必须先设置Tty
+     *
+     * @param foreground 是否在前台运行，true为前台，false为后台
+     * @return this对象，支持链式调用
      */
     Job run(boolean foreground);
 
     /**
-     * Attempt to interrupt the job.
+     * 尝试中断任务
      *
-     * @return true if the job is actually interrupted
+     * 发送中断信号给正在运行的任务
+     *
+     * @return 如果任务实际被中断了返回true，否则返回false
      */
     boolean interrupt();
 
     /**
-     * Resume the job to foreground.
+     * 恢复任务运行到前台
+     *
+     * 将暂停或后台运行的任务恢复到前台运行
+     *
+     * @return this对象，支持链式调用
      */
     Job resume();
 
     /**
-     * @return true if the job is running in background
+     * 判断任务是否在后台运行
+     *
+     * @return 如果任务正在后台运行返回true，否则返回false
      */
     boolean isRunInBackground();
 
     /**
-     * Send the job to background.
+     * 将任务发送到后台运行
      *
-     * @return this object
+     * @return this对象，支持链式调用
      */
     Job toBackground();
 
     /**
-     * Send the job to foreground.
+     * 将任务调到前台运行
      *
-     * @return this object
+     * @return this对象，支持链式调用
      */
     Job toForeground();
 
     /**
-     * Resume the job.
+     * 恢复任务运行
      *
-     * @param foreground true when the job is resumed in foreground
+     * 可以指定恢复到前台还是后台
+     *
+     * @param foreground true表示恢复到前台，false表示恢复到后台
+     * @return this对象，支持链式调用
      */
     Job resume(boolean foreground);
 
     /**
-     * Resume the job.
+     * 暂停任务
      *
-     * @return this object
+     * 将正在运行的任务暂停
+     *
+     * @return this对象，支持链式调用
      */
     Job suspend();
 
     /**
-     * Terminate the job.
+     * 终止任务
+     *
+     * 强制结束任务的执行，释放相关资源
      */
     void terminate();
 
     /**
-     * @return the first process in the job
+     * 获取任务中的第一个进程
+     *
+     * 一个任务可能包含多个进程，这里返回第一个
+     *
+     * @return 任务中的第一个进程对象
      */
     Process process();
 
     /**
-     * @return the date with job timeout
+     * 获取任务的超时时间
+     *
+     * 如果任务设置了超时，返回超时的日期时间
+     *
+     * @return 任务超时的日期，如果未设置超时则返回null
      */
     Date timeoutDate();
 
     /**
-     * Set the date with job timeout
-     * @param date the date with job timeout
+     * 设置任务的超时时间
+     *
+     * @param date 任务超时的日期时间
      */
     void setTimeoutDate(Date date);
 
     /**
-     * @return the session this job belongs to
+     * 获取任务所属的会话
+     *
+     * 每个任务都属于一个特定的会话，会话中保存了任务运行时的上下文信息
+     *
+     * @return 任务所属的会话对象
      */
     Session getSession();
 }

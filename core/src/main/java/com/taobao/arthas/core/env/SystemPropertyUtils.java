@@ -17,13 +17,11 @@
 package com.taobao.arthas.core.env;
 
 /**
- * Helper class for resolving placeholders in texts. Usually applied to file
- * paths.
+ * 用于解析文本中的占位符的辅助类。通常应用于文件路径。
  *
  * <p>
- * A text may contain {@code ${...}} placeholders, to be resolved as system
- * properties: e.g. {@code ${user.dir}}. Default values can be supplied using
- * the ":" separator between key and value.
+ * 文本可能包含 {@code ${...}} 占位符，这些占位符将被解析为系统属性：
+ * 例如 {@code ${user.dir}}。可以使用 ":" 分隔符在键和值之间提供默认值。
  *
  * @author Juergen Hoeller
  * @author Rob Harrop
@@ -35,28 +33,30 @@ package com.taobao.arthas.core.env;
  */
 public abstract class SystemPropertyUtils {
 
-    /** Prefix for system property placeholders: "${". */
+    /** 系统属性占位符前缀: "${" */
     public static final String PLACEHOLDER_PREFIX = "${";
 
-    /** Suffix for system property placeholders: "}". */
+    /** 系统属性占位符后缀: "}" */
     public static final String PLACEHOLDER_SUFFIX = "}";
 
-    /** Value separator for system property placeholders: ":". */
+    /** 系统属性占位符的值分隔符: ":" */
     public static final String VALUE_SEPARATOR = ":";
 
+    /** 严格模式的占位符解析助手，遇到无法解析的占位符会抛出异常 */
     private static final PropertyPlaceholderHelper strictHelper = new PropertyPlaceholderHelper(PLACEHOLDER_PREFIX,
             PLACEHOLDER_SUFFIX, VALUE_SEPARATOR, false);
 
+    /** 非严格模式的占位符解析助手，遇到无法解析的占位符会忽略并保留原样 */
     private static final PropertyPlaceholderHelper nonStrictHelper = new PropertyPlaceholderHelper(PLACEHOLDER_PREFIX,
             PLACEHOLDER_SUFFIX, VALUE_SEPARATOR, true);
 
     /**
-     * Resolve {@code ${...}} placeholders in the given text, replacing them with
-     * corresponding system property values.
-     * 
-     * @param text the String to resolve
-     * @return the resolved String
-     * @throws IllegalArgumentException if there is an unresolvable placeholder
+     * 解析给定文本中的 {@code ${...}} 占位符，将其替换为相应的系统属性值
+     * 使用严格模式，遇到无法解析的占位符会抛出异常
+     *
+     * @param text 要解析的字符串
+     * @return 解析后的字符串
+     * @throws IllegalArgumentException 如果存在无法解析的占位符
      * @see #PLACEHOLDER_PREFIX
      * @see #PLACEHOLDER_SUFFIX
      */
@@ -65,47 +65,59 @@ public abstract class SystemPropertyUtils {
     }
 
     /**
-     * Resolve {@code ${...}} placeholders in the given text, replacing them with
-     * corresponding system property values. Unresolvable placeholders with no
-     * default value are ignored and passed through unchanged if the flag is set to
-     * {@code true}.
-     * 
-     * @param text                           the String to resolve
-     * @param ignoreUnresolvablePlaceholders whether unresolved placeholders are to
-     *                                       be ignored
-     * @return the resolved String
-     * @throws IllegalArgumentException if there is an unresolvable placeholder
+     * 解析给定文本中的 {@code ${...}} 占位符，将其替换为相应的系统属性值
+     * 如果标志设置为 {@code true}，无法解析且没有默认值的占位符将被忽略并保持不变
+     *
+     * @param text                           要解析的字符串
+     * @param ignoreUnresolvablePlaceholders 是否忽略无法解析的占位符
+     * @return 解析后的字符串
+     * @throws IllegalArgumentException 如果存在无法解析的占位符且 "ignoreUnresolvablePlaceholders" 标志为 {@code false}
      * @see #PLACEHOLDER_PREFIX
-     * @see #PLACEHOLDER_SUFFIX and the "ignoreUnresolvablePlaceholders" flag is
-     *      {@code false}
+     * @see #PLACEHOLDER_SUFFIX
      */
     public static String resolvePlaceholders(String text, boolean ignoreUnresolvablePlaceholders) {
+        // 根据是否忽略无法解析的占位符选择相应的助手
         PropertyPlaceholderHelper helper = (ignoreUnresolvablePlaceholders ? nonStrictHelper : strictHelper);
+        // 使用系统属性占位符解析器进行替换
         return helper.replacePlaceholders(text, new SystemPropertyPlaceholderResolver(text));
     }
 
     /**
-     * PlaceholderResolver implementation that resolves against system properties
-     * and system environment variables.
+     * 占位符解析器实现，根据系统属性和系统环境变量进行解析
      */
     private static class SystemPropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
+        /** 当前正在解析的文本 */
         private final String text;
 
+        /**
+         * 创建系统属性占位符解析器
+         *
+         * @param text 要解析的文本
+         */
         public SystemPropertyPlaceholderResolver(String text) {
             this.text = text;
         }
 
+        /**
+         * 解析占位符
+         * 首先尝试从系统属性中获取，如果找不到则从系统环境变量中获取
+         *
+         * @param placeholderName 占位符名称
+         * @return 解析后的值，如果找不到则返回 {@code null}
+         */
         @Override
         public String resolvePlaceholder(String placeholderName) {
             try {
+                // 首先尝试从系统属性中获取
                 String propVal = System.getProperty(placeholderName);
                 if (propVal == null) {
-                    // Fall back to searching the system environment.
+                    // 如果系统属性中找不到，回退到系统环境变量中搜索
                     propVal = System.getenv(placeholderName);
                 }
                 return propVal;
             } catch (Throwable ex) {
+                // 如果解析过程中出现异常，打印错误信息并返回 null
                 System.err.println("Could not resolve placeholder '" + placeholderName + "' in [" + this.text
                         + "] as system property: " + ex);
                 return null;
