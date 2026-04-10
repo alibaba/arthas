@@ -82,6 +82,18 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'
 ```
 
+### 过滤对象
+
+对 `getInstances` 返回的 `instances` 数组，可以继续使用 OGNL 选择表达式 `.{? 条件}` 做过滤，其中 `#this` 表示当前遍历到的对象。
+
+下面的例子使用 `java.lang.Thread`，适合在任意仍在运行的 JVM 里验证过滤表达式。它会筛选出所有非 daemon 线程，并只输出线程名：
+
+```bash
+vmtool --action getInstances --className java.lang.Thread --limit -1 --express 'instances.{? #this.daemon == false}.{name}'
+```
+
+如果想直接查看过滤后的对象本身，可以去掉最后的 `.{name}`。
+
 ## 强制 GC
 
 ```bash

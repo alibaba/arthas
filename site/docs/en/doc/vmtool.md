@@ -79,8 +79,20 @@ The return result of the `getInstances` action is bound to the `instances` varia
 :::
 
 ```bash
-vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express'instances[0].getBeanDefinitionNames()'
+vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'
 ```
+
+### Filter objects
+
+For the `instances` array returned by `getInstances`, you can further filter objects with the OGNL selection expression `.{? condition}`. Here `#this` refers to the current object being evaluated.
+
+The following example uses `java.lang.Thread`, which is suitable for verifying filter expressions in almost any running JVM. It filters all non-daemon threads and prints only their names:
+
+```bash
+vmtool --action getInstances --className java.lang.Thread --limit -1 --express 'instances.{? #this.daemon == false}.{name}'
+```
+
+If you want to inspect the filtered objects directly, remove the trailing `.{name}`.
 
 ## Force GC
 
