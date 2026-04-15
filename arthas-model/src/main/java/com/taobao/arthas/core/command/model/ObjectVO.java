@@ -19,6 +19,9 @@ public class ObjectVO {
     }
 
     public static ObjectVO[] array(Object[] objects, Integer expand) {
+        if (objects == null) {
+            return new ObjectVO[0];
+        }
         ObjectVO[] result = new ObjectVO[objects.length];
         for (int i = 0; i < objects.length; ++i) {
             result[i] = new ObjectVO(objects[i], expand);
