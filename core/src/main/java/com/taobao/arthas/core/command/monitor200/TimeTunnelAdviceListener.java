@@ -64,7 +64,10 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
         //取出入参时的 args，因为在函数执行过程中 args可能被修改
-        args = popArgs();
+        Object[] realArgs = popArgs();
+        if (realArgs != null) {
+            args = realArgs;
+        }
         afterFinishing(Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject));
     }
 
@@ -72,7 +75,10 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                               Throwable throwable) {
         //取出入参时的 args，因为在函数执行过程中 args可能被修改
-        args = popArgs();
+        Object[] realArgs = popArgs();
+        if (realArgs != null) {
+            args = realArgs;
+        }
         afterFinishing(Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable));
     }
 
