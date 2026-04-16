@@ -271,6 +271,11 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             // 设置超时任务
             scheduleTimeoutTask(process);
 
+            // 追加trace方法后，终止命令
+            if (listener.id() == listenerId) {
+                process.end(0, "Enhance classes with specified advice listener successfully.");
+            }
+
             //异步执行，在AdviceListener中结束
         } catch (Throwable e) {
             String msg = "error happens when enhancing class: "+e.getMessage();
