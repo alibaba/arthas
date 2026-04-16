@@ -393,4 +393,27 @@ public class ObjectViewTest {
             return INSTANCE;
         }
     }
+
+    @Test
+    public void testJsonModeCircularReference() {
+        GlobalOptions.isUsingJson = true;
+        try {
+            CircularRef a = new CircularRef("a");
+            CircularRef b = new CircularRef("b");
+            a.ref = b;
+            b.ref = a;
+            ObjectView objectView = new ObjectView(a, 3);
+            String result = objectView.draw();
+            // Should not throw StackOverflowError
+            Assert.assertNotNull(result);
+        } finally {
+            GlobalOptions.isUsingJson = false;
+        }
+    }
+
+    private static class CircularRef {
+        String name;
+        CircularRef ref;
+        CircularRef(String name) { this.name = name; }
+    }
 }
