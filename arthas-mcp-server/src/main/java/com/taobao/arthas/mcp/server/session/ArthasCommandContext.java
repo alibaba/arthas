@@ -146,15 +146,12 @@ public class ArthasCommandContext {
      * Interrupt the current job
      */
     public Map<String, Object> interruptJob() {
-        requireSessionSupport();
-        return commandExecutor.interruptJob(binding.getArthasSessionId());
+        if (binding != null) {
+            return commandExecutor.interruptJob(binding.getArthasSessionId());
+        }
+        return null;
     }
 
-    /**
-     * Set session userId for statistics reporting
-     *
-     * @param userId 用户 ID
-     */
     public void setSessionUserId(String userId) {
         if (binding != null && userId != null) {
             commandExecutor.setSessionUserId(binding.getArthasSessionId(), userId);

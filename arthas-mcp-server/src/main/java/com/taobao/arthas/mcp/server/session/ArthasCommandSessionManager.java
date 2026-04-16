@@ -21,6 +21,9 @@ public class ArthasCommandSessionManager {
     
     private final CommandExecutor commandExecutor;
     private final ConcurrentHashMap<String, CommandSessionBinding> sessionBindings = new ConcurrentHashMap<>();
+    
+    // 独立管理 task session
+    private final ConcurrentHashMap<String, CommandSessionBinding> taskSessionBindings = new ConcurrentHashMap<>();
 
     public ArthasCommandSessionManager(CommandExecutor commandExecutor) {
         this.commandExecutor = commandExecutor;
@@ -152,5 +155,43 @@ public class ArthasCommandSessionManager {
 
     public void closeAllSessions() {
         sessionBindings.keySet().forEach(this::closeCommandSession);
+    }
+    
+    /**
+     * 为 task 创建独立的 Arthas Session。
+     */
+    public CommandSessionBinding createIsolatedTaskSession(String taskId) {
+        Map<String, Object> result = commandExecutor.createSession();
+        
+        CommandSessionBinding binding = new CommandSessionBinding(
+            "task-" + taskId,  // 使用 task ID 作为 MCP session ID
+            (String) result.get("sessionId"),
+            (String) result.get("consumerId")
+        );
+        
+        // 注册到独立的 map，方便追踪和清理
+        taskSessionBindings.put(taskId, binding);
+        
+        logger.info("Created isolated task session: taskId={}, arthasSessionId={}", 
+                   taskId, binding.getArthasSessionId());
+        return binding;
+    }
+
+    public void closeTaskSession(String taskId) {
+        CommandSessionBinding binding = taskSessionBindings.remove(taskId);
+        if (binding != null) {
+            try {
+                commandExecutor.closeSession(binding.getArthasSessionId());
+                logger.info("Closed task session: taskId={}, arthasSessionId={}", 
+                           taskId, binding.getArthasSessionId());
+            } catch (Exception e) {
+                logger.warn("Failed to close task session: taskId={}, error={}", 
+                           taskId, e.getMessage());
+            }
+        }
+    }
+
+    public int getActiveTaskSessionCount() {
+        return taskSessionBindings.size();
     }
 }

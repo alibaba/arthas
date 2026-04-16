@@ -4,14 +4,15 @@ import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.core.mcp.util.McpAuthExtractor;
 import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
 import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
+import com.taobao.arthas.mcp.server.task.CreateTaskContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
+import com.taobao.arthas.mcp.server.tool.ToolContextKeys;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.taobao.arthas.core.mcp.tool.util.McpToolUtils.*;
 import static com.taobao.arthas.core.mcp.tool.function.StreamableToolUtils.*;
 
 /**
@@ -39,18 +40,18 @@ public abstract class AbstractArthasTool {
         private final boolean isStreamable;
         
         public ToolExecutionContext(ToolContext toolContext, boolean isStreamable) {
-            this.commandContext = (ArthasCommandContext) toolContext.getContext().get(TOOL_CONTEXT_COMMAND_CONTEXT_KEY);
+            this.commandContext = (ArthasCommandContext) toolContext.getContext().get(ToolContextKeys.COMMAND_CONTEXT);
             this.isStreamable = isStreamable;
             
             // 尝试获取 Exchange (在 Stateless 模式下为 null)
-            this.exchange = (McpNettyServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY);
+            this.exchange = (McpNettyServerExchange) toolContext.getContext().get(ToolContextKeys.EXCHANGE);
             
             // 尝试获取 Progress Token
-            Object progressTokenObj = toolContext.getContext().get(PROGRESS_TOKEN);
+            Object progressTokenObj = toolContext.getContext().get(ToolContextKeys.PROGRESS_TOKEN);
             this.progressToken = progressTokenObj != null ? String.valueOf(progressTokenObj) : null;
             
             // 尝试获取 Transport Context (在 Stateless 模式下可能为 null)
-            this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(MCP_TRANSPORT_CONTEXT);
+            this.mcpTransportContext = (McpTransportContext) toolContext.getContext().get(ToolContextKeys.MCP_TRANSPORT_CONTEXT);
             
             // 从 Transport Context 中提取认证信息
             if (this.mcpTransportContext != null) {
@@ -111,14 +112,14 @@ public abstract class AbstractArthasTool {
         }
     }
 
-    protected String executeStreamable(ToolContext toolContext, String commandStr, 
-                                     Integer expectedResultCount, Integer pollIntervalMs, 
+    protected String executeStreamable(ToolContext toolContext, String commandStr,
+                                     Integer expectedResultCount, Integer pollIntervalMs,
                                      Integer timeoutMs,
                                      String successMessage) {
         ToolExecutionContext execContext = null;
         try {
             execContext = new ToolExecutionContext(toolContext, true);
-            
+
             logger.info("Starting streamable execution: {}", commandStr);
 
             // Set userId to session before async execution for stat reporting
@@ -133,16 +134,25 @@ public abstract class AbstractArthasTool {
             }
             logger.debug("Async execution started: {}", asyncResult);
 
+            // 构建取消检查器（如果在 task 模式下运行）
+            StreamableToolUtils.CancellationChecker cancellationChecker = buildCancellationChecker(toolContext);
+
             Map<String, Object> results = executeAndCollectResults(
-                execContext.getExchange(), 
-                execContext.getCommandContext(), 
-                expectedResultCount, 
-                pollIntervalMs, 
+                execContext.getExchange(),
+                execContext.getCommandContext(),
+                expectedResultCount,
+                pollIntervalMs,
                 timeoutMs,
-                execContext.getProgressToken()
+                execContext.getProgressToken(),
+                cancellationChecker
             );
-            
+
             if (results != null) {
+                // 检查是否被取消
+                if (Boolean.TRUE.equals(results.get("cancelled"))) {
+                    return JsonParser.toJson(results);
+                }
+
                 String message = successMessage != null ? successMessage : "Command execution completed successfully";
 
                 if (Boolean.TRUE.equals(results.get("timedOut"))) {
@@ -153,12 +163,12 @@ public abstract class AbstractArthasTool {
                         message = "Command execution ended (Timed out). No results captured within the time limit.";
                     }
                 }
-                
+
                 return JsonParser.toJson(createCompletedResponse(message, results));
             } else {
                 return JsonParser.toJson(createErrorResponse("Command execution failed due to timeout or error limits exceeded"));
             }
-            
+
         } catch (Exception e) {
             logger.error("Error executing streamable command: {}", commandStr, e);
             return JsonParser.toJson(createErrorResponse("Error executing command: " + e.getMessage()));
@@ -171,6 +181,37 @@ public abstract class AbstractArthasTool {
                 }
             }
         }
+    }
+
+    /**
+     * 从 ToolContext 中构建取消检查器。
+     *
+     * <p>当工具在 task 模式下运行时，ToolContext 中包含 CREATE_TASK_EXTRA 和 TASK_ID，
+     * 可以用来定期检查任务是否已被取消。非 task 模式下返回 null。
+     */
+    private static StreamableToolUtils.CancellationChecker buildCancellationChecker(ToolContext toolContext) {
+        if (toolContext == null) {
+            return null;
+        }
+        Object extraObj = toolContext.getContext().get(ToolContextKeys.CREATE_TASK_CONTEXT);
+        Object taskIdObj = toolContext.getContext().get(ToolContextKeys.TASK_ID);
+        if (!(extraObj instanceof CreateTaskContext) || !(taskIdObj instanceof String)) {
+            return null;
+        }
+        final CreateTaskContext taskContext = (CreateTaskContext) extraObj;
+        final String taskId = (String) taskIdObj;
+        return new StreamableToolUtils.CancellationChecker() {
+            @Override
+            public boolean isCancelled() {
+                try {
+                    Boolean result = taskContext.isCancellationRequested(taskId).join();
+                    return Boolean.TRUE.equals(result);
+                } catch (Exception e) {
+                    // 检查失败不应阻止工具继续执行
+                    return false;
+                }
+            }
+        };
     }
 
     private static boolean isAsyncExecutionStarted(Map<String, Object> asyncResult) {
