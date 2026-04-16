@@ -27,7 +27,7 @@ public abstract class StdoutHandler implements Function<String, String> {
         if (firstTextToken.value().equals(GrepHandler.NAME)) {
             return GrepHandler.inject(tokens);
         } else if (firstTextToken.value().equals(PlainTextHandler.NAME)) {
-            return PlainTextHandler.inject(tokens);
+            return PlainTextHandler.inject();
         } else if (firstTextToken.value().equals(WordCountHandler.NAME)) {
             return WordCountHandler.inject(tokens);
         } else if (firstTextToken.value().equals(TeeHandler.NAME)){
