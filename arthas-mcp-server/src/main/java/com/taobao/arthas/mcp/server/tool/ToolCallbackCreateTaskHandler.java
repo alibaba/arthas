@@ -108,7 +108,7 @@ public class ToolCallbackCreateTaskHandler implements CreateTaskHandler {
             if (Boolean.TRUE.equals(result.getIsError())) {
                 // 工具返回错误结果，标记任务为失败
                 String errorMessage = extractErrorMessage(result);
-                context.failTask(taskId, errorMessage)
+                context.failTask(taskId, new McpSchema.CallToolResult(errorMessage, true, null))
                     .exceptionally(ex -> {
                         logger.error("Failed to mark task as failed: {}", taskId, ex);
                         return null;
@@ -130,7 +130,7 @@ public class ToolCallbackCreateTaskHandler implements CreateTaskHandler {
             logger.error("Tool execution failed for task: {}", taskId, e);
 
             // 标记任务失败（如果任务已被取消，updateTaskStatus 会静默忽略终态任务）
-            context.failTask(taskId, "Tool execution failed: " + e.getMessage())
+            context.failTask(taskId, new McpSchema.CallToolResult("Tool execution failed: " + e.getMessage(), true, null))
                 .exceptionally(ex -> {
                     logger.error("Failed to update task failure: {}", taskId, ex);
                     return null;

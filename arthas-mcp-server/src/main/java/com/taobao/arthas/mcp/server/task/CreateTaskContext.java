@@ -35,7 +35,7 @@ public interface CreateTaskContext {
 
     CompletableFuture<Void> completeTask(String taskId, McpSchema.CallToolResult result);
 
-    CompletableFuture<Void> failTask(String taskId, String message);
+    CompletableFuture<Void> failTask(String taskId, McpSchema.CallToolResult errorResult);
 
     CompletableFuture<Void> setInputRequired(String taskId, String message);
 

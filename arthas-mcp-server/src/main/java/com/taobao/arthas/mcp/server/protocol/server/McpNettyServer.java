@@ -270,6 +270,7 @@ public class McpNettyServer {
 						new McpError("Tool with name '" + toolSpecification.getTool().getName() + "' already exists"));
 			}
 			this.tools.add(toolSpecification);
+			this.toolsByName.put(toolSpecification.getTool().getName(), toolSpecification);
 			logger.debug("Added tool handler: {}", toolSpecification.getTool().getName());
 			return null;
 		}).thenCompose(ignored -> {
@@ -301,6 +302,7 @@ public class McpNettyServer {
 			if (!removed) {
 				throw new CompletionException(new McpError("Tool with name '" + toolName + "' not found"));
 			}
+			this.toolsByName.remove(toolName);
 			logger.debug("Removed tool handler: {}", toolName);
 			return null;
 		}).thenCompose(ignored -> {

@@ -355,7 +355,26 @@ public class ServerTaskToolHandler extends AbstractTaskHandler<McpSchema.ServerT
                 ));
                 return f;
             }
-            
+
+            // For FAILED/CANCELLED: fetch the stored payload (FAILED has one via failTask;
+            // CANCELLED has none, so fall back to a synthetic error result).
+            if (finalTask.getStatus() == McpSchema.TaskStatus.FAILED
+                    || finalTask.getStatus() == McpSchema.TaskStatus.CANCELLED) {
+                return taskStore.getTaskResult(taskId, sessionId)
+                        .thenApply(result -> {
+                            if (result != null) {
+                                return (McpSchema.CallToolResult) result;
+                            }
+                            // CANCELLED (or FAILED without payload as a safety net)
+                            String msg = finalTask.getStatus() == McpSchema.TaskStatus.CANCELLED
+                                    ? "Task was cancelled" +
+                                        (finalTask.getStatusMessage() != null ? ": " + finalTask.getStatusMessage() : "")
+                                    : "Task failed" +
+                                        (finalTask.getStatusMessage() != null ? ": " + finalTask.getStatusMessage() : "");
+                            return new McpSchema.CallToolResult(msg, true, null);
+                        });
+            }
+
             return taskStore.getTaskResult(taskId, sessionId)
                     .thenApply(result -> (McpSchema.CallToolResult) result);
         }).exceptionally(ex -> {

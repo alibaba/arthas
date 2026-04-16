@@ -101,8 +101,8 @@ public class DefaultCreateTaskContext implements CreateTaskContext {
     }
 
     @Override
-    public CompletableFuture<Void> failTask(String taskId, String message) {
-        return taskStore.updateTaskStatus(taskId, sessionId, McpSchema.TaskStatus.FAILED, message);
+    public CompletableFuture<Void> failTask(String taskId, McpSchema.CallToolResult errorResult) {
+        return taskStore.storeTaskResult(taskId, sessionId, McpSchema.TaskStatus.FAILED, errorResult);
     }
 
     @Override

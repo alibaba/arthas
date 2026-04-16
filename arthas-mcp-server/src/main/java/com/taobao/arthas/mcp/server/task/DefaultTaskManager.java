@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -413,14 +414,25 @@ class DefaultTaskManager implements TaskManager {
     /** Fetches the result of a terminal task. */
     @SuppressWarnings("unchecked")
     private CompletableFuture<McpSchema.Result> fetchTaskResult(String taskId, String sessionId) {
-        TaskStore<McpSchema.Result> store = (TaskStore<McpSchema.Result>) this.taskStore;
-        return store.getTaskResult(taskId, sessionId)
-                .thenApply(result -> {
-                    if (result == null) {
+        // Re-fetch the task to get its current status for fallback construction.
+        return this.taskStore.getTask(taskId, sessionId).thenCompose(storeResult -> {
+            final McpSchema.Task task = storeResult != null ? storeResult.task() : null;
+            TaskStore<McpSchema.Result> store = (TaskStore<McpSchema.Result>) this.taskStore;
+            return store.getTaskResult(taskId, sessionId)
+                    .thenApply(result -> {
+                        if (result != null) {
+                            return result;
+                        }
+                        // CANCELLED tasks never store a payload — construct a semantic response.
+                        if (task != null && task.getStatus() == McpSchema.TaskStatus.CANCELLED) {
+                            String msg = "Task was cancelled" +
+                                    (task.getStatusMessage() != null ? ": " + task.getStatusMessage() : "");
+                            return (McpSchema.Result) new McpSchema.CallToolResult(msg, true, null);
+                        }
+                        // Should not reach here for FAILED tasks (payload stored by failTask).
                         throw new RuntimeException("Task result not found");
-                    }
-                    return result;
-                });
+                    });
+        });
     }
 
     /** Watches a task until terminal, then fetches its result. */
@@ -629,7 +641,16 @@ class DefaultTaskManager implements TaskManager {
         }
 
         return this.taskStore.requestCancellation(taskId, ctx.sessionId())
-                .thenApply(task -> (McpSchema.Result) McpSchema.CancelTaskResult.fromTask(task));
+                .thenApply(task -> {
+                    if (task == null) {
+                        throw new CompletionException(
+                                McpError.builder(McpSchema.ErrorCodes.INVALID_PARAMS)
+                                        .message("Task not found or not accessible")
+                                        .data("Task ID: " + taskId)
+                                        .build());
+                    }
+                    return (McpSchema.Result) McpSchema.CancelTaskResult.fromTask(task);
+                });
     }
 
     private String extractTaskIdFromParams(Object params) {
