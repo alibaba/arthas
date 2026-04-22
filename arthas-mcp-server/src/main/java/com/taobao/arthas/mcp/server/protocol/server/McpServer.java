@@ -10,6 +10,10 @@ import com.taobao.arthas.mcp.server.CommandExecutor;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.protocol.spec.McpStatelessServerTransport;
 import com.taobao.arthas.mcp.server.protocol.spec.McpStreamableServerTransportProvider;
+import com.taobao.arthas.mcp.server.session.ArthasCommandSessionManager;
+import com.taobao.arthas.mcp.server.task.TaskAwareToolSpecification;
+import com.taobao.arthas.mcp.server.task.TaskMessageQueue;
+import com.taobao.arthas.mcp.server.task.TaskStore;
 import com.taobao.arthas.mcp.server.util.Assert;
 
 import java.time.Duration;
@@ -50,6 +54,8 @@ public interface McpServer {
 
 		final List<McpServerFeatures.ToolSpecification> tools = new ArrayList<>();
 
+		final List<TaskAwareToolSpecification> taskTools = new ArrayList<>();
+
 		final Map<String, McpServerFeatures.ResourceSpecification> resources = new HashMap<>();
 
 		final List<McpSchema.ResourceTemplate> resourceTemplates = new ArrayList<>();
@@ -59,6 +65,12 @@ public interface McpServer {
 		final List<BiFunction<McpNettyServerExchange, List<McpSchema.Root>, CompletableFuture<Void>>> rootsChangeHandlers = new ArrayList<>();
 
 		Duration requestTimeout = Duration.ofSeconds(10); // Default timeout
+
+		TaskStore<McpSchema.ServerTaskPayloadResult> taskStore;
+
+		TaskMessageQueue taskMessageQueue;
+		
+		ArthasCommandSessionManager sessionManager;
 
 		public StreamableServerNettySpecification(McpStreamableServerTransportProvider transportProvider) {
 			this.transportProvider = transportProvider;
@@ -202,15 +214,87 @@ public interface McpServer {
 			this.commandExecutor = commandExecutor;
 			return this;
 		}
+		
+		public StreamableServerNettySpecification sessionManager(ArthasCommandSessionManager sessionManager) {
+			this.sessionManager = sessionManager;
+			return this;
+		}
+
+	    public StreamableServerNettySpecification taskTool(TaskAwareToolSpecification taskToolSpecification) {
+	    	Assert.notNull(taskToolSpecification, "Task tool specification must not be null");
+	    	assertNoDuplicateTool(taskToolSpecification.tool().getName());
+	    	this.taskTools.add(taskToolSpecification);
+	    	return this;
+	    }
+
+		public StreamableServerNettySpecification taskTools(List<TaskAwareToolSpecification> taskToolSpecifications) {
+			Assert.notNull(taskToolSpecifications, "Task tool specifications list must not be null");
+			for (TaskAwareToolSpecification taskTool : taskToolSpecifications) {
+				assertNoDuplicateTool(taskTool.tool().getName());
+				this.taskTools.add(taskTool);
+			}
+			return this;
+		}
+
+		public StreamableServerNettySpecification taskTools(TaskAwareToolSpecification... taskToolSpecifications) {
+			Assert.notNull(taskToolSpecifications, "Task tool specifications must not be null");
+			for (TaskAwareToolSpecification taskTool : taskToolSpecifications) {
+				assertNoDuplicateTool(taskTool.tool().getName());
+				this.taskTools.add(taskTool);
+			}
+			return this;
+		}
+
+		public StreamableServerNettySpecification taskStore(TaskStore<McpSchema.ServerTaskPayloadResult> taskStore) {
+			Assert.notNull(taskStore, "Task store must not be null");
+			this.taskStore = taskStore;
+			return this;
+		}
+
+		public StreamableServerNettySpecification taskMessageQueue(TaskMessageQueue taskMessageQueue) {
+			Assert.notNull(taskMessageQueue, "Task message queue must not be null");
+			this.taskMessageQueue = taskMessageQueue;
+			return this;
+		}
+
+		protected void validateTaskConfiguration() {
+			boolean hasTaskTools = !this.taskTools.isEmpty();
+			boolean hasTaskStore = this.taskStore != null;
+			
+			if (hasTaskTools && !hasTaskStore) {
+				throw new IllegalStateException("Task-aware tools registered but no TaskStore configured. "
+						+ "Add a TaskStore via .taskStore(store) or remove task tools.");
+			}
+			// Note: Having taskStore without taskTools is allowed (for future dynamic registration)
+		}
+
+		private void assertNoDuplicateTool(String toolName) {
+			for (McpServerFeatures.ToolSpecification tool : this.tools) {
+				if (tool.getTool().getName().equals(toolName)) {
+					throw new IllegalArgumentException("Duplicate tool name: " + toolName);
+				}
+			}
+			for (TaskAwareToolSpecification taskTool : this.taskTools) {
+				if (taskTool.tool().getName().equals(toolName)) {
+					throw new IllegalArgumentException("Duplicate tool name: " + toolName);
+				}
+			}
+		}
 
 		public McpNettyServer build() {
+			validateTaskConfiguration();
+			
 			ObjectMapper mapper = this.objectMapper != null ? this.objectMapper : JsonParser.getObjectMapper();
 			Assert.notNull(this.commandExecutor, "CommandExecutor must be set before building");
 			return new McpNettyServer(
 					this.transportProvider, mapper, this.requestTimeout,
 					new McpServerFeatures.McpServerConfig(this.serverInfo, this.serverCapabilities, this.tools,
-							this.resources, this.resourceTemplates, this.prompts, this.rootsChangeHandlers, this.instructions
-					), this.commandExecutor
+							this.taskTools,
+							this.resources, this.resourceTemplates, this.prompts, this.rootsChangeHandlers, this.instructions,
+							this.taskStore,
+							this.taskMessageQueue
+					), this.commandExecutor,
+					this.sessionManager
 			);
 		}
 	}

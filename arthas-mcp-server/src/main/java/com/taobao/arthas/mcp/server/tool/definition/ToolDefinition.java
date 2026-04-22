@@ -1,6 +1,7 @@
 package com.taobao.arthas.mcp.server.tool.definition;
 
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.TaskSupportMode;
 
 public class ToolDefinition {
     private String name;
@@ -10,13 +11,21 @@ public class ToolDefinition {
     private McpSchema.JsonSchema inputSchema;
 
     private boolean streamable;
+    
+    private TaskSupportMode taskSupport;
 
     public ToolDefinition(String name, String description,
-                          McpSchema.JsonSchema inputSchema, boolean streamable) {
+                          McpSchema.JsonSchema inputSchema, boolean streamable, TaskSupportMode taskSupport) {
         this.name = name;
         this.description = description;
         this.inputSchema = inputSchema;
         this.streamable = streamable;
+        this.taskSupport = taskSupport;
+    }
+    
+    public ToolDefinition(String name, String description,
+                          McpSchema.JsonSchema inputSchema, boolean streamable) {
+        this(name, description, inputSchema, streamable, TaskSupportMode.FORBIDDEN);
     }
 
     public String getName() {
@@ -35,6 +44,10 @@ public class ToolDefinition {
         return streamable;
     }
 
+    public TaskSupportMode taskSupport() {
+        return taskSupport;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -48,6 +61,8 @@ public class ToolDefinition {
         private McpSchema.JsonSchema inputSchema;
 
         private boolean streamable;
+        
+        private TaskSupportMode taskSupport = TaskSupportMode.FORBIDDEN;
 
         private Builder() {
         }
@@ -71,10 +86,14 @@ public class ToolDefinition {
             this.streamable = streamable;
             return this;
         }
-
-        public ToolDefinition build() {
-            return new ToolDefinition(this.name, this.description, this.inputSchema, this.streamable);
+        
+        public Builder taskSupport(TaskSupportMode taskSupport) {
+            this.taskSupport = taskSupport;
+            return this;
         }
 
+        public ToolDefinition build() {
+            return new ToolDefinition(name, description, inputSchema, streamable, taskSupport);
+        }
     }
 }

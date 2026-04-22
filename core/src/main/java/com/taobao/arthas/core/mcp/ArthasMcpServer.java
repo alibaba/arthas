@@ -16,9 +16,18 @@ import com.taobao.arthas.mcp.server.protocol.server.transport.NettyStreamableSer
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.Implementation;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema.ServerCapabilities;
 import com.taobao.arthas.mcp.server.protocol.spec.McpStreamableServerTransportProvider;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
+import com.taobao.arthas.mcp.server.session.ArthasCommandSessionManager;
+import com.taobao.arthas.mcp.server.task.InMemoryTaskMessageQueue;
+import com.taobao.arthas.mcp.server.task.InMemoryTaskStore;
+import com.taobao.arthas.mcp.server.task.TaskAwareToolSpecification;
+import com.taobao.arthas.mcp.server.task.TaskMessageQueue;
+import com.taobao.arthas.mcp.server.task.TaskStore;
 import com.taobao.arthas.mcp.server.tool.DefaultToolCallbackProvider;
 import com.taobao.arthas.mcp.server.tool.ToolCallback;
+import com.taobao.arthas.mcp.server.tool.ToolCallbackCreateTaskHandler;
 import com.taobao.arthas.mcp.server.tool.ToolCallbackProvider;
+import com.taobao.arthas.mcp.server.tool.definition.ToolDefinition;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +55,7 @@ public class ArthasMcpServer {
     private final ServerProtocol protocol;
 
     private final CommandExecutor commandExecutor;
+    private ArthasCommandSessionManager sessionManager;
 
     private McpHttpRequestHandler unifiedMcpHandler;
 
@@ -75,13 +85,13 @@ public class ArthasMcpServer {
     }
 
     /**
-     * Start MCP server
+     * 启动 MCP 服务器
      */
     public void start() {
         try {
-            // Register Arthas-specific JSON filter
+            // 注册 Arthas 特定的 JSON 过滤器
             com.taobao.arthas.core.mcp.util.McpObjectVOFilter.register();
-            
+
             McpServerProperties properties = new McpServerProperties.Builder()
                     .name("arthas-mcp-server")
                     .version("4.1.8")
@@ -93,14 +103,7 @@ public class ArthasMcpServer {
                     .protocol(this.protocol)
                     .build();
 
-            // Use Arthas tool base package from core module
-            DefaultToolCallbackProvider toolCallbackProvider = new DefaultToolCallbackProvider();
-            toolCallbackProvider.setToolBasePackage(ARTHAS_TOOL_BASE_PACKAGE);
-            
-            ToolCallback[] callbacks = toolCallbackProvider.getToolCallbacks();
-            List<ToolCallback> providerToolCallbacks = Arrays.stream(callbacks)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            ToolClassification toolClassification = scanAndClassifyTools();
 
             unifiedMcpHandler = McpHttpRequestHandler.builder()
                     .mcpEndpoint(properties.getMcpEndpoint())
@@ -109,49 +112,186 @@ public class ArthasMcpServer {
                     .build();
 
             if (properties.getProtocol() == ServerProtocol.STREAMABLE) {
-                McpStreamableServerTransportProvider transportProvider = createStreamableHttpTransportProvider(properties);
-                streamableHandler = transportProvider.getMcpRequestHandler();
-                unifiedMcpHandler.setStreamableHandler(streamableHandler);
-
-                McpServer.StreamableServerNettySpecification streamableServerNettySpecification = McpServer.netty(transportProvider)
-                        .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
-                        .capabilities(buildServerCapabilities(properties))
-                        .instructions(properties.getInstructions())
-                        .requestTimeout(properties.getRequestTimeout())
-                        .commandExecutor(commandExecutor)
-                        .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
-
-                streamableServerNettySpecification.tools(
-                        McpToolUtils.toStreamableToolSpecifications(providerToolCallbacks));
-
-                streamableServer = streamableServerNettySpecification.build();
+                startStreamableServer(properties, toolClassification);
             } else {
-                NettyStatelessServerTransport statelessTransport = createStatelessHttpTransport(properties);
-                statelessHandler = statelessTransport.getMcpRequestHandler();
-                unifiedMcpHandler.setStatelessHandler(statelessHandler);
-
-                McpServer.StatelessServerNettySpecification statelessServerNettySpecification = McpServer.netty(statelessTransport)
-                        .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
-                        .capabilities(buildServerCapabilities(properties))
-                        .instructions(properties.getInstructions())
-                        .requestTimeout(properties.getRequestTimeout())
-                        .commandExecutor(commandExecutor)
-                        .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
-
-                statelessServerNettySpecification.tools(
-                        McpToolUtils.toStatelessToolSpecifications(providerToolCallbacks));
-
-                statelessServer = statelessServerNettySpecification.build();
+                startStatelessServer(properties, toolClassification);
             }
 
             logger.info("Arthas MCP server started successfully");
             logger.info("- MCP Endpoint: {}", properties.getMcpEndpoint());
             logger.info("- Transport mode: {}", properties.getProtocol());
-            logger.info("- Available tools: {}", providerToolCallbacks.size());
-            logger.info("- Server ready to accept connections");
         } catch (Exception e) {
             logger.error("Failed to start Arthas MCP server", e);
             throw new RuntimeException("Failed to start Arthas MCP server", e);
+        }
+    }
+
+    /**
+     * 扫描并分类工具
+     */
+    private ToolClassification scanAndClassifyTools() {
+        DefaultToolCallbackProvider toolCallbackProvider = new DefaultToolCallbackProvider();
+        toolCallbackProvider.setToolBasePackage(ARTHAS_TOOL_BASE_PACKAGE);
+        
+        ToolCallback[] allCallbacks = toolCallbackProvider.getToolCallbacks();
+        
+        // 根据 taskSupport 属性分类工具
+        List<ToolCallback> requiredTaskTools = new ArrayList<>();  // taskSupport=required
+        List<ToolCallback> optionalTaskTools = new ArrayList<>();  // taskSupport=optional
+        List<ToolCallback> normalTools = new ArrayList<>();        // taskSupport=forbidden
+        
+        for (ToolCallback callback : allCallbacks) {
+            if (callback == null) {
+                continue;
+            }
+            
+            ToolDefinition def = callback.getToolDefinition();
+            McpSchema.TaskSupportMode taskSupport = def.taskSupport();
+            
+            // 根据 taskSupport 分类
+            switch (taskSupport) {
+                case REQUIRED:
+                    requiredTaskTools.add(callback);
+                    break;
+                case OPTIONAL:
+                    optionalTaskTools.add(callback);
+                    break;
+                case FORBIDDEN:
+                default:
+                    normalTools.add(callback);
+                    break;
+            }
+        }
+        
+        logger.info("Scanned {} tools: {} normal, {} optional-task, {} required-task", 
+                allCallbacks.length, normalTools.size(), optionalTaskTools.size(), requiredTaskTools.size());
+        
+        return new ToolClassification(Arrays.asList(allCallbacks), normalTools, optionalTaskTools, requiredTaskTools);
+    }
+    
+    /**
+     * 启动 Streamable 模式服务器
+     */
+    private void startStreamableServer(McpServerProperties properties, ToolClassification classification) {
+        // 初始化 SessionManager
+        this.sessionManager = new ArthasCommandSessionManager(commandExecutor);
+        logger.info("Initialized ArthasCommandSessionManager for MCP server");
+        
+        McpStreamableServerTransportProvider transportProvider = createStreamableHttpTransportProvider(properties);
+        streamableHandler = transportProvider.getMcpRequestHandler();
+        unifiedMcpHandler.setStreamableHandler(streamableHandler);
+
+        // 准备任务感知工具列表（taskSupport = OPTIONAL 或 REQUIRED）
+        List<ToolCallback> taskAwareTools = new ArrayList<>();
+        taskAwareTools.addAll(classification.optionalTaskTools);
+        taskAwareTools.addAll(classification.requiredTaskTools);
+        
+        boolean hasTaskTools = !taskAwareTools.isEmpty();
+
+        McpServer.StreamableServerNettySpecification serverSpec = McpServer.netty(transportProvider)
+                .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
+                .capabilities(buildServerCapabilities(properties, hasTaskTools))
+                .instructions(properties.getInstructions())
+                .requestTimeout(properties.getRequestTimeout())
+                .commandExecutor(commandExecutor)
+                .sessionManager(this.sessionManager)
+                .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
+
+        // 只注册普通工具（taskSupport = FORBIDDEN）
+        serverSpec.tools(McpToolUtils.toStreamableToolSpecifications(classification.normalTools));
+        logger.debug("Registered {} normal tools", classification.normalTools.size());
+        
+        if (hasTaskTools) {
+            configureTaskSupport(serverSpec, taskAwareTools);
+        }
+
+        streamableServer = serverSpec.build();
+    }
+
+    /**
+     * 配置任务支持
+     */
+    private void configureTaskSupport(McpServer.StreamableServerNettySpecification serverSpec,
+                                      List<ToolCallback> taskAwareTools) {
+        logger.info("Configuring tasks support for {} task-aware tools", taskAwareTools.size());
+
+        // 创建 TaskStore 和 TaskMessageQueue
+        TaskStore<McpSchema.ServerTaskPayloadResult> taskStore = InMemoryTaskStore.<McpSchema.ServerTaskPayloadResult>builder()
+                .defaultTtl(Duration.ofMinutes(30))  // 任务 TTL 30 分钟
+                .build();
+
+        TaskMessageQueue messageQueue = new InMemoryTaskMessageQueue();
+
+        // 配置 TaskStore 和 TaskMessageQueue
+        serverSpec.taskStore(taskStore).taskMessageQueue(messageQueue);
+
+        // 为每个任务感知工具创建 TaskAwareToolSpecification
+        for (ToolCallback callback : taskAwareTools) {
+            ToolDefinition def = callback.getToolDefinition();
+
+            ToolCallbackCreateTaskHandler createTaskHandler = new ToolCallbackCreateTaskHandler(callback);
+
+            TaskAwareToolSpecification spec = TaskAwareToolSpecification.builder()
+                    .name(def.getName())
+                    .description(def.getDescription())
+                    .inputSchema(def.getInputSchema())
+                    .taskSupport(def.taskSupport())
+                    .createTaskHandler(createTaskHandler)
+                    .build();
+
+            serverSpec.taskTool(spec);
+            logger.debug("Registered task-aware tool: {} (taskSupport: {})", def.getName(), def.taskSupport());
+        }
+
+        logger.info("Registered {} task-aware tools successfully", taskAwareTools.size());
+    }
+    
+    /**
+     * 启动 Stateless 模式服务器
+     */
+    private void startStatelessServer(McpServerProperties properties, ToolClassification classification) {
+        // 创建传输层
+        NettyStatelessServerTransport statelessTransport = createStatelessHttpTransport(properties);
+        statelessHandler = statelessTransport.getMcpRequestHandler();
+        unifiedMcpHandler.setStatelessHandler(statelessHandler);
+        
+        // Stateless 模式不支持任务
+        boolean enableTasks = false;
+        
+        // 构建服务器规格
+        McpServer.StatelessServerNettySpecification serverSpec = McpServer.netty(statelessTransport)
+                .serverInfo(new Implementation(properties.getName(), properties.getVersion()))
+                .capabilities(buildServerCapabilities(properties, enableTasks))
+                .instructions(properties.getInstructions())
+                .requestTimeout(properties.getRequestTimeout())
+                .commandExecutor(commandExecutor)
+                .objectMapper(properties.getObjectMapper() != null ? properties.getObjectMapper() : JsonParser.getObjectMapper());
+        
+        // 在 stateless 模式下，所有工具都作为普通工具注册（不支持任务）
+        serverSpec.tools(McpToolUtils.toStatelessToolSpecifications(classification.allCallbacks));
+        logger.info("Registered {} tools in stateless mode (tasks not supported)", classification.allCallbacks.size());
+        
+        // 构建并启动服务器
+        statelessServer = serverSpec.build();
+    }
+    
+    /**
+     * 工具分类结果
+     */
+    private static class ToolClassification {
+        final List<ToolCallback> allCallbacks;
+        final List<ToolCallback> normalTools;
+        final List<ToolCallback> optionalTaskTools;
+        final List<ToolCallback> requiredTaskTools;
+        
+        ToolClassification(List<ToolCallback> allCallbacks, 
+                          List<ToolCallback> normalTools,
+                          List<ToolCallback> optionalTaskTools,
+                          List<ToolCallback> requiredTaskTools) {
+            this.allCallbacks = allCallbacks;
+            this.normalTools = normalTools;
+            this.optionalTaskTools = optionalTaskTools;
+            this.requiredTaskTools = requiredTaskTools;
         }
     }
     
@@ -178,12 +318,35 @@ public class ArthasMcpServer {
                 .build();
     }
 
-    private ServerCapabilities buildServerCapabilities(McpServerProperties properties) {
-        return ServerCapabilities.builder()
+    /**
+     * 构建服务器能力声明。
+     * 
+     * @param properties 服务器属性
+     * @param enableTasks 是否启用任务支持（只有在有任务工具时才启用）
+     * @return ServerCapabilities
+     */
+    private ServerCapabilities buildServerCapabilities(McpServerProperties properties, boolean enableTasks) {
+        ServerCapabilities.Builder builder = ServerCapabilities.builder()
                 .prompts(new ServerCapabilities.PromptCapabilities(properties.isPromptChangeNotification()))
                 .resources(new ServerCapabilities.ResourceCapabilities(properties.isResourceSubscribe(), properties.isResourceChangeNotification()))
-                .tools(new ServerCapabilities.ToolCapabilities(properties.isToolChangeNotification()))
-                .build();
+                .tools(new ServerCapabilities.ToolCapabilities(properties.isToolChangeNotification()));
+        
+        // 只有在有任务工具时才声明 tasks capability
+        if (enableTasks) {
+            // 声明服务器支持的任务能力
+            ServerCapabilities.TaskCapabilities taskCapabilities = ServerCapabilities.TaskCapabilities.builder()
+                    .list()        // 支持 tasks/list（列出所有任务）
+                    .cancel()      // 支持 tasks/cancel（取消任务）
+                    .toolsCall()   // 支持 tools/call 的任务增强执行（包括 tasks/get 和 tasks/result）
+                    .build();
+            
+            builder.tasks(taskCapabilities);
+            logger.info("Tasks capability enabled (supports list, cancel, tools/call with tasks)");
+        } else {
+            logger.info("Tasks capability disabled (no task-aware tools)");
+        }
+        
+        return builder.build();
     }
 
     public void stop() {
