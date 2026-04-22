@@ -44,7 +44,7 @@ public class GrepHandler extends StdoutHandler {
     /**
      * stop after NUM selected lines
      */
-    private final Integer maxCount;
+    protected final Integer maxCount;
 
     private static CLI cli = null;
 
@@ -73,6 +73,11 @@ public class GrepHandler extends StdoutHandler {
             if (afterLines < 1) {
                 afterLines = context;
             }
+        }
+        if (grepCommand.isCount()) {
+            return new GrepCountHandler(grepCommand.getPattern(), grepCommand.isIgnoreCase(),
+                            grepCommand.isInvertMatch(), grepCommand.isRegEx(), grepCommand.isTrimEnd(),
+                            grepCommand.getMaxCount());
         }
         return new GrepHandler(grepCommand.getPattern(), grepCommand.isIgnoreCase(), grepCommand.isInvertMatch(),
                         grepCommand.isRegEx(), grepCommand.isShowLineNumber(), grepCommand.isTrimEnd(), beforeLines,
@@ -114,13 +119,7 @@ public class GrepHandler extends StdoutHandler {
             }
             lineNum++;
 
-            final boolean match;
-            if (pattern == null) {
-                match = (ignoreCase ? line.toLowerCase() : line).contains(keyword);
-            } else {
-                match = pattern.matcher(line).find();
-            }
-            if (invertMatch != match) {
+            if (isSelectedLine(line)) {
                 matchCount++;
                 if (beforeLines > continueCount) {
                     int n = lastContinueLineNum == -1 ? (beforeLines >= lineNum ? 1 : lineNum - beforeLines)
@@ -165,10 +164,61 @@ public class GrepHandler extends StdoutHandler {
         return str;
     }
 
+    protected String prepareLine(String line) {
+        if (this.trimEnd) {
+            return StringUtils.stripEnd(line, null);
+        }
+        return line;
+    }
+
+    protected boolean isSelectedLine(String line) {
+        final boolean match;
+        if (pattern == null) {
+            match = (ignoreCase ? line.toLowerCase() : line).contains(keyword);
+        } else {
+            match = pattern.matcher(line).find();
+        }
+        return invertMatch != match;
+    }
+
     protected void appendLine(StringBuilder output, int lineNum, String line) {
         if (showLineNumber) {
             output.append(lineNum).append(':');
         }
         output.append(line).append('\n');
+    }
+
+    private static class GrepCountHandler extends GrepHandler implements StatisticsFunction {
+
+        private int count;
+
+        GrepCountHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode,
+                        boolean trimEnd, int maxCount) {
+            super(keyword, ignoreCase, invertMatch, regexpMode, false, trimEnd, 0, 0, maxCount);
+        }
+
+        @Override
+        public String apply(String input) {
+            if (input == null) {
+                return null;
+            }
+
+            String[] lines = input.split("\n");
+            for (String rawLine : lines) {
+                if (maxCount > 0 && count >= maxCount) {
+                    break;
+                }
+                String line = prepareLine(rawLine);
+                if (isSelectedLine(line)) {
+                    count++;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String result() {
+            return count + "\n";
+        }
     }
 }

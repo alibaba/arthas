@@ -10,7 +10,7 @@ Similar to the traditional `grep` command.
 
 ```
  USAGE:
-   grep [-A <value>] [-B <value>] [-C <value>] [-h] [-i] [-v] [-n] [-m <value>] [-e] [--trim-end] pattern
+   grep [-A <value>] [-B <value>] [-C <value>] [-h] [-i] [-v] [-n] [-c] [-m <value>] [-e] [--trim-end] pattern
 
  SUMMARY:
    grep command for pipes.
@@ -21,6 +21,7 @@ Similar to the traditional `grep` command.
   sysenv | grep -v JAVA
   sysenv | grep -e "(?i)(JAVA|sun)" -m 3  -C 2
   sysenv | grep JAVA -A2 -B3
+  thread --all | grep -c HttpClient
   thread | grep -m 10 -e  "TIMED_WAITING|WAITING"
 
  WIKI:
@@ -34,6 +35,7 @@ Similar to the traditional `grep` command.
  -i, --ignore-case                                                              Perform case insensitive matching.  By default, grep is case sensitive.
  -v, --invert-match                                                             Select non-matching lines
  -n, --line-number                                                              Print line number with output lines
+ -c, --count                                                                    Print only a count of selected lines
  -m, --max-count <value>                                                        stop after NUM selected lines)
  -e, --regex                                                                    Enable regular expression to match
      --trim-end                                                                 Remove whitespaces at the end of the line

@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.command.internal;
 
+import com.taobao.arthas.core.shell.cli.CliTokens;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -92,6 +93,41 @@ public class GrepHandlerTest {
             final String expected = (String) args[1];
             Assert.assertEquals(expected, ret.substring(0, ret.length() - 1));
         }
+    }
+
+    @Test
+    public void test4grep_c() {
+        StdoutHandler handler = GrepHandler.inject(CliTokens.tokenize("grep -c java"));
+
+        Assert.assertTrue(handler instanceof StatisticsFunction);
+        Assert.assertNull(handler.apply("java\n1python\n2\njava\nc"));
+        Assert.assertEquals("2\n", ((StatisticsFunction) handler).result());
+    }
+
+    @Test
+    public void test4grep_c_with_invert_match() {
+        StdoutHandler handler = GrepHandler.inject(CliTokens.tokenize("grep -v -c java"));
+
+        Assert.assertTrue(handler instanceof StatisticsFunction);
+        Assert.assertNull(handler.apply("java\n1python\n2\njava\nc"));
+        Assert.assertEquals("3\n", ((StatisticsFunction) handler).result());
+    }
+
+    @Test
+    public void test4grep_c_with_max_count() {
+        StdoutHandler handler = GrepHandler.inject(CliTokens.tokenize("grep -c -m 1 java"));
+
+        Assert.assertTrue(handler instanceof StatisticsFunction);
+        Assert.assertNull(handler.apply("java\n1python\n2\njava\nc"));
+        Assert.assertNull(handler.apply("java"));
+        Assert.assertEquals("1\n", ((StatisticsFunction) handler).result());
+    }
+
+    @Test
+    public void test4grep_without_c_is_not_statistics_function() {
+        StdoutHandler handler = GrepHandler.inject(CliTokens.tokenize("grep java"));
+
+        Assert.assertFalse(handler instanceof StatisticsFunction);
     }
 
 }

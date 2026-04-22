@@ -66,4 +66,19 @@ public class GrepCommandTest {
         }
         Assert.assertFalse(grepCommand.isTrimEnd());
     }
+
+    @Test
+    public void testCount() {
+        List<String> args = Arrays.asList("-c", "HttpClient");
+        GrepCommand grepCommand = new GrepCommand();
+        CommandLine commandLine = cli.parse(args, true);
+
+        try {
+            CLIConfigurator.inject(commandLine, grepCommand);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        Assert.assertTrue(grepCommand.isCount());
+        Assert.assertEquals("HttpClient", grepCommand.getPattern());
+    }
 }
