@@ -96,11 +96,36 @@ public class ArthasBootstrapCommandTest {
     }
 
     @Test
+    public void testResolveCommandLocationUrlsAcceptsUppercaseJarExtension() throws Exception {
+        Path tempDir = Files.createTempDirectory("arthas-command-locations");
+        Files.createFile(tempDir.resolve("external-command.JAR"));
+        Files.createFile(tempDir.resolve("external-command.txt"));
+
+        List<URL> urls = ArthasBootstrap.resolveCommandLocationUrls(tempDir.toString(), null, LOGGER);
+
+        assertThat(urls).hasSize(1);
+        assertThat(new File(urls.get(0).toURI()).getName()).isEqualTo("external-command.JAR");
+    }
+
+    @Test
     public void testAppendCommandUrlsAndLoadExternalCommandResolvers() throws Throwable {
         Path externalJar = createExternalResolverJar();
         TestCommandClassLoader classLoader = new TestCommandClassLoader();
 
         assertThat(ArthasBootstrap.loadExternalCommandResolvers(classLoader, LOGGER)).isEmpty();
+
+        ArthasBootstrap.appendCommandUrls(classLoader, Collections.singletonList(externalJar.toUri().toURL()));
+
+        List<CommandResolver> resolvers = ArthasBootstrap.loadExternalCommandResolvers(classLoader, LOGGER);
+        assertThat(resolvers).hasSize(1);
+        assertThat(resolvers.get(0).commands()).extracting(Command::name).containsExactly("external-test");
+    }
+
+    @Test
+    public void testLoadExternalCommandResolversSkipsBrokenProvider() throws Throwable {
+        Path externalJar = createExternalResolverJar("com.example.MissingCommandResolver\n"
+                        + ExternalTestCommandResolver.class.getName() + "\n");
+        TestCommandClassLoader classLoader = new TestCommandClassLoader();
 
         ArthasBootstrap.appendCommandUrls(classLoader, Collections.singletonList(externalJar.toUri().toURL()));
 
@@ -123,12 +148,16 @@ public class ArthasBootstrapCommandTest {
     }
 
     private Path createExternalResolverJar() throws IOException {
+        return createExternalResolverJar(ExternalTestCommandResolver.class.getName() + "\n");
+    }
+
+    private Path createExternalResolverJar(String serviceContent) throws IOException {
         Path jarFile = Files.createTempFile("arthas-external-command", ".jar");
         try (JarOutputStream jarOutputStream = new JarOutputStream(Files.newOutputStream(jarFile))) {
             writeClassEntry(jarOutputStream, ExternalTestCommand.class);
             writeClassEntry(jarOutputStream, ExternalTestCommandResolver.class);
             writeTextEntry(jarOutputStream, "META-INF/services/com.taobao.arthas.core.shell.command.CommandResolver",
-                            ExternalTestCommandResolver.class.getName() + "\n");
+                            serviceContent);
         }
         return jarFile;
     }

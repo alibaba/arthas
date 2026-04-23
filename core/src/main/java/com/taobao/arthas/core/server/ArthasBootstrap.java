@@ -672,7 +672,6 @@ public class ArthasBootstrap {
                 resolvers.add(iterator.next());
             } catch (ServiceConfigurationError error) {
                 logger.error("Load external arthas command resolver error", error);
-                break;
             }
         }
         return resolvers;
@@ -733,7 +732,8 @@ public class ArthasBootstrap {
     }
 
     private static boolean isCommandJar(File file) {
-        return file.getName().endsWith(".jar");
+        String fileName = file.getName();
+        return fileName.length() >= 4 && fileName.regionMatches(true, fileName.length() - 4, ".jar", 0, 4);
     }
 
     private static void addCommandUrl(Map<String, URL> commandUrls, File jarFile) throws IOException {

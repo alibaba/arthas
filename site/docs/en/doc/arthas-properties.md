@@ -52,7 +52,7 @@ It can also be configured on the command line: `--disabled-commands stop,dump`.
 By default, arthas-spring-boot-starter will disable the `stop` command.
 :::
 
-### load external commands
+### Load external commands
 
 You can load external command jars when Arthas starts:
 
