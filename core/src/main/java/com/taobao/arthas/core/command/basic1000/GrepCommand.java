@@ -94,7 +94,7 @@ public class GrepCommand extends AnnotatedCommand {
         this.showLineNumber = showLineNumber;
     }
 
-    @Option(shortName = "c", longName = "count", flag = true)
+    @Option(shortName = "c", longName = "count", flag = true, acceptValue = false)
     @Description("Print only a count of selected lines")
     public void setCount(boolean count) {
         this.count = count;
