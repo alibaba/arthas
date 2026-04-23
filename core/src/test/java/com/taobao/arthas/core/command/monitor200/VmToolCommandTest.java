@@ -71,5 +71,7 @@ public class VmToolCommandTest {
     @Test
     public void testNormalizeArrayClassNameEmptyBaseReturnsInput() {
         Assert.assertEquals("[]", VmToolCommand.normalizeArrayClassName("[]"));
+        Assert.assertEquals("[][]", VmToolCommand.normalizeArrayClassName("[][]"));
+        Assert.assertEquals("[][][]", VmToolCommand.normalizeArrayClassName("[][][]"));
     }
 }
