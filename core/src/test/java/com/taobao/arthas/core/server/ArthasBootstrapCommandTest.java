@@ -20,7 +20,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -40,6 +42,9 @@ import com.taobao.arthas.core.shell.handlers.NoOpHandler;
 public class ArthasBootstrapCommandTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArthasBootstrapCommandTest.class);
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Test
     public void testBindCommandLocations() {
         Properties properties = new Properties();
@@ -56,7 +61,7 @@ public class ArthasBootstrapCommandTest {
 
     @Test
     public void testResolveCommandLocationUrls() throws Exception {
-        Path tempDir = Files.createTempDirectory("arthas-command-locations");
+        Path tempDir = temporaryFolder.newFolder("arthas-command-locations").toPath();
         Path firstJar = Files.createFile(tempDir.resolve("b.jar"));
         Path secondJar = Files.createFile(tempDir.resolve("a.jar"));
         Files.createFile(tempDir.resolve("c.txt"));
@@ -76,11 +81,11 @@ public class ArthasBootstrapCommandTest {
 
     @Test
     public void testResolveCommandLocationUrlsLoadsDefaultCommandsDirectory() throws Exception {
-        Path arthasHome = Files.createTempDirectory("arthas-home");
+        Path arthasHome = temporaryFolder.newFolder("arthas-home").toPath();
         Path commandsDirectory = Files.createDirectory(arthasHome.resolve("commands"));
         Files.createFile(commandsDirectory.resolve("b.jar"));
         Files.createFile(commandsDirectory.resolve("a.jar"));
-        Path configuredJar = Files.createTempFile("arthas-configured-command", ".jar");
+        Path configuredJar = temporaryFolder.newFile("arthas-configured-command.jar").toPath();
 
         List<URL> urls = ArthasBootstrap.resolveCommandLocationUrls(configuredJar.toString(), arthasHome.toString(), LOGGER);
 
@@ -97,7 +102,7 @@ public class ArthasBootstrapCommandTest {
 
     @Test
     public void testResolveCommandLocationUrlsAcceptsUppercaseJarExtension() throws Exception {
-        Path tempDir = Files.createTempDirectory("arthas-command-locations");
+        Path tempDir = temporaryFolder.newFolder("arthas-command-locations").toPath();
         Files.createFile(tempDir.resolve("external-command.JAR"));
         Files.createFile(tempDir.resolve("external-command.txt"));
 
@@ -152,7 +157,7 @@ public class ArthasBootstrapCommandTest {
     }
 
     private Path createExternalResolverJar(String serviceContent) throws IOException {
-        Path jarFile = Files.createTempFile("arthas-external-command", ".jar");
+        Path jarFile = temporaryFolder.newFile("arthas-external-command.jar").toPath();
         try (JarOutputStream jarOutputStream = new JarOutputStream(Files.newOutputStream(jarFile))) {
             writeClassEntry(jarOutputStream, ExternalTestCommand.class);
             writeClassEntry(jarOutputStream, ExternalTestCommandResolver.class);

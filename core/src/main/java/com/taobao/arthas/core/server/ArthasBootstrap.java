@@ -556,16 +556,16 @@ public class ArthasBootstrap {
 
     static List<URL> resolveCommandLocationUrls(String commandLocations, String arthasHome, Logger logger)
                     throws IOException {
-        List<String> locations = collectCommandLocations(commandLocations, arthasHome);
+        List<CommandLocation> locations = collectCommandLocations(commandLocations, arthasHome);
         if (locations.isEmpty()) {
             return Collections.emptyList();
         }
 
         Map<String, URL> commandUrls = new LinkedHashMap<String, URL>();
-        for (String location : locations) {
-            File file = new File(location);
+        for (CommandLocation location : locations) {
+            File file = new File(location.path());
             if (!file.exists()) {
-                logger.warn("Skip arthas external command location because it does not exist: {}", location);
+                logger.warn("Skip arthas external command location because it does not exist: {}", location.path());
                 continue;
             }
 
@@ -591,23 +591,26 @@ public class ArthasBootstrap {
             } else if (file.isFile() && isCommandJar(file)) {
                 addCommandUrl(commandUrls, file);
             } else {
-                logger.warn("Skip arthas external command location because it is not a jar file or directory: {}", location);
+                logger.warn("Skip arthas external command location because it is not a jar file or directory: {}",
+                                location.path());
             }
         }
 
         return new ArrayList<URL>(commandUrls.values());
     }
 
-    private static List<String> collectCommandLocations(String commandLocations, String arthasHome) {
-        List<String> locations = new ArrayList<String>();
+    private static List<CommandLocation> collectCommandLocations(String commandLocations, String arthasHome) {
+        List<CommandLocation> locations = new ArrayList<CommandLocation>();
         String[] configuredLocations = StringUtils.tokenizeToStringArray(commandLocations, ",");
         if (configuredLocations != null && configuredLocations.length > 0) {
-            locations.addAll(Arrays.asList(configuredLocations));
+            for (String configuredLocation : configuredLocations) {
+                locations.add(new CommandLocation(configuredLocation, false));
+            }
         }
 
         File defaultCommandsDirectory = resolveDefaultCommandsDirectory(arthasHome);
         if (defaultCommandsDirectory != null) {
-            locations.add(defaultCommandsDirectory.getAbsolutePath());
+            locations.add(new CommandLocation(defaultCommandsDirectory.getAbsolutePath(), true));
         }
 
         return locations;
@@ -615,20 +618,35 @@ public class ArthasBootstrap {
 
     private static String describeCommandLocations(String commandLocations, String arthasHome) {
         List<String> descriptions = new ArrayList<String>();
-        String[] configuredLocations = StringUtils.tokenizeToStringArray(commandLocations, ",");
-        if (configuredLocations != null && configuredLocations.length > 0) {
-            descriptions.addAll(Arrays.asList(configuredLocations));
-        }
-
-        File defaultCommandsDirectory = resolveDefaultCommandsDirectory(arthasHome);
-        if (defaultCommandsDirectory != null) {
-            descriptions.add(defaultCommandsDirectory.getAbsolutePath() + " (default)");
+        for (CommandLocation location : collectCommandLocations(commandLocations, arthasHome)) {
+            descriptions.add(location.description());
         }
 
         if (descriptions.isEmpty()) {
             return "[]";
         }
         return descriptions.toString();
+    }
+
+    private static class CommandLocation {
+        private final String path;
+        private final boolean defaultLocation;
+
+        CommandLocation(String path, boolean defaultLocation) {
+            this.path = path;
+            this.defaultLocation = defaultLocation;
+        }
+
+        String path() {
+            return path;
+        }
+
+        String description() {
+            if (defaultLocation) {
+                return path + " (default)";
+            }
+            return path;
+        }
     }
 
     private static File resolveDefaultCommandsDirectory(String arthasHome) {
