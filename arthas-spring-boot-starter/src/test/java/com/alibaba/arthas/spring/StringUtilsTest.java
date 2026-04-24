@@ -17,6 +17,7 @@ public class StringUtilsTest {
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("telnet-port", "" + 9999);
+		map.put("command-locations", "/tmp/ext-command.jar,/tmp/ext-commands");
 
 		map.put("aaa--bbb", "fff");
 
@@ -29,6 +30,7 @@ public class StringUtilsTest {
 		map = StringUtils.removeDashKey(map);
 
 		Assertions.assertThat(map).containsEntry("telnetPort", "" + 9999);
+		Assertions.assertThat(map).containsEntry("commandLocations", "/tmp/ext-command.jar,/tmp/ext-commands");
 
 		Assertions.assertThat(map).containsEntry("aaa-Bbb", "fff");
 

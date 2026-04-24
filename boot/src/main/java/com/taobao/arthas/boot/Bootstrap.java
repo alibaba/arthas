@@ -59,6 +59,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
                 + "  java -jar arthas-boot.jar --disabled-commands stop,dump\n"
+                + "  java -jar arthas-boot.jar --command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://arthas.aliyun.com/doc\n")
 public class Bootstrap {
@@ -131,6 +132,7 @@ public class Bootstrap {
     private String select;
 
     private String disabledCommands;
+    private String commandLocations;
 
 	static {
         String arthasLibDirEnv = System.getenv("ARTHAS_LIB_DIR");
@@ -308,6 +310,12 @@ public class Bootstrap {
     @Description("disable some commands ")
     public void setDisabledCommands(String disabledCommands) {
         this.disabledCommands = disabledCommands;
+    }
+
+    @Option(longName = "command-locations")
+    @Description("external command jar locations, support jar file or directory, separated by comma")
+    public void setCommandLocations(String commandLocations) {
+        this.commandLocations = commandLocations;
     }
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
@@ -583,6 +591,10 @@ public class Bootstrap {
                 if (bootstrap.getDisabledCommands() != null) {
                     attachArgs.add("-disabled-commands");
                     attachArgs.add(bootstrap.getDisabledCommands());
+                }
+                if (bootstrap.getCommandLocations() != null) {
+                    attachArgs.add("-command-locations");
+                    attachArgs.add(bootstrap.getCommandLocations());
                 }
 
                 AnsiLog.info("Try to attach process " + pid);
@@ -895,5 +907,9 @@ public class Bootstrap {
 
     public String getDisabledCommands() {
         return disabledCommands;
+    }
+
+    public String getCommandLocations() {
+        return commandLocations;
     }
 }

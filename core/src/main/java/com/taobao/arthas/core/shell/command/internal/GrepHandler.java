@@ -53,7 +53,7 @@ public class GrepHandler extends StdoutHandler {
 
         GrepCommand grepCommand = new GrepCommand();
         if (cli == null) {
-            cli = CLIConfigurator.define(GrepCommand.class);
+            cli = CLIConfigurator.define(GrepCommand.class, true);
         }
         CommandLine commandLine = cli.parse(args, true);
 

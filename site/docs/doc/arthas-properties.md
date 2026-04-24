@@ -23,6 +23,8 @@ arthas.sessionTimeout=1800
 #arthas.appName=demoapp
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd
+#arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
+# 默认还会尝试加载 ${arthas.home}/commands 目录下的 *.jar
 ```
 
 - 如果配置 `arthas.telnetPort`为 -1 ，则不 listen telnet 端口。`arthas.httpPort`类似。
@@ -49,6 +51,22 @@ arthas.disabledCommands=stop,dump
 ::: tip
 默认情况下，arthas-spring-boot-starter 会禁掉`stop`命令。
 :::
+
+### 加载外部命令
+
+可以通过下面配置在 Arthas 启动时加载外部 command jar：
+
+```
+arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
+```
+
+- 支持单个 jar 路径，或目录路径，多个值用英文逗号分隔。
+- 目录只会扫描当前目录下的 `*.jar`，不会递归子目录。
+- 如果 `${arthas.home}/commands` 目录存在，Arthas 启动时也会自动尝试从该目录加载 `*.jar`。显式配置的 `arthas.commandLocations` 会先加载，再加载默认目录。
+- 外部 jar 需要通过 `META-INF/services/com.taobao.arthas.core.shell.command.CommandResolver` 暴露 `CommandResolver` 实现。
+- Arthas 会优先保留内置命令；如果外部命令和内置命令重名，会跳过外部命令并记录日志。
+
+也可以在命令行配置： `--command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'` 。
 
 ## 配置的优先级
 

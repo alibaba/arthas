@@ -53,6 +53,7 @@
     <modules>
         <module>web-ui</module>
         <module>math-game</module>
+        <module>arthas-demo-external-command</module>
         <module>common</module>
         <module>arthas-model</module>
         <module>spy</module>
@@ -249,6 +250,7 @@
             </activation>
             <modules>
                 <module>arthas-mcp-integration-test</module>
+                <module>arthas-external-command-integration-test</module>
             </modules>
         </profile>
 

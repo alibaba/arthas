@@ -4,6 +4,7 @@ import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandBuilder;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+import com.taobao.arthas.core.shell.command.ShellInternalCommandResolver;
 import com.taobao.arthas.core.shell.command.internal.GrepHandler;
 import com.taobao.arthas.core.shell.command.internal.PlainTextHandler;
 import com.taobao.arthas.core.shell.command.internal.WordCountHandler;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * @author beiwei30 on 23/11/2016.
  */
-class BuiltinCommandResolver implements CommandResolver {
+class BuiltinCommandResolver implements ShellInternalCommandResolver {
 
     private Handler<CommandProcess> handler;
 
