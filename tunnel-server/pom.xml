@@ -12,7 +12,6 @@
 	<url>https://github.com/alibaba/arthas</url>
 
 	<properties>
-		<tunnel.spring-boot.version>3.5.14</tunnel.spring-boot.version>
 		<tunnel.slf4j.version>2.0.17</tunnel.slf4j.version>
 		<tunnel.logback.version>1.5.32</tunnel.logback.version>
 		<maven.compiler.target>17</maven.compiler.target>
@@ -34,8 +33,8 @@
 			<!--
 				tunnel-server 已升级到 Spring Boot 3.5，需要使用 SLF4J 2 和 Logback 1.5。
 				root POM 仍为其它模块管理 Spring Boot 2 时代的日志版本，所以这里按
-				tunnel.spring-boot.version 对应的 Spring Boot BOM 版本做模块级覆盖。
-				后续升级 tunnel.spring-boot.version 时，这两个日志版本必须同步到对应 BOM。
+				root spring-boot3.version 对应的 Spring Boot BOM 版本做模块级覆盖。
+				后续升级 spring-boot3.version 时，这两个日志版本必须同步到对应 BOM。
 			-->
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -56,7 +55,7 @@
 				<!-- Import dependency management from Spring Boot -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${tunnel.spring-boot.version}</version>
+				<version>${spring-boot3.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -222,7 +221,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${tunnel.spring-boot.version}</version>
+				<version>${spring-boot3.version}</version>
                 <configuration>
                     <executable>true</executable>
                 </configuration>
