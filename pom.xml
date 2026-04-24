@@ -68,7 +68,6 @@
         <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
-        <module>tunnel-server</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
@@ -249,6 +248,7 @@
                 <jdk>[17,)</jdk>
             </activation>
             <modules>
+                <module>tunnel-server</module>
                 <module>arthas-mcp-integration-test</module>
                 <module>arthas-external-command-integration-test</module>
             </modules>

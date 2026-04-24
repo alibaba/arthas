@@ -43,7 +43,7 @@ public class TunnelClusterStoreConfiguration {
         @Bean
         // @ConditionalOnBean(StringRedisTemplate.class)
         @ConditionalOnClass(StringRedisTemplate.class)
-        @ConditionalOnProperty("spring.redis.host")
+        @ConditionalOnProperty("spring.data.redis.host")
         @ConditionalOnMissingBean
         public TunnelClusterStore tunnelClusterStore(@Autowired StringRedisTemplate redisTemplate) {
             RedisTunnelClusterStore redisTunnelClusterStore = new RedisTunnelClusterStore();

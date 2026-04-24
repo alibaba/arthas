@@ -1,3 +1,9 @@
+## Requirements
+
+The tunnel server requires Java 17 or later to build and run. This requirement comes from the Spring Boot 3.x baseline.
+
+When building the root Maven reactor with Java 8 through Java 16, `tunnel-server` is not enabled by default. It is included only by the root `jdk17` profile.
+
 ## How it works
 
 Tunnel server/client use websocket protocol.
