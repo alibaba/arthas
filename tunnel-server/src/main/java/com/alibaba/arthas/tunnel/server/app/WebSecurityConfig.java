@@ -2,9 +2,11 @@ package com.alibaba.arthas.tunnel.server.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
 
@@ -14,17 +16,20 @@ import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
  *
  */
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     @Autowired
     ArthasProperties arthasProperties;
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests().requestMatchers(EndpointRequest.toAnyEndpoint()).authenticated().anyRequest()
-        .permitAll().and().formLogin();
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).authenticated().anyRequest().permitAll())
+                .formLogin(Customizer.withDefaults());
         // allow iframe
         if (arthasProperties.isEnableIframeSupport()) {
-            httpSecurity.headers().frameOptions().disable();
+            httpSecurity.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
         }
+        return httpSecurity.build();
     }
 }
