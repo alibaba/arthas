@@ -31,6 +31,12 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+			<!--
+				tunnel-server 已升级到 Spring Boot 3.5，需要使用 SLF4J 2 和 Logback 1.5。
+				root POM 仍为其它模块管理 Spring Boot 2 时代的日志版本，所以这里按
+				tunnel.spring-boot.version 对应的 Spring Boot BOM 版本做模块级覆盖。
+				后续升级 tunnel.spring-boot.version 时，这两个日志版本必须同步到对应 BOM。
+			-->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
