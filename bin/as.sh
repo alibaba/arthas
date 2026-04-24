@@ -157,6 +157,8 @@ PASSWORD=
 
 # disabledCommands
 DISABLED_COMMANDS=
+# external command locations
+COMMAND_LOCATIONS=
 
 ############ Command Arguments ############
 
@@ -433,6 +435,7 @@ Usage:
        [--app-name <value>]
        [--username <value>] [--password <value>]
        [--disabled-commands <value>]
+       [--command-locations <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -458,6 +461,8 @@ Options and Arguments:
     --username                  Special username
     --password                  Special password
     --disabled-commands         Disable special commands
+    --command-locations         External command jar locations, support jar file or directory,
+                                separated by comma
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -480,6 +485,7 @@ EXAMPLES:
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump
+  ./as.sh --command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'
   ./as.sh --select math-game
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
@@ -658,6 +664,11 @@ parse_arguments()
         ;;
         --disabled-commands)
         DISABLED_COMMANDS="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --command-locations)
+        COMMAND_LOCATIONS="$2"
         shift # past argument
         shift # past value
         ;;
@@ -873,6 +884,10 @@ attach_jvm()
     if [ "${DISABLED_COMMANDS}" ]; then
         tempArgs+=("-disabled-commands")
         tempArgs+=("${DISABLED_COMMANDS}")
+    fi
+    if [ "${COMMAND_LOCATIONS}" ]; then
+        tempArgs+=("-command-locations")
+        tempArgs+=("${COMMAND_LOCATIONS}")
     fi
 
     if [ "${TARGET_IP}" ]; then

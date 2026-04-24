@@ -29,7 +29,11 @@ arthas 3.7.2及以后的版本同时支持 springboot 2/3
 ```
 arthas.agent-id=hsehdfsfghhwertyfad
 arthas.tunnel-server=ws://47.75.156.201:7777/ws
+arthas.command-locations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
 ```
+
+Spring Boot relaxed binding 同时支持 `arthas.command-locations` 和 `arthas.commandLocations`；
+在 Spring Boot 配置文件中推荐使用 `arthas.command-locations`。
 
 全部支持的配置项：[参考](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
 

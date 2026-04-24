@@ -70,6 +70,11 @@ public class Configure {
     private String disabledCommands;
 
     /**
+     * 外部 command jar 位置，支持 jar 路径或目录路径，多个值用英文 , 分隔
+     */
+    private String commandLocations;
+
+    /**
      * 本地连接不需要鉴权，即使配置了password。arthas.properties 里默认为true
      */
     private Boolean localConnectionNonAuth;
@@ -210,6 +215,14 @@ public class Configure {
 
     public void setDisabledCommands(String disabledCommands) {
         this.disabledCommands = disabledCommands;
+    }
+
+    public String getCommandLocations() {
+        return commandLocations;
+    }
+
+    public void setCommandLocations(String commandLocations) {
+        this.commandLocations = commandLocations;
     }
 
     public boolean isLocalConnectionNonAuth() {

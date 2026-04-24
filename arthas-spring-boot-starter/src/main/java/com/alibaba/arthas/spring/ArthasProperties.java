@@ -43,6 +43,7 @@ public class ArthasProperties {
 	 * disabled commands，default disable stop command
 	 */
 	private String disabledCommands;
+	private String commandLocations;
 	private static final String DEFAULT_DISABLEDCOMMANDS = "stop";
 
     /**
@@ -141,6 +142,14 @@ public class ArthasProperties {
 	public void setDisabledCommands(String disabledCommands) {
 		this.disabledCommands = disabledCommands;
 	}
+
+    public String getCommandLocations() {
+        return commandLocations;
+    }
+
+    public void setCommandLocations(String commandLocations) {
+        this.commandLocations = commandLocations;
+    }
 
     public String getUsername() {
         return username;
