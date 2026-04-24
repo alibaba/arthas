@@ -238,8 +238,9 @@ public class VmToolCommand extends AnnotatedCommand {
                     classLoader = ClassLoader.getSystemClassLoader();
                 }
 
+                String searchClassName = normalizeArrayClassName(className);
                 List<Class<?>> matchedClasses = new ArrayList<Class<?>>(
-                        SearchUtils.searchClassOnly(inst, className, false, hashCode));
+                        SearchUtils.searchClassOnly(inst, searchClassName, false, hashCode));
                 int matchedClassSize = matchedClasses.size();
                 if (matchedClassSize == 0) {
                     process.end(-1, "Can not find class by class name: " + className + ".");
@@ -306,6 +307,52 @@ public class VmToolCommand extends AnnotatedCommand {
             logger.error("vmtool error", e);
             process.end(1, "vmtool error: " + e.getMessage());
         }
+    }
+
+    /**
+     * 将用户友好的数组类名（例如 {@code java.lang.Object[]} 或 {@code int[][]}）
+     * 转换为 JVM 内部数组类名（例如 {@code [Ljava.lang.Object;} 或 {@code [[I}）。
+     * 非数组输入或无法识别的输入原样返回。
+     */
+    static String normalizeArrayClassName(String className) {
+        if (className == null || !className.endsWith("[]")) {
+            return className;
+        }
+        int dimensions = 0;
+        String base = className;
+        while (base.endsWith("[]")) {
+            dimensions++;
+            base = base.substring(0, base.length() - 2);
+        }
+        if (base.isEmpty()) {
+            return className;
+        }
+        String internal;
+        if ("boolean".equals(base)) {
+            internal = "Z";
+        } else if ("byte".equals(base)) {
+            internal = "B";
+        } else if ("char".equals(base)) {
+            internal = "C";
+        } else if ("short".equals(base)) {
+            internal = "S";
+        } else if ("int".equals(base)) {
+            internal = "I";
+        } else if ("long".equals(base)) {
+            internal = "J";
+        } else if ("float".equals(base)) {
+            internal = "F";
+        } else if ("double".equals(base)) {
+            internal = "D";
+        } else {
+            internal = "L" + base + ";";
+        }
+        StringBuilder sb = new StringBuilder(dimensions + internal.length());
+        for (int i = 0; i < dimensions; i++) {
+            sb.append('[');
+        }
+        sb.append(internal);
+        return sb.toString();
     }
 
     static class InstancesWrapper {
