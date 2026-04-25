@@ -373,7 +373,10 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
     public CompletableFuture<Boolean> isCancellationRequested(String taskId, String sessionId) {
         return CompletableFuture.supplyAsync(() -> {
             TaskEntry entry = tasks.get(taskId);
-            if (entry == null || !isSessionValid(entry, sessionId)) return false;
+            // Bug fix: entry == null means TTL cleanup already removed the task.
+            // We must NOT suppress the cancellation signal — if cancellationRequests still
+            // contains the taskId, the background thread must see it and exit cleanly.
+            if (entry != null && !isSessionValid(entry, sessionId)) return false;
             return cancellationRequests.contains(taskId);
         });
     }
@@ -461,7 +464,17 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
             if (now.isAfter(expiresAt)) {
                 String taskId = entry.getKey();
                 results.remove(taskId);
-                cancellationRequests.remove(taskId);
+                if (!TaskHelper.isTerminal(task.getStatus())) {
+                    // Bug fix: for non-terminal tasks (WORKING/INPUT_REQUIRED), signal the
+                    // background thread cooperatively BEFORE removing from tasks map.
+                    // Do NOT remove from cancellationRequests — the background thread must
+                    // see this signal and exit cleanly via its finally block.
+                    cancellationRequests.add(taskId);
+                    logger.debug("Signaled cancellation for expired non-terminal task: {}", taskId);
+                } else {
+                    // Terminal tasks: safe to fully clean up, no background thread running.
+                    cancellationRequests.remove(taskId);
+                }
                 expiredTaskIds.add(taskId);
                 logger.debug("Removed expired task: {}", taskId);
                 return true;

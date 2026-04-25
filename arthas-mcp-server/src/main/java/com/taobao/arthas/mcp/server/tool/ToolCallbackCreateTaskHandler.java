@@ -1,7 +1,8 @@
 package com.taobao.arthas.mcp.server.tool;
 
-import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
+import com.taobao.arthas.mcp.server.protocol.spec.McpError;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
+import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.task.CreateTaskContext;
 import com.taobao.arthas.mcp.server.task.CreateTaskHandler;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 import static com.taobao.arthas.mcp.server.tool.ToolContextKeys.*;
 
@@ -26,27 +29,62 @@ public class ToolCallbackCreateTaskHandler implements CreateTaskHandler {
     
     private final ToolCallback toolCallback;
 
-    public ToolCallbackCreateTaskHandler(ToolCallback toolCallback) {
+    // 专用 executor，避免 I/O 密集型任务污染 ForkJoinPool.commonPool
+    private final Executor taskExecutor;
+
+    public ToolCallbackCreateTaskHandler(ToolCallback toolCallback, Executor taskExecutor) {
         this.toolCallback = toolCallback;
+        this.taskExecutor = taskExecutor;
     }
 
     @Override
     public CompletableFuture<McpSchema.CreateTaskResult> createTask(
             Map<String, Object> args,
             CreateTaskContext context) {
-        
+
         logger.debug("Creating task for tool: {}", toolCallback.getToolDefinition().getName());
+
+        // 前置检查：在创建 Task 之前判断并发限制，避免产生孤儿 Task。
+        // 此时请求已经被应程层的并发限制，客户端可立刻感知并重试。
+        if (context.isAtConcurrencyLimit()) {
+            logger.warn("Concurrent task session limit reached, rejecting tool: {}",
+                    toolCallback.getToolDefinition().getName());
+            CompletableFuture<McpSchema.CreateTaskResult> rejected = new CompletableFuture<>();
+            rejected.completeExceptionally(
+                    McpError.builder(McpSchema.ErrorCodes.INVALID_PARAMS)
+                            .message("concurrent task session limit reached")
+                            .data("Server is at max concurrent task capacity. Retry after an existing task completes.")
+                            .build()
+            );
+            return rejected;
+        }
 
         return context.createTask(opts -> {
             // 使用默认配置，工具可以通过注解自定义 pollInterval 等
         }).thenCompose(task -> {
             String taskId = task.getTaskId();
-            
+
             logger.info("Task created: {}, starting async tool execution", taskId);
 
-            CompletableFuture.runAsync(() -> {
-                executeToolAndUpdateTaskStatus(taskId, args, context);
-            });
+            // 将 Task 提交到专用线程池（SynchronousQueue）。
+            // 若 executor 拒绝（理论上不应发生，前置检查已拦截），
+            // 作为安全底存捕获并标记任务失败，避免孤児 Task。
+            try {
+                CompletableFuture.runAsync(() -> {
+                    executeToolAndUpdateTaskStatus(taskId, args, context);
+                }, taskExecutor);
+            } catch (RejectedExecutionException e) {
+                logger.error("Task executor rejected task: {} (should not happen after pre-check)", taskId, e);
+                context.failTask(taskId, new McpSchema.CallToolResult(
+                        "Task rejected: executor at capacity", true, null))
+                        .exceptionally(ex -> {
+                            logger.error("Failed to mark rejected task as failed: {}", taskId, ex);
+                            return null;
+                        });
+                // 返回已创建但将就失败的 Task，让客户端能感知
+                return CompletableFuture.completedFuture(
+                        new McpSchema.CreateTaskResult(task, null));
+            }
 
             return CompletableFuture.completedFuture(
                 new McpSchema.CreateTaskResult(task, null)
