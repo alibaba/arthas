@@ -44,11 +44,15 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
 
     private final Set<String> cancellationRequests = ConcurrentHashMap.newKeySet();
 
+    private final Map<String, Long> expiredCancellationDeadlines = new ConcurrentHashMap<>();
+
     private final ScheduledExecutorService cleanupExecutor;
 
     private final long defaultTtl;
 
     private final long defaultPollInterval;
+
+    private final long expiredCancellationRetentionMs;
 
     private static final AtomicLong INSTANCE_COUNTER = new AtomicLong(0);
 
@@ -57,6 +61,8 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
     private final TaskMessageQueue messageQueue;
 
     private final int maxTasks;
+
+    private static final long DEFAULT_EXPIRED_CANCELLATION_RETENTION_MS = 30 * 60 * 1000L;
 
     public InMemoryTaskStore() {
         this(DEFAULT_TTL_MS, DEFAULT_POLL_INTERVAL_MS, null, DEFAULT_MAX_TASKS);
@@ -72,15 +78,26 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
 
     public InMemoryTaskStore(long defaultTtl, long defaultPollInterval,
                              TaskMessageQueue messageQueue, int maxTasks) {
+        this(defaultTtl, defaultPollInterval, messageQueue, maxTasks,
+                DEFAULT_EXPIRED_CANCELLATION_RETENTION_MS);
+    }
+
+    InMemoryTaskStore(long defaultTtl, long defaultPollInterval,
+                      TaskMessageQueue messageQueue, int maxTasks,
+                      long expiredCancellationRetentionMs) {
         if (defaultTtl <= 0) throw new IllegalArgumentException("defaultTtl must be positive");
         if (defaultPollInterval <= 0) throw new IllegalArgumentException("defaultPollInterval must be positive");
         if (maxTasks <= 0) throw new IllegalArgumentException("maxTasks must be positive");
+        if (expiredCancellationRetentionMs <= 0) {
+            throw new IllegalArgumentException("expiredCancellationRetentionMs must be positive");
+        }
 
         this.instanceId = INSTANCE_COUNTER.incrementAndGet();
         this.defaultTtl = defaultTtl;
         this.defaultPollInterval = defaultPollInterval;
         this.messageQueue = messageQueue;
         this.maxTasks = maxTasks;
+        this.expiredCancellationRetentionMs = expiredCancellationRetentionMs;
 
         this.cleanupExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "mcp-task-cleanup-" + instanceId);
@@ -455,7 +472,10 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
     /** Package-visible for testing. */
     void cleanupExpiredTasks() {
         Instant now = Instant.now();
+        long nowMillis = now.toEpochMilli();
         List<String> expiredTaskIds = new ArrayList<>();
+
+        cleanupExpiredCancellationRequests(nowMillis);
 
         tasks.entrySet().removeIf(entry -> {
             McpSchema.Task task = entry.getValue().task();
@@ -467,13 +487,12 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
                 if (!TaskHelper.isTerminal(task.getStatus())) {
                     // Bug fix: for non-terminal tasks (WORKING/INPUT_REQUIRED), signal the
                     // background thread cooperatively BEFORE removing from tasks map.
-                    // Do NOT remove from cancellationRequests — the background thread must
-                    // see this signal and exit cleanly via its finally block.
-                    cancellationRequests.add(taskId);
+                    // 保留取消信号一段时间，避免后台线程尚未观察到信号时被提前清理。
+                    markExpiredTaskCancellation(taskId, nowMillis);
                     logger.debug("Signaled cancellation for expired non-terminal task: {}", taskId);
                 } else {
                     // Terminal tasks: safe to fully clean up, no background thread running.
-                    cancellationRequests.remove(taskId);
+                    clearCancellationRequest(taskId);
                 }
                 expiredTaskIds.add(taskId);
                 logger.debug("Removed expired task: {}", taskId);
@@ -491,6 +510,27 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
             }
             logger.debug("Completed cleanup of {} expired tasks", expiredTaskIds.size());
         }
+    }
+
+    private void markExpiredTaskCancellation(String taskId, long nowMillis) {
+        cancellationRequests.add(taskId);
+        expiredCancellationDeadlines.put(taskId, nowMillis + expiredCancellationRetentionMs);
+    }
+
+    private void clearCancellationRequest(String taskId) {
+        cancellationRequests.remove(taskId);
+        expiredCancellationDeadlines.remove(taskId);
+    }
+
+    private void cleanupExpiredCancellationRequests(long nowMillis) {
+        expiredCancellationDeadlines.entrySet().removeIf(entry -> {
+            if (nowMillis < entry.getValue()) {
+                return false;
+            }
+            cancellationRequests.remove(entry.getKey());
+            logger.debug("Removed expired cancellation signal: {}", entry.getKey());
+            return true;
+        });
     }
 
     @Override
