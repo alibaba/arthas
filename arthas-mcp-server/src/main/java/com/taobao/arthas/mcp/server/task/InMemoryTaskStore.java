@@ -484,14 +484,15 @@ public class InMemoryTaskStore<R extends McpSchema.Result> implements TaskStore<
             if (now.isAfter(expiresAt)) {
                 String taskId = entry.getKey();
                 results.remove(taskId);
-                if (!TaskHelper.isTerminal(task.getStatus())) {
-                    // Bug fix: for non-terminal tasks (WORKING/INPUT_REQUIRED), signal the
-                    // background thread cooperatively BEFORE removing from tasks map.
+                if (!TaskHelper.isTerminal(task.getStatus())
+                        || task.getStatus() == McpSchema.TaskStatus.CANCELLED) {
+                    // 对仍可能有后台执行线程的任务，移除 task 记录前先保留协作取消信号。
+                    // CANCELLED 对客户端是终态，但不代表后台 worker 已退出。
                     // 保留取消信号一段时间，避免后台线程尚未观察到信号时被提前清理。
                     markExpiredTaskCancellation(taskId, nowMillis);
-                    logger.debug("Signaled cancellation for expired non-terminal task: {}", taskId);
+                    logger.debug("Retained cancellation signal for expired active task: {}", taskId);
                 } else {
-                    // Terminal tasks: safe to fully clean up, no background thread running.
+                    // COMPLETED/FAILED 已不需要协作取消信号，可以完整清理。
                     clearCancellationRequest(taskId);
                 }
                 expiredTaskIds.add(taskId);
