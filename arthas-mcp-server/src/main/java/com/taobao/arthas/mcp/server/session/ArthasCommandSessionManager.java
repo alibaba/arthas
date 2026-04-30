@@ -1,6 +1,9 @@
 package com.taobao.arthas.mcp.server.session;
 
 import com.taobao.arthas.mcp.server.CommandExecutor;
+import com.taobao.arthas.mcp.server.protocol.spec.McpError;
+import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
+import com.taobao.arthas.mcp.server.task.TaskDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,19 +17,25 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ArthasCommandSessionManager {
     private static final Logger logger = LoggerFactory.getLogger(ArthasCommandSessionManager.class);
-    
+
     // Arthas 默认 session 超时时间是 30 分钟，这里设置一个稍短的时间作为预判断
     // 如果距离上次访问超过这个时间，认为 session 可能已过期，主动重建
     private static final long SESSION_EXPIRY_THRESHOLD_MS = 25 * 60 * 1000; // 25 分钟
-    
+
     private final CommandExecutor commandExecutor;
+    private final int maxConcurrentTaskSessions;
     private final ConcurrentHashMap<String, CommandSessionBinding> sessionBindings = new ConcurrentHashMap<>();
-    
+
     // 独立管理 task session
     private final ConcurrentHashMap<String, CommandSessionBinding> taskSessionBindings = new ConcurrentHashMap<>();
 
     public ArthasCommandSessionManager(CommandExecutor commandExecutor) {
+        this(commandExecutor, TaskDefaults.DEFAULT_MAX_CONCURRENT_TASK_SESSIONS);
+    }
+
+    public ArthasCommandSessionManager(CommandExecutor commandExecutor, int maxConcurrentTaskSessions) {
         this.commandExecutor = commandExecutor;
+        this.maxConcurrentTaskSessions = maxConcurrentTaskSessions;
     }
 
     public static class CommandSessionBinding {
@@ -161,20 +170,28 @@ public class ArthasCommandSessionManager {
      * 为 task 创建独立的 Arthas Session。
      */
     public CommandSessionBinding createIsolatedTaskSession(String taskId) {
-        Map<String, Object> result = commandExecutor.createSession();
-        
-        CommandSessionBinding binding = new CommandSessionBinding(
-            "task-" + taskId,  // 使用 task ID 作为 MCP session ID
-            (String) result.get("sessionId"),
-            (String) result.get("consumerId")
-        );
-        
-        // 注册到独立的 map，方便追踪和清理
-        taskSessionBindings.put(taskId, binding);
-        
-        logger.info("Created isolated task session: taskId={}, arthasSessionId={}", 
-                   taskId, binding.getArthasSessionId());
-        return binding;
+        synchronized (taskSessionBindings) {
+            if (taskSessionBindings.size() >= maxConcurrentTaskSessions) {
+                throw McpError.builder(McpSchema.ErrorCodes.INVALID_PARAMS)
+                    .message("concurrent task session limit reached: " + maxConcurrentTaskSessions)
+                    .build();
+            }
+
+            Map<String, Object> result = commandExecutor.createSession();
+
+            CommandSessionBinding binding = new CommandSessionBinding(
+                "task-" + taskId,  // 使用 task ID 作为 MCP session ID
+                (String) result.get("sessionId"),
+                (String) result.get("consumerId")
+            );
+
+            // 注册到独立的 map，方便追踪和清理
+            taskSessionBindings.put(taskId, binding);
+
+            logger.info("Created isolated task session: taskId={}, arthasSessionId={}",
+                       taskId, binding.getArthasSessionId());
+            return binding;
+        }
     }
 
     public void closeTaskSession(String taskId) {
@@ -193,5 +210,13 @@ public class ArthasCommandSessionManager {
 
     public int getActiveTaskSessionCount() {
         return taskSessionBindings.size();
+    }
+
+    /**
+     * 检查当前活跃 task session 数是否已达并发上限。
+     * 供外层在创建 Task 前进行前置判断，避免产生孤儿 Task。
+     */
+    public boolean isAtConcurrencyLimit() {
+        return taskSessionBindings.size() >= maxConcurrentTaskSessions;
     }
 }

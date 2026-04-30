@@ -15,13 +15,23 @@ import java.time.Duration;
  */
 public final class TaskDefaults {
 
-    public static final long DEFAULT_TTL_MS = 60_000L;
+    public static final long DEFAULT_TTL_MS = 10 * 60 * 1000L;
 
     public static final long DEFAULT_POLL_INTERVAL_MS = 1000L;
 
     public static final int DEFAULT_PAGE_SIZE = 100;
 
+    /**
+     * task 记录存储容量上限（内存兜底）。
+     * 统计的是 tasks Map 中所有状态的 entry 总数（包含已完成但未被 TTL 清理的），
+     */
     public static final int DEFAULT_MAX_TASKS = 10_000;
+
+    /**
+     * 并发 task session 上限（资源保护）。
+     * 统计的是正在执行中的 Arthas session 数量，保护目标 JVM 不被过多 session 拖垮。
+     */
+    public static final int DEFAULT_MAX_CONCURRENT_TASK_SESSIONS = 10;
 
     public static final long DEFAULT_AUTOMATIC_POLLING_TIMEOUT_MS = 600000L;
 

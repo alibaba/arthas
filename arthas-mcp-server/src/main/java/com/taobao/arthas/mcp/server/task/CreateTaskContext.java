@@ -46,4 +46,6 @@ public interface CreateTaskContext {
     ArthasCommandContext createIsolatedTaskSession(String taskId);
 
     void cleanupTaskSession(String taskId);
+
+    boolean isAtConcurrencyLimit();
 }

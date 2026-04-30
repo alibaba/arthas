@@ -34,6 +34,12 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +68,10 @@ public class ArthasMcpServer {
     private McpStreamableHttpRequestHandler streamableHandler;
 
     private McpStatelessHttpRequestHandler statelessHandler;
+
+    // MCP Task 专用线程池，大小与 maxConcurrentTaskSessions 对齐，
+    // 避免 I/O 密集型任务污染 ForkJoinPool.commonPool
+    private ExecutorService taskExecutor;
 
     public static final String DEFAULT_MCP_ENDPOINT = "/mcp";
     
@@ -176,6 +186,18 @@ public class ArthasMcpServer {
         // 初始化 SessionManager
         this.sessionManager = new ArthasCommandSessionManager(commandExecutor);
         logger.info("Initialized ArthasCommandSessionManager for MCP server");
+
+        int maxSessions = com.taobao.arthas.mcp.server.task.TaskDefaults.DEFAULT_MAX_CONCURRENT_TASK_SESSIONS;
+        this.taskExecutor = new ThreadPoolExecutor(
+                maxSessions,                       // corePoolSize: 与 session 上限一致
+                maxSessions,                       // maxPoolSize: 固定大小，避免动态扩缩
+                0L, TimeUnit.MILLISECONDS,
+                new SynchronousQueue<>(),           // 无缓冲：直接交付或拒绝，无隐式排队
+                new McpTaskThreadFactory(),         // 具名线程，便于 thread dump 诊断
+                new ThreadPoolExecutor.AbortPolicy() // 兜底：超出直接抛 RejectedExecutionException
+        );
+        logger.info("Created MCP task executor: fixedSize={}, queue=SynchronousQueue (no buffering)",
+                maxSessions);
         
         McpStreamableServerTransportProvider transportProvider = createStreamableHttpTransportProvider(properties);
         streamableHandler = transportProvider.getMcpRequestHandler();
@@ -229,7 +251,7 @@ public class ArthasMcpServer {
         for (ToolCallback callback : taskAwareTools) {
             ToolDefinition def = callback.getToolDefinition();
 
-            ToolCallbackCreateTaskHandler createTaskHandler = new ToolCallbackCreateTaskHandler(callback);
+            ToolCallbackCreateTaskHandler createTaskHandler = new ToolCallbackCreateTaskHandler(callback, taskExecutor);
 
             TaskAwareToolSpecification spec = TaskAwareToolSpecification.builder()
                     .name(def.getName())
@@ -369,10 +391,32 @@ public class ArthasMcpServer {
                 statelessServer.closeGracefully().get();
                 logger.info("Stateless server stopped successfully");
             }
-            
+
+            if (taskExecutor != null) {
+                taskExecutor.shutdown();
+                if (!taskExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    taskExecutor.shutdownNow();
+                    logger.warn("MCP task executor did not terminate within 5s, forced shutdown");
+                } else {
+                    logger.info("MCP task executor stopped successfully");
+                }
+            }
+
             logger.info("Arthas MCP server stopped completely");
         } catch (Exception e) {
             logger.error("Failed to stop Arthas MCP server gracefully", e);
+        }
+    }
+
+
+    private static class McpTaskThreadFactory implements ThreadFactory {
+        private final AtomicInteger counter = new AtomicInteger(0);
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r, "mcp-task-" + counter.getAndIncrement());
+            t.setDaemon(true);
+            return t;
         }
     }
 }

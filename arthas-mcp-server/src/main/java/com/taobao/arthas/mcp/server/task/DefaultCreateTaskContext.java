@@ -143,4 +143,12 @@ public class DefaultCreateTaskContext implements CreateTaskContext {
             sessionManager.closeTaskSession(taskId);
         }
     }
+
+    @Override
+    public boolean isAtConcurrencyLimit() {
+        if (sessionManager == null) {
+            return false;
+        }
+        return sessionManager.isAtConcurrencyLimit();
+    }
 }
