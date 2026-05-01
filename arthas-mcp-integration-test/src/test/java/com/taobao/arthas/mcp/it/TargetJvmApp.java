@@ -11,14 +11,42 @@ public class TargetJvmApp {
         return compute(value) + 1;
     }
 
+    public int hotMethodA(int value) {
+        return computeA(value) + 1;
+    }
+
+    public int hotMethodB(int value) {
+        return computeB(value) + 2;
+    }
+
+    public int hotMethodC(int value) {
+        return computeC(value) + 3;
+    }
+
     private int compute(int value) {
         return value * 2;
+    }
+
+    private int computeA(int value) {
+        return value * 2;
+    }
+
+    private int computeB(int value) {
+        return value * 3;
+    }
+
+    private int computeC(int value) {
+        return value * 4;
     }
 
     public static void main(String[] args) throws Exception {
         System.out.println("TargetJvmApp started.");
         while (true) {
-            INSTANCE.hotMethod((int) (System.nanoTime() & 0xFF));
+            int value = (int) (System.nanoTime() & 0xFF);
+            INSTANCE.hotMethod(value);
+            INSTANCE.hotMethodA(value);
+            INSTANCE.hotMethodB(value);
+            INSTANCE.hotMethodC(value);
             Thread.sleep(50);
         }
     }
