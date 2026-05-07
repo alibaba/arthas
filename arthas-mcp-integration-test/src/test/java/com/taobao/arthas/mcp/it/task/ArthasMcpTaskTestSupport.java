@@ -402,10 +402,11 @@ final class ArthasMcpTaskTestSupport {
                 } catch (Exception ignored) {
                 }
             }
-            waitForPortClosed("127.0.0.1", this.httpPort, Duration.ofSeconds(15));
-            // Brief pause to ensure OS fully reclaims the port before next Environment starts
+            // 增加端口关闭等待时间 (原来 15 秒)
+            waitForPortClosed("127.0.0.1", this.httpPort, Duration.ofSeconds(30));
+            // 增加延迟以确保 OS 端口完全释放 (原来 2 秒)
             try {
-                Thread.sleep(2_000);
+                Thread.sleep(5_000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -677,7 +678,9 @@ final class ArthasMcpTaskTestSupport {
                     }
                 }
             }
-            throw new IllegalStateException("未从 SSE 流中读取到期望的 JSONRPCResponse, id=" + expectedId);
+            // 更详细的错误信息
+            throw new IllegalStateException("未从 SSE 流中读取到期望的 JSONRPCResponse, id=" + expectedId +
+                    " (连接已关闭)");
         }
     }
 }
