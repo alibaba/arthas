@@ -43,12 +43,6 @@ final class ArthasMcpTaskTestSupport {
 
     static final String TARGET_METHOD_PATTERN = "hotMethod";
 
-    static final String TARGET_METHOD_A_PATTERN = "hotMethodA";
-
-    static final String TARGET_METHOD_B_PATTERN = "hotMethodB";
-
-    static final String TARGET_METHOD_C_PATTERN = "hotMethodC";
-
     private ArthasMcpTaskTestSupport() {
     }
 
@@ -234,6 +228,65 @@ final class ArthasMcpTaskTestSupport {
         throw new IllegalStateException("等待端口监听超时: " + host + ":" + port);
     }
 
+    private static void waitForMcpEndpointReady(String host, int port, String endpoint, Duration timeout)
+            throws InterruptedException {
+        long deadline = System.nanoTime() + timeout.toNanos();
+        while (System.nanoTime() < deadline) {
+            try {
+                URL url = new URL("http://" + host + ":" + port + endpoint);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(2_000);
+                conn.setReadTimeout(5_000);
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "application/json, text/event-stream");
+                // Minimal valid JSON-RPC initialize request
+                byte[] body = ("{\"jsonrpc\":\"2.0\",\"id\":0,\"method\":\"initialize\","
+                        + "\"params\":{\"protocolVersion\":\"2025-11-25\","
+                        + "\"capabilities\":{},"
+                        + "\"clientInfo\":{\"name\":\"probe\",\"version\":\"0\"}}}").getBytes(StandardCharsets.UTF_8);
+                conn.setFixedLengthStreamingMode(body.length);
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(body);
+                }
+                int code = conn.getResponseCode();
+                if (code == 200) {
+                    // drain response to avoid connection leak
+                    try (InputStream is = conn.getInputStream()) {
+                        byte[] buf = new byte[4096];
+                        while (is.read(buf) != -1) { /* drain */ }
+                    } catch (IOException ignored) {
+                    }
+                    return;
+                }
+            } catch (IOException ignored) {
+            }
+            Thread.sleep(500);
+        }
+        throw new IllegalStateException("等待 MCP endpoint 就绪超时: http://" + host + ":" + port + endpoint);
+    }
+
+    private static void waitForPortClosed(String host, int port, Duration timeout) {
+        long deadline = System.nanoTime() + timeout.toNanos();
+        while (System.nanoTime() < deadline) {
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress(host, port), 300);
+                // port still open, keep waiting
+            } catch (IOException e) {
+                // connection refused or reset — port is closed
+                return;
+            }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+        // timed out waiting — proceed anyway
+    }
+
     private static void deleteDirectoryQuietly(Path dir) {
         try {
             if (!Files.exists(dir)) {
@@ -323,6 +376,7 @@ final class ArthasMcpTaskTestSupport {
                 runAttach(arthasHome, tempHome, attachLog, targetPid, telnetPort, httpPort);
 
                 waitForPortOpen("127.0.0.1", httpPort, Duration.ofSeconds(30));
+                waitForMcpEndpointReady("127.0.0.1", httpPort, "/mcp", Duration.ofSeconds(30));
                 return new Environment(tempHome, httpPort, targetJvm);
             } catch (Exception e) {
                 if (targetJvm != null) {
@@ -341,11 +395,19 @@ final class ArthasMcpTaskTestSupport {
             if (this.targetJvm != null) {
                 this.targetJvm.destroy();
                 try {
-                    if (!this.targetJvm.waitFor(5, TimeUnit.SECONDS)) {
+                    if (!this.targetJvm.waitFor(10, TimeUnit.SECONDS)) {
                         this.targetJvm.destroyForcibly();
+                        this.targetJvm.waitFor(5, TimeUnit.SECONDS);
                     }
                 } catch (Exception ignored) {
                 }
+            }
+            waitForPortClosed("127.0.0.1", this.httpPort, Duration.ofSeconds(15));
+            // Brief pause to ensure OS fully reclaims the port before next Environment starts
+            try {
+                Thread.sleep(2_000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             deleteDirectoryQuietly(this.tempHome);
         }
