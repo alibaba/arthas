@@ -26,8 +26,6 @@ import jdk.jfr.consumer.RecordingFile;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -40,7 +38,6 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 按 ClassLoader 维度统计 metaspace / class metadata 内存。
@@ -52,25 +49,24 @@ import java.util.Set;
 @Description(Constants.EXAMPLE +
         "  classloader-metaspace\n" +
         "  classloader-metaspace --classLoaderClass com.example.ModuleClassLoader\n" +
-        "  classloader-metaspace --classLoaderClass com.example.ModuleClassLoader --field moduleName\n" +
         "  classloader-metaspace -c 1a2b3c4d --duration 3s\n" +
         "  classloader-metaspace --limit 20\n" +
+        "  classloader-metaspace --verbose\n" +
         Constants.WIKI + Constants.WIKI_HOME + "classloader-metaspace")
 public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassLoaderMetaspaceCommand.class);
     static final String STATS_EVENT_NAME = "jdk.ClassLoaderStatistics";
     static final String MAPPING_EVENT_NAME = "arthas.ClassLoaderMetaspaceMapping";
-    static final String DEFAULT_FIELD_NAME = "moduleName";
     static final long DEFAULT_DURATION_MILLIS = 2500;
     static final long DEFAULT_PERIOD_MILLIS = 500;
 
     private String hashCode;
     private String classLoaderClass;
-    private String fieldName = DEFAULT_FIELD_NAME;
     private String duration = DEFAULT_DURATION_MILLIS + "ms";
     private String period = DEFAULT_PERIOD_MILLIS + "ms";
     private Integer limit;
+    private boolean verbose;
     private volatile boolean interrupted;
 
     @Option(shortName = "c", longName = "classloader")
@@ -83,12 +79,6 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
     @Description("The class name of the special ClassLoader.")
     public void setClassLoaderClass(String classLoaderClass) {
         this.classLoaderClass = classLoaderClass;
-    }
-
-    @Option(longName = "field")
-    @Description("Field name used as ClassLoader display name, moduleName by default.")
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
     }
 
     @Option(longName = "duration")
@@ -107,6 +97,12 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
     @Description("Maximum rows to display, unlimited by default.")
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+    @Option(shortName = "v", longName = "verbose", flag = true)
+    @Description("Show verbose columns, including classLoaderData, hiddenBlockSize and type.")
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override
@@ -135,7 +131,8 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
             process.appendResult(new ClassLoaderMetaspaceModel()
                     .setRows(rows)
                     .setDurationMillis(durationMillis)
-                    .setPeriodMillis(periodMillis));
+                    .setPeriodMillis(periodMillis)
+                    .setVerbose(verbose));
             process.appendResult(new RowAffectModel(affect));
             process.end();
         } catch (InterruptedException e) {
@@ -210,7 +207,6 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
             ClassLoader loader = entry.getKey();
             MappingEvent event = new MappingEvent();
             event.anchorClass = entry.getValue();
-            event.name = readFieldValue(instrumentation, loader, fieldName);
             event.hash = ClassUtils.classLoaderHash(loader);
             event.type = loader.getClass().getName();
             event.loaderToString = safeToString(loader);
@@ -289,16 +285,12 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
 
     private static String displayName(StatsRow stats, LoaderMapping mapping) {
         return selectDisplayName(
-                mapping == null ? null : mapping.name,
                 stats.jfrName,
                 mapping == null ? null : mapping.loaderToString,
                 stats.typeName);
     }
 
-    static String selectDisplayName(String fieldValue, String jfrName, String loaderToString, String typeName) {
-        if (!StringUtils.isBlank(fieldValue)) {
-            return fieldValue;
-        }
+    static String selectDisplayName(String jfrName, String loaderToString, String typeName) {
         if (!StringUtils.isBlank(jfrName)) {
             return jfrName;
         }
@@ -362,67 +354,6 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
         }
     }
 
-    static String readFieldValue(Instrumentation instrumentation, ClassLoader loader, String fieldName) {
-        if (loader == null || StringUtils.isBlank(fieldName)) {
-            return null;
-        }
-        Field field = findField(loader.getClass(), fieldName);
-        if (field == null) {
-            return null;
-        }
-
-        openFieldPackageToArthas(instrumentation, field.getDeclaringClass());
-        try {
-            field.setAccessible(true);
-            Object value = field.get(loader);
-            return value == null ? null : value.toString();
-        } catch (Throwable e) {
-            return null;
-        }
-    }
-
-    static Field findField(Class<?> type, String fieldName) {
-        for (Class<?> cursor = type; cursor != null; cursor = cursor.getSuperclass()) {
-            try {
-                return cursor.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException ignored) {
-                // 继续向父类查找字段。
-            }
-        }
-        return null;
-    }
-
-    private static void openFieldPackageToArthas(Instrumentation instrumentation, Class<?> declaringClass) {
-        Package declaringPackage = declaringClass == null ? null : declaringClass.getPackage();
-        if (instrumentation == null || declaringClass == null || declaringPackage == null
-                || StringUtils.isBlank(declaringPackage.getName())) {
-            return;
-        }
-        try {
-            Method getModule = Class.class.getMethod("getModule");
-            Object targetModule = getModule.invoke(declaringClass);
-            Object arthasModule = getModule.invoke(ClassLoaderMetaspaceCommand.class);
-            Class<?> moduleClass = Class.forName("java.lang.Module");
-            Method isOpen = moduleClass.getMethod("isOpen", String.class, moduleClass);
-            String packageName = declaringPackage.getName();
-            if (Boolean.TRUE.equals(isOpen.invoke(targetModule, packageName, arthasModule))) {
-                return;
-            }
-            Method isModifiableModule = Instrumentation.class.getMethod("isModifiableModule", moduleClass);
-            if (!Boolean.TRUE.equals(isModifiableModule.invoke(instrumentation, targetModule))) {
-                return;
-            }
-            Method redefineModule = Instrumentation.class.getMethod("redefineModule",
-                    moduleClass, Set.class, Map.class, Map.class, Set.class, Map.class);
-            Map<String, Set<Object>> extraOpens = new HashMap<String, Set<Object>>();
-            extraOpens.put(packageName, Collections.singleton(arthasModule));
-            redefineModule.invoke(instrumentation, targetModule, Collections.emptySet(), Collections.emptyMap(),
-                    extraOpens, Collections.emptySet(), Collections.emptyMap());
-        } catch (Throwable ignored) {
-            // JDK 8 或模块打开失败时，后续字段读取失败会自动走 JFR name/toString 回退。
-        }
-    }
-
     private static String safeToString(ClassLoader loader) {
         try {
             return loader == null ? "BootstrapClassLoader" : loader.toString();
@@ -457,13 +388,11 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
     }
 
     private static class LoaderMapping {
-        private final String name;
         private final String hash;
         private final String type;
         private final String loaderToString;
 
-        private LoaderMapping(String name, String hash, String type, String loaderToString) {
-            this.name = name;
+        private LoaderMapping(String hash, String type, String loaderToString) {
             this.hash = hash;
             this.type = type;
             this.loaderToString = loaderToString;
@@ -471,7 +400,6 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
 
         private static LoaderMapping from(RecordedEvent event) {
             return new LoaderMapping(
-                    safeString(event, "name"),
                     safeString(event, "hash"),
                     safeString(event, "type"),
                     safeString(event, "loaderToString"));
@@ -540,9 +468,6 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
     public static final class MappingEvent extends Event {
         @Label("Anchor Class")
         Class<?> anchorClass;
-
-        @Label("Name")
-        String name;
 
         @Label("Hash")
         String hash;

@@ -27,6 +27,28 @@ public class ClassLoaderMetaspaceView extends ResultView<ClassLoaderMetaspaceMod
         }
 
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1).overflow(Overflow.HIDDEN);
+        if (result.isVerbose()) {
+            drawVerboseTable(process, table, rows);
+        } else {
+            drawDefaultTable(process, table, rows);
+        }
+    }
+
+    private void drawDefaultTable(CommandProcess process, TableElement table, List<Row> rows) {
+        table.add(new RowElement().style(Decoration.bold.bold())
+                .add("hash", "classes", "chunkSize", "blockSize", "name"));
+        for (Row row : rows) {
+            table.row(
+                    value(row.getHash()),
+                    String.valueOf(row.getClassCount()),
+                    String.valueOf(row.getChunkSize()),
+                    String.valueOf(row.getBlockSize()),
+                    value(row.getName()));
+        }
+        process.write(RenderUtil.render(table, process.width()));
+    }
+
+    private void drawVerboseTable(CommandProcess process, TableElement table, List<Row> rows) {
         table.add(new RowElement().style(Decoration.bold.bold())
                 .add("hash", "classLoaderData", "classes", "chunkSize", "blockSize", "hiddenBlockSize", "type",
                         "name"));

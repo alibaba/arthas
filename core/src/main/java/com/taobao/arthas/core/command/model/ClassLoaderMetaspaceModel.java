@@ -12,6 +12,7 @@ public class ClassLoaderMetaspaceModel extends ResultModel {
     private List<Row> rows;
     private long durationMillis;
     private long periodMillis;
+    private boolean verbose;
 
     @Override
     public String getType() {
@@ -42,6 +43,15 @@ public class ClassLoaderMetaspaceModel extends ResultModel {
 
     public ClassLoaderMetaspaceModel setPeriodMillis(long periodMillis) {
         this.periodMillis = periodMillis;
+        return this;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public ClassLoaderMetaspaceModel setVerbose(boolean verbose) {
+        this.verbose = verbose;
         return this;
     }
 

@@ -35,28 +35,13 @@ public class ClassLoaderMetaspaceCommandTest {
     }
 
     @Test
-    public void testReadDisplayNameFromCurrentClassField() {
-        CurrentFieldLoader loader = new CurrentFieldLoader("order-service");
-        Assert.assertEquals("order-service", ClassLoaderMetaspaceCommand.readFieldValue(null, loader, "moduleName"));
-    }
-
-    @Test
-    public void testReadDisplayNameFromParentClassField() {
-        ChildFieldLoader loader = new ChildFieldLoader("pay-service");
-        Assert.assertEquals("pay-service", ClassLoaderMetaspaceCommand.readFieldValue(null, loader, "moduleName"));
-    }
-
-    @Test
     public void testReadDisplayNameFallbackOrder() {
-        NullFieldLoader loader = new NullFieldLoader();
-        Assert.assertNull(ClassLoaderMetaspaceCommand.readFieldValue(null, loader, "moduleName"));
-        Assert.assertNull(ClassLoaderMetaspaceCommand.readFieldValue(null, loader, "missing"));
         Assert.assertEquals("jfr-loader",
-                ClassLoaderMetaspaceCommand.selectDisplayName(null, "jfr-loader", "fallback-loader", "loader.Type"));
+                ClassLoaderMetaspaceCommand.selectDisplayName("jfr-loader", "fallback-loader", "loader.Type"));
         Assert.assertEquals("fallback-loader",
-                ClassLoaderMetaspaceCommand.selectDisplayName(null, null, "fallback-loader", "loader.Type"));
+                ClassLoaderMetaspaceCommand.selectDisplayName(null, "fallback-loader", "loader.Type"));
         Assert.assertEquals("loader.Type",
-                ClassLoaderMetaspaceCommand.selectDisplayName(null, null, null, "loader.Type"));
+                ClassLoaderMetaspaceCommand.selectDisplayName(null, null, "loader.Type"));
     }
 
     @Test
@@ -79,40 +64,4 @@ public class ClassLoaderMetaspaceCommandTest {
         return new Row().setName(name).setChunkSize(chunkSize).setBlockSize(blockSize);
     }
 
-    private static class CurrentFieldLoader extends ClassLoader {
-        private final String moduleName;
-
-        private CurrentFieldLoader(String moduleName) {
-            super(null);
-            this.moduleName = moduleName;
-        }
-    }
-
-    private static class ParentFieldLoader extends ClassLoader {
-        private final String moduleName;
-
-        private ParentFieldLoader(String moduleName) {
-            super(null);
-            this.moduleName = moduleName;
-        }
-    }
-
-    private static class ChildFieldLoader extends ParentFieldLoader {
-        private ChildFieldLoader(String moduleName) {
-            super(moduleName);
-        }
-    }
-
-    private static class NullFieldLoader extends ClassLoader {
-        private final String moduleName = null;
-
-        private NullFieldLoader() {
-            super(null);
-        }
-
-        @Override
-        public String toString() {
-            return "fallback-loader";
-        }
-    }
 }
