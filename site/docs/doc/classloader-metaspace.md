@@ -12,34 +12,34 @@
 
 ## 参数说明
 
-| 参数名称 | 参数说明 |
-| ---: | :--- |
-| `[c:]` | ClassLoader 的 hashcode，格式和 `classloader -c` 一致 |
-| `[classLoaderClass:]` | 按 ClassLoader 完整类名过滤 |
-| `[duration:]` | JFR 采样时长，默认 `2500ms`，支持 `ms`、`s`、`m`，裸数字按毫秒处理 |
-| `[period:]` | `jdk.ClassLoaderStatistics` 采样周期，默认 `500ms`，支持 `ms`、`s`、`m` |
-| `[limit:]` | 只输出按 `chunkSize` 降序排序后的前 N 行 |
-| `[verbose:]` | 输出完整诊断列，包括 `classLoaderData`、`hiddenBlockSize` 和 `type`；也可使用 `-v` |
+|              参数名称 | 参数说明                                                                           |
+| --------------------: | :--------------------------------------------------------------------------------- |
+|                `[c:]` | ClassLoader 的 hashcode，格式和 `classloader -c` 一致                              |
+| `[classLoaderClass:]` | 按 ClassLoader 完整类名过滤                                                        |
+|         `[duration:]` | JFR 采样时长，默认 `2500ms`，支持 `ms`、`s`、`m`，裸数字按毫秒处理                 |
+|           `[period:]` | `jdk.ClassLoaderStatistics` 采样周期，默认 `500ms`，支持 `ms`、`s`、`m`            |
+|            `[limit:]` | 只输出按 `chunkSize` 降序排序后的前 N 行                                           |
+|          `[verbose:]` | 输出完整诊断列，包括 `classLoaderData`、`hiddenBlockSize` 和 `type`；也可使用 `-v` |
 
 ## 输出字段
 
 默认终端表格优先展示日常排查需要的核心列。使用 `--verbose` 时会输出完整诊断列，`type` 和 `name` 这类长文本列放在右侧；如果终端宽度不足，长文本列可能被截断或隐藏。
 
-| 字段 | 说明 |
-| ---: | :--- |
-| `hash` | Arthas ClassLoader hash |
-| `classes` | JFR `classCount`，已加载类数量 |
-| `chunkSize` | 该 ClassLoaderData 已分配的 metaspace chunk 总大小 |
-| `blockSize` | 已使用的 metaspace block 总大小 |
-| `name` | 显示名，优先使用 JFR name，失败时回退到 `toString()` |
+|        字段 | 说明                                                 |
+| ----------: | :--------------------------------------------------- |
+|      `hash` | Arthas ClassLoader hash                              |
+|   `classes` | JFR `classCount`，已加载类数量                       |
+| `chunkSize` | 该 ClassLoaderData 已分配的 metaspace chunk 总大小   |
+| `blockSize` | 已使用的 metaspace block 总大小                      |
+|      `name` | 显示名，优先使用 JFR name，失败时回退到 `toString()` |
 
 `--verbose` 额外输出：
 
-| 字段 | 说明 |
-| ---: | :--- |
-| `classLoaderData` | HotSpot 内部 ClassLoaderData 指针 |
+|              字段 | 说明                                                                                         |
+| ----------------: | :------------------------------------------------------------------------------------------- |
+| `classLoaderData` | HotSpot 内部 ClassLoaderData 指针                                                            |
 | `hiddenBlockSize` | hidden class 使用的 metaspace block 总大小；在 JDK 11 上兼容读取 JFR 的 `anonymousBlockSize` |
-| `type` | ClassLoader 类名 |
+|            `type` | ClassLoader 类名                                                                             |
 
 ## 使用参考
 

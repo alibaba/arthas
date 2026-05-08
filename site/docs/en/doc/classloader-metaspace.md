@@ -12,34 +12,34 @@ Show metaspace / class metadata statistics by ClassLoader instance.
 
 ## Options
 
-| Name | Specification |
-| ---: | :--- |
-| `[c:]` | ClassLoader hashcode, same format as `classloader -c` |
-| `[classLoaderClass:]` | Filter by full ClassLoader class name |
-| `[duration:]` | JFR sampling duration, `2500ms` by default; supports `ms`, `s`, `m`; a plain number means milliseconds |
-| `[period:]` | `jdk.ClassLoaderStatistics` period, `500ms` by default; supports `ms`, `s`, `m` |
-| `[limit:]` | Show only the first N rows after sorting by `chunkSize` descending |
-| `[verbose:]` | Show full diagnostic columns, including `classLoaderData`, `hiddenBlockSize` and `type`; `-v` is also supported |
+|                  Name | Specification                                                                                                   |
+| --------------------: | :-------------------------------------------------------------------------------------------------------------- |
+|                `[c:]` | ClassLoader hashcode, same format as `classloader -c`                                                           |
+| `[classLoaderClass:]` | Filter by full ClassLoader class name                                                                           |
+|         `[duration:]` | JFR sampling duration, `2500ms` by default; supports `ms`, `s`, `m`; a plain number means milliseconds          |
+|           `[period:]` | `jdk.ClassLoaderStatistics` period, `500ms` by default; supports `ms`, `s`, `m`                                 |
+|            `[limit:]` | Show only the first N rows after sorting by `chunkSize` descending                                              |
+|          `[verbose:]` | Show full diagnostic columns, including `classLoaderData`, `hiddenBlockSize` and `type`; `-v` is also supported |
 
 ## Output
 
 The default terminal table prioritizes core columns for daily troubleshooting. With `--verbose`, full diagnostic columns are shown. Long text columns, `type` and `name`, are shown on the right and may be truncated or hidden when the terminal is narrow.
 
-| Field | Specification |
-| ---: | :--- |
-| `hash` | Arthas ClassLoader hash |
-| `classes` | JFR `classCount`, the number of loaded classes |
-| `chunkSize` | Total allocated metaspace chunk size for the ClassLoaderData |
-| `blockSize` | Total used metaspace block size |
-| `name` | Display name. The command tries JFR name first, then falls back to `toString()` |
+|       Field | Specification                                                                   |
+| ----------: | :------------------------------------------------------------------------------ |
+|      `hash` | Arthas ClassLoader hash                                                         |
+|   `classes` | JFR `classCount`, the number of loaded classes                                  |
+| `chunkSize` | Total allocated metaspace chunk size for the ClassLoaderData                    |
+| `blockSize` | Total used metaspace block size                                                 |
+|      `name` | Display name. The command tries JFR name first, then falls back to `toString()` |
 
 `--verbose` also shows:
 
-| Field | Specification |
-| ---: | :--- |
-| `classLoaderData` | HotSpot ClassLoaderData pointer |
+|             Field | Specification                                                                                                     |
+| ----------------: | :---------------------------------------------------------------------------------------------------------------- |
+| `classLoaderData` | HotSpot ClassLoaderData pointer                                                                                   |
 | `hiddenBlockSize` | Total metaspace block size used by hidden classes; on JDK 11 this is read from the JFR `anonymousBlockSize` field |
-| `type` | ClassLoader class name |
+|            `type` | ClassLoader class name                                                                                            |
 
 ## Usage
 
