@@ -20,6 +20,7 @@
 ## class/classloader 相关
 
 - [classloader](classloader.md) - 查看 classloader 的继承树，urls，类加载信息，使用 classloader 去 getResource
+- [classloader-metaspace](classloader-metaspace.md) - 按 ClassLoader 实例统计 metaspace / class metadata 内存
 - [dump](dump.md) - dump 已加载类的 byte code 到特定目录
 - [jad](jad.md) - 反编译指定已加载类的源码
 - [mc](mc.md) - 内存编译器，内存编译`.java`文件为`.class`文件

@@ -51,6 +51,7 @@ public class ResultViewResolver {
 
             //klass100
             registerView(ClassLoaderView.class);
+            registerView(ClassLoaderMetaspaceView.class);
             registerView(DumpClassView.class);
             registerView(GetStaticView.class);
             registerView(JadView.class);

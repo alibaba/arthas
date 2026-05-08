@@ -10,6 +10,7 @@ import com.taobao.arthas.core.command.basic1000.*;
 import com.taobao.arthas.core.command.hidden.JulyCommand;
 import com.taobao.arthas.core.command.hidden.ThanksCommand;
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand;
+import com.taobao.arthas.core.command.klass100.ClassLoaderMetaspaceCommand;
 import com.taobao.arthas.core.command.klass100.DumpClassCommand;
 import com.taobao.arthas.core.command.klass100.GetStaticCommand;
 import com.taobao.arthas.core.command.klass100.JadCommand;
@@ -107,6 +108,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(StopCommand.class);
         try {
             if (ClassLoader.getSystemClassLoader().getResource("jdk/jfr/Recording.class") != null) {
+                commandClassList.add(ClassLoaderMetaspaceCommand.class);
                 commandClassList.add(JFRCommand.class);
             }
         } catch (Throwable e) {

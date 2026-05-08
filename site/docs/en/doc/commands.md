@@ -20,6 +20,7 @@
 ## class/classloader - related
 
 - [classloader](classloader.md) - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. `java/lang/String.class`
+- [classloader-metaspace](classloader-metaspace.md) - show metaspace / class metadata memory by ClassLoader instance
 - [dump](dump.md) - dump the loaded classes in byte code to the specified location
 - [jad](jad.md) - decompile the specified loaded classes
 - [mc](mc.md) - Memory compiler, compiles `.java` files into `.class` files in memory
