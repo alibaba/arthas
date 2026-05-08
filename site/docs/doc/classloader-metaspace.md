@@ -38,7 +38,7 @@
 | 字段 | 说明 |
 | ---: | :--- |
 | `classLoaderData` | HotSpot 内部 ClassLoaderData 指针 |
-| `hiddenBlockSize` | hidden class 使用的 metaspace block 总大小 |
+| `hiddenBlockSize` | hidden class 使用的 metaspace block 总大小；在 JDK 11 上兼容读取 JFR 的 `anonymousBlockSize` |
 | `type` | ClassLoader 类名 |
 
 ## 使用参考

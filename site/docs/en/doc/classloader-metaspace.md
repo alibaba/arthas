@@ -38,7 +38,7 @@ The default terminal table prioritizes core columns for daily troubleshooting. W
 | Field | Specification |
 | ---: | :--- |
 | `classLoaderData` | HotSpot ClassLoaderData pointer |
-| `hiddenBlockSize` | Total metaspace block size used by hidden classes |
+| `hiddenBlockSize` | Total metaspace block size used by hidden classes; on JDK 11 this is read from the JFR `anonymousBlockSize` field |
 | `type` | ClassLoader class name |
 
 ## Usage

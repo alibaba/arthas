@@ -370,6 +370,16 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
         }
     }
 
+    static long readHiddenBlockSize(RecordedEvent event) {
+        if (event.hasField("hiddenBlockSize")) {
+            return event.getLong("hiddenBlockSize");
+        }
+        if (event.hasField("anonymousBlockSize")) {
+            return event.getLong("anonymousBlockSize");
+        }
+        return 0L;
+    }
+
     private static String typeName(RecordedClassLoader loader) {
         if (loader == null || loader.getType() == null) {
             return "BootstrapClassLoader";
@@ -446,7 +456,7 @@ public class ClassLoaderMetaspaceCommand extends AnnotatedCommand {
                     event.getLong("classCount"),
                     event.getLong("chunkSize"),
                     event.getLong("blockSize"),
-                    event.getLong("hiddenBlockSize"));
+                    readHiddenBlockSize(event));
         }
     }
 
