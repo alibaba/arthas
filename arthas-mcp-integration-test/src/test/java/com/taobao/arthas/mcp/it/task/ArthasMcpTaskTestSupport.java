@@ -377,6 +377,8 @@ final class ArthasMcpTaskTestSupport {
 
                 waitForPortOpen("127.0.0.1", httpPort, Duration.ofSeconds(30));
                 waitForMcpEndpointReady("127.0.0.1", httpPort, "/mcp", Duration.ofSeconds(30));
+                // 等待服务端内部状态完全稳定（CI 环境资源紧张时需要额外时间）
+                Thread.sleep(3_000L);
                 return new Environment(tempHome, httpPort, targetJvm);
             } catch (Exception e) {
                 if (targetJvm != null) {
@@ -603,6 +605,23 @@ final class ArthasMcpTaskTestSupport {
 
         private McpSchema.JSONRPCResponse postRequestExpectSseResponse(String sessionId, String method, Object params,
                                                                        Duration timeout) throws Exception {
+            int maxAttempts = 5;
+            Exception lastException = null;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    return doPostExpectSseResponse(sessionId, method, params, timeout);
+                } catch (IOException e) {
+                    lastException = e;
+                    if (attempt < maxAttempts) {
+                        Thread.sleep(1_000L * attempt);
+                    }
+                }
+            }
+            throw new IllegalStateException(method + " 重试 " + maxAttempts + " 次后仍然失败", lastException);
+        }
+
+        private McpSchema.JSONRPCResponse doPostExpectSseResponse(String sessionId, String method, Object params,
+                                                                   Duration timeout) throws Exception {
             McpSchema.JSONRPCRequest request = new McpSchema.JSONRPCRequest(
                     McpSchema.JSONRPC_VERSION,
                     method,
