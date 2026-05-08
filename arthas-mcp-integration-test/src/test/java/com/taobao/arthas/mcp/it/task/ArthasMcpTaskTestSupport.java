@@ -458,6 +458,22 @@ final class ArthasMcpTaskTestSupport {
         }
 
         InitializedSession initializeSession(String clientName) throws Exception {
+            int maxAttempts = 5;
+            IOException lastIoException = null;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    return doInitializeSession(clientName);
+                } catch (IOException e) {
+                    lastIoException = e;
+                    if (attempt < maxAttempts) {
+                        Thread.sleep(1_000L * attempt);
+                    }
+                }
+            }
+            throw new IllegalStateException("initialize 重试 " + maxAttempts + " 次后仍然失败", lastIoException);
+        }
+
+        private InitializedSession doInitializeSession(String clientName) throws Exception {
             McpSchema.InitializeRequest init = new McpSchema.InitializeRequest(
                     McpSchema.LATEST_PROTOCOL_VERSION,
                     new McpSchema.ClientCapabilities(null, null, null, null),
