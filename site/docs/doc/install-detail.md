@@ -20,7 +20,7 @@ java -jar arthas-boot.jar -h
 - 如果下载速度比较慢，可以使用 aliyun 的镜像：
 
   ```bash
-  java -jar arthas-boot.jar --repo-mirror aliyun --use-http
+  java -jar arthas-boot.jar --repo-mirror aliyun
   ```
 
 ### 使用`as.sh`

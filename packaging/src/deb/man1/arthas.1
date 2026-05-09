@@ -8,7 +8,7 @@ Arthas \- Alibaba Java Diagnostic Tool
 .SH SYNOPSIS
 .B as [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
-       [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
+       [--use-version <value>] [--repo-mirror <value>] [--versions]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
 .SH DESCRIPTION
@@ -70,10 +70,6 @@ Use special maven repository mirror, value is center/aliyun or http repo url.
 .B --versions
 List local and remote arthas versions
 
-.TP 
-.B --use-http 
-Enforce use http to download, default use https
-
 .TP
 .B --attach-only
 Attach target process only, do not connect
@@ -105,4 +101,3 @@ Verbose, print debug info.
 .TP
 .B <pid>
 Target pid
-

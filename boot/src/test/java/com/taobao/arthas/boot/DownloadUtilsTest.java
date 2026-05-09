@@ -36,7 +36,7 @@ public class DownloadUtilsTest {
             String version = "3.3.7";
             File folder = rootFolder.newFolder();
             System.err.println(folder.getAbsolutePath());
-            DownloadUtils.downArthasPackaging("aliyun", false, version, folder.getAbsolutePath());
+            DownloadUtils.downArthasPackaging("aliyun", version, folder.getAbsolutePath());
 
             File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
             Assert.assertTrue(as.exists());
@@ -48,7 +48,7 @@ public class DownloadUtilsTest {
         String version = "3.1.7";
         File folder = rootFolder.newFolder();
         System.err.println(folder.getAbsolutePath());
-        DownloadUtils.downArthasPackaging("center", false, version, folder.getAbsolutePath());
+        DownloadUtils.downArthasPackaging("center", version, folder.getAbsolutePath());
 
         File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
         Assert.assertTrue(as.exists());

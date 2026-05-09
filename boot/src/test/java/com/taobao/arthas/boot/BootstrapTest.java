@@ -1,6 +1,7 @@
 package com.taobao.arthas.boot;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 
@@ -22,5 +23,14 @@ public class BootstrapTest {
         CLIConfigurator.inject(commandLine, bootstrap);
 
         assertEquals("/tmp/ext-command.jar,/tmp/ext-commands", bootstrap.getCommandLocations());
+    }
+
+    @Test
+    public void testUseHttpOptionRemovedFromUsage() {
+        CLI cli = CLIConfigurator.define(Bootstrap.class);
+        StringBuilder usage = new StringBuilder();
+        cli.usage(usage);
+
+        assertFalse(usage.toString().contains("use" + "-http"));
     }
 }
