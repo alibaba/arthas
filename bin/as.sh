@@ -113,9 +113,6 @@ USE_VERSION=
 # remote repo to download arthas
 REPO_MIRROR=
 
-# use http to download arthas
-USE_HTTP=false
-
 # attach only, do not telnet connect
 ATTACH_ONLY=false
 
@@ -327,15 +324,6 @@ get_local_version()
     ls "${ARTHAS_LIB_DIR}" | sort | tail -1
 }
 
-get_repo_url()
-{
-    local repoUrl="${REPO_MIRROR}"
-    if [ "$USE_HTTP" = true ] ; then
-        repoUrl=${repoUrl/https/http}
-    fi
-    echo "${repoUrl}"
-}
-
 # get latest version from remote
 get_remote_version()
 {
@@ -370,7 +358,7 @@ update_if_necessary()
             || exit_on_err 1 "create ${temp_target_lib_dir} fail."
 
         # download current arthas version
-        local downloadUrl="${REMOTE_DOWNLOAD_URL//PLACEHOLDER_REPO/$(get_repo_url)}"
+        local downloadUrl="${REMOTE_DOWNLOAD_URL//PLACEHOLDER_REPO/${REPO_MIRROR}}"
         downloadUrl="${downloadUrl//PLACEHOLDER_VERSION/${update_version}}"
         echo "Download arthas from: ${downloadUrl}"
         curl \
@@ -436,7 +424,7 @@ Usage:
        [--username <value>] [--password <value>]
        [--disabled-commands <value>]
        [--command-locations <value>]
-       [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
+       [--use-version <value>] [--repo-mirror <value>] [--versions]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
 NOTE: Arthas 4 supports JDK 8+. If you need to diagnose applications running on JDK 6/7, you can use Arthas 3.
@@ -452,7 +440,6 @@ Options and Arguments:
     --repo-mirror <value>       Use special remote repository mirror, value is
                                 center/aliyun or http repo url.
     --versions                  List local and remote arthas versions
-    --use-http                  Enforce use http to download, default use https
     --attach-only               Attach target process only, do not connect
     --debug-attach              Debug attach agent
     --tunnel-server             Remote tunnel server url
@@ -487,7 +474,7 @@ EXAMPLES:
   ./as.sh --disabled-commands stop,dump
   ./as.sh --command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'
   ./as.sh --select math-game
-  ./as.sh --repo-mirror aliyun --use-http
+  ./as.sh --repo-mirror aliyun
 WIKI:
   https://arthas.aliyun.com/doc
 
@@ -671,10 +658,6 @@ parse_arguments()
         COMMAND_LOCATIONS="$2"
         shift # past argument
         shift # past value
-        ;;
-        --use-http)
-        USE_HTTP=true
-        shift # past argument
         ;;
         --attach-only)
         ATTACH_ONLY=true

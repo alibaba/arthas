@@ -67,28 +67,16 @@ public class DownloadUtils {
         return null;
     }
 
-    private static String getRepoUrl(String repoUrl, boolean http) {
-        if (repoUrl.endsWith("/")) {
-            repoUrl = repoUrl.substring(0, repoUrl.length() - 1);
-        }
-
-        if (http && repoUrl.startsWith("https")) {
-            repoUrl = "http" + repoUrl.substring("https".length());
-        }
-        return repoUrl;
-    }
-
-    public static void downArthasPackaging(String repoMirror, boolean http, String arthasVersion, String savePath)
+    public static void downArthasPackaging(String repoMirror, String arthasVersion, String savePath)
             throws IOException {
-        String repoUrl = getRepoUrl(ARTHAS_DOWNLOAD_URL, http);
-
         File unzipDir = new File(savePath, arthasVersion + File.separator + "arthas");
 
         File tempFile = File.createTempFile("arthas", "arthas");
 
         AnsiLog.debug("Arthas download temp file: " + tempFile.getAbsolutePath());
 
-        String remoteDownloadUrl = repoUrl.replace("${REPO}", repoMirror).replace("${VERSION}", arthasVersion);
+        String remoteDownloadUrl = ARTHAS_DOWNLOAD_URL.replace("${REPO}", repoMirror)
+                .replace("${VERSION}", arthasVersion);
         AnsiLog.info("Start download arthas from remote server: " + remoteDownloadUrl);
         saveUrl(tempFile.getAbsolutePath(), remoteDownloadUrl, true);
         AnsiLog.info("Download arthas success.");
@@ -131,7 +119,7 @@ public class DownloadUtils {
                 fout.write(data, 0, count);
             }
         } catch (javax.net.ssl.SSLException e) {
-            AnsiLog.error("TLS connect error, please try to add --use-http argument.");
+            AnsiLog.error("TLS connect error, please check local Java TLS configuration.");
             AnsiLog.error("URL: " + urlString);
             AnsiLog.error(e);
         } finally {
