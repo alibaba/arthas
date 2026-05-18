@@ -18,7 +18,7 @@ arthas.httpPort=8563
 arthas.ip=127.0.0.1
 
 # seconds
-arthas.sessionTimeout=1800
+arthas.sessionTimeout=10800
 
 #arthas.appName=demoapp
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws

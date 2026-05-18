@@ -194,7 +194,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "session-timeout")
-    @Description("The session timeout seconds, default 1800 (30min)")
+    @Description("The session timeout seconds, default 10800 (3h)")
     public void setSessionTimeout(Long sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
