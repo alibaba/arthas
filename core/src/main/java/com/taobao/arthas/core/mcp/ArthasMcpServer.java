@@ -34,12 +34,15 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +56,8 @@ public class ArthasMcpServer {
      * Arthas tool base package in core module
      */
     public static final String ARTHAS_TOOL_BASE_PACKAGE = "com.taobao.arthas.core.mcp.tool.function";
+    private static final long MCP_COMPONENT_STOP_TIMEOUT_SECONDS = 5L;
+    private static final long MCP_TASK_EXECUTOR_STOP_TIMEOUT_SECONDS = 5L;
 
     private McpNettyServer streamableServer;
     private McpStatelessNettyServer statelessServer;
@@ -373,38 +378,73 @@ public class ArthasMcpServer {
 
     public void stop() {
         logger.info("Stopping Arthas MCP server...");
+        if (unifiedMcpHandler != null) {
+            logger.debug("Shutting down unified MCP handler");
+            closeMcpComponent("Unified MCP handler", () -> unifiedMcpHandler.closeGracefully());
+        }
+
+        if (streamableServer != null) {
+            logger.debug("Shutting down streamable server");
+            closeMcpComponent("Streamable server", () -> streamableServer.closeGracefully());
+        }
+
+        if (statelessServer != null) {
+            logger.debug("Shutting down stateless server");
+            closeMcpComponent("Stateless server", () -> statelessServer.closeGracefully());
+        }
+
+        stopTaskExecutor();
+        logger.info("Arthas MCP server stopped completely");
+    }
+
+    private void closeMcpComponent(String componentName, Supplier<CompletableFuture<Void>> closeAction) {
         try {
-            if (unifiedMcpHandler != null) {
-                logger.debug("Shutting down unified MCP handler");
-                unifiedMcpHandler.closeGracefully().get();
-                logger.info("Unified MCP handler stopped successfully");
+            CompletableFuture<Void> closeFuture = closeAction.get();
+            if (closeFuture == null) {
+                logger.warn("{} graceful shutdown returned null future, continue stopping Arthas MCP server", componentName);
+                return;
             }
 
-            if (streamableServer != null) {
-                logger.debug("Shutting down streamable server");
-                streamableServer.closeGracefully().get();
-                logger.info("Streamable server stopped successfully");
-            }
-
-            if (statelessServer != null) {
-                logger.debug("Shutting down stateless server");
-                statelessServer.closeGracefully().get();
-                logger.info("Stateless server stopped successfully");
-            }
-
-            if (taskExecutor != null) {
-                taskExecutor.shutdown();
-                if (!taskExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    taskExecutor.shutdownNow();
-                    logger.warn("MCP task executor did not terminate within 5s, forced shutdown");
-                } else {
-                    logger.info("MCP task executor stopped successfully");
-                }
-            }
-
-            logger.info("Arthas MCP server stopped completely");
+            closeFuture.get(MCP_COMPONENT_STOP_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            logger.info("{} stopped successfully", componentName);
+        } catch (TimeoutException e) {
+            logger.warn("{} graceful shutdown timed out after {}s, continue stopping Arthas MCP server",
+                    componentName, MCP_COMPONENT_STOP_TIMEOUT_SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.warn("{} graceful shutdown interrupted, continue stopping Arthas MCP server", componentName, e);
         } catch (Exception e) {
-            logger.error("Failed to stop Arthas MCP server gracefully", e);
+            logger.warn("{} graceful shutdown failed, continue stopping Arthas MCP server", componentName, e);
+        }
+    }
+
+    private void stopTaskExecutor() {
+        if (taskExecutor == null) {
+            return;
+        }
+
+        try {
+            taskExecutor.shutdown();
+            if (!taskExecutor.awaitTermination(MCP_TASK_EXECUTOR_STOP_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                taskExecutor.shutdownNow();
+                logger.warn("MCP task executor did not terminate within {}s, forced shutdown",
+                        MCP_TASK_EXECUTOR_STOP_TIMEOUT_SECONDS);
+            } else {
+                logger.info("MCP task executor stopped successfully");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            taskExecutor.shutdownNow();
+            logger.warn("MCP task executor shutdown interrupted, forced shutdown", e);
+        } catch (Exception e) {
+            try {
+                if (!taskExecutor.isShutdown()) {
+                    taskExecutor.shutdownNow();
+                }
+            } catch (Exception shutdownException) {
+                logger.warn("Failed to force shutdown MCP task executor", shutdownException);
+            }
+            logger.warn("Failed to stop MCP task executor", e);
         }
     }
 
