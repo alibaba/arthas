@@ -63,6 +63,12 @@ export const sidebarEN = {
           ],
         },
         {
+          text: "AI Integration",
+          link: "/en/doc/ai.md",
+          collapsible: true,
+          children: ["/en/doc/mcp-server.md"],
+        },
+        {
           text: "Other features",
           link: "/en/doc/advanced-use.md",
           collapsible: true,
@@ -77,7 +83,6 @@ export const sidebarEN = {
             "/en/doc/agent.html",
             "/en/doc/spring-boot-starter.md",
             "/en/doc/http-api.md",
-            "/en/doc/mcp-server.md",
             "/en/doc/batch-support.md",
           ],
         },

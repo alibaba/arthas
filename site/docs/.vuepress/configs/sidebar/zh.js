@@ -63,6 +63,12 @@ export const sidebarZH = {
           ],
         },
         {
+          text: "AI 相关",
+          link: "/doc/ai.md",
+          collapsible: true,
+          children: ["/doc/mcp-server.md"],
+        },
+        {
           text: "其他特性",
           link: "/doc/advanced-use.md",
           collapsible: true,
@@ -77,7 +83,6 @@ export const sidebarZH = {
             "/doc/agent.html",
             "/doc/spring-boot-starter.md",
             "/doc/http-api.md",
-            "/doc/mcp-server.md",
             "/doc/batch-support.md",
           ],
         },
