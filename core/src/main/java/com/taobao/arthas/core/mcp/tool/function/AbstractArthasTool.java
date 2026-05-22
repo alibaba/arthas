@@ -122,6 +122,10 @@ public abstract class AbstractArthasTool {
 
             logger.info("Starting streamable execution: {}", commandStr);
 
+            if (execContext.getAuthSubject() != null) {
+                execContext.getCommandContext().setSessionAuth(execContext.getAuthSubject());
+            }
+
             // Set userId to session before async execution for stat reporting
             if (execContext.getUserId() != null) {
                 execContext.getCommandContext().setSessionUserId(execContext.getUserId());
