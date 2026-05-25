@@ -138,6 +138,7 @@ public class McpHttpRequestHandler {
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, APPLICATION_JSON);
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
             response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
 
             ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         } catch (Exception e) {
@@ -147,6 +148,7 @@ public class McpHttpRequestHandler {
                     HttpResponseStatus.INTERNAL_SERVER_ERROR
             );
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
             ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         }
     }
