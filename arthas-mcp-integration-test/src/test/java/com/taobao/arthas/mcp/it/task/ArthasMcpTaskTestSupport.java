@@ -232,15 +232,17 @@ final class ArthasMcpTaskTestSupport {
             throws InterruptedException {
         long deadline = System.nanoTime() + timeout.toNanos();
         while (System.nanoTime() < deadline) {
+            HttpURLConnection conn = null;
             try {
                 URL url = new URL("http://" + host + ":" + port + endpoint);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setConnectTimeout(2_000);
                 conn.setReadTimeout(5_000);
                 conn.setDoOutput(true);
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("Accept", "application/json, text/event-stream");
+                conn.setRequestProperty("Connection", "close");
                 // Minimal valid JSON-RPC initialize request
                 byte[] body = ("{\"jsonrpc\":\"2.0\",\"id\":0,\"method\":\"initialize\","
                         + "\"params\":{\"protocolVersion\":\"2025-11-25\","
@@ -261,6 +263,10 @@ final class ArthasMcpTaskTestSupport {
                     return;
                 }
             } catch (IOException ignored) {
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
             }
             Thread.sleep(500);
         }
@@ -489,29 +495,35 @@ final class ArthasMcpTaskTestSupport {
             );
 
             HttpURLConnection conn = openPostConnection(null);
-            writeJson(conn, request);
+            String sessionId;
+            McpSchema.InitializeResult initializeResult;
+            try {
+                writeJson(conn, request);
 
-            int code = conn.getResponseCode();
-            String body = readBody(conn);
-            if (code != 200) {
-                throw new IllegalStateException("initialize 失败: http=" + code + ", body=" + body);
-            }
+                int code = conn.getResponseCode();
+                String body = readBody(conn);
+                if (code != 200) {
+                    throw new IllegalStateException("initialize 失败: http=" + code + ", body=" + body);
+                }
 
-            String sessionId = conn.getHeaderField(HttpHeaders.MCP_SESSION_ID);
-            if (sessionId == null || sessionId.trim().isEmpty()) {
-                throw new IllegalStateException("initialize 未返回 mcp-session-id header, body=" + body);
-            }
+                sessionId = conn.getHeaderField(HttpHeaders.MCP_SESSION_ID);
+                if (sessionId == null || sessionId.trim().isEmpty()) {
+                    throw new IllegalStateException("initialize 未返回 mcp-session-id header, body=" + body);
+                }
 
-            McpSchema.JSONRPCMessage msg = McpSchema.deserializeJsonRpcMessage(OBJECT_MAPPER, body);
-            if (!(msg instanceof McpSchema.JSONRPCResponse)) {
-                throw new IllegalStateException("initialize 响应不是 JSONRPCResponse: " + body);
-            }
-            McpSchema.JSONRPCResponse resp = (McpSchema.JSONRPCResponse) msg;
-            if (resp.getError() != null) {
-                throw new IllegalStateException("initialize 返回 error: " + OBJECT_MAPPER.writeValueAsString(resp.getError()));
-            }
+                McpSchema.JSONRPCMessage msg = McpSchema.deserializeJsonRpcMessage(OBJECT_MAPPER, body);
+                if (!(msg instanceof McpSchema.JSONRPCResponse)) {
+                    throw new IllegalStateException("initialize 响应不是 JSONRPCResponse: " + body);
+                }
+                McpSchema.JSONRPCResponse resp = (McpSchema.JSONRPCResponse) msg;
+                if (resp.getError() != null) {
+                    throw new IllegalStateException("initialize 返回 error: " + OBJECT_MAPPER.writeValueAsString(resp.getError()));
+                }
 
-            McpSchema.InitializeResult initializeResult = OBJECT_MAPPER.convertValue(resp.getResult(), McpSchema.InitializeResult.class);
+                initializeResult = OBJECT_MAPPER.convertValue(resp.getResult(), McpSchema.InitializeResult.class);
+            } finally {
+                conn.disconnect();
+            }
             sendInitializedNotification(sessionId);
             return new InitializedSession(sessionId, initializeResult);
         }
@@ -590,16 +602,37 @@ final class ArthasMcpTaskTestSupport {
         }
 
         private void sendInitializedNotification(String sessionId) throws Exception {
+            int maxAttempts = 5;
+            IOException last = null;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    doSendInitializedNotification(sessionId);
+                    return;
+                } catch (IOException e) {
+                    last = e;
+                    if (attempt < maxAttempts) {
+                        Thread.sleep(200L * attempt);
+                    }
+                }
+            }
+            throw new IllegalStateException("notifications/initialized 重试 " + maxAttempts + " 次后仍然失败", last);
+        }
+
+        private void doSendInitializedNotification(String sessionId) throws Exception {
             McpSchema.JSONRPCNotification notification = new McpSchema.JSONRPCNotification(
                     McpSchema.JSONRPC_VERSION,
                     McpSchema.METHOD_NOTIFICATION_INITIALIZED,
                     Collections.emptyMap()
             );
             HttpURLConnection conn = openPostConnection(sessionId);
-            writeJson(conn, notification);
-            int code = conn.getResponseCode();
-            if (code != 202 && code != 200) {
-                throw new IllegalStateException("notifications/initialized 失败: http=" + code + ", body=" + readBody(conn));
+            try {
+                writeJson(conn, notification);
+                int code = conn.getResponseCode();
+                if (code != 202 && code != 200) {
+                    throw new IllegalStateException("notifications/initialized 失败: http=" + code + ", body=" + readBody(conn));
+                }
+            } finally {
+                conn.disconnect();
             }
         }
 
@@ -630,16 +663,20 @@ final class ArthasMcpTaskTestSupport {
             );
 
             HttpURLConnection conn = openPostConnection(sessionId);
-            conn.setReadTimeout((int) timeout.toMillis());
-            writeJson(conn, request);
+            try {
+                conn.setReadTimeout((int) timeout.toMillis());
+                writeJson(conn, request);
 
-            int code = conn.getResponseCode();
-            if (code != 200) {
-                throw new IllegalStateException(method + " 失败: http=" + code + ", body=" + readBody(conn));
-            }
+                int code = conn.getResponseCode();
+                if (code != 200) {
+                    throw new IllegalStateException(method + " 失败: http=" + code + ", body=" + readBody(conn));
+                }
 
-            try (InputStream is = conn.getInputStream()) {
-                return readJsonRpcResponseFromSse(is, request.getId());
+                try (InputStream is = conn.getInputStream()) {
+                    return readJsonRpcResponseFromSse(is, request.getId());
+                }
+            } finally {
+                conn.disconnect();
             }
         }
 
@@ -652,6 +689,7 @@ final class ArthasMcpTaskTestSupport {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "text/event-stream, application/json");
+            conn.setRequestProperty("Connection", "close");
             if (sessionId != null) {
                 conn.setRequestProperty(HttpHeaders.MCP_SESSION_ID, sessionId);
             }
