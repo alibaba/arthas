@@ -17,7 +17,6 @@ public class ProfilerTool extends AbstractArthasTool {
             "resume",
             "stop",
             "dump",
-            "check",
             "status",
             "meminfo",
             "list",
@@ -41,7 +40,7 @@ public class ProfilerTool extends AbstractArthasTool {
                     + "- execute: 直接传递 async-profiler agent 兼容参数，如 action=execute, actionArg=\"stop,file=/tmp/result.html\""
     )
     public String profiler(
-            @ToolParam(description = "动作（必填），可选值: start/resume/stop/dump/check/status/meminfo/list/version/load/execute/dumpCollapsed/dumpFlat/dumpTraces/getSamples/actions")
+            @ToolParam(description = "动作（必填），可选值: start/resume/stop/dump/status/meminfo/list/version/load/execute/dumpCollapsed/dumpFlat/dumpTraces/getSamples/actions")
             String action,
 
             @ToolParam(description = "动作参数（可选）。当 action=execute 时必填，示例: \"stop,file=/tmp/result.html\"", required = false)
@@ -83,7 +82,7 @@ public class ProfilerTool extends AbstractArthasTool {
             @ToolParam(description = "按调度策略分组线程 (--sched)", required = false)
             Boolean sched,
 
-            @ToolParam(description = "C 栈采样方式 (--cstack)，可选 fp|dwarf|lbr|no", required = false)
+            @ToolParam(description = "C 栈采样方式 (--cstack)，可选 fp|dwarf|vm|vmx|no", required = false)
             String cstack,
 
             @ToolParam(description = "使用简单类名 (-s)", required = false)

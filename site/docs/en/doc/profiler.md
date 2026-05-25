@@ -170,8 +170,6 @@ Perf events:
 
 If you encounter the permissions/configuration issues of the OS itself and then missing some events, you can refer to the [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) documentation.
 
-You can use `check` action to check if a profiling event is available, this action receives the same format options with `start`.
-
 You can use the `--event` parameter to specify the event to sample, for example, `alloc` event means heap memory allocation profiling:
 
 ```bash
@@ -212,21 +210,21 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v2.9/src/arguments.cpp#L52)
+Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp#L52)
 
 ## View all supported actions
 
 ```bash
 $ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status, check]
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status]
 ```
 
 ## View version
 
 ```bash
 $ profiler version
-Async-profiler 2.9 built on May  8 2023
-Copyright 2016-2021 Andrei Pangin
+async-profiler 4.4
+Copyright The async-profiler authors
 ```
 
 ## Configure Java stack depth
@@ -336,9 +334,9 @@ profiler start --live
 
 ## Config method of collecting C stack frames
 
-Use `--cstack MODE` to config how to walk native frames (C stack). Possible modes are fp (Frame Pointer), dwarf (DWARF unwind info), lbr (Last Branch Record, available on Haswell since Linux 4.1), and no (do not collect C stack).
+Use `--cstack MODE` to configure how to walk native frames (C stack). Possible modes are fp (Frame Pointer), dwarf (DWARF unwind info), vm, vmx (HotSpot VM Structs), and no (do not collect C stack).
 
-By default, C stack is shown in cpu, itimer, wall-clock and perf-events profiles. Java-level events like alloc and lock collect only Java stack.
+By default, C stack is shown in cpu, ctimer, wall-clock and perf-events profiles. Java-level events like alloc and lock collect only Java stack.
 
 ```bash
 profiler --cstack fp
