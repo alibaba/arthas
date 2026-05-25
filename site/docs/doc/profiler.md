@@ -170,8 +170,6 @@ Perf events:
 
 如果遇到 OS 本身的权限/配置问题，然后缺少部分 event，可以参考 [async-profiler 的文档](https://github.com/jvm-profiling-tools/async-profiler)。
 
-可以使用 `check` action 测试某个 event 是否可用，此 action 的参数格式与 start 一致。
-
 可以用`--event`参数指定要采样的事件，比如 `alloc` 表示分析内存分配情况：
 
 ```bash
@@ -212,21 +210,21 @@ profiler execute 'start,framebuf=5000000'
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v2.9/src/arguments.cpp#L52)
+具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp#L52)
 
 ## 查看所有支持的 action
 
 ```bash
 $ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status, check]
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, execute, meminfo, stop, load, dumpFlat, dump, actions, dumpTraces, status]
 ```
 
 ## 查看版本
 
 ```bash
 $ profiler version
-Async-profiler 2.9 built on May  8 2023
-Copyright 2016-2021 Andrei Pangin
+async-profiler 4.4
+Copyright The async-profiler authors
 ```
 
 ## 配置 Java 栈深度
@@ -336,9 +334,9 @@ profiler start --live
 
 ## 配置收集 C 栈帧的方法
 
-使用 `--cstack MODE` 配置收集 native 帧的方法。候选模式有 fp (Frame Pointer), dwarf (DWARF unwind info), lbr (Last Branch Record, 从 Linux 4.1 在 Haswell 可用), and no (不收集 native 栈帧).
+使用 `--cstack MODE` 配置收集 native 帧的方法。候选模式有 fp (Frame Pointer), dwarf (DWARF unwind info), vm、vmx (HotSpot VM Structs)，以及 no (不收集 native 栈帧).
 
-默认情况下，C 栈帧会出现在 cpu、itimer、wall-clock、perf-events 模式中，而 Java 级别的 event 比如 alloc 和 lock 只收集 Java stack。
+默认情况下，C 栈帧会出现在 cpu、ctimer、wall-clock、perf-events 模式中，而 Java 级别的 event 比如 alloc 和 lock 只收集 Java stack。
 
 ```bash
 profiler --cstack fp

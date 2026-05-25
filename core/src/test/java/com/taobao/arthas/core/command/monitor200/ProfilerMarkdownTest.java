@@ -45,5 +45,12 @@ class ProfilerMarkdownTest {
         Assertions.assertThat(md).contains("a.A.foo");
         Assertions.assertThat(md).contains("b.B.bar");
     }
-}
 
+    @Test
+    void shouldExposeOnlySupportedAsyncProfiler44Actions() {
+        Assertions.assertThat(ProfilerCommand.ProfilerAction.values())
+                .extracting(Enum::name)
+                .contains("start", "resume", "stop", "dump", "status", "meminfo", "list", "version")
+                .doesNotContain("check");
+    }
+}
