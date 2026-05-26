@@ -7,6 +7,10 @@ on:
         description: "The version number to download and update (e.g., 4.0.3)"
         required: true
 
+permissions:
+  contents: write
+  actions: write
+
 jobs:
   update-assets:
     runs-on: ubuntu-latest
@@ -78,3 +82,15 @@ jobs:
           git add .
           git commit -m "Update docs to version ${{ github.event.inputs.version }}"
           git push origin gh-pages
+
+      # 步骤 12：触发同步到 Gitee 的工作流
+      - name: Trigger sync to Gitee workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SYNC_REF: ${{ github.event.repository.default_branch }}
+          SYNC_WORKFLOW: sync-to-gitee.yaml
+        run: |
+          gh api \
+            --method POST \
+            "/repos/${{ github.repository }}/actions/workflows/${SYNC_WORKFLOW}/dispatches" \
+            -f ref="${SYNC_REF}"
