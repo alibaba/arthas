@@ -38,13 +38,20 @@ public class ObjectView implements View {
             });
 
     public static String toJsonString(Object object) {
-        JSONWriter.Context context = new JSONWriter.Context(JSON_OBJECT_WRITER_PROVIDER);
-        context.setMaxLevel(4097);
-        context.config(JSONWriter.Feature.IgnoreErrorGetter,
-                JSONWriter.Feature.ReferenceDetection,
-                JSONWriter.Feature.IgnoreNonFieldGetter,
-                JSONWriter.Feature.WriteNonStringKeyAsString);
-        return JSON.toJSONString(object, context);
+        try {
+            JSONWriter.Context context = new JSONWriter.Context(JSON_OBJECT_WRITER_PROVIDER);
+            context.setMaxLevel(4097);
+            context.config(JSONWriter.Feature.IgnoreErrorGetter,
+                    JSONWriter.Feature.ReferenceDetection,
+                    JSONWriter.Feature.IgnoreNonFieldGetter,
+                    JSONWriter.Feature.WriteNonStringKeyAsString);
+            return JSON.toJSONString(object, context);
+        } catch (StackOverflowError e) {
+            logger.error("ObjectView JSON serialization stackoverflow, object class: {}", object == null ? "null" : object.getClass(), e);
+            return "ERROR DATA!!! object class: " + (object == null ? "null" : object.getClass())
+                    + ", StackOverflowError: circular reference or object graph too deep. "
+                    + "Try disabling json mode: options json false";
+        }
     }
 
     private final Object object;
