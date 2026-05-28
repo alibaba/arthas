@@ -79,6 +79,7 @@ public class ResultViewResolver {
             registerView(TimeTunnelView.class);
             registerView(TraceView.class);
             registerView(WatchView.class);
+            registerView(SqlProfilerView.class);
             registerView(VmToolView.class);
             registerView(JFRView.class);
 
