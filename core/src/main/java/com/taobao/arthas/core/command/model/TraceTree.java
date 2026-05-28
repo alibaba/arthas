@@ -66,6 +66,8 @@ public class TraceTree {
         current.end();
         if (current.parent() != null) {
             //TODO 为什么会到达这里？ 调用end次数比begin多？
+            // 因为AdviceListener中的before与after并不保证配对执行，那么此处便存在有end没有begin的情况，
+            // 此次修复后，不存在有after没有before的情况了，但仍存在不配对的情况，还有待进一步重构&完善
             current = current.parent();
         }
     }
