@@ -236,7 +236,7 @@ public class JadCommand extends AnnotatedCommand {
 
     @Override
     public void complete(Completion completion) {
-        int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
+        int argumentIndex = CompletionUtils.detectArgumentIndex(completion, JadCommand.class);
 
         if (argumentIndex == 1) {
             if (!CompletionUtils.completeClassName(completion)) {
