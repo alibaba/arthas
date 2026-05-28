@@ -23,6 +23,10 @@ import com.taobao.arthas.core.util.StringUtils;
  */
 public class SpyImpl extends AbstractSpy {
     private static final Logger logger = LoggerFactory.getLogger(SpyImpl.class);
+    /**
+     * 防止 advice 回调链路里再次命中增强点时发生同线程递归分发。
+     */
+    private static final ThreadLocal<Integer> DISPATCH_DEPTH = new ThreadLocal<Integer>();
 
     @Override
     public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
@@ -34,16 +38,20 @@ public class SpyImpl extends AbstractSpy {
         // TODO listener 只用查一次，放到 thread local里保存起来就可以了！
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+        if (listeners != null && tryEnterDispatch()) {
+            try {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        adviceListener.before(clazz, methodName, methodDesc, target, args);
+                    } catch (Throwable e) {
+                        logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                     }
-                    adviceListener.before(clazz, methodName, methodDesc, target, args);
-                } catch (Throwable e) {
-                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                 }
+            } finally {
+                exitDispatch();
             }
         }
 
@@ -59,16 +67,20 @@ public class SpyImpl extends AbstractSpy {
 
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+        if (listeners != null && tryEnterDispatch()) {
+            try {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        adviceListener.afterReturning(clazz, methodName, methodDesc, target, args, returnObject);
+                    } catch (Throwable e) {
+                        logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                     }
-                    adviceListener.afterReturning(clazz, methodName, methodDesc, target, args, returnObject);
-                } catch (Throwable e) {
-                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                 }
+            } finally {
+                exitDispatch();
             }
         }
     }
@@ -83,16 +95,20 @@ public class SpyImpl extends AbstractSpy {
 
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+        if (listeners != null && tryEnterDispatch()) {
+            try {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        adviceListener.afterThrowing(clazz, methodName, methodDesc, target, args, throwable);
+                    } catch (Throwable e) {
+                        logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                     }
-                    adviceListener.afterThrowing(clazz, methodName, methodDesc, target, args, throwable);
-                } catch (Throwable e) {
-                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
                 }
+            } finally {
+                exitDispatch();
             }
         }
     }
@@ -107,18 +123,22 @@ public class SpyImpl extends AbstractSpy {
 
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
-
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+        int tracingLineNumber = Integer.parseInt(info[3]);
+        if (listeners != null && tryEnterDispatch()) {
+            try {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                        listener.invokeBeforeTracing(classLoader, owner, methodName, methodDesc, tracingLineNumber);
+                    } catch (Throwable e) {
+                        logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                     }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeBeforeTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
+            } finally {
+                exitDispatch();
             }
         }
     }
@@ -132,18 +152,22 @@ public class SpyImpl extends AbstractSpy {
         String methodDesc = info[2];
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
-
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+        int tracingLineNumber = Integer.parseInt(info[3]);
+        if (listeners != null && tryEnterDispatch()) {
+            try {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                        listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, tracingLineNumber);
+                    } catch (Throwable e) {
+                        logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                     }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
+            } finally {
+                exitDispatch();
             }
         }
 
@@ -159,20 +183,37 @@ public class SpyImpl extends AbstractSpy {
 
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
-
-        if (listeners != null) {
-            for (AdviceListener adviceListener : listeners) {
-                try {
-                    if (skipAdviceListener(adviceListener)) {
-                        continue;
+        int tracingLineNumber = Integer.parseInt(info[3]);
+        if (listeners != null && tryEnterDispatch()) {
+            try {
+                for (AdviceListener adviceListener : listeners) {
+                    try {
+                        if (skipAdviceListener(adviceListener)) {
+                            continue;
+                        }
+                        InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                        listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, tracingLineNumber);
+                    } catch (Throwable e) {
+                        logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                     }
-                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
-                } catch (Throwable e) {
-                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
+            } finally {
+                exitDispatch();
             }
         }
+    }
+
+    private static boolean tryEnterDispatch() {
+        Integer depth = DISPATCH_DEPTH.get();
+        if (depth != null && depth.intValue() > 0) {
+            return false;
+        }
+        DISPATCH_DEPTH.set(Integer.valueOf(1));
+        return true;
+    }
+
+    private static void exitDispatch() {
+        DISPATCH_DEPTH.remove();
     }
 
     private static boolean skipAdviceListener(AdviceListener adviceListener) {
