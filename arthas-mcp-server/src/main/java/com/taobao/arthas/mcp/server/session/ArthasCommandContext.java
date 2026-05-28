@@ -158,4 +158,12 @@ public class ArthasCommandContext {
             logger.debug("Set userId for session {}: {}", binding.getArthasSessionId(), userId);
         }
     }
+
+    public void setSessionAuth(Object authSubject) {
+        if (binding != null && authSubject != null) {
+            commandExecutor.setSessionAuth(binding.getArthasSessionId(), authSubject);
+            logger.debug("Set auth subject for session {}: {}",
+                    binding.getArthasSessionId(), authSubject.getClass().getSimpleName());
+        }
+    }
 }

@@ -5,10 +5,12 @@
 package com.taobao.arthas.mcp.server.task;
 
 import com.taobao.arthas.mcp.server.protocol.server.McpNettyServerExchange;
+import com.taobao.arthas.mcp.server.protocol.server.McpTransportContext;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.session.ArthasCommandSessionManager;
 import com.taobao.arthas.mcp.server.session.ArthasCommandSessionManager.CommandSessionBinding;
+import com.taobao.arthas.mcp.server.util.McpAuthExtractor;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -134,7 +136,23 @@ public class DefaultCreateTaskContext implements CreateTaskContext {
             throw new IllegalStateException("SessionManager is not available");
         }
         CommandSessionBinding binding = sessionManager.createIsolatedTaskSession(taskId);
-        return new ArthasCommandContext(commandContext.getCommandExecutor(), binding);
+        ArthasCommandContext isolatedContext = new ArthasCommandContext(commandContext.getCommandExecutor(), binding);
+        Object authSubject = getTransportAuthSubject();
+        if (authSubject != null) {
+            isolatedContext.setSessionAuth(authSubject);
+        }
+        return isolatedContext;
+    }
+
+    private Object getTransportAuthSubject() {
+        if (exchange == null) {
+            return null;
+        }
+        McpTransportContext transportContext = exchange.getTransportContext();
+        if (transportContext == null) {
+            return null;
+        }
+        return transportContext.get(McpAuthExtractor.MCP_AUTH_SUBJECT_KEY);
     }
 
     @Override
