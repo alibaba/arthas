@@ -122,6 +122,11 @@ public abstract class AbstractArthasTool {
 
             logger.info("Starting streamable execution: {}", commandStr);
 
+            // 在异步命令创建 Job 前，把 MCP 已认证主体写入当前 Arthas session。
+            if (execContext.getAuthSubject() != null) {
+                execContext.getCommandContext().setSessionAuth(execContext.getAuthSubject());
+            }
+
             // Set userId to session before async execution for stat reporting
             if (execContext.getUserId() != null) {
                 execContext.getCommandContext().setSessionUserId(execContext.getUserId());
