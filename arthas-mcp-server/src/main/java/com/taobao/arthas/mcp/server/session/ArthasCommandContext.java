@@ -158,4 +158,17 @@ public class ArthasCommandContext {
             logger.debug("Set userId for session {}: {}", binding.getArthasSessionId(), userId);
         }
     }
+
+    /**
+     * 将已认证主体写入当前绑定的 Arthas session。
+     *
+     * @param authSubject 认证主体
+     */
+    public void setSessionAuth(Object authSubject) {
+        if (binding != null && authSubject != null) {
+            commandExecutor.setSessionAuth(binding.getArthasSessionId(), authSubject);
+            logger.debug("Set auth subject for session {}: {}",
+                    binding.getArthasSessionId(), authSubject.getClass().getSimpleName());
+        }
+    }
 }
