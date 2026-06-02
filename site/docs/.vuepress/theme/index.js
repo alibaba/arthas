@@ -24,6 +24,10 @@ export function localTheme(options) {
         __dirname,
         "components/SidebarItem.vue",
       ),
+      "@theme/SidebarItems.vue": path.resolve(
+        __dirname,
+        "components/SidebarItems.vue",
+      ),
     },
   };
 }

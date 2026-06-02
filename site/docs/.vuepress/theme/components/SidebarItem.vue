@@ -2,7 +2,7 @@
 import AutoLink from "@theme/AutoLink.vue";
 import DropdownTransition from "@theme/DropdownTransition.vue";
 
-import { computed, nextTick, onBeforeUnmount, ref, toRefs } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps({
@@ -15,9 +15,14 @@ const props = defineProps({
     required: false,
     default: 0,
   },
+  forceOpen: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
-const { item, depth } = toRefs(props);
+const { item, depth, forceOpen } = toRefs(props);
 const route = useRoute();
 const router = useRouter();
 
@@ -56,7 +61,7 @@ const isCollapsible = computed(
   () => Boolean(item.value.collapsible) && hasChildren.value
 );
 const isOpenDefault = computed(() =>
-  isCollapsible.value ? isActive.value : true
+  isCollapsible.value ? forceOpen.value || isActive.value : true
 );
 const isOpen = ref(isOpenDefault.value);
 
@@ -103,6 +108,10 @@ const unregisterRouterHook = router.afterEach(() => {
   nextTick(() => {
     isOpen.value = isOpenDefault.value;
   });
+});
+
+watch(isOpenDefault, (value) => {
+  isOpen.value = value;
 });
 
 onBeforeUnmount(() => {
@@ -157,6 +166,7 @@ onBeforeUnmount(() => {
           :key="`${depth}${child.text}${child.link}`"
           :item="child"
           :depth="depth + 1"
+          :force-open="forceOpen"
         />
       </ul>
     </DropdownTransition>
