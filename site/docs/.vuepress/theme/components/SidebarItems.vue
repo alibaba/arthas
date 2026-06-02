@@ -14,10 +14,10 @@ const normalizedQuery = computed(() => normalizeText(searchQuery.value.trim()));
 const isSearchActive = computed(() => normalizedQuery.value.length > 0);
 const searchPlaceholder = computed(() => (isEnglish.value ? "Search" : "搜索"));
 const clearSearchLabel = computed(() =>
-  isEnglish.value ? "Clear search" : "清除搜索"
+  isEnglish.value ? "Clear search" : "清除搜索",
 );
 const noResultsText = computed(() =>
-  isEnglish.value ? "No matches" : "没有匹配结果"
+  isEnglish.value ? "No matches" : "没有匹配结果",
 );
 
 function normalizeText(value) {
@@ -26,7 +26,7 @@ function normalizeText(value) {
 
 function sidebarItemMatches(item, query) {
   return [item.text, item.link].some((value) =>
-    normalizeText(value).includes(query)
+    normalizeText(value).includes(query),
   );
 }
 
@@ -67,7 +67,7 @@ onMounted(() => {
       if (!sidebar) return;
 
       const activeSidebarItem = document.querySelector(
-        `.sidebar a.sidebar-item[href="${route.path}${hash}"]`
+        `.sidebar a.sidebar-item[href="${route.path}${hash}"]`,
       );
       if (!activeSidebarItem) return;
 
@@ -84,7 +84,7 @@ onMounted(() => {
       ) {
         activeSidebarItem.scrollIntoView(false);
       }
-    }
+    },
   );
 });
 </script>
