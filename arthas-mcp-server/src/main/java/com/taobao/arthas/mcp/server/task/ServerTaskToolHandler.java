@@ -35,6 +35,8 @@ public class ServerTaskToolHandler extends AbstractTaskHandler<McpSchema.ServerT
 
     private static final Logger logger = LoggerFactory.getLogger(ServerTaskToolHandler.class);
 
+    private static final Duration AUTOMATIC_POLLING_GRACE = Duration.ofSeconds(10);
+
     private final ObjectMapper objectMapper;
     private final TaskManagerOptions taskOptions;
     private final Duration automaticPollingTimeout;
@@ -305,7 +307,7 @@ public class ServerTaskToolHandler extends AbstractTaskHandler<McpSchema.ServerT
                     String taskId = task.getTaskId();
                     String sessionId = extractSessionId(exchange);
 
-                    return pollTaskUntilTerminal(taskId, sessionId, task, taskTool);
+                    return pollTaskUntilTerminal(taskId, sessionId, task, taskTool, request);
                 });
     }
 
@@ -314,15 +316,17 @@ public class ServerTaskToolHandler extends AbstractTaskHandler<McpSchema.ServerT
             String taskId,
             String sessionId,
             McpSchema.Task initialTask,
-            TaskAwareToolSpecification taskTool) {
+            TaskAwareToolSpecification taskTool,
+            McpSchema.CallToolRequest request) {
         
         long pollInterval = initialTask.getPollInterval() != null 
                 ? initialTask.getPollInterval() 
                 : TaskDefaults.DEFAULT_POLL_INTERVAL_MS;
         
-        Duration timeout = this.automaticPollingTimeout != null 
-                ? this.automaticPollingTimeout 
+        Duration defaultTimeout = this.automaticPollingTimeout != null
+                ? this.automaticPollingTimeout
                 : Duration.ofMillis(TaskDefaults.DEFAULT_AUTOMATIC_POLLING_TIMEOUT_MS);
+        Duration timeout = resolveAutomaticPollingTimeout(request, defaultTimeout);
         
         CompletableFuture<List<McpSchema.Task>> watchFuture = taskStore.watchTaskUntilTerminal(
                 taskId, 
@@ -390,6 +394,45 @@ public class ServerTaskToolHandler extends AbstractTaskHandler<McpSchema.ServerT
             }
             throw new java.util.concurrent.CompletionException(cause);
         });
+    }
+
+    Duration resolveAutomaticPollingTimeout(
+            McpSchema.CallToolRequest request,
+            Duration defaultTimeout) {
+        Duration base = defaultTimeout != null
+                ? defaultTimeout
+                : Duration.ofMillis(TaskDefaults.DEFAULT_AUTOMATIC_POLLING_TIMEOUT_MS);
+        try {
+            Long timeoutSeconds = readPositiveLongArgument(request, "timeout");
+            Duration commandTimeout = timeoutSeconds != null
+                    ? Duration.ofSeconds(timeoutSeconds)
+                    : base;
+            Duration derived = commandTimeout.plus(AUTOMATIC_POLLING_GRACE);
+            return base.compareTo(derived) >= 0 ? base : derived;
+        } catch (RuntimeException e) {
+            logger.warn("Failed to resolve automatic polling timeout, fallback to default with grace", e);
+            return base.plus(AUTOMATIC_POLLING_GRACE);
+        }
+    }
+
+    private Long readPositiveLongArgument(McpSchema.CallToolRequest request, String name) {
+        if (request == null || request.getArguments() == null) {
+            return null;
+        }
+        Object value = request.getArguments().get(name);
+        if (value instanceof Number) {
+            long n = ((Number) value).longValue();
+            return n > 0 ? n : null;
+        }
+        if (value instanceof String) {
+            try {
+                long n = Long.parseLong(((String) value).trim());
+                return n > 0 ? n : null;
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+        return null;
     }
 
     private String extractSessionId(McpNettyServerExchange exchange) {
