@@ -57,6 +57,12 @@ Starting with the application.
 
 - [Arthas Spring Boot Starter](spring-boot-starter.md)
 
+## Load External Commands
+
+Load external command jars when Arthas starts and extend team-specific diagnostic actions as Arthas commands.
+
+- [Load External Commands](external-command.md)
+
 ## HTTP API
 
 The Http API provides structured data and supports more complex interactive functions, making it easier to integrate Arthas into custom interfaces.

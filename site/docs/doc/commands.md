@@ -54,6 +54,10 @@
 
 - [options](options.md) - 查看或设置 Arthas 全局开关
 
+## 扩展命令
+
+- [加载外部命令](external-command.md) - 启动时从外部 jar 加载自定义 Arthas 命令
+
 ## 管道
 
 Arthas 支持使用管道对上述命令的结果进行进一步的处理，如`sm java.lang.String * | grep 'index'`

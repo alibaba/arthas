@@ -68,6 +68,8 @@ arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
 
 也可以在命令行配置： `--command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'` 。
 
+完整的外部命令开发和加载示例请参考：[加载外部命令](external-command.md)。
+
 ## 配置的优先级
 
 配置的优先级是：命令行参数 > System Env > System Properties > arthas.properties 。

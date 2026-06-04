@@ -54,6 +54,10 @@
 
 - [options](options.md) - check/set Arthas global optionss
 
+## Extension commands
+
+- [Load external commands](external-command.md) - load custom Arthas commands from external jars at startup
+
 ## pipe
 
 Arthas provides `pipe` to process the result returned from commands further, e.g. `sm java.lang.String * | grep 'index'`. Commands supported in `pipe`:

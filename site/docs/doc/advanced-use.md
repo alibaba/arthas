@@ -57,6 +57,12 @@ Arthas 支持配置项参考。
 
 - [Arthas Spring Boot Starter](spring-boot-starter.md)
 
+## 加载外部命令
+
+在 Arthas 启动时加载外部 command jar，把团队内部诊断动作扩展为新的 Arthas 命令。
+
+- [加载外部命令](external-command.md)
+
 ## HTTP API
 
 Http API 提供结构化的数据，支持更复杂的交互功能，方便自定义界面集成 arthas。
