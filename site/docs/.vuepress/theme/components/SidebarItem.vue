@@ -47,7 +47,7 @@ function isActiveSidebarItem(sidebarItem, currentRoute) {
 
   if (sidebarItem.children) {
     return sidebarItem.children.some((child) =>
-      isActiveSidebarItem(child, currentRoute)
+      isActiveSidebarItem(child, currentRoute),
     );
   }
 
@@ -58,10 +58,10 @@ const hasChildren = computed(() => Boolean(item.value.children?.length));
 const usesTreeRow = computed(() => Boolean(item.value.link) && depth.value > 0);
 const isActive = computed(() => isActiveSidebarItem(item.value, route));
 const isCollapsible = computed(
-  () => Boolean(item.value.collapsible) && hasChildren.value
+  () => Boolean(item.value.collapsible) && hasChildren.value,
 );
 const isOpenDefault = computed(() =>
-  isCollapsible.value ? forceOpen.value || isActive.value : true
+  isCollapsible.value ? forceOpen.value || isActive.value : true,
 );
 const isOpen = ref(isOpenDefault.value);
 
@@ -181,7 +181,9 @@ onBeforeUnmount(() => {
   margin: 0.125rem 0.75rem;
   border-left: 0.25rem solid transparent;
   border-radius: 6px;
-  transition: background-color var(--t-color), border-color var(--t-color);
+  transition:
+    background-color var(--t-color),
+    border-color var(--t-color);
 
   &.active,
   &:hover {
