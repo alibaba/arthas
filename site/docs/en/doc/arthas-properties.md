@@ -69,6 +69,8 @@ arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
 It can also be configured on the command line:
 `--command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'`.
 
+For a complete external command development and loading example, see [Load External Commands](external-command.md).
+
 ## Configured order
 
 The order of configuration is: command line parameters > System Env > System Properties > arthas.properties.

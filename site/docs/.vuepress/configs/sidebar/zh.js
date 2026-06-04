@@ -82,6 +82,7 @@ export const sidebarZH = {
             "/doc/arthas-properties.html",
             "/doc/agent.html",
             "/doc/spring-boot-starter.md",
+            "/doc/external-command.md",
             "/doc/http-api.md",
             "/doc/batch-support.md",
           ],

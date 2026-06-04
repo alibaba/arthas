@@ -82,6 +82,7 @@ export const sidebarEN = {
             "/en/doc/arthas-properties.html",
             "/en/doc/agent.html",
             "/en/doc/spring-boot-starter.md",
+            "/en/doc/external-command.md",
             "/en/doc/http-api.md",
             "/en/doc/batch-support.md",
           ],
