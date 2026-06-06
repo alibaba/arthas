@@ -116,15 +116,7 @@ public class AdviceListenerManager {
             synchronized (this) {
                 className = className.replace('/', '.');
                 String key = key(className, methodName, methodDesc);
-
-                List<AdviceListener> listeners = map.get(key);
-                if (listeners == null) {
-                    listeners = new ArrayList<AdviceListener>();
-                    map.put(key, listeners);
-                }
-                if (!listeners.contains(listener)) {
-                    listeners.add(listener);
-                }
+                registerListener(key, listener);
             }
         }
 
@@ -142,16 +134,21 @@ public class AdviceListenerManager {
             synchronized (this) {
                 className = className.replace('/', '.');
                 String key = keyForTrace(className, owner, methodName, methodDesc);
-
-                List<AdviceListener> listeners = map.get(key);
-                if (listeners == null) {
-                    listeners = new ArrayList<AdviceListener>();
-                    map.put(key, listeners);
-                }
-                if (!listeners.contains(listener)) {
-                    listeners.add(listener);
-                }
+                registerListener(key, listener);
             }
+        }
+
+        private void registerListener(String key, AdviceListener listener) {
+            List<AdviceListener> listeners = map.get(key);
+            if (listeners != null && listeners.contains(listener)) {
+                return;
+            }
+
+            List<AdviceListener> newListeners = listeners == null
+                    ? new ArrayList<AdviceListener>()
+                    : new ArrayList<AdviceListener>(listeners);
+            newListeners.add(listener);
+            map.put(key, newListeners);
         }
 
         public List<AdviceListener> queryTraceAdviceListeners(String className, String owner, String methodName,
