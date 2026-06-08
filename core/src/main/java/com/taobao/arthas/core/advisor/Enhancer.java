@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import com.alibaba.deps.org.objectweb.asm.Opcodes;
 import com.alibaba.deps.org.objectweb.asm.Type;
 import com.alibaba.deps.org.objectweb.asm.tree.AbstractInsnNode;
 import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.LineNumberNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodInsnNode;
 import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -33,7 +35,9 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.bytekit.asm.MethodProcessor;
 import com.alibaba.bytekit.asm.interceptor.InterceptorProcessor;
 import com.alibaba.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
+import com.alibaba.bytekit.asm.location.LineLocationMatcher;
 import com.alibaba.bytekit.asm.location.Location;
+import com.alibaba.bytekit.asm.location.Location.LineLocation;
 import com.alibaba.bytekit.asm.location.LocationType;
 import com.alibaba.bytekit.asm.location.MethodInsnNodeWare;
 import com.alibaba.bytekit.asm.location.filter.GroupLocationFilter;
@@ -47,6 +51,7 @@ import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyLineInterceptor;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor3;
@@ -79,6 +84,7 @@ public class Enhancer implements ClassFileTransformer {
      * 指定增强的 classloader hash，如果为空则不限制。
      */
     private final String targetClassLoaderHash;
+    private LineEnhanceOptions lineEnhanceOptions;
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
     private boolean isLazy = false;
@@ -134,6 +140,10 @@ public class Enhancer implements ClassFileTransformer {
         this.affect = new EnhancerAffect();
         affect.setListenerId(listener.id());
         this.isLazy = isLazy;
+    }
+
+    public void setLineEnhanceOptions(LineEnhanceOptions lineEnhanceOptions) {
+        this.lineEnhanceOptions = lineEnhanceOptions;
     }
 
     @Override
@@ -198,6 +208,15 @@ public class Enhancer implements ClassFileTransformer {
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
 
+            final List<InterceptorProcessor> lineInterceptorProcessors = new ArrayList<InterceptorProcessor>();
+            if (isLineEnhance()) {
+                lineInterceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyLineInterceptor.class));
+                for (InterceptorProcessor interceptorProcessor : lineInterceptorProcessors) {
+                    interceptorProcessor.setLocationMatcher(new LineLocationMatcher(lineEnhanceOptions.getMode(),
+                            lineEnhanceOptions.getDuplicatePolicy(), lineEnhanceOptions.getLineList()));
+                }
+            }
+
             if (this.isTracing) {
                 if (!this.skipJDKTrace) {
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor1.class));
@@ -212,7 +231,11 @@ public class Enhancer implements ClassFileTransformer {
 
             List<MethodNode> matchedMethods = new ArrayList<MethodNode>();
             for (MethodNode methodNode : classNode.methods) {
-                if (!isIgnore(methodNode, methodNameMatcher)) {
+                if (isLineEnhance()) {
+                    if (isLineMethodMatched(methodNode)) {
+                        matchedMethods.add(methodNode);
+                    }
+                } else if (!isIgnore(methodNode, methodNameMatcher)) {
                     matchedMethods.add(methodNode);
                 }
             }
@@ -249,12 +272,24 @@ public class Enhancer implements ClassFileTransformer {
             groupLocationFilter.addFilter(invokeBeforeFilter);
             groupLocationFilter.addFilter(invokeAfterFilter);
             groupLocationFilter.addFilter(invokeExceptionFilter);
+            if (isLineEnhance()) {
+                groupLocationFilter.addFilter(new LineAlreadyEnhancedLocationFilter(Type.getInternalName(SpyAPI.class),
+                        "atLine"));
+            }
 
             for (MethodNode methodNode : matchedMethods) {
                 if (AsmUtils.isNative(methodNode)) {
                     logger.info("ignore native method: {}",
                             AsmUtils.methodDeclaration(Type.getObjectType(classNode.name), methodNode));
                     continue;
+                }
+                Set<Integer> lineNumbers = null;
+                if (isLineEnhance()) {
+                    lineNumbers = enhanceLineInterceptors(classNode, methodNode, groupLocationFilter,
+                            lineInterceptorProcessors);
+                    if (lineNumbers.isEmpty()) {
+                        continue;
+                    }
                 }
                 // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
                 if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
@@ -299,6 +334,12 @@ public class Enhancer implements ClassFileTransformer {
                 // enter/exist 总是要插入 listener
                 AdviceListenerManager.registerAdviceListener(inClassLoader, className, methodNode.name, methodNode.desc,
                         listener);
+                if (isLineEnhance()) {
+                    for (Integer lineNumber : lineNumbers) {
+                        AdviceListenerManager.registerLineAdviceListener(inClassLoader, className, methodNode.name,
+                                methodNode.desc, lineNumber, listener);
+                    }
+                }
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
@@ -340,6 +381,132 @@ public class Enhancer implements ClassFileTransformer {
     private boolean isIgnore(MethodNode methodNode, Matcher methodNameMatcher) {
         return null == methodNode || isAbstract(methodNode.access) || !methodNameMatcher.matching(methodNode.name)
                 || ArthasCheckUtils.isEquals(methodNode.name, "<clinit>");
+    }
+
+    private boolean isLineEnhance() {
+        return lineEnhanceOptions != null && !lineEnhanceOptions.getLines().isEmpty();
+    }
+
+    private boolean isLineMethodMatched(MethodNode methodNode) {
+        if (isIgnore(methodNode, methodNameMatcher)) {
+            return false;
+        }
+        if (AsmUtils.isConstructor(methodNode) || AsmUtils.isNative(methodNode)) {
+            return false;
+        }
+        String methodDesc = lineEnhanceOptions.getMethodDesc();
+        if (methodDesc != null && methodDesc.length() > 0 && !methodDesc.equals(methodNode.desc)) {
+            return false;
+        }
+        return hasAnyLine(methodNode, lineEnhanceOptions.getLines());
+    }
+
+    private boolean hasAnyLine(MethodNode methodNode, Set<Integer> targetLines) {
+        return !matchedLineNumbers(methodNode, targetLines).isEmpty();
+    }
+
+    private Set<Integer> matchedLineNumbers(MethodNode methodNode, Set<Integer> targetLines) {
+        Set<Integer> result = new LinkedHashSet<Integer>();
+        if (methodNode == null || methodNode.instructions == null || targetLines == null || targetLines.isEmpty()) {
+            return result;
+        }
+        for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                .getNext()) {
+            if (insnNode instanceof LineNumberNode) {
+                int line = ((LineNumberNode) insnNode).line;
+                if (targetLines.contains(line)) {
+                    result.add(line);
+                }
+            }
+        }
+        return result;
+    }
+
+    private Set<Integer> enhanceLineInterceptors(ClassNode classNode, MethodNode methodNode,
+            GroupLocationFilter groupLocationFilter, List<InterceptorProcessor> lineInterceptorProcessors) {
+        Set<Integer> lineNumbers = findAlreadyEnhancedLineNumbers(methodNode, lineEnhanceOptions.getLines());
+        MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
+        for (InterceptorProcessor interceptor : lineInterceptorProcessors) {
+            try {
+                List<Location> locations = interceptor.process(methodProcessor);
+                for (Location location : locations) {
+                    if (location instanceof LineLocation) {
+                        lineNumbers.add(((LineLocation) location).getTargetLine());
+                    }
+                }
+            } catch (Throwable e) {
+                logger.error("line enhancer error, class: {}, method: {}, interceptor: {}", classNode.name,
+                        methodNode.name, interceptor.getClass().getName(), e);
+            }
+        }
+        lineNumbers.addAll(findAlreadyEnhancedLineNumbers(methodNode, lineEnhanceOptions.getLines()));
+        return lineNumbers;
+    }
+
+    private Set<Integer> findAlreadyEnhancedLineNumbers(MethodNode methodNode, Set<Integer> targetLines) {
+        Set<Integer> result = new LinkedHashSet<Integer>();
+        if (methodNode == null || methodNode.instructions == null) {
+            return result;
+        }
+        for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                .getNext()) {
+            if (insnNode instanceof LineNumberNode) {
+                LineNumberNode lineNumberNode = (LineNumberNode) insnNode;
+                if (targetLines.contains(lineNumberNode.line) && hasLineSpyAround(lineNumberNode)) {
+                    result.add(lineNumberNode.line);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static boolean hasLineSpyAround(AbstractInsnNode insnNode) {
+        return LineAlreadyEnhancedLocationFilter.hasLineSpyAround(insnNode, Type.getInternalName(SpyAPI.class),
+                "atLine");
+    }
+
+    private static class LineAlreadyEnhancedLocationFilter implements LocationFilter {
+        private final String owner;
+        private final String methodName;
+
+        private LineAlreadyEnhancedLocationFilter(String owner, String methodName) {
+            this.owner = owner;
+            this.methodName = methodName;
+        }
+
+        @Override
+        public boolean allow(AbstractInsnNode insnNode, LocationType locationType, boolean complete) {
+            if (!LocationType.LINE.equals(locationType)) {
+                return false;
+            }
+            return !hasLineSpyAround(insnNode, owner, methodName);
+        }
+
+        private static boolean hasLineSpyAround(AbstractInsnNode insnNode, String owner, String methodName) {
+            AbstractInsnNode current = insnNode.getPrevious();
+            while (current != null && !(current instanceof LineNumberNode)) {
+                if (isMethodInsn(current, owner, methodName)) {
+                    return true;
+                }
+                current = current.getPrevious();
+            }
+            current = insnNode.getNext();
+            while (current != null && !(current instanceof LineNumberNode)) {
+                if (isMethodInsn(current, owner, methodName)) {
+                    return true;
+                }
+                current = current.getNext();
+            }
+            return false;
+        }
+
+        private static boolean isMethodInsn(AbstractInsnNode insnNode, String owner, String methodName) {
+            if (insnNode instanceof MethodInsnNode) {
+                MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                return owner.equals(methodInsnNode.owner) && methodName.equals(methodInsnNode.name);
+            }
+            return false;
+        }
     }
 
     /**

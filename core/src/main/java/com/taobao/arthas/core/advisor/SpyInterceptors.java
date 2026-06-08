@@ -8,6 +8,7 @@ import com.alibaba.bytekit.asm.interceptor.annotation.AtExceptionExit;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtExit;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtInvoke;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtInvokeException;
+import com.alibaba.bytekit.asm.interceptor.annotation.AtLine;
 
 /**
  * 
@@ -39,6 +40,17 @@ public class SpyInterceptors {
                 @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
                 @Binding.Throwable Throwable throwable) {
             SpyAPI.atExceptionExit(clazz, methodInfo, target, args, throwable);
+        }
+    }
+
+    public static class SpyLineInterceptor {
+        @AtLine(lines = { -1 }, inline = true)
+        public static void atLine(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.MethodInfo String methodInfo, @Binding.Line int lineNumber, @Binding.Args Object[] args,
+                @Binding.ArgNames(optional = true) String[] argNames,
+                @Binding.LocalVars(ignoreThis = true, optional = true) Object[] localVars,
+                @Binding.LocalVarNames(ignoreThis = true, optional = true) String[] localVarNames) {
+            SpyAPI.atLine(clazz, methodInfo, lineNumber, target, args, argNames, localVars, localVarNames);
         }
     }
 

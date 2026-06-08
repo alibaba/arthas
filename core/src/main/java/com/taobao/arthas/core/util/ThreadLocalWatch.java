@@ -35,6 +35,14 @@ public class ThreadLocalWatch {
         return (System.nanoTime() - pop(timestampRef.get())) / 1000000.0;
     }
 
+    public double costInMillisWithoutPop() {
+        long timestamp = peek(timestampRef.get());
+        if (timestamp == 0) {
+            return 0.0;
+        }
+        return (System.nanoTime() - timestamp) / 1000000.0;
+    }
+
     /**
      * 
      * <pre>
@@ -74,5 +82,13 @@ public class ThreadLocalWatch {
         long value = stack[pos];
         stack[0] = pos - 1;
         return value;
+    }
+
+    static long peek(long[] stack) {
+        int pos = (int) stack[0];
+        if (pos > 0) {
+            return stack[pos];
+        }
+        return 0;
     }
 }
