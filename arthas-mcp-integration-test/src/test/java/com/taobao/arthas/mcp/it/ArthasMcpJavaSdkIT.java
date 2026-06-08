@@ -80,6 +80,7 @@ class ArthasMcpJavaSdkIT {
             "thread",
             "trace",
             "tt",
+            "version",
             "vmoption",
             "vmtool",
             "viewfile",
@@ -228,7 +229,8 @@ class ArthasMcpJavaSdkIT {
                 || "options".equals(toolName)
                 || "vmoption".equals(toolName)
                 || "classloader".equals(toolName)
-                || "perfcounter".equals(toolName)) {
+                || "perfcounter".equals(toolName)
+                || "version".equals(toolName)) {
             return args;
         }
 
