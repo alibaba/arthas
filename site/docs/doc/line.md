@@ -12,40 +12,40 @@
 
 ## 参数说明
 
-| 参数名称 | 参数说明 |
-| ---: | :--- |
-| `--class <class-pattern>` | 需要观察的类名，必填，默认通配符匹配 |
-| `--method <method-pattern>` | 需要观察的方法名，可选，不指定时匹配类里的所有可插桩方法 |
-| `--desc <method-desc>` | JVM 方法描述符，可选，用于区分重载方法，比如 `(I)Ljava/util/List;` |
-| `--line <line>` | 需要观察的源码行号，支持逗号分隔和重复指定，比如 `--line 51,57 --line 61` |
-| `--express <express>` | 观察表达式，默认值是 `{params, localVarMap}` |
-| `--condition <express>` | 条件表达式，条件成立时才输出 |
-| `--list-lines` | 只列出匹配方法的可用行号，不增强类 |
-| `[E]` | 开启正则表达式匹配，默认是通配符匹配 |
-| `[x:]` | 输出对象展开层级，默认值为 1 |
-| `[M:]` | 输出结果大小限制，默认使用 `options` 中的 `object-size-limit` |
-| `[n:]` | 执行次数限制，默认值为 100 |
-| `[c:]` | 指定 ClassLoader hash，只增强该 ClassLoader 加载的类 |
-| `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为 `[maxMatch <arg>]` |
-| `--stack` | 命中行号时输出当前线程栈 |
-| `--stack-depth <depth>` | `--stack` 的最大栈深度，默认值为 32，最大值为 256 |
+|                    参数名称 | 参数说明                                                                  |
+| --------------------------: | :------------------------------------------------------------------------ |
+|   `--class <class-pattern>` | 需要观察的类名，必填，默认通配符匹配                                      |
+| `--method <method-pattern>` | 需要观察的方法名，可选，不指定时匹配类里的所有可插桩方法                  |
+|      `--desc <method-desc>` | JVM 方法描述符，可选，用于区分重载方法，比如 `(I)Ljava/util/List;`        |
+|             `--line <line>` | 需要观察的源码行号，支持逗号分隔和重复指定，比如 `--line 51,57 --line 61` |
+|       `--express <express>` | 观察表达式，默认值是 `{params, localVarMap}`                              |
+|     `--condition <express>` | 条件表达式，条件成立时才输出                                              |
+|              `--list-lines` | 只列出匹配方法的可用行号，不增强类                                        |
+|                       `[E]` | 开启正则表达式匹配，默认是通配符匹配                                      |
+|                      `[x:]` | 输出对象展开层级，默认值为 1                                              |
+|                      `[M:]` | 输出结果大小限制，默认使用 `options` 中的 `object-size-limit`             |
+|                      `[n:]` | 执行次数限制，默认值为 100                                                |
+|                      `[c:]` | 指定 ClassLoader hash，只增强该 ClassLoader 加载的类                      |
+|                 `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为 `[maxMatch <arg>]`         |
+|                   `--stack` | 命中行号时输出当前线程栈                                                  |
+|     `--stack-depth <depth>` | `--stack` 的最大栈深度，默认值为 32，最大值为 256                         |
 
 ## 表达式变量
 
 `line` 命令复用 Arthas 的 OGNL 表达式机制。常用变量如下：
 
-| 变量 | 说明 |
-| ---: | :--- |
-| `params` | 方法入参数组 |
-| `target` | 当前对象，静态方法为 `null` |
-| `clazz` | 当前类 |
-| `method` | 当前方法信息 |
-| `lineNumber` | 当前命中的源码行号 |
-| `argNames` | 方法参数名数组，依赖目标类保留调试信息 |
-| `localVars` / `locals` | 当前行可见的局部变量值数组 |
-| `localVarNames` | 当前行可见的局部变量名数组 |
-| `localVarMap` | 局部变量名到变量值的映射 |
-| `#cost` | 从方法入口到当前行的耗时，单位为 ms |
+|                   变量 | 说明                                   |
+| ---------------------: | :------------------------------------- |
+|               `params` | 方法入参数组                           |
+|               `target` | 当前对象，静态方法为 `null`            |
+|                `clazz` | 当前类                                 |
+|               `method` | 当前方法信息                           |
+|           `lineNumber` | 当前命中的源码行号                     |
+|             `argNames` | 方法参数名数组，依赖目标类保留调试信息 |
+| `localVars` / `locals` | 当前行可见的局部变量值数组             |
+|        `localVarNames` | 当前行可见的局部变量名数组             |
+|          `localVarMap` | 局部变量名到变量值的映射               |
+|                `#cost` | 从方法入口到当前行的耗时，单位为 ms    |
 
 局部变量名和值依赖目标类编译时保留 `LocalVariableTable` 调试信息。如果目标类没有调试信息，`localVarMap` 可能为空或不完整。
 

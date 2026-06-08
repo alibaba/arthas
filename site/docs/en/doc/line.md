@@ -12,40 +12,40 @@ The `line` command inserts probes at specified source line numbers in matched me
 
 ## Parameters
 
-| Name | Specification |
-| ---: | :--- |
-| `--class <class-pattern>` | Class name to watch. Required. Wildcard matching is used by default |
-| `--method <method-pattern>` | Method name to watch. Optional. If omitted, all instrumentable methods in the class may match |
-| `--desc <method-desc>` | JVM method descriptor. Optional. Use it to select an overloaded method, for example `(I)Ljava/util/List;` |
-| `--line <line>` | Source line numbers to watch. Supports comma-separated values and repeated options, for example `--line 51,57 --line 61` |
-| `--express <express>` | Expression to evaluate. The default value is `{params, localVarMap}` |
-| `--condition <express>` | Condition expression. Output is printed only when the condition is true |
-| `--list-lines` | List available source line numbers without enhancing classes |
-| `[E]` | Enable regular expression matching. Wildcard matching is used by default |
-| `[x:]` | Object expansion level. The default value is 1 |
-| `[M:]` | Result size limit. The default value comes from `options` `object-size-limit` |
-| `[n:]` | Execution count limit. The default value is 100 |
-| `[c:]` | Specify the ClassLoader hash. Only classes loaded by this ClassLoader are enhanced |
-| `[m <arg>]` | Specify the maximum number of matched classes. The default value is 50. The long form is `[maxMatch <arg>]` |
-| `--stack` | Print the current stack trace when the line probe hits |
-| `--stack-depth <depth>` | Maximum stack depth for `--stack`. The default value is 32, and the maximum value is 256 |
+|                        Name | Specification                                                                                                            |
+| --------------------------: | :----------------------------------------------------------------------------------------------------------------------- |
+|   `--class <class-pattern>` | Class name to watch. Required. Wildcard matching is used by default                                                      |
+| `--method <method-pattern>` | Method name to watch. Optional. If omitted, all instrumentable methods in the class may match                            |
+|      `--desc <method-desc>` | JVM method descriptor. Optional. Use it to select an overloaded method, for example `(I)Ljava/util/List;`                |
+|             `--line <line>` | Source line numbers to watch. Supports comma-separated values and repeated options, for example `--line 51,57 --line 61` |
+|       `--express <express>` | Expression to evaluate. The default value is `{params, localVarMap}`                                                     |
+|     `--condition <express>` | Condition expression. Output is printed only when the condition is true                                                  |
+|              `--list-lines` | List available source line numbers without enhancing classes                                                             |
+|                       `[E]` | Enable regular expression matching. Wildcard matching is used by default                                                 |
+|                      `[x:]` | Object expansion level. The default value is 1                                                                           |
+|                      `[M:]` | Result size limit. The default value comes from `options` `object-size-limit`                                            |
+|                      `[n:]` | Execution count limit. The default value is 100                                                                          |
+|                      `[c:]` | Specify the ClassLoader hash. Only classes loaded by this ClassLoader are enhanced                                       |
+|                 `[m <arg>]` | Specify the maximum number of matched classes. The default value is 50. The long form is `[maxMatch <arg>]`              |
+|                   `--stack` | Print the current stack trace when the line probe hits                                                                   |
+|     `--stack-depth <depth>` | Maximum stack depth for `--stack`. The default value is 32, and the maximum value is 256                                 |
 
 ## Expression Variables
 
 `line` reuses the Arthas OGNL expression mechanism. Common variables:
 
-| Variable | Description |
-| ---: | :--- |
-| `params` | Method argument array |
-| `target` | Current object. It is `null` for static methods |
-| `clazz` | Current class |
-| `method` | Current method information |
-| `lineNumber` | Matched source line number |
-| `argNames` | Method argument name array. It depends on debug metadata in the target class |
-| `localVars` / `locals` | Local variable value array visible at the current line |
-| `localVarNames` | Local variable name array visible at the current line |
-| `localVarMap` | Map from local variable name to value |
-| `#cost` | Elapsed time from method entry to the current line, in milliseconds |
+|               Variable | Description                                                                  |
+| ---------------------: | :--------------------------------------------------------------------------- |
+|               `params` | Method argument array                                                        |
+|               `target` | Current object. It is `null` for static methods                              |
+|                `clazz` | Current class                                                                |
+|               `method` | Current method information                                                   |
+|           `lineNumber` | Matched source line number                                                   |
+|             `argNames` | Method argument name array. It depends on debug metadata in the target class |
+| `localVars` / `locals` | Local variable value array visible at the current line                       |
+|        `localVarNames` | Local variable name array visible at the current line                        |
+|          `localVarMap` | Map from local variable name to value                                        |
+|                `#cost` | Elapsed time from method entry to the current line, in milliseconds          |
 
 Local variable names and values depend on the target bytecode retaining `LocalVariableTable` debug metadata. If the target class has no debug metadata, `localVarMap` may be empty or incomplete.
 
