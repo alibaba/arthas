@@ -1,5 +1,6 @@
 package com.taobao.arthas.mcp.it;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.mcp.server.protocol.spec.HttpHeaders;
 import com.taobao.arthas.mcp.server.protocol.spec.McpSchema;
@@ -73,7 +74,7 @@ class ArthasMcpToolsIT {
             for (McpSchema.Tool tool : toolsResult.getTools()) {
                 toolNames.add(tool.getName());
             }
-            assertThat(toolNames).contains("jvm", "jad", "thread");
+            assertThat(toolNames).contains("jvm", "jad", "thread", "version");
             assertThat(toolNames).contains("watch", "tt");
 
             McpSchema.Tool watchTool = toolsResult.getTools().stream()
@@ -102,6 +103,16 @@ class ArthasMcpToolsIT {
             assertThat(callToolResult).isNotNull();
             assertThat(callToolResult.getIsError()).isNotEqualTo(Boolean.TRUE);
             assertThat(callToolResult.getContent()).isNotNull().isNotEmpty();
+
+            McpSchema.CallToolResult versionResult = client.callTool(sessionId, "version", Collections.emptyMap());
+            assertThat(versionResult).isNotNull();
+            assertThat(versionResult.getIsError()).isNotEqualTo(Boolean.TRUE);
+            String versionText = extractTextContent(versionResult);
+            JsonNode versionBody = OBJECT_MAPPER.readTree(versionText);
+            assertThat(versionBody.path("success").asBoolean()).isTrue();
+            JsonNode versionNode = findResultByType(versionBody.path("results"), "version");
+            assertThat(versionNode).isNotNull();
+            assertThat(versionNode.path("version").asText()).isNotBlank();
         } finally {
             if (targetJvm != null) {
                 targetJvm.destroy();
@@ -113,6 +124,30 @@ class ArthasMcpToolsIT {
                 deleteDirectoryQuietly(tempHome);
             }
         }
+    }
+
+    private static String extractTextContent(McpSchema.CallToolResult result) {
+        for (McpSchema.Content content : result.getContent()) {
+            if (content instanceof McpSchema.TextContent) {
+                String text = ((McpSchema.TextContent) content).getText();
+                if (text != null && !text.trim().isEmpty()) {
+                    return text;
+                }
+            }
+        }
+        throw new IllegalStateException("tool 返回内容中没有文本结果: " + result.getContent());
+    }
+
+    private static JsonNode findResultByType(JsonNode results, String type) {
+        if (results == null || !results.isArray()) {
+            return null;
+        }
+        for (JsonNode result : results) {
+            if (type.equals(result.path("type").asText())) {
+                return result;
+            }
+        }
+        return null;
     }
 
     private static String retry(Duration timeout, IoSupplier<String> supplier) throws Exception {
