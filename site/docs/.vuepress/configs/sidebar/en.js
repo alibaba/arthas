@@ -31,6 +31,7 @@ export const sidebarEN = {
             "/en/doc/jfr.md",
             "/en/doc/jvm.md",
             "/en/doc/keymap.md",
+            "/en/doc/line.md",
             "/en/doc/logger.md",
             "/en/doc/mbean.md",
             "/en/doc/mc.md",
