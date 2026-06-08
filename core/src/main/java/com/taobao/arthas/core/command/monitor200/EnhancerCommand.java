@@ -12,6 +12,7 @@ import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
+import com.taobao.arthas.core.advisor.LineEnhanceOptions;
 import com.taobao.arthas.core.command.model.EnhancerModel;
 import com.taobao.arthas.core.command.model.EnhancerModelFactory;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -143,6 +144,10 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
      */
     protected abstract AdviceListener getAdviceListener(CommandProcess process);
 
+    protected LineEnhanceOptions getLineEnhanceOptions() {
+        return null;
+    }
+
     AdviceListener getAdviceListenerWithId(CommandProcess process) {
         if (listenerId != 0) {
             AdviceListener listener = AdviceWeaver.listener(listenerId);
@@ -212,6 +217,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace,
                     getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), this.lazy, this.hashCode);
+            enhancer.setLineEnhanceOptions(getLineEnhanceOptions());
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst, this.maxNumOfMatchedClass);

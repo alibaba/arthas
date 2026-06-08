@@ -36,6 +36,7 @@
 :::
 
 - [monitor](monitor.md) - monitor method execution statistics
+- [line](line.md) - watch arguments, local variables, and expression results at specified source lines
 - [stack](stack.md) - display the stack trace for the specified class and method
 - [trace](trace.md) - trace the execution time of specified method invocation
 - [tt](tt.md) - time tunnel, record the arguments and returned value for the methods and replay

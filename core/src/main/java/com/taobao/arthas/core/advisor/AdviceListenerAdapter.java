@@ -65,6 +65,13 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
                 throwable);
     }
 
+    @Override
+    final public void atLine(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args,
+            int lineNumber, String[] argNames, Object[] localVars, String[] localVarNames) throws Throwable {
+        atLine(clazz.getClassLoader(), clazz, new ArthasMethod(clazz, methodName, methodDesc), target, args,
+                lineNumber, argNames, localVars, localVarNames);
+    }
+
     /**
      * 前置通知
      *
@@ -105,6 +112,14 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
      */
     public abstract void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
             Object[] args, Throwable throwable) throws Throwable;
+
+    /**
+     * 行号通知，默认无操作。
+     */
+    public void atLine(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
+            int lineNumber, String[] argNames, Object[] localVars, String[] localVarNames) throws Throwable {
+        // default no-op
+    }
 
     /**
      * 判断条件是否满足，满足的情况下需要输出结果

@@ -31,6 +31,7 @@ export const sidebarZH = {
             "/doc/jfr.md",
             "/doc/jvm.md",
             "/doc/keymap.md",
+            "/doc/line.md",
             "/doc/logger.md",
             "/doc/mbean.md",
             "/doc/mc.md",
