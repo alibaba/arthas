@@ -21,6 +21,10 @@ public interface Session {
     String SERVER = "server";
     String USER_ID = "userId";
     /**
+     * 会话静默模式，不输出连接欢迎信息。
+     */
+    String QUIET = "arthas-session-quiet";
+    /**
      * The tty this session related to.
      */
     String TTY = "tty";

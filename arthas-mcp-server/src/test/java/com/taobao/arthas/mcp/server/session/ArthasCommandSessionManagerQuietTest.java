@@ -3,46 +3,28 @@ package com.taobao.arthas.mcp.server.session;
 import com.taobao.arthas.mcp.server.CommandExecutor;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ArthasCommandContextAuthTest {
+class ArthasCommandSessionManagerQuietTest {
 
     @Test
-    void setSessionAuthShouldDelegateToBoundSession() {
+    void commandSessionsShouldBeCreatedQuietly() {
         RecordingCommandExecutor executor = new RecordingCommandExecutor();
-        ArthasCommandSessionManager.CommandSessionBinding binding =
-                new ArthasCommandSessionManager.CommandSessionBinding("mcp-session", "arthas-session", "consumer");
-        ArthasCommandContext context = new ArthasCommandContext(executor, binding);
-        Object authSubject = new Object();
+        ArthasCommandSessionManager sessionManager = new ArthasCommandSessionManager(executor);
 
-        context.setSessionAuth(authSubject);
+        sessionManager.createCommandSession("mcp-session");
+        sessionManager.createIsolatedTaskSession("task-1");
 
-        assertThat(executor.authSessionId).isEqualTo("arthas-session");
-        assertThat(executor.authSubject).isSameAs(authSubject);
-        assertThat(executor.authCallCount).isEqualTo(1);
-    }
-
-    @Test
-    void setSessionAuthShouldIgnoreMissingBindingOrSubject() {
-        RecordingCommandExecutor executor = new RecordingCommandExecutor();
-        ArthasCommandContext temporaryContext = new ArthasCommandContext(executor);
-        ArthasCommandSessionManager.CommandSessionBinding binding =
-                new ArthasCommandSessionManager.CommandSessionBinding("mcp-session", "arthas-session", "consumer");
-        ArthasCommandContext boundContext = new ArthasCommandContext(executor, binding);
-
-        temporaryContext.setSessionAuth(new Object());
-        boundContext.setSessionAuth(null);
-
-        assertThat(executor.authCallCount).isZero();
+        assertThat(executor.quietFlags).containsExactly(Boolean.TRUE, Boolean.TRUE);
     }
 
     private static final class RecordingCommandExecutor implements CommandExecutor {
-        private String authSessionId;
-        private Object authSubject;
-        private int authCallCount;
+        private final List<Boolean> quietFlags = new ArrayList<Boolean>();
 
         @Override
         public Map<String, Object> executeSync(String commandLine, long timeout, String sessionId,
@@ -67,9 +49,10 @@ class ArthasCommandContextAuthTest {
 
         @Override
         public Map<String, Object> createSession(boolean quiet) {
+            quietFlags.add(quiet);
             Map<String, Object> result = new HashMap<String, Object>();
-            result.put("sessionId", "created-session");
-            result.put("consumerId", "created-consumer");
+            result.put("sessionId", "session-" + quietFlags.size());
+            result.put("consumerId", "consumer-" + quietFlags.size());
             return result;
         }
 
@@ -80,9 +63,6 @@ class ArthasCommandContextAuthTest {
 
         @Override
         public void setSessionAuth(String sessionId, Object authSubject) {
-            this.authSessionId = sessionId;
-            this.authSubject = authSubject;
-            this.authCallCount++;
         }
 
         @Override

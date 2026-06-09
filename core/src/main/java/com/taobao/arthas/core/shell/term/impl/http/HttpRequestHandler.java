@@ -56,6 +56,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         String path = new URI(request.uri()).getPath();
         if (wsUri.equalsIgnoreCase(path)) {
+            ctx.channel().attr(TtyWebSocketFrameHandler.REQUEST_URI).set(request.uri());
             ctx.fireChannelRead(request.retain());
         } else {
             if (HttpUtil.is100ContinueExpected(request)) {
