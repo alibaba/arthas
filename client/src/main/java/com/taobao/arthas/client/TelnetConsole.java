@@ -84,6 +84,7 @@ public class TelnetConsole {
 
     private Integer width = null;
     private Integer height = null;
+    private boolean quiet = false;
 
     @Argument(argName = "target-ip", index = 0, required = false)
     @Description("Target ip")
@@ -131,6 +132,12 @@ public class TelnetConsole {
     @Description("The terminal height")
     public void setheight(int height) {
         this.height = height;
+    }
+
+    @Option(longName = "quiet", flag = true)
+    @Description("Suppress connection welcome output")
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
     }
 
     public TelnetConsole() {
@@ -273,7 +280,9 @@ public class TelnetConsole {
                 }
             }
 
-            final TelnetClient telnet = new TelnetClient();
+            final TelnetClient telnet = telnetConsole.isQuiet()
+                    ? new TelnetClient("arthas-agent")
+                    : new TelnetClient();
             telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
 
             // send init terminal size
@@ -444,6 +453,10 @@ public class TelnetConsole {
 
     public Integer getheight() {
         return height;
+    }
+
+    public boolean isQuiet() {
+        return quiet;
     }
 
     public boolean isHelp() {

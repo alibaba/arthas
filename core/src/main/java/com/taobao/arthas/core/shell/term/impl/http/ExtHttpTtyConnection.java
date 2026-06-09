@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSession;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 
@@ -23,9 +24,15 @@ import io.termd.core.http.HttpTtyConnection;
  */
 public class ExtHttpTtyConnection extends HttpTtyConnection {
     private ChannelHandlerContext context;
+    private final boolean quiet;
 
     public ExtHttpTtyConnection(ChannelHandlerContext context) {
+        this(context, false);
+    }
+
+    public ExtHttpTtyConnection(ChannelHandlerContext context, boolean quiet) {
         this.context = context;
+        this.quiet = quiet;
     }
 
     @Override
@@ -59,10 +66,13 @@ public class ExtHttpTtyConnection extends HttpTtyConnection {
     }
 
     public Map<String, Object> extSessions() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        if (quiet) {
+            result.put(Session.QUIET, Boolean.TRUE);
+        }
         if (context != null) {
             HttpSession httpSession = HttpSessionManager.getHttpSessionFromContext(context);
             if (httpSession != null) {
-                Map<String, Object> result = new HashMap<String, Object>();
                 Object subject = httpSession.getAttribute(ArthasConstants.SUBJECT_KEY);
                 if (subject != null) {
                     result.put(ArthasConstants.SUBJECT_KEY, subject);
@@ -72,10 +82,10 @@ public class ExtHttpTtyConnection extends HttpTtyConnection {
                 if (userId != null) {
                     result.put(ArthasConstants.USER_ID_KEY, userId);
                 }
-                if (!result.isEmpty()) {
-                    return result;
-                }
             }
+        }
+        if (!result.isEmpty()) {
+            return result;
         }
         return Collections.emptyMap();
     }

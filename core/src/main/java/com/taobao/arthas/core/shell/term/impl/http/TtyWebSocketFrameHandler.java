@@ -19,6 +19,7 @@ package com.taobao.arthas.core.shell.term.impl.http;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -27,6 +28,7 @@ import io.termd.core.function.Consumer;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.tty.TtyConnection;
 
+import java.util.List;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -52,10 +54,17 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
     if (evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-      ctx.pipeline().remove(HttpRequestHandler.class);
-      group.add(ctx.channel());
-      conn = new ExtHttpTtyConnection(context);
-      handler.accept(conn);
+      // Netty 会先发旧事件，再发带 requestUri 的 HandshakeComplete；这里延迟兜底，优先读取 query。
+      ctx.executor().execute(new Runnable() {
+        @Override
+        public void run() {
+          handleHandshakeComplete(ctx, null);
+        }
+      });
+    } else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+      WebSocketServerProtocolHandler.HandshakeComplete handshakeComplete =
+          (WebSocketServerProtocolHandler.HandshakeComplete) evt;
+      handleHandshakeComplete(ctx, handshakeComplete.requestUri());
     } else if (evt instanceof IdleStateEvent) {
       ctx.writeAndFlush(new PingWebSocketFrame());
     } else {
@@ -79,5 +88,31 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
   @Override
   public void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
     conn.writeToDecoder(msg.text());
+  }
+
+  private void handleHandshakeComplete(ChannelHandlerContext ctx, String requestUri) {
+    if (conn != null) {
+      return;
+    }
+    ctx.pipeline().remove(HttpRequestHandler.class);
+    group.add(ctx.channel());
+    conn = new ExtHttpTtyConnection(context, isQuietRequest(requestUri));
+    handler.accept(conn);
+  }
+
+  static boolean isQuietRequest(String requestUri) {
+    if (requestUri == null) {
+      return false;
+    }
+    List<String> values = new QueryStringDecoder(requestUri).parameters().get("quiet");
+    if (values == null) {
+      return false;
+    }
+    for (String value : values) {
+      if ("true".equalsIgnoreCase(value)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

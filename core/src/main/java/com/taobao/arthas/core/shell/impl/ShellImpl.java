@@ -52,7 +52,7 @@ import javax.security.auth.login.LoginException;
  */
 public class ShellImpl implements Shell {
     private static final Logger logger = LoggerFactory.getLogger(ShellImpl.class);
-    private SecurityAuthenticator securityAuthenticator = ArthasBootstrap.getInstance().getSecurityAuthenticator();
+    private static final String ARTHAS_AGENT_TERMINAL_TYPE = "arthas-agent";
 
     private JobControllerImpl jobController;
     final String id;
@@ -78,6 +78,7 @@ public class ShellImpl implements Shell {
                     Principal principal = AuthUtils.localPrincipal(handlerContext);
                     if (principal != null) {
                         try {
+                            SecurityAuthenticator securityAuthenticator = ArthasBootstrap.getInstance().getSecurityAuthenticator();
                             Subject subject = securityAuthenticator.login(principal);
                             if (subject != null) {
                                 session.put(ArthasConstants.SUBJECT_KEY, subject);
@@ -97,6 +98,9 @@ public class ShellImpl implements Shell {
                     session.put(entry.getKey(), entry.getValue());
                 }
             }
+        }
+        if (term != null && ARTHAS_AGENT_TERMINAL_TYPE.equalsIgnoreCase(term.type())) {
+            session.put(Session.QUIET, Boolean.TRUE);
         }
         session.put(Session.COMMAND_MANAGER, commandManager);
         session.put(Session.INSTRUMENTATION, instrumentation);
@@ -168,10 +172,14 @@ public class ShellImpl implements Shell {
         term.suspendHandler(new SuspendHandler(this));
         term.closeHandler(new CloseHandler(this));
 
-        if (welcome != null && welcome.length() > 0) {
+        if (!isQuietSession() && welcome != null && welcome.length() > 0) {
             term.write(welcome + "\n");
         }
         return this;
+    }
+
+    private boolean isQuietSession() {
+        return Boolean.TRUE.equals(session.get(Session.QUIET));
     }
 
     public String statusLine(Job job, ExecStatus status) {

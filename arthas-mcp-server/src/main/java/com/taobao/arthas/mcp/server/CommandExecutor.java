@@ -47,7 +47,7 @@ public interface CommandExecutor {
 
     Map<String, Object> interruptJob(String sessionId);
 
-    Map<String, Object> createSession();
+    Map<String, Object> createSession(boolean quiet);
 
     Map<String, Object> closeSession(String sessionId);
 
@@ -61,4 +61,3 @@ public interface CommandExecutor {
      */
     void setSessionUserId(String sessionId, String userId);
 }
-

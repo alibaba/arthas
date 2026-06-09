@@ -79,7 +79,7 @@ public class ArthasCommandSessionManager {
     }
 
     public CommandSessionBinding createCommandSession(String mcpSessionId) {
-        Map<String, Object> result = commandExecutor.createSession();
+        Map<String, Object> result = commandExecutor.createSession(true);
         
         CommandSessionBinding binding = new CommandSessionBinding(
             mcpSessionId,
@@ -177,7 +177,7 @@ public class ArthasCommandSessionManager {
                     .build();
             }
 
-            Map<String, Object> result = commandExecutor.createSession();
+            Map<String, Object> result = commandExecutor.createSession(true);
 
             CommandSessionBinding binding = new CommandSessionBinding(
                 "task-" + taskId,  // 使用 task ID 作为 MCP session ID
