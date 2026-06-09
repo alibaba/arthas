@@ -713,9 +713,10 @@ public class McpStreamableHttpRequestHandler {
         }
 
         private void cancelResponseHeartbeat() {
-            if (this.heartbeatTask != null) {
-                this.heartbeatTask.cancel(false);
+            ScheduledFuture<?> task = this.heartbeatTask;
+            if (task != null) {
                 this.heartbeatTask = null;
+                task.cancel(false);
             }
         }
     }
