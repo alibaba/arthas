@@ -378,7 +378,7 @@ public class TelnetConsole {
 
                         // 检查到有 [arthas@ 时，意味着可以执行下一个命令了
                         int index = line.indexOf(PROMPT);
-                        if (index > 0) {
+                        if (index >= 0) {
                             line.delete(0, index + PROMPT.length());
                             receviedPromptQueue.put("");
                         }
