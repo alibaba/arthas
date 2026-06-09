@@ -16,6 +16,8 @@
 
 package com.taobao.arthas.core.shell.term.impl.http;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -24,6 +26,7 @@ import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.AttributeKey;
 import io.termd.core.function.Consumer;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.tty.TtyConnection;
@@ -35,20 +38,16 @@ import java.util.List;
  */
 public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
+  private static final Logger logger = LoggerFactory.getLogger(TtyWebSocketFrameHandler.class);
+  static final AttributeKey<String> REQUEST_URI = AttributeKey.valueOf("arthas.websocket.requestUri");
+
   private final ChannelGroup group;
   private final Consumer<TtyConnection> handler;
-  private ChannelHandlerContext context;
   private HttpTtyConnection conn;
 
   public TtyWebSocketFrameHandler(ChannelGroup group, Consumer<TtyConnection> handler) {
     this.group = group;
     this.handler = handler;
-  }
-
-  @Override
-  public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    super.channelActive(ctx);
-    context = ctx;
   }
 
   @Override
@@ -75,7 +74,6 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     HttpTtyConnection tmp = conn;
-    context = null;
     conn = null;
     if (tmp != null) {
       Consumer<Void> closeHandler = tmp.getCloseHandler();
@@ -87,7 +85,13 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
 
   @Override
   public void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-    conn.writeToDecoder(msg.text());
+    HttpTtyConnection tmp = conn;
+    if (tmp == null) {
+      logger.warn("websocket frame received before handshake completed, closing channel");
+      ctx.close();
+      return;
+    }
+    tmp.writeToDecoder(msg.text());
   }
 
   private void handleHandshakeComplete(ChannelHandlerContext ctx, String requestUri) {
@@ -96,8 +100,15 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
     }
     ctx.pipeline().remove(HttpRequestHandler.class);
     group.add(ctx.channel());
-    conn = new ExtHttpTtyConnection(context, isQuietRequest(requestUri));
+    conn = new ExtHttpTtyConnection(ctx, isQuietRequest(ctx, requestUri));
     handler.accept(conn);
+  }
+
+  static boolean isQuietRequest(ChannelHandlerContext ctx, String requestUri) {
+    if (requestUri == null && ctx != null) {
+      requestUri = ctx.channel().attr(REQUEST_URI).get();
+    }
+    return isQuietRequest(requestUri);
   }
 
   static boolean isQuietRequest(String requestUri) {
