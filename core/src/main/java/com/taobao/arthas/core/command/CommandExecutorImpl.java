@@ -279,10 +279,13 @@ public class CommandExecutorImpl implements CommandExecutor {
     }
 
     @Override
-    public Map<String, Object> createSession() {
+    public Map<String, Object> createSession(boolean quiet) {
         Session session = sessionManager.createSession();
         if (session == null) {
             return createErrorResult(null, "create api session failed");
+        }
+        if (quiet) {
+            session.put(Session.QUIET, Boolean.TRUE);
         }
 
         SharingResultDistributorImpl resultDistributor = new SharingResultDistributorImpl(session);
@@ -290,6 +293,20 @@ public class CommandExecutorImpl implements CommandExecutor {
         resultDistributor.addConsumer(resultConsumer);
         session.setResultDistributor(resultDistributor);
 
+        if (!quiet) {
+            appendWelcomeResults(resultDistributor);
+        }
+
+        updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
+
+        Map<String, Object> result = new TreeMap<>();
+        result.put("success", true);
+        result.put("sessionId", session.getSessionId());
+        result.put("consumerId", resultConsumer.getConsumerId());
+        return result;
+    }
+
+    private void appendWelcomeResults(ResultDistributor resultDistributor) {
         resultDistributor.appendResult(new MessageModel("Welcome to arthas!"));
 
         WelcomeModel welcomeModel = new WelcomeModel();
@@ -300,14 +317,6 @@ public class CommandExecutorImpl implements CommandExecutor {
         welcomeModel.setPid(PidUtils.currentPid());
         welcomeModel.setTime(DateUtils.getCurrentDateTime());
         resultDistributor.appendResult(welcomeModel);
-
-        updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
-
-        Map<String, Object> result = new TreeMap<>();
-        result.put("success", true);
-        result.put("sessionId", session.getSessionId());
-        result.put("consumerId", resultConsumer.getConsumerId());
-        return result;
     }
 
     @Override
