@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.taobao.arthas.core.util.ClassUtils.formatClassLoaderText;
+
 /**
  * @author gongdewei 2020/4/21
  */
@@ -61,7 +63,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
     private void drawUrlClassStats(CommandProcess process, ClassLoaderVO classLoader, List<UrlClassStat> urlClassStats,
             boolean detail) {
         if (classLoader != null) {
-            process.write(classLoader.getName() + ", hash:" + classLoader.getHash() + "\n");
+            process.write(formatClassLoaderText(classLoader.getName()) + ", hash:" + classLoader.getHash() + "\n");
         }
 
         boolean hasMatched = false;
@@ -135,7 +137,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
             }
 
             TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-            table.row(new LabelElement(classLoaderVO.getName() + ", hash:" + classLoaderVO.getHash())
+            table.row(new LabelElement(formatClassLoaderText(classLoaderVO.getName()) + ", hash:" + classLoaderVO.getHash())
                     .style(Decoration.bold.bold()));
             Collection<String> usedUrls = urlStat.getUsedUrls();
             table.row(new LabelElement("Used URLs:").style(Decoration.bold.bold()));
@@ -200,7 +202,8 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
     private Element renderClasses(ClassSetVO classSetVO) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         if (classSetVO.getSegment() == 0) {
-            table.row(new LabelElement("hash:" + classSetVO.getClassloader().getHash() + ", " + classSetVO.getClassloader().getName())
+            table.row(new LabelElement("hash:" + classSetVO.getClassloader().getHash() + ", "
+                    + formatClassLoaderText(classSetVO.getClassloader().getName()))
                     .style(Decoration.bold.bold()));
         }
         for (String className : classSetVO.getClasses()) {
@@ -222,7 +225,8 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.add(new RowElement().style(Decoration.bold.bold()).add("name", "loadedCount", "hash", "parent"));
         for (ClassLoaderVO classLoaderVO : classLoaderInfos) {
-            table.row(classLoaderVO.getName(), "" + classLoaderVO.getLoadedCount(), classLoaderVO.getHash(), classLoaderVO.getParent());
+            table.row(formatClassLoaderText(classLoaderVO.getName()), "" + classLoaderVO.getLoadedCount(),
+                    classLoaderVO.getHash(), formatClassLoaderText(classLoaderVO.getParent()));
         }
         return table;
     }
@@ -231,7 +235,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
     private static Element renderTree(Collection<ClassLoaderVO> classLoaderInfos) {
         TreeElement root = new TreeElement();
         for (ClassLoaderVO classLoader : classLoaderInfos) {
-            TreeElement child = new TreeElement(classLoader.getName());
+            TreeElement child = new TreeElement(formatClassLoaderText(classLoader.getName()));
             root.addChild(child);
             renderSubtree(child, classLoader);
         }
@@ -243,7 +247,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
             return;
         }
         for (ClassLoaderVO childClassLoader : parentClassLoader.getChildren()) {
-            TreeElement child = new TreeElement(childClassLoader.getName());
+            TreeElement child = new TreeElement(formatClassLoaderText(childClassLoader.getName()));
             parent.addChild(child);
             renderSubtree(child, childClassLoader);
         }

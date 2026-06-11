@@ -198,6 +198,16 @@ public class ClassUtils {
         return classLoaderVO;
     }
 
+    public static String formatClassLoaderText(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace("\r\n", "\\n")
+                .replace("\r", "\\n")
+                .replace("\n", "\\n")
+                .replace("\t", "    ");
+    }
+
     public static List<ClassLoaderVO> createClassLoaderVOList(Collection<ClassLoader> classLoaders) {
         List<ClassLoaderVO> classLoaderVOList = new ArrayList<ClassLoaderVO>();
         for (ClassLoader classLoader : classLoaders) {
