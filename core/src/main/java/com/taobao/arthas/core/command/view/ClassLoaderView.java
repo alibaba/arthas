@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.taobao.arthas.core.util.ClassUtils.formatClassLoaderText;
+
 /**
  * @author gongdewei 2020/4/21
  */
@@ -249,15 +251,5 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
             parent.addChild(child);
             renderSubtree(child, childClassLoader);
         }
-    }
-
-    private static String formatClassLoaderText(String value) {
-        if (value == null) {
-            return null;
-        }
-        return value.replace("\r\n", "\\n")
-                .replace("\r", "\\n")
-                .replace("\n", "\\n")
-                .replace("\t", "    ");
     }
 }

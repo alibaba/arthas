@@ -2,10 +2,13 @@ package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderUrlStat;
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.UrlClassStat;
+import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.ClassLoaderModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassSetVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.TypeRenderUtils;
+import com.taobao.text.util.RenderUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,6 +46,20 @@ public class ClassLoaderViewTest {
 
         Assert.assertTrue(output.contains("RootClassLoader\\n  root detail"));
         Assert.assertTrue(output.contains("ChildClassLoader\\n  child detail"));
+    }
+
+    @Test
+    public void shouldEscapeLineBreaksInClassDetailClassLoaderTree() {
+        ClassVO classInfo = new ClassVO();
+        classInfo.setClassloader(new String[] {
+                "TomcatEmbeddedWebappClassLoader\r\n  context: /demo",
+                "jdk.internal.loader.ClassLoaders$AppClassLoader\n  parent detail"
+        });
+
+        String output = RenderUtil.render(TypeRenderUtils.drawClassLoader(classInfo), 200);
+
+        Assert.assertTrue(output.contains("TomcatEmbeddedWebappClassLoader\\n  context: /demo"));
+        Assert.assertTrue(output.contains("jdk.internal.loader.ClassLoaders$AppClassLoader\\n  parent detail"));
     }
 
     @Test
