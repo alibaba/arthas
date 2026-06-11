@@ -62,6 +62,9 @@ public class TypeRenderUtils {
 
     public static Element drawClassLoader(ClassVO clazz) {
         String[] classloaders = clazz.getClassloader();
+        if (classloaders == null) {
+            return drawTree(new String[0]);
+        }
         String[] formattedClassloaders = new String[classloaders.length];
         for (int i = 0; i < classloaders.length; i++) {
             formattedClassloaders[i] = ClassUtils.formatClassLoaderText(classloaders[i]);

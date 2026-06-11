@@ -20,14 +20,14 @@ public class ClassLoaderViewTest {
     @Test
     public void shouldEscapeLineBreaksInClassLoaderTable() {
         ClassLoaderVO classLoader = new ClassLoaderVO();
-        classLoader.setName("TomcatEmbeddedWebappClassLoader\r\n  context: /demo");
+        classLoader.setName("TomcatEmbeddedWebappClassLoader\r\n  context:\t/demo");
         classLoader.setParent("jdk.internal.loader.ClassLoaders$AppClassLoader\n  parent detail");
         classLoader.setLoadedCount(12);
         classLoader.setHash("1a2b3c");
 
         String output = renderClassLoaders(classLoader, false);
 
-        Assert.assertTrue(output.contains("TomcatEmbeddedWebappClassLoader\\n  context: /demo"));
+        Assert.assertTrue(output.contains("TomcatEmbeddedWebappClassLoader\\n  context:    /demo"));
         Assert.assertTrue(output.contains("jdk.internal.loader.ClassLoaders$AppClassLoader\\n  parent detail"));
     }
 
@@ -60,6 +60,15 @@ public class ClassLoaderViewTest {
 
         Assert.assertTrue(output.contains("TomcatEmbeddedWebappClassLoader\\n  context: /demo"));
         Assert.assertTrue(output.contains("jdk.internal.loader.ClassLoaders$AppClassLoader\\n  parent detail"));
+    }
+
+    @Test
+    public void shouldRenderClassDetailWithNullClassLoaderTree() {
+        ClassVO classInfo = new ClassVO();
+
+        String output = RenderUtil.render(TypeRenderUtils.drawClassLoader(classInfo), 200);
+
+        Assert.assertNotNull(output);
     }
 
     @Test
