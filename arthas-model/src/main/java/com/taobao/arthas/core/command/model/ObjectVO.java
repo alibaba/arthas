@@ -12,6 +12,7 @@ package com.taobao.arthas.core.command.model;
 public class ObjectVO {
     private Object object;
     private Integer expand;
+    private String renderedValue;
 
     public ObjectVO(Object object, Integer expand) {
         this.object = object;
@@ -54,5 +55,13 @@ public class ObjectVO {
 
     public void setExpand(Integer expand) {
         this.expand = expand;
+    }
+
+    public String getRenderedValue() {
+        return renderedValue;
+    }
+
+    public void setRenderedValue(String renderedValue) {
+        this.renderedValue = renderedValue;
     }
 }
