@@ -1,7 +1,7 @@
 # Arthas Spring Boot Starter
 
 ::: tip
-Support spring boot 2
+Arthas 3.7.2 and later support both Spring Boot 2 and Spring Boot 3.
 :::
 
 Latest Version: [View](https://search.maven.org/search?q=arthas-spring-boot-starter)
