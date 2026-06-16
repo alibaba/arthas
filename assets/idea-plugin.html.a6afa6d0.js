@@ -1,1 +1,0 @@
-const e=JSON.parse('{"key":"v-96b07b98","path":"/en/doc/idea-plugin.html","title":"IDEA Plugin","lang":"en-US","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1780574422000,"contributors":[{"name":"hengyunabc","email":"hengyunabc@gmail.com","commits":1}]},"filePathRelative":"en/doc/idea-plugin.md","version":"4.2.2"}');export{e as data};
