@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -220,28 +221,37 @@ public class CompletionUtils {
             className = tokens.get(tokens.size() - 3).value();
         }
 
-        Set<Class<?>> results = SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className, 2);
-        if (results.size() != 1) {
-            // no class found or multiple class found
+        Set<Class<?>> results = SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className,
+                false);
+        if (results.isEmpty()) {
+            // no class found
             completion.complete(Collections.<String>emptyList());
             return true;
         }
 
-        Class<?> clazz = results.iterator().next();
-
-        List<String> res = new ArrayList<String>();
-
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (StringUtils.isBlank(lastToken)) {
-                res.add(method.getName());
-            } else if (method.getName().startsWith(lastToken)) {
-                res.add(method.getName());
+        String matchedClassName = null;
+        Set<String> res = new LinkedHashSet<String>();
+        for (Class<?> clazz : results) {
+            if (matchedClassName == null) {
+                matchedClassName = clazz.getName();
+            } else if (!matchedClassName.equals(clazz.getName())) {
+                completion.complete(Collections.<String>emptyList());
+                return true;
+            }
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (StringUtils.isBlank(lastToken)) {
+                    res.add(method.getName());
+                } else if (method.getName().startsWith(lastToken)) {
+                    res.add(method.getName());
+                }
             }
         }
-        res.add("<init>");
+        if (StringUtils.isBlank(lastToken) || "<init>".startsWith(lastToken)) {
+            res.add("<init>");
+        }
 
         if (res.size() == 1) {
-            completion.complete(res.get(0).substring(lastToken.length()), true);
+            completion.complete(res.iterator().next().substring(lastToken.length()), true);
             return true;
         } else {
             CompletionUtils.complete(completion, res);
