@@ -22,7 +22,7 @@ public class ThreadUnsafeFixGaStack<E> implements GaStack<E> {
 
     private void checkForPush() {
         // stack is full
-        if (current == max) {
+        if (current == max - 1) {
             throw new ArrayIndexOutOfBoundsException();
         }
     }
