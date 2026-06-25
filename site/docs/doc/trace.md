@@ -20,6 +20,7 @@
 |             `#cost` | 方法执行耗时                                                       |
 |              `[c:]` | 指定 classloader hash，只增强该 classloader 加载的类               |
 |         `[m <arg>]` | 指定 Class 最大匹配数量，默认值为 50。长格式为`[maxMatch <arg>]`。 |
+|       `[includeLambda]` | 同时 trace 目标方法内的 lambda 方法（`lambda$<method>$<N>`），默认关闭。 |
 
 这里重点要说明的是`条件表达式`，`条件表达式`的构成主要由 ognl 表达式组成，所以你可以这样写`"params[0]<0"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
@@ -143,6 +144,29 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         +---[0.019768ms] java.lang.StringBuilder:toString() #28
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
+
+### trace 包含 lambda 函数
+
+Java 源码中使用 lambda 编写的代码，`javac` 会将其编译为外层类上一个独立的合成方法，命名为 `lambda$<方法>$<序号>`（例如 `lambda$print$0`），并在原调用点用 `INVOKEDYNAMIC` 指令进行分发。默认情况下 `trace` 只会跟踪匹配到的目标方法，lambda 方法体内的调用链路并不会出现在报告中。
+
+加上 `--includeLambda` 参数后，目标方法内的这些 lambda 方法也会被一并增强，其方法体耗时与内部调用会以子节点的形式出现在完整的 trace 报告中：
+
+```bash
+$ trace demo.MathGame print --includeLambda
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 2) cost in 47 ms, listenerId: 1
+`---ts=2026-06-26 23:44:11.240;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528
+    `---[3.43025ms] demo.MathGame:print()
+        `---[2.09% min=0.007292ms,max=0.035416ms,total=0.071791ms,count=4] demo.MathGame:lambda$print$0()
+```
+
+若想进一步查看 lambda 方法体内对 JDK 方法的调用（如 `StringBuffer.append`），可以结合 `--skipJDKMethod false` 一起使用。
+
+::: tip
+- 该参数默认关闭（`false`），开启后会增强更多方法，性能开销相应增加。
+- 由于 `trace` 是基于线程的调用栈统计，对于在**其它线程**上执行的 lambda（例如 `parallelStream`、`CompletableFuture.supplyAsync`、ForkJoinPool），其方法体会作为独立线程上的顶层 trace 输出，无法嵌套展示在原调用方之下，这是线程绑定追踪本身的限制。
+- `-p` 路径追踪模式下已经会跟踪匹配类上的所有方法（包含 lambda），因此无需再额外指定该参数。
+:::
 
 ### 根据调用耗时过滤
 

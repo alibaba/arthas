@@ -7,6 +7,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.matcher.GroupMatcher;
+import com.taobao.arthas.core.util.matcher.LambdaAwareMatcher;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.matcher.TrueMatcher;
@@ -39,6 +40,7 @@ import java.util.List;
         "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
         "  trace demo.MathGame run -n 5\n" +
         "  trace demo.MathGame run --skipJDKMethod false\n" +
+        "  trace demo.MathGame print --includeLambda --skipJDKMethod false\n" +
         "  trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
         "  trace OuterClass$InnerClass *\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
@@ -52,6 +54,7 @@ public class TraceCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private List<String> pathPatterns;
     private boolean skipJDKTrace;
+    private boolean includeLambda = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -96,6 +99,12 @@ public class TraceCommand extends EnhancerCommand {
         this.skipJDKTrace = skipJDKTrace;
     }
 
+    @Option(longName = "includeLambda", flag = true)
+    @Description("Also trace lambda methods (lambda$<method>$<N>) inside the target method. Default false.")
+    public void setIncludeLambda(boolean includeLambda) {
+        this.includeLambda = includeLambda;
+    }
+
     @Override
     @Option(shortName = "c", longName = "classloader")
     @Description("The hash code of the special class's classLoader")
@@ -117,6 +126,10 @@ public class TraceCommand extends EnhancerCommand {
 
     public boolean isSkipJDKTrace() {
         return skipJDKTrace;
+    }
+
+    public boolean isIncludeLambda() {
+        return includeLambda;
     }
 
     public boolean isRegEx() {
@@ -155,7 +168,9 @@ public class TraceCommand extends EnhancerCommand {
     protected Matcher getMethodNameMatcher() {
         if (methodNameMatcher == null) {
             if (pathPatterns == null || pathPatterns.isEmpty()) {
-                methodNameMatcher = SearchUtils.classNameMatcher(getMethodPattern(), isRegEx());
+                Matcher<String> base = SearchUtils.classNameMatcher(getMethodPattern(), isRegEx());
+                // includeLambda 时，将目标方法内的 lambda 合成方法 (lambda$<method>$<N>) 一并纳入匹配
+                methodNameMatcher = new LambdaAwareMatcher(base, includeLambda);
             } else {
                 methodNameMatcher = getPathTracingMethodMatcher();
             }

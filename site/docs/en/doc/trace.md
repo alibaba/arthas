@@ -20,6 +20,7 @@ Trace method calling path, and output the time cost for each node in the path.
 |               #cost | time cost                                                                                              |
 |              `[c:]` | Specify classloader hash, only enhance classes loaded by it                                            |
 |         `[m <arg>]` | Specify the max number of matched Classes, the default value is 50. Long format is `[maxMatch <arg>]`. |
+|               `[includeLambda]` | Also trace lambda methods (`lambda$<method>$<N>`) inside the target method. Default off. |
 
 There's one thing worthy noting here is `condition expression`. The `condition expression` supports OGNL grammar, for example, you can come up a expression like this `"params[0]<0"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
@@ -139,6 +140,29 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         +---[0.019768ms] java.lang.StringBuilder:toString() #28
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
+
+### Include lambda methods
+
+When you write a lambda in Java, `javac` compiles the lambda body into a separate synthetic method on the enclosing class, named `lambda$<method>$<index>` (e.g. `lambda$print$0`), and replaces the lambda expression at the call site with an `INVOKEDYNAMIC` instruction. By default `trace` only tracks the matched target method, so the call path inside the lambda body never appears in the report.
+
+With the `--includeLambda` option, these lambda methods inside the target method are also instrumented, so their body cost and inner calls show up as child nodes in the complete trace report:
+
+```bash
+$ trace demo.MathGame print --includeLambda
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 2) cost in 47 ms, listenerId: 1
+`---ts=2026-06-26 23:44:11.240;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528
+    `---[3.43025ms] demo.MathGame:print()
+        `---[2.09% min=0.007292ms,max=0.035416ms,total=0.071791ms,count=4] demo.MathGame:lambda$print$0()
+```
+
+To see deeper calls inside the lambda body (e.g. `StringBuffer.append`), use `--skipJDKMethod false` together with `--includeLambda`.
+
+::: tip
+- This option is off by default (`false`); turning it on instruments more methods, with correspondingly higher overhead.
+- Because `trace` is thread-bound, lambdas executed on **other threads** (e.g. `parallelStream`, `CompletableFuture.supplyAsync`, ForkJoinPool) will be reported as top-level traces on the worker thread rather than nested under the caller. This is an inherent limitation of thread-bound tracing.
+- The `-p` path tracing mode already tracks all methods on matched classes (including lambdas), so this option is not needed there.
+:::
 
 ### Filtering by cost
 
