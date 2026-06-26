@@ -5,7 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +46,26 @@ class TtyWebSocketFrameHandlerQuietTest {
         channel.writeInbound(new TextWebSocketFrame("help"));
 
         assertThat(channel.isOpen()).isFalse();
+    }
+
+    @Test
+    void writerIdleShouldSendWebSocketPingFrame() {
+        EmbeddedChannel channel = new EmbeddedChannel(new TtyWebSocketFrameHandler(
+                new DefaultChannelGroup(GlobalEventExecutor.INSTANCE),
+                connection -> {
+                }));
+
+        channel.pipeline().fireUserEventTriggered(IdleStateEvent.WRITER_IDLE_STATE_EVENT);
+
+        PingWebSocketFrame ping = channel.readOutbound();
+        try {
+            assertThat(ping).isNotNull();
+        } finally {
+            if (ping != null) {
+                ping.release();
+            }
+            channel.finishAndReleaseAll();
+        }
     }
 
     @Test
