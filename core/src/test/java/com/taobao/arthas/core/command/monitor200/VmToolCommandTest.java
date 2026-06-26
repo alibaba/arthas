@@ -6,6 +6,18 @@ import org.junit.Test;
 public class VmToolCommandTest {
 
     @Test
+    public void testValidateBacktraceNum() {
+        Assert.assertNull(VmToolCommand.validateBacktraceNum(Integer.valueOf(-1)));
+        Assert.assertNull(VmToolCommand.validateBacktraceNum(Integer.valueOf(0)));
+        Assert.assertNull(VmToolCommand.validateBacktraceNum(Integer.valueOf(1)));
+        Assert.assertNull(VmToolCommand.validateBacktraceNum(null));
+        Assert.assertEquals("backtraceNum must be -1 or greater.",
+                VmToolCommand.validateBacktraceNum(Integer.valueOf(Integer.MIN_VALUE)));
+        Assert.assertEquals("backtraceNum must be -1 or greater.",
+                VmToolCommand.validateBacktraceNum(Integer.valueOf(-2)));
+    }
+
+    @Test
     public void testNormalizeArrayClassNameNull() {
         Assert.assertNull(VmToolCommand.normalizeArrayClassName(null));
     }

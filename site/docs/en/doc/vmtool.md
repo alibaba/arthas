@@ -126,6 +126,7 @@ $ vmtool --action referenceAnalyze --className java.lang.String --objectNum 5 --
 
 - Use `--objectNum` to specify how many objects will be shown
 - Use `--backtraceNum` to specify how many steps of backtrace will be done, set `-1` to backtrace until root, set `0` to disable backtrace output
+- `--backtraceNum` values less than `-1` are invalid
 - `--classLoaderClass` and `--classloader` from `getInstances` are also applicable here
   :::
 
