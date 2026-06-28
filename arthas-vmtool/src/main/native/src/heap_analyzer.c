@@ -924,6 +924,9 @@ static char *build_reference_analyze_output(heap_ctx_t *ctx, jclass klass,
   if (object_num < 0) {
     object_num = 0;
   }
+  if (backtrace_num < -1) {
+    backtrace_num = 0;
+  }
 
   if (JVMTI_CALL(ctx->jvmti, GetTag, klass, &klass_tag) != JVMTI_ERROR_NONE) {
     sb_append_cstr(&sb, "ERROR: JVMTI GetTag(klass) failed\n");

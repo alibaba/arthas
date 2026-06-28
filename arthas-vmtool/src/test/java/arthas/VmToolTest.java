@@ -1,6 +1,7 @@
 package arthas;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -249,5 +250,19 @@ public class VmToolTest {
         VmTool vmtool = initVmTool();
         String result = vmtool.referenceAnalyze(ByteHolder.class, 2, -1);
         Assertions.assertThat(result).contains("ByteHolder").contains("root");
+    }
+
+    @Test
+    public void testReferenceAnalyzeRejectsInvalidBacktraceNum() throws Exception {
+        Constructor<VmTool> constructor = VmTool.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        VmTool vmtool = constructor.newInstance();
+
+        try {
+            vmtool.referenceAnalyze(ByteHolder.class, 1, Integer.MIN_VALUE);
+            Assert.fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            Assertions.assertThat(e).hasMessage("backtraceNum must be -1 or greater");
+        }
     }
 }

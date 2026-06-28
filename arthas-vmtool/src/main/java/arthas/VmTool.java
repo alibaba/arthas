@@ -146,6 +146,9 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public String referenceAnalyze(Class<?> klass, int objectNum, int backtraceNum) {
+        if (backtraceNum < -1) {
+            throw new IllegalArgumentException("backtraceNum must be -1 or greater");
+        }
         return referenceAnalyze0(klass, objectNum, backtraceNum);
     }
 }

@@ -95,6 +95,7 @@ public class VmToolCommand extends AnnotatedCommand {
      * default value 2
      */
     private int backtraceNum = 2;
+    private static final String BACKTRACE_NUM_ERROR = "backtraceNum must be -1 or greater.";
 
     private String libPath;
     private static String defaultLibPath;
@@ -203,6 +204,13 @@ public class VmToolCommand extends AnnotatedCommand {
             Instrumentation inst = process.session().getInstrumentation();
 
             if (VmToolAction.getInstances.equals(action) || VmToolAction.referenceAnalyze.equals(action)) {
+                if (VmToolAction.referenceAnalyze.equals(action)) {
+                    String validateError = validateBacktraceNum(Integer.valueOf(backtraceNum));
+                    if (validateError != null) {
+                        process.end(-1, validateError);
+                        return;
+                    }
+                }
                 if (className == null) {
                     process.end(-1, "The className option cannot be empty!");
                     return;
@@ -307,6 +315,13 @@ public class VmToolCommand extends AnnotatedCommand {
             logger.error("vmtool error", e);
             process.end(1, "vmtool error: " + e.getMessage());
         }
+    }
+
+    static String validateBacktraceNum(Integer backtraceNum) {
+        if (backtraceNum != null && backtraceNum.intValue() < -1) {
+            return BACKTRACE_NUM_ERROR;
+        }
+        return null;
     }
 
     /**
