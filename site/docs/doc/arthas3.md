@@ -105,5 +105,3 @@ ID                 NAME                                                     GROU
 #### trace 命令自动高亮显示最耗时方法调用
 
 trace 命令现在会自动显示
-
-![Untitled2](TODO /Untitled2.gif)
