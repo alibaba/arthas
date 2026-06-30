@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * 
@@ -37,7 +38,7 @@ public class TunnelSocketServerInitializer extends ChannelInitializer<SocketChan
         pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(tunnelServer.getPath(), null, true, ArthasConstants.MAX_HTTP_CONTENT_LENGTH, false, true, 10000L));
-
+        pipeline.addLast(new IdleStateHandler(0, 0, ArthasConstants.WEBSOCKET_IDLE_SECONDS));
         pipeline.addLast(new TunnelSocketFrameHandler(tunnelServer));
     }
 }

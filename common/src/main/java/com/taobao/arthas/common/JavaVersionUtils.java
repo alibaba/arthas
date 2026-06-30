@@ -28,19 +28,19 @@ public class JavaVersionUtils {
     }
 
     public static boolean isJava6() {
-        return JAVA_VERSION_STR.equals("1.6");
+        return "1.6".equals(JAVA_VERSION_STR);
     }
 
     public static boolean isJava7() {
-        return JAVA_VERSION_STR.equals("1.7");
+        return "1.7".equals(JAVA_VERSION_STR);
     }
 
     public static boolean isJava8() {
-        return JAVA_VERSION_STR.equals("1.8");
+        return "1.8".equals(JAVA_VERSION_STR);
     }
 
     public static boolean isJava9() {
-        return JAVA_VERSION_STR.equals("9");
+        return "9".equals(JAVA_VERSION_STR);
     }
 
     public static boolean isLessThanJava9() {

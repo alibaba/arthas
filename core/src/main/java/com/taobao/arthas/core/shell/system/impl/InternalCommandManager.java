@@ -1,11 +1,11 @@
 package com.taobao.arthas.core.shell.system.impl;
 
-import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+import com.taobao.arthas.core.shell.command.ShellInternalCommandResolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,17 +34,16 @@ public class InternalCommandManager {
     }
 
     public Command getCommand(String commandName) {
-        Command command = null;
         for (CommandResolver resolver : resolvers) {
-            // 内建命令在ShellLineHandler里提前处理了，所以这里不需要再查找内建命令
-            if (resolver instanceof BuiltinCommandPack) {
-                command = getCommand(resolver, commandName);
-                if (command != null) {
-                    break;
-                }
+            if (resolver instanceof ShellInternalCommandResolver) {
+                continue;
+            }
+            Command command = getCommand(resolver, commandName);
+            if (command != null) {
+                return command;
             }
         }
-        return command;
+        return null;
     }
 
     /**

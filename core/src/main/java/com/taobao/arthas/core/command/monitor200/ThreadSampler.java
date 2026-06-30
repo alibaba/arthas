@@ -118,12 +118,13 @@ public class ThreadSampler {
         // Compute cpu usage
         final HashMap<ThreadVO, Double> cpuUsages = new HashMap<ThreadVO, Double>(threads.size());
         for (ThreadVO thread : threads) {
-            double cpu = sampleIntervalNanos == 0 ? 0 : (deltas.get(thread) * 10000 / sampleIntervalNanos / 100.0);
+            double cpu = sampleIntervalNanos == 0 ? 0 : (Math.rint(deltas.get(thread) * 10000.0 / sampleIntervalNanos) / 100.0);
             cpuUsages.put(thread, cpu);
         }
 
         // Sort by CPU time : should be a rendering hint...
         Collections.sort(threads, new Comparator<ThreadVO>() {
+            @Override
             public int compare(ThreadVO o1, ThreadVO o2) {
                 long l1 = deltas.get(o1);
                 long l2 = deltas.get(o2);

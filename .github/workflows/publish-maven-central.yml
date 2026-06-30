@@ -1,0 +1,106 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - "arthas-all-*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, for example 4.1.8"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maven-central-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate release secrets
+        shell: bash
+        env:
+          CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          missing=0
+          for name in CENTRAL_TOKEN_USERNAME CENTRAL_TOKEN_PASSWORD MAVEN_GPG_PRIVATE_KEY MAVEN_GPG_PASSPHRASE; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is empty. Configure it as a GitHub Actions secret, not a repository variable."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Set up JDK, Maven settings and GPG
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          server-id: central
+          server-username: CENTRAL_TOKEN_USERNAME
+          server-password: CENTRAL_TOKEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Verify imported GPG private key
+        shell: bash
+        run: |
+          if ! gpg --batch --list-secret-keys --keyid-format LONG | grep -q '^sec'; then
+            echo "::error::No GPG secret key was imported. Check that MAVEN_GPG_PRIVATE_KEY contains an ASCII-armored private key exported with: gpg --armor --export-secret-keys <KEY_ID>"
+            exit 1
+          fi
+
+      - name: Resolve release version
+        id: release
+        shell: bash
+        env:
+          DISPATCH_VERSION: ${{ inputs.version }}
+        run: |
+          version="$DISPATCH_VERSION"
+          if [ -z "$version" ]; then
+            case "$GITHUB_REF_NAME" in
+              arthas-all-*) version="${GITHUB_REF_NAME#arthas-all-}" ;;
+              v*) version="${GITHUB_REF_NAME#v}" ;;
+              *) version="$GITHUB_REF_NAME" ;;
+            esac
+          fi
+          if [ -z "$version" ]; then
+            echo "::error::Release version is empty."
+            exit 1
+          fi
+          if [[ "$version" == *-SNAPSHOT ]]; then
+            echo "::error::Release version must not end with -SNAPSHOT."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Show effective version
+        run: mvn -B -ntp -q -Drevision=${{ steps.release.outputs.version }} help:evaluate -Dexpression=project.version -DforceStdout
+
+      - name: Publish to Maven Central
+        run: >
+          mvn -B -ntp -DskipTests
+          -P full,release
+          -Drevision=${{ steps.release.outputs.version }}
+          -Dcentral.autoPublish=true
+          -Dcentral.waitUntil=published
+          clean
+          deploy
+        env:
+          CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

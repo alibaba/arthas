@@ -3,6 +3,7 @@ package com.taobao.arthas.core.util;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.FieldVO;
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
@@ -61,7 +62,14 @@ public class TypeRenderUtils {
 
     public static Element drawClassLoader(ClassVO clazz) {
         String[] classloaders = clazz.getClassloader();
-        return drawTree(classloaders);
+        if (classloaders == null) {
+            return drawTree(new String[0]);
+        }
+        String[] formattedClassloaders = new String[classloaders.length];
+        for (int i = 0; i < classloaders.length; i++) {
+            formattedClassloaders[i] = ClassUtils.formatClassLoaderText(classloaders[i]);
+        }
+        return drawTree(formattedClassloaders);
     }
 
     public static Element drawTree(String[] nodes) {
@@ -75,7 +83,7 @@ public class TypeRenderUtils {
         return root;
     }
 
-    public static Element drawField(ClassDetailVO clazz, Integer expand) {
+    public static Element drawField(ClassDetailVO clazz) {
         TableElement fieldsTable = new TableElement(1).leftCellPadding(0).rightCellPadding(0);
         FieldVO[] fields = clazz.getFields();
         if (fields == null || fields.length == 0) {
@@ -94,7 +102,8 @@ public class TypeRenderUtils {
             }
 
             if (field.isStatic()) {
-                Object o = (expand != null && expand >= 0) ? new ObjectView(field.getValue(), expand).draw() : field.getValue();
+                ObjectVO objectVO = field.getValue();
+                Object o = objectVO.needExpand() ? new ObjectView(objectVO).draw() : objectVO.getObject();
                 fieldTable.row("value", StringUtils.objectToString(o));
             }
 
@@ -160,9 +169,9 @@ public class TypeRenderUtils {
         return list.toArray(new String[0]);
     }
 
-    public static FieldVO[] getFields(Class clazz) {
+    public static FieldVO[] getFields(Class clazz, Integer expand) {
         Field[] fields = clazz.getDeclaredFields();
-        if (fields == null || fields.length == 0) {
+        if (fields.length == 0) {
             return new FieldVO[0];
         }
 
@@ -175,7 +184,7 @@ public class TypeRenderUtils {
             fieldVO.setAnnotations(getAnnotations(field.getAnnotations()));
             if (Modifier.isStatic(field.getModifiers())) {
                 fieldVO.setStatic(true);
-                fieldVO.setValue(getFieldValue(field));
+                fieldVO.setValue(new ObjectVO(getFieldValue(field), expand));
             } else {
                 fieldVO.setStatic(false);
             }

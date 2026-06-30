@@ -8,27 +8,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [8]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java }} 
+          java-version: '8'
+          distribution: 'adopt'
       - name: Build with Maven
-        run: mvn clean package -P full
+        run: mvn -V -ntp clean package -P full
+
+      - name: Setup java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Build tunnel server with Maven
+        run: mvn -V -ntp package -P full -pl tunnel-server -am -DskipTests
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          fail_on_unmatched_files: true
           files: |
             packaging/target/*.zip
-            packaging/target/*.deb
-            packaging/target/*.rpm
             tunnel-server/target/*fatjar.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

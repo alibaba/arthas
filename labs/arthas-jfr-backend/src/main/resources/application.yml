@@ -1,0 +1,36 @@
+arthas:
+  jfr-storage-path: ${user.home}/arthas-jfr-storage
+
+spring:
+  servlet:
+    multipart:
+      max-request-size: 1GB
+      max-file-size: 1GB
+
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:arthas-jfr-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate.dialect: ${DB_DIALECT:org.hibernate.dialect.H2Dialect}
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  task.scheduling.pool.size: 8
+
+server:
+  port: 8200
+  tomcat:
+    relaxed-query-chars:
+      - '['
+      - ']'

@@ -2,18 +2,27 @@ package com.taobao.arthas.core.server;
 
 import java.arthas.SpyAPI;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.Executors;
@@ -33,8 +42,8 @@ import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
 import com.alibaba.bytekit.utils.AsmUtils;
 import com.alibaba.bytekit.utils.IOUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
@@ -42,6 +51,7 @@ import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.command.CommandExecutorImpl;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
@@ -55,6 +65,8 @@ import com.taobao.arthas.core.security.SecurityAuthenticatorImpl;
 import com.taobao.arthas.core.server.instrument.ClassLoader_Instrument;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
+import com.taobao.arthas.core.shell.command.Command;
+import com.taobao.arthas.core.shell.command.CommandRegistry;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.history.HistoryManager;
@@ -68,6 +80,7 @@ import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.IPUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
@@ -75,6 +88,9 @@ import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
+import com.taobao.arthas.core.mcp.ArthasMcpBootstrap;
+import com.taobao.arthas.mcp.server.CommandExecutor;
+import com.taobao.arthas.mcp.server.protocol.server.handler.McpHttpRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -87,6 +103,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  */
 public class ArthasBootstrap {
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
+    private static final String DEFAULT_COMMANDS_DIRECTORY = "commands";
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
     private static String ARTHAS_HOME = null;
 
@@ -122,6 +139,9 @@ public class ArthasBootstrap {
     private HistoryManager historyManager;
 
     private HttpApiHandler httpApiHandler;
+
+    private McpHttpRequestHandler mcpRequestHandler;
+    private ArthasMcpBootstrap arthasMcpBootstrap;
 
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
@@ -176,12 +196,9 @@ public class ArthasBootstrap {
     }
 
     private void initFastjson() {
-        // disable  fastjson circular reference feature
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
-        // add date format option for  fastjson
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
         // ignore getter error #1661
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
+        // #2081
+        JSON.config(JSONWriter.Feature.IgnoreErrorGetter, JSONWriter.Feature.WriteNonStringKeyAsString);
     }
 
     private void initBeans() {
@@ -256,16 +273,19 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> copyMap = new HashMap<String, String>();
+        Map<String, Object> copyMap;
         if (argsMap != null) {
-            copyMap.putAll(argsMap);
-        }
-        // 添加 arthas.home
-        if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+            copyMap = new HashMap<String, Object>(argsMap);
+            // 添加 arthas.home
+            if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+                copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
+            }
+        } else {
+            copyMap = new HashMap<String, Object>(1);
             copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
         }
 
-        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>)(Object)copyMap);
+        MapPropertySource mapPropertySource = new MapPropertySource("args", copyMap);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
@@ -316,25 +336,25 @@ public class ArthasBootstrap {
             if (!location.endsWith(".properties")) {
                 location = new File(location, configName + ".properties").getAbsolutePath();
             }
+            if (new File(location).exists()) {
+                Properties properties = FileUtils.readProperties(location);
+
+                boolean overrideAll = false;
+                if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
+                    overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
+                } else {
+                    overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
+                }
+
+                PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
+                if (overrideAll) {
+                    arthasEnvironment.addFirst(propertySource);
+                } else {
+                    arthasEnvironment.addLast(propertySource);
+                }
+            }
         }
 
-        if (new File(location).exists()) {
-            Properties properties = FileUtils.readProperties(location);
-
-            boolean overrideAll = false;
-            if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
-                overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
-            } else {
-                overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
-            }
-
-            PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
-            if (overrideAll) {
-                arthasEnvironment.addFirst(propertySource);
-            } else {
-                arthasEnvironment.addLast(propertySource);
-            }
-        }
     }
 
     /**
@@ -392,6 +412,19 @@ public class ArthasBootstrap {
             }
 
             this.httpSessionManager = new HttpSessionManager();
+            if (IPUtils.isAllZeroIP(configure.getIp()) && StringUtils.isBlank(configure.getPassword())) {
+                // 当 listen 0.0.0.0 时，强制生成密码，防止被远程连接
+                String errorMsg = "Listening on 0.0.0.0 is very dangerous! External users can connect to your machine! "
+                        + "No password is currently configured. " + "Therefore, a default password is generated, "
+                        + "and clients need to use the password to connect!";
+                AnsiLog.error(errorMsg);
+                configure.setPassword(StringUtils.randomString(64));
+                AnsiLog.error("Generated arthas password: " + configure.getPassword());
+
+                logger().error(errorMsg);
+                logger().info("Generated arthas password: " + configure.getPassword());
+            }
+
             this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
 
             shellServer = new ShellServerImpl(options);
@@ -400,19 +433,20 @@ public class ArthasBootstrap {
             if (configure.getDisabledCommands() != null) {
                 String[] strings = StringUtils.tokenizeToStringArray(configure.getDisabledCommands(), ",");
                 if (strings != null) {
-                    for (String s : strings) {
-                        disabledCommands.add(s);
-                    }
+                    disabledCommands.addAll(Arrays.asList(strings));
                 }
             }
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
+            CommandResolver externalCommands = loadExternalCommandResolver(shellServer, builtinCommands);
+            if (externalCommands != null) {
+                resolvers.add(externalCommands);
+            }
             resolvers.add(builtinCommands);
 
             //worker group
             workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
 
-            // TODO: discover user provided command resolver
             if (configure.getTelnetPort() != null && configure.getTelnetPort() > 0) {
                 logger().info("try to bind telnet server, host: {}, port: {}.", configure.getIp(), configure.getTelnetPort());
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
@@ -449,14 +483,24 @@ public class ArthasBootstrap {
             //http api handler
             httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
-            logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
-                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+            // Mcp Server
+            String mcpEndpoint = configure.getMcpEndpoint();
+            String mcpProtocol = configure.getMcpProtocol();
+            if (mcpEndpoint != null && !mcpEndpoint.trim().isEmpty()) {
+                logger().info("try to start mcp server, endpoint: {}, protocol: {}.", mcpEndpoint, mcpProtocol);
+                CommandExecutor commandExecutor = new CommandExecutorImpl(sessionManager);
+                this.arthasMcpBootstrap = new ArthasMcpBootstrap(commandExecutor, mcpEndpoint, mcpProtocol);
+                this.mcpRequestHandler = this.arthasMcpBootstrap.start().getMcpRequestHandler();
+            }
+            logger().info("as-server listening on network={};telnet={};http={};timeout={};mcp={};mcpProtocol={};", configure.getIp(),
+                    configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout(), configure.getMcpEndpoint(), configure.getMcpProtocol());
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
                 logger().info("arthas stat url: {}", configure.getStatUrl());
             }
             UserStatUtil.setStatUrl(configure.getStatUrl());
+            UserStatUtil.setAgentId(configure.getAgentId());
             UserStatUtil.arthasStart();
 
             try {
@@ -471,6 +515,294 @@ public class ArthasBootstrap {
             destroy();
             throw e;
         }
+    }
+
+    private CommandResolver loadExternalCommandResolver(ShellServer shellServer, BuiltinCommandPack builtinCommands)
+                    throws Throwable {
+        String arthasHome = reslove(arthasEnvironment, ARTHAS_HOME_PROPERTY, arthasHome());
+        String commandLocationSummary = describeCommandLocations(configure.getCommandLocations(), arthasHome);
+        List<URL> commandUrls = resolveCommandLocationUrls(configure.getCommandLocations(), arthasHome, logger());
+        if (commandUrls.isEmpty()) {
+            return null;
+        }
+
+        ClassLoader arthasClassLoader = ArthasBootstrap.class.getClassLoader();
+        appendCommandUrls(arthasClassLoader, commandUrls);
+
+        List<CommandResolver> externalResolvers = loadExternalCommandResolvers(arthasClassLoader, logger());
+        if (externalResolvers.isEmpty()) {
+            logger().warn("No external arthas command resolvers found from command locations: {}", commandLocationSummary);
+            return null;
+        }
+
+        List<CommandResolver> reservedResolvers = new ArrayList<CommandResolver>();
+        reservedResolvers.addAll(shellServer.getCommandManager().getResolvers());
+        reservedResolvers.add(builtinCommands);
+
+        CommandRegistry externalRegistry = createExternalCommandRegistry(reservedResolvers, externalResolvers, logger());
+        if (externalRegistry == null) {
+            logger().warn("No external arthas commands loaded from command locations: {}", commandLocationSummary);
+            return null;
+        }
+
+        logger().info("Loaded {} external arthas commands from {} resolver(s), locations: {}.",
+                        externalRegistry.commands().size(), externalResolvers.size(), commandLocationSummary);
+        return externalRegistry;
+    }
+
+    static List<URL> resolveCommandLocationUrls(String commandLocations, Logger logger) throws IOException {
+        return resolveCommandLocationUrls(commandLocations, arthasHome(), logger);
+    }
+
+    static List<URL> resolveCommandLocationUrls(String commandLocations, String arthasHome, Logger logger)
+                    throws IOException {
+        List<CommandLocation> locations = collectCommandLocations(commandLocations, arthasHome);
+        if (locations.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Map<String, URL> commandUrls = new LinkedHashMap<String, URL>();
+        for (CommandLocation location : locations) {
+            File file = new File(location.path());
+            if (!file.exists()) {
+                logger.warn("Skip arthas external command location because it does not exist: {}", location.path());
+                continue;
+            }
+
+            if (file.isDirectory()) {
+                File[] jarFiles = file.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        return pathname.isFile() && isCommandJar(pathname);
+                    }
+                });
+                if (jarFiles == null || jarFiles.length == 0) {
+                    continue;
+                }
+                Arrays.sort(jarFiles, new Comparator<File>() {
+                    @Override
+                    public int compare(File left, File right) {
+                        return left.getName().compareTo(right.getName());
+                    }
+                });
+                for (File jarFile : jarFiles) {
+                    addCommandUrl(commandUrls, jarFile);
+                }
+            } else if (file.isFile() && isCommandJar(file)) {
+                addCommandUrl(commandUrls, file);
+            } else {
+                logger.warn("Skip arthas external command location because it is not a jar file or directory: {}",
+                                location.path());
+            }
+        }
+
+        return new ArrayList<URL>(commandUrls.values());
+    }
+
+    private static List<CommandLocation> collectCommandLocations(String commandLocations, String arthasHome) {
+        List<CommandLocation> locations = new ArrayList<CommandLocation>();
+        String[] configuredLocations = StringUtils.tokenizeToStringArray(commandLocations, ",");
+        if (configuredLocations != null && configuredLocations.length > 0) {
+            for (String configuredLocation : configuredLocations) {
+                locations.add(new CommandLocation(configuredLocation, false));
+            }
+        }
+
+        File defaultCommandsDirectory = resolveDefaultCommandsDirectory(arthasHome);
+        if (defaultCommandsDirectory != null) {
+            locations.add(new CommandLocation(defaultCommandsDirectory.getAbsolutePath(), true));
+        }
+
+        return locations;
+    }
+
+    private static String describeCommandLocations(String commandLocations, String arthasHome) {
+        List<String> descriptions = new ArrayList<String>();
+        for (CommandLocation location : collectCommandLocations(commandLocations, arthasHome)) {
+            descriptions.add(location.description());
+        }
+
+        if (descriptions.isEmpty()) {
+            return "[]";
+        }
+        return descriptions.toString();
+    }
+
+    private static class CommandLocation {
+        private final String path;
+        private final boolean defaultLocation;
+
+        CommandLocation(String path, boolean defaultLocation) {
+            this.path = path;
+            this.defaultLocation = defaultLocation;
+        }
+
+        String path() {
+            return path;
+        }
+
+        String description() {
+            if (defaultLocation) {
+                return path + " (default)";
+            }
+            return path;
+        }
+    }
+
+    private static File resolveDefaultCommandsDirectory(String arthasHome) {
+        if (!StringUtils.hasText(arthasHome)) {
+            return null;
+        }
+
+        File commandsDirectory = new File(arthasHome, DEFAULT_COMMANDS_DIRECTORY);
+        if (commandsDirectory.isDirectory()) {
+            return commandsDirectory;
+        }
+        return null;
+    }
+
+    static void appendCommandUrls(ClassLoader classLoader, List<URL> commandUrls) throws Throwable {
+        if (commandUrls == null || commandUrls.isEmpty()) {
+            return;
+        }
+
+        Method appendURLMethod;
+        try {
+            appendURLMethod = classLoader.getClass().getMethod("appendURL", URL.class);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Current Arthas ClassLoader does not support appendURL: "
+                            + classLoader.getClass().getName(), e);
+        }
+
+        for (URL commandUrl : commandUrls) {
+            appendURLMethod.invoke(classLoader, commandUrl);
+        }
+    }
+
+    static List<CommandResolver> loadExternalCommandResolvers(ClassLoader classLoader, Logger logger) {
+        List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
+        Iterator<CommandResolver> iterator = ServiceLoader.load(CommandResolver.class, classLoader).iterator();
+        while (true) {
+            try {
+                if (!iterator.hasNext()) {
+                    break;
+                }
+                resolvers.add(iterator.next());
+            } catch (ServiceConfigurationError error) {
+                logger.error("Load external arthas command resolver error", error);
+            }
+        }
+        return resolvers;
+    }
+
+    static CommandRegistry createExternalCommandRegistry(List<CommandResolver> reservedResolvers,
+                    List<CommandResolver> externalResolvers, Logger logger) {
+        Set<String> reservedNames = collectCommandNames(reservedResolvers);
+        Set<String> externalNames = new HashSet<String>();
+        CommandRegistry registry = CommandRegistry.create();
+
+        for (CommandResolver resolver : externalResolvers) {
+            List<Command> commands = resolver.commands();
+            if (commands == null || commands.isEmpty()) {
+                continue;
+            }
+
+            for (Command command : commands) {
+                if (command == null) {
+                    continue;
+                }
+
+                String commandName;
+                try {
+                    commandName = command.name();
+                } catch (Throwable t) {
+                    logger.warn("Skip external arthas command because command.name() throws exception, resolver: {} ({})",
+                                    resolver.getClass().getName(), codeSourceLocation(resolver.getClass()), t);
+                    continue;
+                }
+
+                if (!StringUtils.hasText(commandName)) {
+                    logger.warn("Skip external arthas command because command name is blank, resolver: {} ({})",
+                                    resolver.getClass().getName(), codeSourceLocation(resolver.getClass()));
+                    continue;
+                }
+
+                if (reservedNames.contains(commandName)) {
+                    logger.warn("Skip external arthas command `{}` from resolver {} ({}) because the name is reserved.",
+                                    commandName, resolver.getClass().getName(), codeSourceLocation(resolver.getClass()));
+                    continue;
+                }
+
+                if (!externalNames.add(commandName)) {
+                    logger.warn("Skip external arthas command `{}` from resolver {} ({}) because the name is duplicated.",
+                                    commandName, resolver.getClass().getName(), codeSourceLocation(resolver.getClass()));
+                    continue;
+                }
+
+                registry.registerCommand(command);
+            }
+        }
+
+        if (registry.commands().isEmpty()) {
+            return null;
+        }
+        return registry;
+    }
+
+    private static boolean isCommandJar(File file) {
+        String fileName = file.getName();
+        return fileName.length() >= 4 && fileName.regionMatches(true, fileName.length() - 4, ".jar", 0, 4);
+    }
+
+    private static void addCommandUrl(Map<String, URL> commandUrls, File jarFile) throws IOException {
+        File canonicalFile = jarFile.getCanonicalFile();
+        String filePath = canonicalFile.getAbsolutePath();
+        if (!commandUrls.containsKey(filePath)) {
+            commandUrls.put(filePath, canonicalFile.toURI().toURL());
+        }
+    }
+
+    private static Set<String> collectCommandNames(List<CommandResolver> resolvers) {
+        Set<String> names = new HashSet<String>();
+        if (resolvers == null || resolvers.isEmpty()) {
+            return names;
+        }
+
+        for (CommandResolver resolver : resolvers) {
+            if (resolver == null) {
+                continue;
+            }
+            List<Command> commands = resolver.commands();
+            if (commands == null || commands.isEmpty()) {
+                continue;
+            }
+            for (Command command : commands) {
+                if (command == null) {
+                    continue;
+                }
+                try {
+                    String name = command.name();
+                    if (StringUtils.hasText(name)) {
+                        names.add(name);
+                    }
+                } catch (Throwable t) {
+                    // ignore
+                }
+            }
+        }
+        return names;
+    }
+
+    private static String codeSourceLocation(Class<?> type) {
+        try {
+            CodeSource codeSource = type.getProtectionDomain().getCodeSource();
+            if (codeSource != null && codeSource.getLocation() != null) {
+                return codeSource.getLocation().toString();
+            }
+        } catch (Throwable t) {
+            // ignore
+        }
+        return "unknown";
     }
 
     private void shutdownWorkGroup() {
@@ -497,6 +829,17 @@ public class ArthasBootstrap {
      * call reset() before destroy()
      */
     public void destroy() {
+        if (this.arthasMcpBootstrap != null) {
+            try {
+                // stop 时需要主动关闭 mcp keep-alive 调度线程，避免 stop 后残留线程导致 ArthasClassLoader 无法回收
+                this.arthasMcpBootstrap.shutdown();
+            } catch (Throwable e) {
+                logger().error("stop mcp server error", e);
+            } finally {
+                this.arthasMcpBootstrap = null;
+                this.mcpRequestHandler = null;
+            }
+        }
         if (shellServer != null) {
             shellServer.close();
             shellServer = null;
@@ -655,6 +998,10 @@ public class ArthasBootstrap {
 
     public HttpApiHandler getHttpApiHandler() {
         return httpApiHandler;
+    }
+
+    public McpHttpRequestHandler getMcpRequestHandler() {
+        return mcpRequestHandler;
     }
 
     public File getOutputPath() {

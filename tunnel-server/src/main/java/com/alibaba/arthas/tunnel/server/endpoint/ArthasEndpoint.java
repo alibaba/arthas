@@ -20,7 +20,7 @@ public class ArthasEndpoint {
 
     @ReadOperation
     public Map<String, Object> invoke() {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>(4);
 
         result.put("version", this.getClass().getPackage().getImplementationVersion());
         result.put("properties", arthasProperties);

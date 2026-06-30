@@ -1,8 +1,6 @@
 package com.taobao.arthas.core.shell.system.impl;
 
-import java.io.File;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.taobao.arthas.core.shell.future.Future;
@@ -134,8 +132,9 @@ public class JobImpl implements Job {
             process.terminate();
         } catch (IllegalStateException ignore) {
             // Process already terminated, likely by itself
+        } finally {
+            controller.removeJob(this.id);
         }
-        controller.removeJob(this.id);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class HistoryCommand extends AnnotatedCommand {
     }
 
     @Argument(index = 0, argName = "n", required = false)
-    @Description("how many history commnads to display")
+    @Description("how many history commands to display")
     public void setNumber(int n) {
         this.n = n;
     }
@@ -49,7 +49,7 @@ public class HistoryCommand extends AnnotatedCommand {
         Session session = process.session();
         //TODO 修改term history实现方式，统一使用HistoryManager
         Object termObject = session.get(Session.TTY);
-        if (termObject != null && termObject instanceof TermImpl) {
+        if (termObject instanceof TermImpl) {
             TermImpl term = (TermImpl) termObject;
             Readline readline = term.getReadline();
             List<int[]> history = readline.getHistory();

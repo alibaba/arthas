@@ -2,9 +2,14 @@ package com.taobao.arthas.core.view;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.writer.FieldWriter;
+import com.alibaba.fastjson2.writer.ObjectWriterCreator;
+import com.alibaba.fastjson2.writer.ObjectWriterProvider;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.command.model.ObjectVO;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,20 +25,48 @@ import static java.lang.String.format;
  * Created by vlinux on 15/5/20.
  */
 public class ObjectView implements View {
+    public static final int MAX_DEEP = 4;
     private static final Logger logger = LoggerFactory.getLogger(ObjectView.class);
-    private final static int MAX_OBJECT_LENGTH = 10 * 1024 * 1024; // 10M
+    private static final ObjectWriterProvider JSON_OBJECT_WRITER_PROVIDER = new ObjectWriterProvider(
+            new ObjectWriterCreator() {
+                @Override
+                protected void setDefaultValue(List<FieldWriter> fieldWriters, Class objectClass) {
+                    // fastjson2 默认会通过无参构造函数创建一个对象来提取字段默认值（用于 NotWriteDefaultValue 等能力），
+                    // 这可能触发目标对象的构造逻辑（比如单例守卫、资源初始化等），在 Arthas 里属于不可接受的副作用。
+                    // 这里直接禁用该行为，只基于现有对象进行序列化。
+                }
+            });
+
+    public static String toJsonString(Object object) {
+        JSONWriter.Context context = new JSONWriter.Context(JSON_OBJECT_WRITER_PROVIDER);
+        context.setMaxLevel(4097);
+        context.config(JSONWriter.Feature.IgnoreErrorGetter,
+                JSONWriter.Feature.ReferenceDetection,
+                JSONWriter.Feature.IgnoreNonFieldGetter,
+                JSONWriter.Feature.WriteNonStringKeyAsString);
+        return JSON.toJSONString(object, context);
+    }
 
     private final Object object;
     private final int deep;
     private final int maxObjectLength;
 
+    public ObjectView(ObjectVO objectVO) {
+        this(defaultMaxObjectLength(), objectVO);
+    }
+
+    // int参数在前面，防止构造函数二义性
+    public ObjectView(int maxObjectLength, ObjectVO objectVO) {
+        this(objectVO.getObject(), objectVO.expandOrDefault(), maxObjectLength);
+    }
+ 
     public ObjectView(Object object, int deep) {
-        this(object, deep, MAX_OBJECT_LENGTH);
+        this(object, deep, defaultMaxObjectLength());
     }
 
     public ObjectView(Object object, int deep, int maxObjectLength) {
         this.object = object;
-        this.deep = deep > 4 ? 4 : deep;
+        this.deep = deep > MAX_DEEP ? MAX_DEEP : deep;
         this.maxObjectLength = maxObjectLength;
     }
 
@@ -42,14 +75,14 @@ public class ObjectView implements View {
         StringBuilder buf = new StringBuilder();
         try {
             if (GlobalOptions.isUsingJson) {
-                return JSON.toJSONString(object, SerializerFeature.IgnoreErrorGetter);
+                return toJsonString(object);
             }
             renderObject(object, 0, deep, buf);
             return buf.toString();
         } catch (ObjectTooLargeException e) {
             buf.append(" Object size exceeds size limit: ")
                     .append(maxObjectLength)
-                    .append(", try to specify -M size_limit in your command, check the help command for more.");
+                    .append(", try to use `options object-size-limit <bytes>` to increase the limit.");
             return buf.toString();
         } catch (Throwable t) {
             logger.error("ObjectView draw error, object class: {}", object.getClass(), t);
@@ -575,7 +608,7 @@ public class ObjectView implements View {
                 appendStringBuilder(buf, format("@%s[%s]", className, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS").format(obj)));
             }
 
-            else if (object instanceof Enum<?>) {
+            else if (obj instanceof Enum<?>) {
                 appendStringBuilder(buf, format("@%s[%s]", className, obj));
             }
 
@@ -586,49 +619,44 @@ public class ObjectView implements View {
                     appendStringBuilder(buf, format("@%s[%s]", className, obj));
                 } else {
                     appendStringBuilder(buf, format("@%s[", className));
-                    List<Field> fields = new ArrayList<Field>();
+                    final List<Field> fields;
                     Class<?> objClass = obj.getClass();
                     if (GlobalOptions.printParentFields) {
+                        fields = new ArrayList<Field>();
                         // 当父类为null的时候说明到达了最上层的父类(Object类).
                         while (objClass != null) {
-                            for (Field field : objClass.getDeclaredFields()) {
-                                fields.add(field);
-                            }
+                            fields.addAll(Arrays.asList(objClass.getDeclaredFields()));
                             objClass = objClass.getSuperclass();
                         }
                     } else {
-                        for (Field field : objClass.getDeclaredFields()) {
-                            fields.add(field);
-                        }
+                        fields = new ArrayList<Field>(Arrays.asList(objClass.getDeclaredFields()));
                     }
 
-                    if (null != fields) {
-                        for (Field field : fields) {
+                    for (Field field : fields) {
 
-                            field.setAccessible(true);
+                        field.setAccessible(true);
 
-                            try {
+                        try {
 
-                                final Object value = field.get(obj);
+                            final Object value = field.get(obj);
 
-                                appendStringBuilder(buf, "\n");
-                                for (int i = 0; i < deep+1; i++) {
-                                    appendStringBuilder(buf, TAB);
-                                }
-                                appendStringBuilder(buf, field.getName());
-                                appendStringBuilder(buf, "=");
-                                renderObject(value, deep + 1, expand, buf);
-                                appendStringBuilder(buf, ",");
-
-                            } catch (ObjectTooLargeException t) {
-                                buf.append("...");
-                                break;
-                            } catch (Throwable t) {
-                                // ignore
+                            appendStringBuilder(buf, "\n");
+                            for (int i = 0; i < deep+1; i++) {
+                                appendStringBuilder(buf, TAB);
                             }
-                        }//for
-                        appendStringBuilder(buf, "\n");
-                    }//if
+                            appendStringBuilder(buf, field.getName());
+                            appendStringBuilder(buf, "=");
+                            renderObject(value, deep + 1, expand, buf);
+                            appendStringBuilder(buf, ",");
+
+                        } catch (ObjectTooLargeException t) {
+                            buf.append("...");
+                            break;
+                        } catch (Throwable t) {
+                            // ignore
+                        }
+                    }//for
+                    appendStringBuilder(buf, "\n");
                     for (int i = 0; i < deep; i++) {
                         appendStringBuilder(buf, TAB);
                     }
@@ -670,5 +698,19 @@ public class ObjectView implements View {
         }
     }
 
+    public static int normalizeMaxObjectLength(Integer limit) {
+        if (limit != null && limit > 0) {
+            return limit;
+        }
+        int globalLimit = GlobalOptions.objectSizeLimit;
+        if (globalLimit > 0) {
+            return globalLimit;
+        }
+        return ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
+    }
+
+    private static int defaultMaxObjectLength() {
+        return normalizeMaxObjectLength(null);
+    }
 
 }

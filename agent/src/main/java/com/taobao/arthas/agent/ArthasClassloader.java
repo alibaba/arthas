@@ -11,6 +11,10 @@ public class ArthasClassloader extends URLClassLoader {
         super(urls, ClassLoader.getSystemClassLoader().getParent());
     }
 
+    public void appendURL(URL url) {
+        super.addURL(url);
+    }
+
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         final Class<?> loadedClass = findLoadedClass(name);

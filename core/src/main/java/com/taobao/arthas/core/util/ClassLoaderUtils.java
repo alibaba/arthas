@@ -1,10 +1,16 @@
 package com.taobao.arthas.core.util;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 
 /**
  *
@@ -12,7 +18,7 @@ import java.util.Set;
  *
  */
 public class ClassLoaderUtils {
-
+    private static Logger logger = LoggerFactory.getLogger(ClassLoaderUtils.class);
     public static Set<ClassLoader> getAllClassLoader(Instrumentation inst) {
         Set<ClassLoader> classLoaderSet = new HashSet<ClassLoader>();
 
@@ -75,5 +81,105 @@ public class ClassLoaderUtils {
             }
         }
         return Integer.toHexString(hashCode);
+    }
+
+    /**
+     * Find List<ClassLoader> by the class name of ClassLoader or the return value of ClassLoader#toString().
+     * @param inst
+     * @param classLoaderClassName
+     * @param classLoaderToString
+     * @return
+     */
+    public static List<ClassLoader> getClassLoader(Instrumentation inst, String classLoaderClassName, String classLoaderToString) {
+        List<ClassLoader> matchClassLoaders = new ArrayList<ClassLoader>();
+        if (StringUtils.isEmpty(classLoaderClassName) && StringUtils.isEmpty(classLoaderToString)) {
+            return matchClassLoaders;
+        }
+        Set<ClassLoader> classLoaderSet = getAllClassLoader(inst);
+        List<ClassLoader> matchedByClassLoaderToStr = new ArrayList<ClassLoader>();
+        for (ClassLoader classLoader : classLoaderSet) {
+            // only classLoaderClassName
+            if (!StringUtils.isEmpty(classLoaderClassName) && StringUtils.isEmpty(classLoaderToString)) {
+                if (classLoader.getClass().getName().equals(classLoaderClassName)) {
+                    matchClassLoaders.add(classLoader);
+                }
+            }
+            // only classLoaderToString
+            else if (!StringUtils.isEmpty(classLoaderToString) && StringUtils.isEmpty(classLoaderClassName)) {
+                if (classLoader.toString().equals(classLoaderToString)) {
+                    matchClassLoaders.add(classLoader);
+                }
+            }
+            // classLoaderClassName and classLoaderToString
+            else {
+                if (classLoader.getClass().getName().equals(classLoaderClassName)) {
+                    matchClassLoaders.add(classLoader);
+                }
+                if (classLoader.toString().equals(classLoaderToString)) {
+                    matchedByClassLoaderToStr.add(classLoader);
+                }
+            }
+        }
+        // classLoaderClassName and classLoaderToString
+        if (!StringUtils.isEmpty(classLoaderClassName) && !StringUtils.isEmpty(classLoaderToString)) {
+            matchClassLoaders.retainAll(matchedByClassLoaderToStr);
+        }
+        return matchClassLoaders;
+    }
+
+    @SuppressWarnings({ "unchecked", "restriction" })
+    public static URL[] getUrls(ClassLoader classLoader) {
+        if (classLoader instanceof URLClassLoader) {
+            try {
+                return ((URLClassLoader) classLoader).getURLs();
+            } catch (Throwable e) {
+                logger.error("classLoader: {} getUrls error", classLoader, e);
+            }
+        }
+
+        // jdk9
+        if (classLoader.getClass().getName().startsWith("jdk.internal.loader.ClassLoaders$")) {
+            try {
+                Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                field.setAccessible(true);
+                sun.misc.Unsafe unsafe = (sun.misc.Unsafe) field.get(null);
+
+                Class<?> ucpOwner = classLoader.getClass();
+                Field ucpField = null;
+
+                // jdk 9~15: jdk.internal.loader.ClassLoaders$AppClassLoader.ucp
+                // jdk 16~17: jdk.internal.loader.BuiltinClassLoader.ucp
+                while (ucpField == null && !ucpOwner.getName().equals("java.lang.Object")) {
+                    try {
+                        ucpField = ucpOwner.getDeclaredField("ucp");
+                    } catch (NoSuchFieldException ex) {
+                        ucpOwner = ucpOwner.getSuperclass();
+                    }
+                }
+                if (ucpField == null) {
+                    return null;
+                }
+
+                long ucpFieldOffset = unsafe.objectFieldOffset(ucpField);
+                Object ucpObject = unsafe.getObject(classLoader, ucpFieldOffset);
+                if (ucpObject == null) {
+                    return null;
+                }
+
+                // jdk.internal.loader.URLClassPath.path
+                Field pathField = ucpField.getType().getDeclaredField("path");
+                if (pathField == null) {
+                    return null;
+                }
+                long pathFieldOffset = unsafe.objectFieldOffset(pathField);
+                ArrayList<URL> path = (ArrayList<URL>) unsafe.getObject(ucpObject, pathFieldOffset);
+
+                return path.toArray(new URL[path.size()]);
+            } catch (Throwable e) {
+                // ignore
+                return null;
+            }
+        }
+        return null;
     }
 }

@@ -118,6 +118,10 @@ public class ArthasMethod {
         return this.methodName;
     }
 
+    public String getDescriptor() {
+        return this.methodDesc;
+    }
+
     @Override
     public String toString() {
         initMethod();

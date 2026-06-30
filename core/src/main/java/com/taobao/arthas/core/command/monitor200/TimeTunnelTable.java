@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.TimeFragmentVO;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.text.Decoration;
@@ -11,8 +13,7 @@ import com.taobao.text.ui.TableElement;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class TimeTunnelTable {
     static TableElement fillTableRow(TableElement table, TimeFragmentVO tf) {
         return table.row(
                 "" + tf.getIndex(),
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(tf.getTimestamp()),
+                DateUtils.formatDateTime(tf.getTimestamp()),
                 "" + tf.getCost(),
                 "" + tf.isReturn(),
                 "" + tf.isThrow(),
@@ -91,9 +92,8 @@ public class TimeTunnelTable {
     }
 
     public static void drawTimeTunnel(TableElement table, TimeFragmentVO tf) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         table.row("INDEX", "" + tf.getIndex())
-                .row("GMT-CREATE", sdf.format(tf.getTimestamp()))
+                .row("GMT-CREATE", DateUtils.formatDateTime(tf.getTimestamp()))
                 .row("COST(ms)", "" + tf.getCost())
                 .row("OBJECT", tf.getObject())
                 .row("CLASS", tf.getClassName())
@@ -102,17 +102,17 @@ public class TimeTunnelTable {
                 .row("IS-EXCEPTION", "" + tf.isThrow());
     }
 
-    public static void drawThrowException(TableElement table, TimeFragmentVO tf, boolean isNeedExpand, Integer expandLevel) {
+    public static void drawThrowException(TableElement table, TimeFragmentVO tf) {
         if (tf.isThrow()) {
             //noinspection ThrowableResultOfMethodCallIgnored
-            Throwable throwable = tf.getThrowExp();
-            if (isNeedExpand) {
-                table.row("THROW-EXCEPTION", new ObjectView(throwable, expandLevel).draw());
+            ObjectVO throwableVO = tf.getThrowExp();
+            if (throwableVO.needExpand()) {
+                table.row("THROW-EXCEPTION", new ObjectView(throwableVO).draw());
             } else {
                 StringWriter stringWriter = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(stringWriter);
                 try {
-                    throwable.printStackTrace(printWriter);
+                    ((Throwable) throwableVO.getObject()).printStackTrace(printWriter);
                     table.row("THROW-EXCEPTION", stringWriter.toString());
                 } finally {
                     printWriter.close();
@@ -121,22 +121,22 @@ public class TimeTunnelTable {
         }
     }
 
-    public static void drawReturnObj(TableElement table, TimeFragmentVO tf, boolean isNeedExpand, Integer expandLevel, Integer sizeLimit) {
+    public static void drawReturnObj(TableElement table, TimeFragmentVO tf, Integer sizeLimit) {
         if (tf.isReturn()) {
-            if (isNeedExpand) {
-                table.row("RETURN-OBJ", new ObjectView(tf.getReturnObj(), expandLevel, sizeLimit).draw());
+            if (tf.getReturnObj().needExpand()) {
+                table.row("RETURN-OBJ", new ObjectView(sizeLimit, tf.getReturnObj()).draw());
             } else {
                 table.row("RETURN-OBJ", "" + StringUtils.objectToString(tf.getReturnObj()));
             }
         }
     }
 
-    public static void drawParameters(TableElement table, Object[] params, boolean isNeedExpand, Integer expandLevel) {
+    public static void drawParameters(TableElement table, ObjectVO[] params) {
         if (params != null) {
             int paramIndex = 0;
-            for (Object param : params) {
-                if (isNeedExpand) {
-                    table.row("PARAMETERS[" + paramIndex++ + "]", new ObjectView(param, expandLevel).draw());
+            for (ObjectVO param : params) {
+                if (param.needExpand()) {
+                    table.row("PARAMETERS[" + paramIndex++ + "]", new ObjectView(param).draw());
                 } else {
                     table.row("PARAMETERS[" + paramIndex++ + "]", "" + StringUtils.objectToString(param));
                 }
@@ -149,26 +149,24 @@ public class TimeTunnelTable {
                 .style(Decoration.bold.bold()));
     }
 
-    public static void drawWatchResults(TableElement table, Map<Integer, Object> watchResults, boolean isNeedExpand,
-                                        Integer expandLevel, Integer sizeLimit) {
-        for (Map.Entry<Integer, Object> entry : watchResults.entrySet()) {
-            Object value = entry.getValue();
+    public static void drawWatchResults(TableElement table, Map<Integer, ObjectVO> watchResults, Integer sizeLimit) {
+        for (Map.Entry<Integer, ObjectVO> entry : watchResults.entrySet()) {
+            ObjectVO objectVO = entry.getValue();
             table.row("" + entry.getKey(), "" +
-                    (isNeedExpand ? new ObjectView(value, expandLevel, sizeLimit).draw() : StringUtils.objectToString(value)));
+                    (objectVO.needExpand() ? new ObjectView(sizeLimit, objectVO).draw() : StringUtils.objectToString(objectVO.getObject())));
         }
     }
 
     public static TableElement drawPlayHeader(String className, String methodName, String objectAddress, int index,
                                        TableElement table) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return table.row("RE-INDEX", "" + index)
-                .row("GMT-REPLAY", sdf.format(new Date()))
+                .row("GMT-REPLAY", DateUtils.formatDateTime(LocalDateTime.now()))
                 .row("OBJECT", objectAddress)
                 .row("CLASS", className)
                 .row("METHOD", methodName);
     }
 
-    public static void drawPlayResult(TableElement table, Object returnObj, boolean isNeedExpand, int expandLevel,
+    public static void drawPlayResult(TableElement table, ObjectVO returnObjVO,
                                int sizeLimit, double cost) {
         // 执行成功:输出成功状态
         table.row("IS-RETURN", "" + true);
@@ -176,28 +174,29 @@ public class TimeTunnelTable {
         table.row("COST(ms)", "" + cost);
 
         // 执行成功:输出成功结果
-        if (isNeedExpand) {
-            table.row("RETURN-OBJ", new ObjectView(returnObj, expandLevel, sizeLimit).draw());
+        if (returnObjVO.needExpand()) {
+            table.row("RETURN-OBJ", new ObjectView(sizeLimit, returnObjVO).draw());
         } else {
-            table.row("RETURN-OBJ", "" + StringUtils.objectToString(returnObj));
+            table.row("RETURN-OBJ", "" + StringUtils.objectToString(returnObjVO.getObject()));
         }
     }
 
-    public static void drawPlayException(TableElement table, Throwable t, boolean isNeedExpand, int expandLevel) {
+    public static void drawPlayException(TableElement table, ObjectVO throwableVO) {
         // 执行失败:输出失败状态
         table.row("IS-RETURN", "" + false);
         table.row("IS-EXCEPTION", "" + true);
 
         // 执行失败:输出失败异常信息
         Throwable cause;
+        Throwable t = (Throwable) throwableVO.getObject();
         if (t instanceof InvocationTargetException) {
             cause = t.getCause();
         } else {
             cause = t;
         }
 
-        if (isNeedExpand) {
-            table.row("THROW-EXCEPTION", new ObjectView(cause, expandLevel).draw());
+        if (throwableVO.needExpand()) {
+            table.row("THROW-EXCEPTION", new ObjectView(cause, throwableVO.expandOrDefault()).draw());
         } else {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);

@@ -3,7 +3,9 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -212,7 +214,7 @@ public class ReflectUtils {
         while ((index = className.indexOf("[]", index) + 1) > 0) {
             dimensions++;
         }
-        StringBuffer brackets = new StringBuffer(className.length() - dimensions);
+        StringBuilder brackets = new StringBuilder(className.length() - dimensions);
         for (int i = 0; i < dimensions; i++) {
             brackets.append('[');
         }
@@ -428,6 +430,29 @@ public class ReflectUtils {
                     Class<?> contextClass) throws Exception {
 
         Class c = null;
+
+        // 在 jdk 17之后，需要hack方式来调用 #2659
+        if (c == null && classLoaderDefineClassMethod != null) {
+            Lookup implLookup = UnsafeUtils.implLookup();
+            MethodHandle unreflect = implLookup.unreflect(classLoaderDefineClassMethod);
+
+            if (protectionDomain == null) {
+                protectionDomain = PROTECTION_DOMAIN;
+            }
+            try {
+                c = (Class) unreflect.invoke(loader, className, b, 0, b.length, protectionDomain);
+            } catch (InvocationTargetException ex) {
+                throw new ReflectException(ex.getTargetException());
+            } catch (Throwable ex) {
+                // Fall through if setAccessible fails with InaccessibleObjectException on JDK
+                // 9+
+                // (on the module path and/or with a JVM bootstrapped with
+                // --illegal-access=deny)
+                if (!ex.getClass().getName().endsWith("InaccessibleObjectException")) {
+                    throw new ReflectException(ex);
+                }
+            }
+        }
 
         // Preferred option: JDK 9+ Lookup.defineClass API if ClassLoader matches
         if (contextClass != null && contextClass.getClassLoader() == loader && privateLookupInMethod != null

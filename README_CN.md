@@ -2,14 +2,15 @@
 
 ## Arthas
 
-![arthas](site/src/site/sphinx/arthas.png)
+![arthas](site/docs/.vuepress/public/images/arthas.png)
 
-[![Build Status](https://travis-ci.org/alibaba/arthas.svg?branch=master)](https://travis-ci.org/alibaba/arthas)
+[![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
 [![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
 ![license](https://img.shields.io/github/license/alibaba/arthas.svg)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
+
 
 English version goes [here](README.md).
 
@@ -26,12 +27,12 @@ English version goes [here](README.md).
 0. 怎么快速定位应用的热点，生成火焰图？
 0. 怎样直接从JVM内查找某个类的实例？
 
-`Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+`Arthas` 4.x 支持 JDK 8+，包括 JDK 17、JDK 21 和 JDK 25，支持 Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
-### [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
+### 在线教程(推荐)
 
-* [使用方法](tutorials/katacoda/README_CN.md#在线教程使用方法)
+* [查看](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 
 ### 快速开始
 
@@ -50,7 +51,7 @@ java -jar arthas-boot.jar
 java -jar arthas-boot.jar -h
 ```
 
-* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+* 如果下载速度比较慢，可以使用 aliyun 的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun`
 
 #### 使用`as.sh`
 
@@ -90,7 +91,7 @@ curl -L https://arthas.aliyun.com/install.sh | sh
 
 * https://arthas.aliyun.com/doc/dashboard
 
-![dashboard](site/src/site/sphinx/_static/dashboard.png)
+![dashboard](site/docs/.vuepress/public/images/dashboard.png)
 
 #### Thread
 
@@ -178,7 +179,7 @@ mc /tmp/Test.java
 #### retransform
 * https://arthas.aliyun.com/doc/retransform
 
-加载外部的`.class`文件，retransform 热更新jvm已加载的类。
+加载外部的`.class`文件，retransform 热更新jvm已加载的类。
 
 ```bash
 retransform /tmp/Test.class
@@ -286,7 +287,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 观察方法执行的时候哪个子调用比较慢:
 
-![trace](site/src/site/sphinx/_static/trace.png)
+![trace](site/docs/.vuepress/public/images/trace.png)
 
 #### Watch
 
@@ -376,7 +377,7 @@ $ classloader
 
 * https://arthas.aliyun.com/doc/web-console
 
-![web console](site/src/site/sphinx/_static/web-console-local.png)
+![web console](site/docs/.vuepress/public/images/web-console-local.png)
 
 #### Profiler/FlameGraph/火焰图
 
@@ -389,13 +390,13 @@ Started [cpu] profiling
 
 ```
 $ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
+profiler output file: /tmp/demo/arthas-output/20211207-111550.html
 OK
 ```
 
 通过浏览器查看profiler结果：
 
-![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
+![](site/docs/.vuepress/public/images/arthas-output-svg.jpg)
 
 #### Arthas Spring Boot Starter
 
@@ -418,7 +419,10 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![vipkid](static/vipkid.png)
 ![百度凤巢](static/baidufengchao.png)
 ![有赞](static/youzan.png)
-
+![科大讯飞](static/iflytek.png)
+![智联招聘](static/zhaopin.png)
+![高德红外](static/guideir.jpg)
+![达美盛](static/dms.png)
 
 ### 衍生项目
 

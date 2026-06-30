@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2021-09-02
+#    date : 2026-06-15
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.5.4
+ARTHAS_SCRIPT_VERSION=4.3.0
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -85,6 +85,8 @@ ARTHAS_HOME=
 # define arthas's lib
 if [ -z "${ARTHAS_LIB_DIR}" ]; then
     ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+else
+    echo "[INFO] ARTHAS_LIB_DIR: ${ARTHAS_LIB_DIR}"
 fi
 
 # target process id to attach
@@ -102,7 +104,7 @@ DEFAULT_TELNET_PORT="3658"
 HTTP_PORT=
 DEFAULT_HTTP_PORT="8563"
 
-# telnet session timeout seconds, default 1800
+# telnet session timeout seconds, default 10800
 SESSION_TIMEOUT=
 
 # use specify version
@@ -110,9 +112,6 @@ USE_VERSION=
 
 # remote repo to download arthas
 REPO_MIRROR=
-
-# use http to download arthas
-USE_HTTP=false
 
 # attach only, do not telnet connect
 ATTACH_ONLY=false
@@ -155,6 +154,8 @@ PASSWORD=
 
 # disabledCommands
 DISABLED_COMMANDS=
+# external command locations
+COMMAND_LOCATIONS=
 
 ############ Command Arguments ############
 
@@ -184,7 +185,7 @@ case "$(uname -s)" in
     *)          OS_TYPE="UNKNOWN"
 esac
 
-# check curl/grep/awk/telent/unzip command
+# check curl/grep/awk/telnet/unzip command
 if ! [ -x "$(command -v curl)" ]; then
   echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
@@ -258,7 +259,7 @@ reset_for_env()
         JAVA_HOME=$(echo "$JAVA_COMMAND_PATH" | sed -n 's/\/bin\/java$//p')
     fi
 
-    # iterater throught candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
+    # iterater through candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
     if [ ! -d "${JAVA_HOME}" ]; then
         JAVA_HOME_CANDIDATES=($(ps aux | grep java | grep -v 'grep java' | awk '{print $11}' | sed -n 's/\/bin\/java$//p'))
         for JAVA_HOME_TEMP in ${JAVA_HOME_CANDIDATES[@]}; do
@@ -323,15 +324,6 @@ get_local_version()
     ls "${ARTHAS_LIB_DIR}" | sort | tail -1
 }
 
-get_repo_url()
-{
-    local repoUrl="${REPO_MIRROR}"
-    if [ "$USE_HTTP" = true ] ; then
-        repoUrl=${repoUrl/https/http}
-    fi
-    echo "${repoUrl}"
-}
-
 # get latest version from remote
 get_remote_version()
 {
@@ -366,7 +358,7 @@ update_if_necessary()
             || exit_on_err 1 "create ${temp_target_lib_dir} fail."
 
         # download current arthas version
-        local downloadUrl="${REMOTE_DOWNLOAD_URL//PLACEHOLDER_REPO/$(get_repo_url)}"
+        local downloadUrl="${REMOTE_DOWNLOAD_URL//PLACEHOLDER_REPO/${REPO_MIRROR}}"
         downloadUrl="${downloadUrl//PLACEHOLDER_VERSION/${update_version}}"
         echo "Download arthas from: ${downloadUrl}"
         curl \
@@ -391,12 +383,32 @@ update_if_necessary()
     fi
 }
 
+# jps command may crash, so need to check it
+check_jps() {
+    "${JAVA_HOME}/bin/jps" > /dev/null 2>&1
+    local exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo "jps command failed with exit code ${exit_code}" >&2
+    fi
+    return $exit_code
+}
+
 call_jps()
 {
-    if [ "${VERBOSE}" = true ] ; then
-        "${JAVA_HOME}"/bin/jps -l -v
+    check_jps
+    local exit_code=$?
+    if [[ "$exit_code" -eq 0 ]]; then
+        # jps command is ok
+        local jps_command=("${JAVA_HOME}/bin/jps" "-l")
+        if [ "${VERBOSE}" = true ] ; then
+            jps_command=("${JAVA_HOME}/bin/jps" "-l" "-v")
+        fi
+        local jps_output=$("${jps_command[@]}")
+        echo "$jps_output"
     else
-        "${JAVA_HOME}"/bin/jps -l
+        # jps command failed, use ps and grep
+        ps_output=$(ps aux | grep java | grep -v grep | awk '{print $2" "$11}')
+        echo "$ps_output"
     fi
 }
 
@@ -411,21 +423,23 @@ Usage:
        [--app-name <value>]
        [--username <value>] [--password <value>]
        [--disabled-commands <value>]
-       [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
+       [--command-locations <value>]
+       [--use-version <value>] [--repo-mirror <value>] [--versions]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
+
+NOTE: Arthas 4 supports JDK 8+. If you need to diagnose applications running on JDK 6/7, you can use Arthas 3.
 
 Options and Arguments:
  -h,--help                      Print usage
     --target-ip <value>         The target jvm listen ip, default 127.0.0.1
     --telnet-port <value>       The target jvm listen telnet port, default 3658
     --http-port <value>         The target jvm listen http port, default 8563
-    --session-timeout <value>   The session timeout seconds, default 1800 (30min)
+    --session-timeout <value>   The session timeout seconds, default 10800 (3h)
     --arthas-home <value>       The arthas home
     --use-version <value>       Use special version arthas
     --repo-mirror <value>       Use special remote repository mirror, value is
                                 center/aliyun or http repo url.
     --versions                  List local and remote arthas versions
-    --use-http                  Enforce use http to download, default use https
     --attach-only               Attach target process only, do not connect
     --debug-attach              Debug attach agent
     --tunnel-server             Remote tunnel server url
@@ -434,6 +448,8 @@ Options and Arguments:
     --username                  Special username
     --password                  Special password
     --disabled-commands         Disable special commands
+    --command-locations         External command jar locations, support jar file or directory,
+                                separated by comma
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -445,7 +461,6 @@ Options and Arguments:
 
 EXAMPLES:
   ./as.sh <pid>
-  ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh --username admin --password <password>
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
@@ -453,12 +468,13 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.5.4
+  ./as.sh --use-version 4.3.0
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump
+  ./as.sh --command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'
   ./as.sh --select math-game
-  ./as.sh --repo-mirror aliyun --use-http
+  ./as.sh --repo-mirror aliyun
 WIKI:
   https://arthas.aliyun.com/doc
 
@@ -638,9 +654,10 @@ parse_arguments()
         shift # past argument
         shift # past value
         ;;
-        --use-http)
-        USE_HTTP=true
+        --command-locations)
+        COMMAND_LOCATIONS="$2"
         shift # past argument
+        shift # past value
         ;;
         --attach-only)
         ATTACH_ONLY=true
@@ -850,6 +867,10 @@ attach_jvm()
     if [ "${DISABLED_COMMANDS}" ]; then
         tempArgs+=("-disabled-commands")
         tempArgs+=("${DISABLED_COMMANDS}")
+    fi
+    if [ "${COMMAND_LOCATIONS}" ]; then
+        tempArgs+=("-command-locations")
+        tempArgs+=("${COMMAND_LOCATIONS}")
     fi
 
     if [ "${TARGET_IP}" ]; then

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
 
     <licenses>
         <license>
@@ -20,7 +15,7 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -56,12 +51,16 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
+        <module>web-ui</module>
         <module>math-game</module>
+        <module>arthas-demo-external-command</module>
         <module>common</module>
+        <module>arthas-model</module>
         <module>spy</module>
         <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
+        <module>arthas-mcp-server</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -72,19 +71,29 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <!-- <module>labs/arthas-grpc-web-proxy</module>
+        <module>labs/cluster-management/native-agent</module>
+        <module>labs/cluster-management/native-agent-management-web</module>
+        <module>labs/cluster-management/native-agent-proxy</module>
+        <module>labs/cluster-management/native-agent-common</module> -->
+        <module>labs/arthas-grpc-server</module>
+        <!-- <module>labs/arthas-jfr-frontend</module> -->
+<!--        <module>labs/arthas-jfr-backend</module>-->
     </modules>
 
     <properties>
-        <revision>3.5.4</revision>
+        <revision>4.3.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot3.version>3.5.14</spring-boot3.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
-        <jacoco.skip>${skipTests}</jacoco.skip>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-        <netty.version>4.1.59.Final</netty.version>
+        <netty-bom.version>4.1.132.Final</netty-bom.version>
+        <central.autoPublish>false</central.autoPublish>
+        <central.waitUntil>validated</central.waitUntil>
     </properties>
 
     <dependencyManagement>
@@ -92,17 +101,17 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.7</version>
+                <version>0.1.7</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.151</version>
+                <version>0.152</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.12</version>
+                <version>1.1.7.15</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -112,27 +121,32 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.31</version>
+                <version>1.7.36</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.2.3</version>
+                <version>1.2.13</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.2.3</version>
+                <version>1.2.13</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.9</version>
+                <version>0.0.20</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.75</version>
+                <artifactId>repackage-asm</artifactId>
+                <version>0.0.20</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>2.0.58</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
@@ -142,56 +156,39 @@
             <dependency>
                 <groupId>com.fifesoft</groupId>
                 <artifactId>rsyntaxtextarea</artifactId>
-                <version>2.5.8</version>
+                <version>3.3.4</version>
             </dependency>
             <dependency>
                 <groupId>ognl</groupId>
                 <artifactId>ognl</artifactId>
-                <version>3.1.19</version>
+                <version>3.3.5</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.1</version>
-                <scope>test</scope>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.10.0</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>2.9.1</version>
+                <version>3.24.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.28.2</version>
+                <version>4.11.0</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-buffer</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-handler</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec-http</artifactId>
-                <version>${netty.version}</version>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-bom</artifactId>
+              <version>${netty-bom.version}</version>
+              <type>pom</type>
+              <scope>import</scope>
             </dependency>
 
             <dependency>
@@ -203,39 +200,71 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.11.6</version>
+                <version>1.18.3</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.11.6</version>
+                <version>1.18.3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.zeroturnaround</groupId>
                 <artifactId>zt-zip</artifactId>
-                <version>1.14</version>
+                <version>1.16</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp</artifactId>
+                <version>0.17.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <profiles>
         <profile>
-            <id>jdk8</id>
+            <!-- ci test -->
+            <id>jdk12</id>
             <activation>
-                <jdk>[1.8,)</jdk>
+                <jdk>[12,)</jdk>
+                <property>
+                    <name>JAVA8_HOME</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                    <version>1.6.0</version>
+                    <scope>system</scope>
+                    <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[17,)</jdk>
             </activation>
             <modules>
                 <module>tunnel-server</module>
+                <module>arthas-mcp-integration-test</module>
+                <module>arthas-external-command-integration-test</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>full</id>
             <build>
                 <plugins>
                     <!-- git commit info -->
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>4.0.1</version>
+                        <version>4.9.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -264,34 +293,6 @@
                             <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <!-- ci test -->
-            <id>jdk12</id>
-            <activation>
-                <jdk>[12,)</jdk>
-                <property>
-                    <name>JAVA8_HOME</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sun</groupId>
-                    <artifactId>tools</artifactId>
-                    <version>1.6.0</version>
-                    <scope>system</scope>
-                    <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>full</id>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -328,6 +329,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -337,6 +339,26 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <useAgent>false</useAgent>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>${central.autoPublish}</autoPublish>
+                            <waitUntil>${central.waitUntil}</waitUntil>
+                            <checksums>all</checksums>
+                            <centralSnapshotsUrl>https://central.sonatype.com/repository/maven-snapshots/</centralSnapshotsUrl>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -350,6 +372,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.0</version>
+                    <configuration>
+                        <source>8</source>
+                        <target>8</target>
+                        <encoding>UTF-8</encoding>
+                        <parameters>true</parameters>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -365,6 +393,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.10.0</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
@@ -454,9 +487,9 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.2</version>
+                <version>1.7.0</version>
                 <configuration>
-                  <flattenMode>minimum</flattenMode>
+                    <flattenMode>minimum</flattenMode>
                 </configuration>
                 <executions>
                     <execution>
@@ -467,7 +500,7 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>flatten-clean</id>
+                        <id>flatten.clean</id>
                         <phase>clean</phase>
                         <goals>
                             <goal>clean</goal>
@@ -476,31 +509,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report-aggregate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

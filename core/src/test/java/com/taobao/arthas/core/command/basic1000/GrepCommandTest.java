@@ -22,7 +22,7 @@ public class GrepCommandTest {
 
     @Before
     public void before() {
-        cli = CLIConfigurator.define(GrepCommand.class);
+        cli = CLIConfigurator.define(GrepCommand.class, true);
     }
 
     @Test
@@ -65,5 +65,36 @@ public class GrepCommandTest {
             throw new RuntimeException(e);
         }
         Assert.assertFalse(grepCommand.isTrimEnd());
+    }
+
+    @Test
+    public void testCount() {
+        List<String> args = Arrays.asList("-c", "HttpClient");
+        GrepCommand grepCommand = new GrepCommand();
+        CommandLine commandLine = cli.parse(args, true);
+
+        try {
+            CLIConfigurator.inject(commandLine, grepCommand);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        Assert.assertTrue(grepCommand.isCount());
+        Assert.assertEquals("HttpClient", grepCommand.getPattern());
+    }
+
+    @Test
+    public void testContext() {
+        List<String> args = Arrays.asList("-C", "2", "HttpClient");
+        GrepCommand grepCommand = new GrepCommand();
+        CommandLine commandLine = cli.parse(args, true);
+
+        try {
+            CLIConfigurator.inject(commandLine, grepCommand);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        Assert.assertFalse(grepCommand.isCount());
+        Assert.assertEquals(2, grepCommand.getContext());
+        Assert.assertEquals("HttpClient", grepCommand.getPattern());
     }
 }

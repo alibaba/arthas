@@ -9,22 +9,53 @@
 	</parent>
 	<artifactId>arthas-tunnel-server</artifactId>
 	<name>arthas-tunnel-server</name>
+	<url>https://github.com/alibaba/arthas</url>
 
 	<properties>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<java.version>1.8</java.version>
+		<tunnel.slf4j.version>2.0.17</tunnel.slf4j.version>
+		<tunnel.logback.version>1.5.32</tunnel.logback.version>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>${netty-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+			<!--
+				tunnel-server 已升级到 Spring Boot 3.5，需要使用 SLF4J 2 和 Logback 1.5。
+				root POM 仍为其它模块管理 Spring Boot 2 时代的日志版本，所以这里按
+				root spring-boot3.version 对应的 Spring Boot BOM 版本做模块级覆盖。
+				后续升级 spring-boot3.version 时，这两个日志版本必须同步到对应 BOM。
+			-->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${tunnel.slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${tunnel.logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${tunnel.logback.version}</version>
+			</dependency>
 			<dependency>
 				<!-- Import dependency management from Spring Boot -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
+				<version>${spring-boot3.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -86,11 +117,16 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -127,9 +163,45 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<source>17</source>
+					<target>17</target>
+					<release>17</release>
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- 从web-ui复制打包好的js/html -->
+                                <copy overwrite="true" todir="${project.basedir}/src/main/resources/static/">
+                                    <fileset dir="${project.basedir}/../web-ui/arthasWebConsole/dist/tunnel/" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>resources-clean</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- 清理从web-ui复制的js/html -->
+                                <delete dir="${project.basedir}/src/main/resources/static"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -149,7 +221,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
+				<version>${spring-boot3.version}</version>
                 <configuration>
                     <executable>true</executable>
                 </configuration>
@@ -165,6 +237,15 @@
 					</execution>
 				</executions>
 			</plugin>
+
+            <!-- 跳过central publishing https://github.com/spring-projects/spring-boot/issues/46928 -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <configuration>
+                    <skipPublishing>true</skipPublishing>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

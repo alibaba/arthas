@@ -42,8 +42,8 @@ import io.netty.util.CharsetUtil;
 public class Base64Command extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(Base64Command.class);
     private String file;
-    private Integer sizeLimit = 128 * 1024;
-    private int maxSizeLimit = 8 * 1024 * 1024;
+    private int sizeLimit = 128 * 1024;
+    private static final int MAX_SIZE_LIMIT = 8 * 1024 * 1024;
 
     private boolean decode;
 
@@ -87,8 +87,13 @@ public class Base64Command extends AnnotatedCommand {
         }
 
         // 确认输入
-        if (file == null && this.input != null) {
-            file = input;
+        if (file == null) {
+            if (this.input != null) {
+                file = input;
+            } else {
+                process.end(-1, ": No file, nor input");
+                return;
+            }
         }
 
         File f = new File(file);
@@ -107,12 +112,12 @@ public class Base64Command extends AnnotatedCommand {
         }
 
         InputStream input = null;
+        ByteBuf convertResult = null;
 
         try {
             input = new FileInputStream(f);
             byte[] bytes = IOUtils.getBytes(input);
 
-            ByteBuf convertResult = null;
             if (this.decode) {
                 convertResult = Base64.decode(Unpooled.wrappedBuffer(bytes));
             } else {
@@ -133,6 +138,9 @@ public class Base64Command extends AnnotatedCommand {
             process.end(1, "read file error: " + e.getMessage());
             return;
         } finally {
+            if (convertResult != null) {
+                convertResult.release();
+            }
             IOUtils.close(input);
         }
 
@@ -145,8 +153,8 @@ public class Base64Command extends AnnotatedCommand {
             return false;
         }
 
-        if (sizeLimit > maxSizeLimit) {
-            process.end(-1, "sizeLimit cannot be large than: " + maxSizeLimit);
+        if (sizeLimit > MAX_SIZE_LIMIT) {
+            process.end(-1, "sizeLimit cannot be large than: " + MAX_SIZE_LIMIT);
             return false;
         }
 

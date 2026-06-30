@@ -20,7 +20,8 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
-import com.taobao.arthas.core.command.model.SearchClassModel;
+import com.taobao.arthas.core.command.model.ObjectVO;
+import com.taobao.arthas.core.command.model.VmToolModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.cli.OptionCompleteHandler;
@@ -29,7 +30,6 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -55,6 +55,11 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
+        + "  vmtool --action heapAnalyze --classNum 20 --objectNum 20\n"
+        + "  vmtool --action referenceAnalyze --className java.lang.String --objectNum 20 --backtraceNum 2\n"
+        + "  vmtool --action interruptThread -t 1\n"
+        + "  vmtool --action mallocTrim\n"
+        + "  vmtool --action mallocStats\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
@@ -63,7 +68,7 @@ public class VmToolCommand extends AnnotatedCommand {
     private VmToolAction action;
     private String className;
     private String express;
-
+    private int threadId;
     private String hashCode = null;
     private String classLoaderClass;
     /**
@@ -75,6 +80,22 @@ public class VmToolCommand extends AnnotatedCommand {
      * default value 10
      */
     private int limit;
+
+    /**
+     * default value 20
+     */
+    private int classNum = 20;
+
+    /**
+     * default value 20
+     */
+    private int objectNum = 20;
+
+    /**
+     * default value 2
+     */
+    private int backtraceNum = 2;
+    private static final String BACKTRACE_NUM_ERROR = "backtraceNum must be -1 or greater.";
 
     private String libPath;
     private static String defaultLibPath;
@@ -137,6 +158,24 @@ public class VmToolCommand extends AnnotatedCommand {
         this.limit = limit;
     }
 
+    @Option(longName = "classNum", required = false)
+    @Description("The number of classes to be shown.")
+    public void setClassNum(int classNum) {
+        this.classNum = classNum;
+    }
+
+    @Option(longName = "objectNum", required = false)
+    @Description("The number of objects to be shown.")
+    public void setObjectNum(int objectNum) {
+        this.objectNum = objectNum;
+    }
+
+    @Option(longName = "backtraceNum", required = false)
+    @Description("The steps of backtrace by reference.")
+    public void setBacktraceNum(int backtraceNum) {
+        this.backtraceNum = backtraceNum;
+    }
+
     @Option(longName = "libPath")
     @Description("The specify lib path.")
     public void setLibPath(String path) {
@@ -144,13 +183,19 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "express", required = false)
-    @Description("The ognl expression, default valueis `instances`.")
+    @Description("The ognl expression, default value is `instances`.")
     public void setExpress(String express) {
         this.express = express;
     }
 
+    @Option(shortName = "t", longName = "threadId", required = false)
+    @Description("The id of the thread to be interrupted")
+    public void setThreadId(int threadId) {
+        this.threadId = threadId;
+    }
+
     public enum VmToolAction {
-        getInstances, forceGc
+        getInstances, forceGc, heapAnalyze, referenceAnalyze, interruptThread, mallocTrim, mallocStats
     }
 
     @Override
@@ -158,7 +203,14 @@ public class VmToolCommand extends AnnotatedCommand {
         try {
             Instrumentation inst = process.session().getInstrumentation();
 
-            if (VmToolAction.getInstances.equals(action)) {
+            if (VmToolAction.getInstances.equals(action) || VmToolAction.referenceAnalyze.equals(action)) {
+                if (VmToolAction.referenceAnalyze.equals(action)) {
+                    String validateError = validateBacktraceNum(Integer.valueOf(backtraceNum));
+                    if (validateError != null) {
+                        process.end(-1, validateError);
+                        return;
+                    }
+                }
                 if (className == null) {
                     process.end(-1, "The className option cannot be empty!");
                     return;
@@ -179,9 +231,10 @@ public class VmToolCommand extends AnnotatedCommand {
                     } else if (matchedClassLoaders.size() > 1) {
                         Collection<ClassLoaderVO> classLoaderVOList = ClassUtils
                                 .createClassLoaderVOList(matchedClassLoaders);
-                        SearchClassModel searchclassModel = new SearchClassModel().setClassLoaderClass(classLoaderClass)
+
+                        VmToolModel vmToolModel = new VmToolModel().setClassLoaderClass(classLoaderClass)
                                 .setMatchedClassLoaders(classLoaderVOList);
-                        process.appendResult(searchclassModel);
+                        process.appendResult(vmToolModel);
                         process.end(-1,
                                 "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
                         return;
@@ -193,8 +246,9 @@ public class VmToolCommand extends AnnotatedCommand {
                     classLoader = ClassLoader.getSystemClassLoader();
                 }
 
+                String searchClassName = normalizeArrayClassName(className);
                 List<Class<?>> matchedClasses = new ArrayList<Class<?>>(
-                        SearchUtils.searchClassOnly(inst, className, false, hashCode));
+                        SearchUtils.searchClassOnly(inst, searchClassName, false, hashCode));
                 int matchedClassSize = matchedClasses.size();
                 if (matchedClassSize == 0) {
                     process.end(-1, "Can not find class by class name: " + className + ".");
@@ -203,27 +257,56 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Found more than one class: " + matchedClasses + ", please specify classloader with '-c <classloader hash>'");
                     return;
                 } else {
-                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
-                    Object value = instances;
-                    if (express != null) {
-                        Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
-                        try {
-                            value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
-                        } catch (ExpressException e) {
-                            logger.warn("ognl: failed execute express: " + express, e);
-                            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
-                                    + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+                    if (VmToolAction.getInstances.equals(action)) {
+                        Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
+                        Object value = instances;
+                        if (express != null) {
+                            Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
+                            try {
+                                value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
+                            } catch (ExpressException e) {
+                                logger.warn("ognl: failed execute express: " + express, e);
+                                process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                                        + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+                            }
                         }
-                    }
 
-                    process.write(new ObjectView(value, this.expand).draw());
-                    process.write("\n");
-                    process.end();
+                        VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
+                        process.appendResult(vmToolModel);
+                        process.end();
+                    } else {
+                        String result = vmToolInstance().referenceAnalyze(matchedClasses.get(0), objectNum, backtraceNum);
+                        process.write(result);
+                        process.end();
+                    }
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
                 vmToolInstance().forceGc();
                 process.write("\n");
                 process.end();
+                return;
+            } else if (VmToolAction.heapAnalyze.equals(action)) {
+                String result = vmToolInstance().heapAnalyze(classNum, objectNum);
+                process.write(result);
+                process.end();
+                return;
+            } else if (VmToolAction.interruptThread.equals(action)) {
+                vmToolInstance().interruptSpecialThread(threadId);
+                process.write("\n");
+                process.end();
+
+                return;
+            } else if (VmToolAction.mallocTrim.equals(action)) {
+                int result = vmToolInstance().mallocTrim();
+                process.write("\n");
+                process.end(result == 1 ? 0 : -1, "mallocTrim result: " +
+                    (result == 1 ? "true" : (result == 0 ? "false" : "not supported")));
+                return;
+            } else if (VmToolAction.mallocStats.equals(action)) {
+                boolean result = vmToolInstance().mallocStats();
+                process.write("\n");
+                process.end(result ? 0 : -1, "mallocStats result: " +
+                    (result ? "true" : "not supported"));
                 return;
             }
 
@@ -232,6 +315,59 @@ public class VmToolCommand extends AnnotatedCommand {
             logger.error("vmtool error", e);
             process.end(1, "vmtool error: " + e.getMessage());
         }
+    }
+
+    static String validateBacktraceNum(Integer backtraceNum) {
+        if (backtraceNum != null && backtraceNum.intValue() < -1) {
+            return BACKTRACE_NUM_ERROR;
+        }
+        return null;
+    }
+
+    /**
+     * 将用户友好的数组类名（例如 {@code java.lang.Object[]} 或 {@code int[][]}）
+     * 转换为 JVM 内部数组类名（例如 {@code [Ljava.lang.Object;} 或 {@code [[I}）。
+     * 非数组输入或无法识别的输入原样返回。
+     */
+    static String normalizeArrayClassName(String className) {
+        if (className == null || !className.endsWith("[]")) {
+            return className;
+        }
+        int dimensions = 0;
+        String base = className;
+        while (base.endsWith("[]")) {
+            dimensions++;
+            base = base.substring(0, base.length() - 2);
+        }
+        if (base.isEmpty()) {
+            return className;
+        }
+        String internal;
+        if ("boolean".equals(base)) {
+            internal = "Z";
+        } else if ("byte".equals(base)) {
+            internal = "B";
+        } else if ("char".equals(base)) {
+            internal = "C";
+        } else if ("short".equals(base)) {
+            internal = "S";
+        } else if ("int".equals(base)) {
+            internal = "I";
+        } else if ("long".equals(base)) {
+            internal = "J";
+        } else if ("float".equals(base)) {
+            internal = "F";
+        } else if ("double".equals(base)) {
+            internal = "D";
+        } else {
+            internal = "L" + base + ";";
+        }
+        StringBuilder sb = new StringBuilder(dimensions + internal.length());
+        for (int i = 0; i < dimensions; i++) {
+            sb.append('[');
+        }
+        sb.append(internal);
+        return sb.toString();
     }
 
     static class InstancesWrapper {
@@ -264,7 +400,7 @@ public class VmToolCommand extends AnnotatedCommand {
             try {
                 File tmpLibFile = File.createTempFile(VmTool.JNI_LIBRARY_NAME, null);
                 tmpLibOutputStream = new FileOutputStream(tmpLibFile);
-                libInputStream = new FileInputStream(new File(libPath));
+                libInputStream = new FileInputStream(libPath);
 
                 IOUtils.copy(libInputStream, tmpLibOutputStream);
                 libPath = tmpLibFile.getAbsolutePath();

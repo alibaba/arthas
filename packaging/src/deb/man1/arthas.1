@@ -8,7 +8,7 @@ Arthas \- Alibaba Java Diagnostic Tool
 .SH SYNOPSIS
 .B as [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
-       [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
+       [--use-version <value>] [--repo-mirror <value>] [--versions]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
 .SH DESCRIPTION
@@ -52,7 +52,7 @@ The target jvm listen http port, default is 8563
 
 .TP
 .B --session-timeout <value> 
-The session timeout time in seconds, default 1800 (30min)
+The session timeout time in seconds, default 10800 (3h)
 
 .TP
 .B --arthas-home <value> 
@@ -69,10 +69,6 @@ Use special maven repository mirror, value is center/aliyun or http repo url.
 .TP
 .B --versions
 List local and remote arthas versions
-
-.TP 
-.B --use-http 
-Enforce use http to download, default use https
 
 .TP
 .B --attach-only
@@ -105,4 +101,3 @@ Verbose, print debug info.
 .TP
 .B <pid>
 Target pid
-

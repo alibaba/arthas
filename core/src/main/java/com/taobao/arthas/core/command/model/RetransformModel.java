@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.taobao.arthas.core.command.klass100.RetransformCommand.RetransformEntry;
-import com.taobao.arthas.core.util.ClassUtils;
 
 /**
  * 
@@ -22,12 +21,22 @@ public class RetransformModel extends ResultModel {
 
     private List<RetransformEntry> retransformEntries;
 
+    private List<Integer> ids;
+
     private RetransformEntry deletedRetransformEntry;
     
 //    private List<ClassVO> trigger
 
 //    List<ClassVO> classVOs = ClassUtils.createClassVOList(matchedClasses);
     public RetransformModel() {
+    }
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
 
     public void addRetransformClass(String className) {

@@ -31,6 +31,9 @@ public class SessionView extends ResultView<SessionModel> {
         if (result.getStatUrl() != null) {
             table.row("STAT_URL", result.getStatUrl());
         }
+        if (result.getUserId() != null) {
+            table.row("USER_ID", result.getUserId());
+        }
         process.write(RenderUtil.render(table, process.width()));
     }
 

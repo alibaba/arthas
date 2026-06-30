@@ -1,7 +1,5 @@
 package com.taobao.arthas.core.shell.term.impl.http.api;
 
-import java.util.Map;
-
 /**
  * Http Api request
  *
@@ -14,6 +12,7 @@ public class ApiRequest {
     private String sessionId;
     private String consumerId;
     private Integer execTimeout;
+    private String userId;
 
     @Override
     public String toString() {
@@ -24,6 +23,7 @@ public class ApiRequest {
                 ", sessionId='" + sessionId + '\'' +
                 ", consumerId='" + consumerId + '\'' +
                 ", execTimeout=" + execTimeout +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 
@@ -73,5 +73,13 @@ public class ApiRequest {
 
     public void setExecTimeout(Integer execTimeout) {
         this.execTimeout = execTimeout;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

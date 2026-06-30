@@ -26,6 +26,7 @@ import sun.management.counter.perf.PerfInstrumentation;
 
 /**
  * @see sun.misc.Perf
+ * @see jdk.internal.perf.Perf
  * @see sun.management.counter.perf.PerfInstrumentation
  * @author hengyunabc 2020-02-16
  */
@@ -55,7 +56,9 @@ public class PerfCounterCommand extends AnnotatedCommand {
             process.end(1,
                     "please check arthas log. if java version >=9 , try to add jvm options when start your process: "
                             + "--add-opens java.base/jdk.internal.perf=ALL-UNNAMED "
-                            + "--add-exports java.base/jdk.internal.perf=ALL-UNNAMED");
+                            + "--add-exports java.base/jdk.internal.perf=ALL-UNNAMED "
+                            + "--add-opens java.management/sun.management.counter.perf=ALL-UNNAMED "
+                            + "--add-opens java.management/sun.management.counter=ALL-UNNAMED");
             return;
         }
 

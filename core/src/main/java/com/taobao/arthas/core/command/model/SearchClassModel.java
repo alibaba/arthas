@@ -11,7 +11,6 @@ public class SearchClassModel extends ResultModel {
     private ClassDetailVO classInfo;
     private boolean withField;
     private boolean detailed;
-    private Integer expand;
     private List<String> classNames;
     private int segment;
 
@@ -21,11 +20,10 @@ public class SearchClassModel extends ResultModel {
     public SearchClassModel() {
     }
 
-    public SearchClassModel(ClassDetailVO classInfo, boolean detailed, boolean withField, Integer expand) {
+    public SearchClassModel(ClassDetailVO classInfo, boolean detailed, boolean withField) {
         this.classInfo = classInfo;
         this.detailed = detailed;
         this.withField = withField;
-        this.expand = expand;
     }
 
     public SearchClassModel(List<String> classNames, int segment) {
@@ -70,10 +68,6 @@ public class SearchClassModel extends ResultModel {
         return withField;
     }
 
-    public Integer getExpand() {
-        return expand;
-    }
-    
     public String getClassLoaderClass() {
         return classLoaderClass;
     }

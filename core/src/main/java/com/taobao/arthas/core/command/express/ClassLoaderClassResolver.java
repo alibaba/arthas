@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import ognl.ClassResolver;
 
 /**
- *
  * @author hengyunabc 2018-10-18
  * @see ognl.DefaultClassResolver
  */
@@ -21,8 +20,7 @@ public class ClassLoaderClassResolver implements ClassResolver {
     }
 
     @Override
-    public Class<?> classForName(String className, @SuppressWarnings("rawtypes") Map context)
-                    throws ClassNotFoundException {
+    public Class classForName(String className, Map context) throws ClassNotFoundException {
         Class<?> result = null;
 
         if ((result = classes.get(className)) == null) {
@@ -41,5 +39,4 @@ public class ClassLoaderClassResolver implements ClassResolver {
         }
         return result;
     }
-
 }

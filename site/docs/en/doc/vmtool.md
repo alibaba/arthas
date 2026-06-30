@@ -1,0 +1,168 @@
+# vmtool
+
+::: tip
+@since 3.5.1
+:::
+
+[`vmtool` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-vmtool)
+
+`vmtool` uses the `JVMTI` to support `getInstances` in jvm and `forceGc`.
+
+- [JVM Tool Interface](https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html)
+
+## getInstances
+
+```bash
+$ vmtool --action getInstances --className java.lang.String --limit 10
+@String[][
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com.taobao.arthas.core.shell.session.Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/],
+    @String[java/util/concurrent/ConcurrentHashMap$ValueIterator],
+    @String[java/util/concurrent/locks/LockSupport],
+]
+```
+
+::: tip
+Through the `--limit` parameter, you can limit the number of return values to avoid pressure on the JVM when obtaining large data. The default value of limit is 10.
+:::
+
+## Specify classloader name
+
+```bash
+vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext
+```
+
+## Specify classloader hash
+
+The classloader that loads the class can be found through the `sc` command.
+
+```bash
+$ sc -d org.springframework.context.ApplicationContext
+ class-info org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext
+ code-source file:/private/tmp/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spring-boot-1.5.13.RELEASE.jar!/
+ name org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext
+...
+ class-loader +-org.springframework.boot.loader.LaunchedURLClassLoader@19469ea2
+                     +-sun.misc.Launcher$AppClassLoader@75b84c92
+                       +-sun.misc.Launcher$ExtClassLoader@4f023edb
+ classLoaderHash 19469ea2
+```
+
+Then use the `-c`/`--classloader` parameter to specify:
+
+```bash
+vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext
+```
+
+## Specify the number of expanded layers of returned results
+
+::: tip
+The return result of the `getInstances` action is bound to the `instances` variable, which is an array.
+
+The expansion level of the result can be specified by the `-x`/`--expand` parameter, the default value is 1.
+:::
+
+```bash
+vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext -x 2
+```
+
+## Execute expression
+
+::: tip
+The return result of the `getInstances` action is bound to the `instances` variable, which is an array. The specified expression can be executed through the `--express` parameter.
+:::
+
+```bash
+vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'
+```
+
+### Filter objects
+
+For the `instances` array returned by `getInstances`, you can further filter objects with the OGNL selection expression `.{? condition}`. Here `#this` refers to the current object being evaluated.
+
+The following example uses `java.lang.Thread`, which is suitable for verifying filter expressions in almost any running JVM. It filters all non-daemon threads and prints only their names:
+
+```bash
+vmtool --action getInstances --className java.lang.Thread --limit -1 --express 'instances.{? #this.daemon == false}.{name}'
+```
+
+If you want to inspect the filtered objects directly, remove the trailing `.{name}`.
+
+## Force GC
+
+```bash
+vmtool --action forceGc
+```
+
+- Use the [`vmoption`](vmoption.md) command to dynamically turn on the `PrintGC` option.
+
+## Analyze heap usage
+
+`heapAnalyze` starts from objects reachable from GC Root, counts instance numbers and bytes per class, and prints the top objects/classes by heap usage.
+
+```bash
+$ vmtool --action heapAnalyze --classNum 5 --objectNum 3
+```
+
+::: tip
+Use `--classNum` to specify how many classes will be shown, and use `--objectNum` to specify how many objects will be shown.
+:::
+
+## Analyze reference chain
+
+`referenceAnalyze` analyzes instances of a specific class and prints the largest objects and their backtrace chain (from the object back to GC Root) to help locate them.
+
+```bash
+$ vmtool --action referenceAnalyze --className java.lang.String --objectNum 5 --backtraceNum 3
+```
+
+::: tip
+
+- Use `--objectNum` to specify how many objects will be shown
+- Use `--backtraceNum` to specify how many steps of backtrace will be done, set `-1` to backtrace until root, set `0` to disable backtrace output
+- `--backtraceNum` values less than `-1` are invalid
+- `--classLoaderClass` and `--classloader` from `getInstances` are also applicable here
+  :::
+
+## interrupt 指定线程
+
+The thread id is specified by the `-t` parameter. It can be obtained using the `thread` command.
+
+```bash
+vmtool --action interruptThread -t 1
+```
+
+## glibc Release Free Memory
+
+Linux man page: [malloc_trim](https://man7.org/linux/man-pages/man3/malloc_trim.3.html)
+
+```bash
+vmtool --action mallocTrim
+```
+
+## glibc Memory Status
+
+The memory status will be output to the application's stderr. Linux man page: [malloc_stats](https://man7.org/linux/man-pages/man3/malloc_stats.3.html)
+
+```bash
+vmtool --action mallocStats
+```
+
+The output to stderr is as follows:
+
+```
+Arena 0:
+system bytes     =     135168
+in use bytes     =      74352
+Total (incl. mmap):
+system bytes     =     135168
+in use bytes     =      74352
+max mmap regions =          0
+max mmap bytes   =          0
+```

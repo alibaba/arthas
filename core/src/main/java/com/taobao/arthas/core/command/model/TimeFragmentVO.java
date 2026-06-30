@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * VO for TimeFragment
@@ -8,16 +8,16 @@ import java.util.Date;
  */
 public class TimeFragmentVO {
     private Integer index;
-    private Date timestamp;
+    private LocalDateTime timestamp;
     private double cost;
     private boolean isReturn;
     private boolean isThrow;
     private String object;
     private String className;
     private String methodName;
-    private Object[] params;
-    private Object returnObj;
-    private Throwable throwExp;
+    private ObjectVO[] params;
+    private ObjectVO returnObj;
+    private ObjectVO throwExp;
 
     public TimeFragmentVO() {
     }
@@ -31,11 +31,11 @@ public class TimeFragmentVO {
         return this;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public TimeFragmentVO setTimestamp(Date timestamp) {
+    public TimeFragmentVO setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -94,29 +94,29 @@ public class TimeFragmentVO {
         return this;
     }
 
-    public Object[] getParams() {
+    public ObjectVO[] getParams() {
         return params;
     }
 
-    public TimeFragmentVO setParams(Object[] params) {
+    public TimeFragmentVO setParams(ObjectVO[] params) {
         this.params = params;
         return this;
     }
 
-    public Object getReturnObj() {
+    public ObjectVO getReturnObj() {
         return returnObj;
     }
 
-    public TimeFragmentVO setReturnObj(Object returnObj) {
+    public TimeFragmentVO setReturnObj(ObjectVO returnObj) {
         this.returnObj = returnObj;
         return this;
     }
 
-    public Throwable getThrowExp() {
+    public ObjectVO getThrowExp() {
         return throwExp;
     }
 
-    public TimeFragmentVO setThrowExp(Throwable throwExp) {
+    public TimeFragmentVO setThrowExp(ObjectVO throwExp) {
         this.throwExp = throwExp;
         return this;
     }

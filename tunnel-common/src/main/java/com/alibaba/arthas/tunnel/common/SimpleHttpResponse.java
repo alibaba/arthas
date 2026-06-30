@@ -3,11 +3,14 @@ package com.alibaba.arthas.tunnel.common;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,8 +19,10 @@ import java.util.Map;
  *
  */
 public class SimpleHttpResponse implements Serializable {
-
     private static final long serialVersionUID = 1L;
+
+    private static final List<String> whitelist = Arrays.asList(byte[].class.getName(), String.class.getName(),
+            Map.class.getName(), HashMap.class.getName(), SimpleHttpResponse.class.getName());
 
     private int status = 200;
 
@@ -55,35 +60,25 @@ public class SimpleHttpResponse implements Serializable {
 
     public static byte[] toBytes(SimpleHttpResponse response) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream out = null;
-        try {
-            out = new ObjectOutputStream(bos);
+        try (ObjectOutputStream out = new ObjectOutputStream(bos)) {
             out.writeObject(response);
             out.flush();
             return bos.toByteArray();
-        } finally {
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
         }
     }
 
     public static SimpleHttpResponse fromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInput in = null;
-        try {
-            in = new ObjectInputStream(bis);
-            return (SimpleHttpResponse) in.readObject();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
+        try (ObjectInputStream in = new ObjectInputStream(bis) {
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                if (!whitelist.contains(desc.getName())) {
+                    throw new InvalidClassException("Unauthorized deserialization attempt", desc.getName());
                 }
-            } catch (IOException ex) {
-                // ignore close exception
+                return super.resolveClass(desc);
             }
+        }) {
+            return (SimpleHttpResponse) in.readObject();
         }
     }
+
 }

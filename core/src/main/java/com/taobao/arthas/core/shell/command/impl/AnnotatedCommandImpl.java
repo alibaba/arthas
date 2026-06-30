@@ -80,7 +80,9 @@ public class AnnotatedCommandImpl extends Command {
         }
         CLIConfigurator.inject(process.commandLine(), instance);
         instance.process(process);
-        UserStatUtil.arthasUsageSuccess(name(), process.args());
+        // get userId from session for stat reporting
+        String userId = process.session() != null ? process.session().getUserId() : null;
+        UserStatUtil.arthasUsageSuccess(name(), process.args(), userId);
     }
 
     @Override

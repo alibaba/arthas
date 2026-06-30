@@ -19,7 +19,8 @@ public class CustomClassResolver implements ClassResolver {
 
     }
 
-    public Class<?> classForName(String className, Map context) throws ClassNotFoundException {
+    @Override
+    public Class classForName(String className, Map context) throws ClassNotFoundException {
         Class<?> result = null;
 
         if ((result = classes.get(className)) == null) {

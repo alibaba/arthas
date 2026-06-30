@@ -8,25 +8,39 @@ package com.taobao.arthas.core.util;
  */
 public class ThreadLocalWatch {
 
-    private final ThreadLocal<LongStack> timestampRef = new ThreadLocal<LongStack>() {
-        @Override
-        protected LongStack initialValue() {
-            return new LongStack(1024 * 4);
-        }
-    };
+    /**
+     * 用 long[] 做一个固定大小的 ring stack，避免把 ArthasClassLoader 加载的对象塞到业务线程的 ThreadLocalMap 里，
+     * 从而在 stop/detach 后导致 ArthasClassLoader 无法被 GC 回收。
+     *
+     * <pre>
+     * 约定：
+     * - stack[0] 存储当前 pos（0..cap）
+     * - stack[1..cap] 存储数据
+     * </pre>
+     */
+    private static final int DEFAULT_STACK_SIZE = 1024 * 4;
+    private final ThreadLocal<long[]> timestampRef = ThreadLocal.withInitial(() -> new long[DEFAULT_STACK_SIZE + 1]);
 
     public long start() {
         final long timestamp = System.nanoTime();
-        timestampRef.get().push(timestamp);
+        push(timestampRef.get(), timestamp);
         return timestamp;
     }
 
     public long cost() {
-        return (System.nanoTime() - timestampRef.get().pop());
+        return (System.nanoTime() - pop(timestampRef.get()));
     }
 
     public double costInMillis() {
-        return (System.nanoTime() - timestampRef.get().pop()) / 1000000.0;
+        return (System.nanoTime() - pop(timestampRef.get())) / 1000000.0;
+    }
+
+    public double costInMillisWithoutPop() {
+        long timestamp = peek(timestampRef.get());
+        if (timestamp == 0) {
+            return 0.0;
+        }
+        return (System.nanoTime() - timestamp) / 1000000.0;
     }
 
     /**
@@ -42,39 +56,39 @@ public class ThreadLocalWatch {
      * @author hengyunabc 2019-11-20
      *
      */
-    static class LongStack {
-        private long[] array;
-        private int pos = 0;
-        private int cap;
+    static void push(long[] stack, long value) {
+        int cap = stack.length - 1;
+        int pos = (int) stack[0];
+        if (pos < cap) {
+            pos++;
+        } else {
+            // if stack is full, reset pos
+            pos = 1;
+        }
+        stack[pos] = value;
+        stack[0] = pos;
+    }
 
-        public LongStack(int maxSize) {
-            array = new long[maxSize];
-            cap = array.length;
+    static long pop(long[] stack) {
+        int cap = stack.length - 1;
+        int pos = (int) stack[0];
+        if (pos > 0) {
+            long value = stack[pos];
+            stack[0] = pos - 1;
+            return value;
         }
 
-        public int size() {
-            return pos;
-        }
+        pos = cap;
+        long value = stack[pos];
+        stack[0] = pos - 1;
+        return value;
+    }
 
-        public void push(long value) {
-            if (pos < cap) {
-                array[pos++] = value;
-            } else {
-                // if array is full, reset pos
-                pos = 0;
-                array[pos++] = value;
-            }
+    static long peek(long[] stack) {
+        int pos = (int) stack[0];
+        if (pos > 0) {
+            return stack[pos];
         }
-
-        public long pop() {
-            if (pos > 0) {
-                pos--;
-                return array[pos];
-            } else {
-                pos = cap;
-                pos--;
-                return array[pos];
-            }
-        }
+        return 0;
     }
 }

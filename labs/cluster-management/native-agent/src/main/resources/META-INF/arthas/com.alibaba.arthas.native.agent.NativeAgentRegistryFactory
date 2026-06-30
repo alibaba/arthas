@@ -1,0 +1,2 @@
+zookeeper=com.alibaba.arthas.nat.agent.registry.impl.ZookeeperNativeAgentRegistry
+etcd=com.alibaba.arthas.nat.agent.registry.impl.EtcdNativeAgentRegistry

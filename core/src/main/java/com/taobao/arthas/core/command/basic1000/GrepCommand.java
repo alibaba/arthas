@@ -21,6 +21,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         " sysenv | grep -v JAVA\n" +
         " sysenv | grep -e \"(?i)(JAVA|sun)\" -m 3  -C 2\n" +
         " sysenv | grep JAVA -A2 -B3\n" +
+        " thread --all | grep -c HttpClient\n" +
         " thread | grep -m 10 -e  \"TIMED_WAITING|WAITING\"\n"
         + Constants.WIKI + Constants.WIKI_HOME + "grep")
 public class GrepCommand extends AnnotatedCommand {
@@ -38,6 +39,8 @@ public class GrepCommand extends AnnotatedCommand {
      * print line number with output lines
      */
     private boolean showLineNumber = false;
+
+    private boolean count = false;
 
     private boolean trimEnd;
 
@@ -89,6 +92,12 @@ public class GrepCommand extends AnnotatedCommand {
     @Description("Print line number with output lines")
     public void setShowLineNumber(boolean showLineNumber) {
         this.showLineNumber = showLineNumber;
+    }
+
+    @Option(shortName = "c", longName = "count", flag = true, acceptValue = false)
+    @Description("Print only a count of selected lines")
+    public void setCount(boolean count) {
+        this.count = count;
     }
 
     @Option(longName = "trim-end", flag = false)
@@ -144,6 +153,10 @@ public class GrepCommand extends AnnotatedCommand {
 
     public boolean isShowLineNumber() {
         return showLineNumber;
+    }
+
+    public boolean isCount() {
+        return count;
     }
 
     public boolean isTrimEnd() {

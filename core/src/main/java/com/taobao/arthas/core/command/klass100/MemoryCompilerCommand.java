@@ -20,7 +20,6 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.ClassLoaderUtils;

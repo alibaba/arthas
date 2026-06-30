@@ -23,8 +23,7 @@ public interface AdviceListener {
     /**
      * 前置通知
      *
-     * @param loader     类加载器
-     * @param className  类名
+     * @param clazz      类
      * @param methodName 方法名
      * @param methodDesc 方法描述
      * @param target     目标类实例
@@ -39,8 +38,7 @@ public interface AdviceListener {
     /**
      * 返回通知
      *
-     * @param loader       类加载器
-     * @param className    类名
+     * @param clazz        类
      * @param methodName   方法名
      * @param methodDesc   方法描述
      * @param target       目标类实例
@@ -58,8 +56,7 @@ public interface AdviceListener {
     /**
      * 异常通知
      *
-     * @param loader     类加载器
-     * @param className  类名
+     * @param clazz      类
      * @param methodName 方法名
      * @param methodDesc 方法描述
      * @param target     目标类实例
@@ -72,5 +69,25 @@ public interface AdviceListener {
             Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args,
             Throwable throwable) throws Throwable;
+
+    /**
+     * 行号通知
+     *
+     * @param clazz          类
+     * @param methodName     方法名
+     * @param methodDesc     方法描述
+     * @param target         目标类实例，静态方法为 null
+     * @param args           参数列表
+     * @param lineNumber     当前源码行号
+     * @param argNames       参数名，依赖 debug info
+     * @param localVars      当前行可读局部变量值
+     * @param localVarNames  当前行可读局部变量名
+     * @throws Throwable 通知过程出错
+     */
+    default void atLine(
+            Class<?> clazz, String methodName, String methodDesc,
+            Object target, Object[] args,
+            int lineNumber, String[] argNames, Object[] localVars, String[] localVarNames) throws Throwable {
+    }
 
 }

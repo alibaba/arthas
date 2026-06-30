@@ -23,18 +23,20 @@ package com.taobao.arthas.compiler;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileObject;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
 
 public class CustomJavaFileObject implements JavaFileObject {
-    private final String binaryName;
+    private final String className;
     private final URI uri;
-    private final String name;
 
-    public CustomJavaFileObject(String binaryName, URI uri) {
+    public CustomJavaFileObject(String className, URI uri) {
         this.uri = uri;
-        this.binaryName = binaryName;
-        name = uri.getPath() == null ? uri.getSchemeSpecificPart() : uri.getPath(); // for FS based URI the path is not null, for JAR URI the scheme specific part is not null
+        this.className = className;
     }
 
     public URI toUri() {
@@ -50,7 +52,7 @@ public class CustomJavaFileObject implements JavaFileObject {
     }
 
     public String getName() {
-        return name;
+        return this.className;
     }
 
     public Reader openReader(boolean ignoreEncodingErrors) {
@@ -78,10 +80,8 @@ public class CustomJavaFileObject implements JavaFileObject {
     }
 
     public boolean isNameCompatible(String simpleName, Kind kind) {
-        String baseName = simpleName + kind.extension;
-        return kind.equals(getKind())
-                && (baseName.equals(getName())
-                || getName().endsWith("/" + baseName));
+        return Kind.CLASS.equals(getKind())
+                && this.className.endsWith(simpleName);
     }
 
     public NestingKind getNestingKind() {
@@ -92,8 +92,8 @@ public class CustomJavaFileObject implements JavaFileObject {
         throw new UnsupportedOperationException();
     }
 
-    public String binaryName() {
-        return binaryName;
+    public String getClassName() {
+        return this.className;
     }
 
 

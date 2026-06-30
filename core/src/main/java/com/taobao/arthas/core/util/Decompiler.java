@@ -116,12 +116,12 @@ public class Decompiler {
 
         List<String> lines = StringUtils.toLines(src);
 
-        if (maxLineNumber >= 100) {
-            formatStr = "/*%3d*/ ";
-            emptyStr = "        ";
-        } else if (maxLineNumber >= 1000) {
+        if (maxLineNumber >= 1000) {
             formatStr = "/*%4d*/ ";
             emptyStr = "         ";
+        } else if (maxLineNumber >= 100) {
+            formatStr = "/*%3d*/ ";
+            emptyStr = "        ";
         }
 
         int index = 0;

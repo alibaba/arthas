@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-boot</artifactId>
     <name>arthas-boot</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
         <dependency>
@@ -21,8 +22,13 @@
             <artifactId>cli</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -30,16 +36,6 @@
     <build>
         <finalName>arthas-boot</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <encoding>UTF-8</encoding>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

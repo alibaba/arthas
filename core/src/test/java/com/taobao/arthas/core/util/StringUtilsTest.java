@@ -412,4 +412,21 @@ public class StringUtilsTest {
     public void testClassLoaderHash() {
         Assert.assertEquals("null", StringUtils.classLoaderHash(null));
     }
+
+    @Test
+    public void testNormalizeNull() {
+        Assert.assertNull(StringUtils.normalizeClassName(null));
+    }
+
+    @Test
+    public void testNormalizeNoSlash() {
+        String input = "com.example.Class";
+        Assert.assertEquals(input, StringUtils.normalizeClassName(input));
+    }
+
+    @Test
+    public void testNormalizeWithSlash() {
+        String input = "com/example/Class";
+        Assert.assertEquals("com.example.Class", StringUtils.normalizeClassName(input));
+    }
 }

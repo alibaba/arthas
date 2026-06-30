@@ -817,7 +817,7 @@ public abstract class SocketClient
 
     /**
      * Subclasses can override this if they need to provide their own
-     * instance field for backwards compatibilty.
+     * instance field for backwards compatibility.
      *
      * @return the CommandSupport instance, may be {@code null}
      * @since 3.0

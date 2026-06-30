@@ -1,0 +1,44 @@
+{
+  "name": "arthaswebconsole",
+  "private": false,
+  "version": "0.1.4",
+  "scripts": {
+    "dev:native-agent": "vite --port 3939 --mode native-agent",
+    "dev:tunnel": "vite --port 8000 --mode tunnel",
+    "dev:ui": "vite --port 8000 --mode ui",
+    "build": "vue-tsc --noEmit && vite build --mode tunnel && vite build --mode ui",
+    "build:native-agent": "vue-tsc --noEmit && vite build --mode native-agent",
+    "build:tunnel": "vue-tsc --noEmit && vite build --mode tunnel",
+    "build:ui": "vue-tsc --noEmit && vite build --mode ui",
+    "preview:ui": "vite preview --mode ui",
+    "preview:tunnel": "vite preview --mode tunnel"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.6.6",
+    "@heroicons/vue": "^1.0.6",
+    "@highlightjs/vue-plugin": "^2.1.0",
+    "@xstate/vue": "^2.0.0",
+    "axios": "^1.7.7",
+    "daisyui": "^2.31.0",
+    "dayjs": "^1.11.6",
+    "echarts": "^5.3.3",
+    "highlight.js": "^11.6.0",
+    "pinia": "^2.0.15",
+    "vue": "^3.2.25",
+    "vue-router": "4",
+    "xstate": "^4.32.1",
+    "xterm": "^5.0.0",
+    "xterm-addon-fit": "^0.6.0",
+    "xterm-addon-webgl": "^0.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.2",
+    "@vitejs/plugin-vue": "^2.3.3",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.4",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.9",
+    "vue-tsc": "1.0.9"
+  }
+}

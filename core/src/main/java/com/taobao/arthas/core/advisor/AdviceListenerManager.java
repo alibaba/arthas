@@ -60,32 +60,30 @@ public class AdviceListenerManager {
             @Override
             public void run() {
                 try {
-                    if (adviceListenerMap != null) {
-                        for (Entry<ClassLoader, ClassLoaderAdviceListenerManager> entry : adviceListenerMap.entrySet()) {
-                            ClassLoaderAdviceListenerManager adviceListenerManager = entry.getValue();
-                            synchronized (adviceListenerManager) {
-                                for (Entry<String, List<AdviceListener>> eee : adviceListenerManager.map.entrySet()) {
-                                    List<AdviceListener> listeners = eee.getValue();
-                                    List<AdviceListener> newResult = new ArrayList<AdviceListener>();
-                                    for (AdviceListener listener : listeners) {
-                                        if (listener instanceof ProcessAware) {
-                                            ProcessAware processAware = (ProcessAware) listener;
-                                            Process process = processAware.getProcess();
-                                            if (process == null) {
-                                                continue;
-                                            }
-                                            ExecStatus status = process.status();
-                                            if (!status.equals(ExecStatus.TERMINATED)) {
-                                                newResult.add(listener);
-                                            }
+                    for (Entry<ClassLoader, ClassLoaderAdviceListenerManager> entry : adviceListenerMap.entrySet()) {
+                        ClassLoaderAdviceListenerManager adviceListenerManager = entry.getValue();
+                        synchronized (adviceListenerManager) {
+                            for (Entry<String, List<AdviceListener>> eee : adviceListenerManager.map.entrySet()) {
+                                List<AdviceListener> listeners = eee.getValue();
+                                List<AdviceListener> newResult = new ArrayList<AdviceListener>();
+                                for (AdviceListener listener : listeners) {
+                                    if (listener instanceof ProcessAware) {
+                                        ProcessAware processAware = (ProcessAware) listener;
+                                        Process process = processAware.getProcess();
+                                        if (process == null) {
+                                            continue;
+                                        }
+                                        ExecStatus status = process.status();
+                                        if (!status.equals(ExecStatus.TERMINATED)) {
+                                            newResult.add(listener);
                                         }
                                     }
-
-                                    if (newResult.size() != listeners.size()) {
-                                        adviceListenerManager.map.put(eee.getKey(), newResult);
-                                    }
-
                                 }
+
+                                if (newResult.size() != listeners.size()) {
+                                    adviceListenerManager.map.put(eee.getKey(), newResult);
+                                }
+
                             }
                         }
                     }
@@ -113,20 +111,16 @@ public class AdviceListenerManager {
             return className + owner + methodName + methodDesc;
         }
 
+        private String keyForLine(String className, String methodName, String methodDesc, int lineNumber) {
+            return className + methodName + methodDesc + "#" + lineNumber;
+        }
+
         public void registerAdviceListener(String className, String methodName, String methodDesc,
                 AdviceListener listener) {
             synchronized (this) {
                 className = className.replace('/', '.');
                 String key = key(className, methodName, methodDesc);
-
-                List<AdviceListener> listeners = map.get(key);
-                if (listeners == null) {
-                    listeners = new ArrayList<AdviceListener>();
-                    map.put(key, listeners);
-                }
-                if (!listeners.contains(listener)) {
-                    listeners.add(listener);
-                }
+                registerListener(key, listener);
             }
         }
 
@@ -141,18 +135,24 @@ public class AdviceListenerManager {
 
         public void registerTraceAdviceListener(String className, String owner, String methodName, String methodDesc,
                 AdviceListener listener) {
+            synchronized (this) {
+                className = className.replace('/', '.');
+                String key = keyForTrace(className, owner, methodName, methodDesc);
+                registerListener(key, listener);
+            }
+        }
 
-            className = className.replace('/', '.');
-            String key = keyForTrace(className, owner, methodName, methodDesc);
-
+        private void registerListener(String key, AdviceListener listener) {
             List<AdviceListener> listeners = map.get(key);
-            if (listeners == null) {
-                listeners = new ArrayList<AdviceListener>();
-                map.put(key, listeners);
+            if (listeners != null && listeners.contains(listener)) {
+                return;
             }
-            if (!listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+
+            List<AdviceListener> newListeners = listeners == null
+                    ? new ArrayList<AdviceListener>()
+                    : new ArrayList<AdviceListener>(listeners);
+            newListeners.add(listener);
+            map.put(key, newListeners);
         }
 
         public List<AdviceListener> queryTraceAdviceListeners(String className, String owner, String methodName,
@@ -164,12 +164,34 @@ public class AdviceListenerManager {
 
             return listeners;
         }
+
+        public void registerLineAdviceListener(String className, String methodName, String methodDesc, int lineNumber,
+                AdviceListener listener) {
+            synchronized (this) {
+                className = className.replace('/', '.');
+                String key = keyForLine(className, methodName, methodDesc, lineNumber);
+                registerListener(key, listener);
+            }
+        }
+
+        public List<AdviceListener> queryLineAdviceListeners(String className, String methodName, String methodDesc,
+                int lineNumber) {
+            className = className.replace('/', '.');
+            String key = keyForLine(className, methodName, methodDesc, lineNumber);
+
+            List<AdviceListener> listeners = map.get(key);
+
+            return listeners;
+        }
     }
 
     public static void registerAdviceListener(ClassLoader classLoader, String className, String methodName,
             String methodDesc, AdviceListener listener) {
         classLoader = wrap(classLoader);
         className = className.replace('/', '.');
+
+        logger.info("registerAdviceListener: classLoader={}, className={}, methodName={}, methodDesc={}, listener={}",
+                classLoader, className, methodName, methodDesc, listener.id());
 
         ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
 
@@ -219,6 +241,36 @@ public class AdviceListenerManager {
 
         if (manager != null) {
             return manager.queryTraceAdviceListeners(className, owner, methodName, methodDesc);
+        }
+
+        return null;
+    }
+
+    public static void registerLineAdviceListener(ClassLoader classLoader, String className, String methodName,
+            String methodDesc, int lineNumber, AdviceListener listener) {
+        classLoader = wrap(classLoader);
+        className = className.replace('/', '.');
+
+        logger.info("registerLineAdviceListener: classLoader={}, className={}, methodName={}, methodDesc={}, lineNumber={}, listener={}",
+                classLoader, className, methodName, methodDesc, lineNumber, listener.id());
+
+        ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
+
+        if (manager == null) {
+            manager = new ClassLoaderAdviceListenerManager();
+            adviceListenerMap.put(classLoader, manager);
+        }
+        manager.registerLineAdviceListener(className, methodName, methodDesc, lineNumber, listener);
+    }
+
+    public static List<AdviceListener> queryLineAdviceListeners(ClassLoader classLoader, String className,
+            String methodName, String methodDesc, int lineNumber) {
+        classLoader = wrap(classLoader);
+        className = className.replace('/', '.');
+        ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
+
+        if (manager != null) {
+            return manager.queryLineAdviceListeners(className, methodName, methodDesc, lineNumber);
         }
 
         return null;

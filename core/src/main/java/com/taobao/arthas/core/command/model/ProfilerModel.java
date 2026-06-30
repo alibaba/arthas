@@ -10,6 +10,10 @@ public class ProfilerModel extends ResultModel {
 
     private String action;
     private String actionArg;
+    /**
+     * profiler stop/dump 输出格式（对应命令行 --format/-o）
+     */
+    private String format;
     private String executeResult;
     private Collection<String> supportedActions;
     private String outputFile;
@@ -41,6 +45,14 @@ public class ProfilerModel extends ResultModel {
 
     public void setActionArg(String actionArg) {
         this.actionArg = actionArg;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public Collection<String> getSupportedActions() {

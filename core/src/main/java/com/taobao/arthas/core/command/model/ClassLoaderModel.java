@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.model;
 
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderStat;
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderUrlStat;
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.UrlClassStat;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,14 @@ public class ClassLoaderModel extends ResultModel {
 
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
+
+    //urls stat
+    private Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats;
+
+    // url->classes stat
+    private ClassLoaderVO classLoader;
+    private List<UrlClassStat> urlClassStats;
+    private Boolean urlClassStatsDetail;
 
     public ClassLoaderModel() {
     }
@@ -112,4 +122,40 @@ public class ClassLoaderModel extends ResultModel {
         this.matchedClassLoaders = matchedClassLoaders;
         return this;
     }
+
+    public Map<ClassLoaderVO, ClassLoaderUrlStat> getUrlStats() {
+        return urlStats;
+    }
+
+    public void setUrlStats(Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats) {
+        this.urlStats = urlStats;
+    }
+
+    public ClassLoaderVO getClassLoader() {
+        return classLoader;
+    }
+
+    public ClassLoaderModel setClassLoader(ClassLoaderVO classLoader) {
+        this.classLoader = classLoader;
+        return this;
+    }
+
+    public List<UrlClassStat> getUrlClassStats() {
+        return urlClassStats;
+    }
+
+    public ClassLoaderModel setUrlClassStats(List<UrlClassStat> urlClassStats) {
+        this.urlClassStats = urlClassStats;
+        return this;
+    }
+
+    public Boolean getUrlClassStatsDetail() {
+        return urlClassStatsDetail;
+    }
+
+    public ClassLoaderModel setUrlClassStatsDetail(Boolean urlClassStatsDetail) {
+        this.urlClassStatsDetail = urlClassStatsDetail;
+        return this;
+    }
+
 }

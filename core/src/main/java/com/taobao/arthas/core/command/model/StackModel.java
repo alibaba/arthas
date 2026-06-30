@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * StackCommand result model
@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class StackModel extends ResultModel {
 
-    private Date ts;
+    private LocalDateTime ts;
     private double cost;
     private String traceId;
     private String rpcId;
@@ -25,11 +25,11 @@ public class StackModel extends ResultModel {
         return "stack";
     }
 
-    public Date getTs() {
+    public LocalDateTime getTs() {
         return ts;
     }
 
-    public void setTs(Date ts) {
+    public void setTs(LocalDateTime ts) {
         this.ts = ts;
     }
 

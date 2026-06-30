@@ -17,6 +17,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -124,7 +125,7 @@ public class RetransformCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "limit")
-    @Description("The limit of dump classes size, default value is 5")
+    @Description("The limit of dump classes size, default value is 50")
     @DefaultValue("50")
     public void setLimit(int limit) {
         this.limit = limit;
@@ -293,6 +294,13 @@ public class RetransformCommand extends AnnotatedCommand {
 
             inst.retransformClasses(classList.toArray(new Class[0]));
 
+            
+            List<Integer> ids  = new ArrayList<Integer>();
+            for (RetransformEntry retransformEntry : retransformEntryList) {
+                ids.add(retransformEntry.getId());
+            }
+            retransformModel.setIds(ids);
+
             process.appendResult(retransformModel);
             process.end();
         } catch (Throwable e) {
@@ -411,7 +419,7 @@ public class RetransformCommand extends AnnotatedCommand {
         Collections.sort(tmp, new Comparator<RetransformEntry>() {
             @Override
             public int compare(RetransformEntry entry1, RetransformEntry entry2) {
-                return entry1.getId() - entry2.getId();
+                return Integer.compare(entry1.getId(), entry2.getId());
             }
         });
         retransformEntries = tmp;

@@ -9,6 +9,7 @@
     </parent>
     <artifactId>arthas-packaging</artifactId>
     <name>arthas-packaging</name>
+    <url>https://github.com/alibaba/arthas</url>
 
     <dependencies>
         <dependency>

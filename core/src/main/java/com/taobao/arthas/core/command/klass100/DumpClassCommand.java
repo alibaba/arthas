@@ -14,11 +14,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
-import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.CommandUtils;
-import com.taobao.arthas.core.util.InstrumentationUtils;
-import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.*;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
@@ -92,7 +88,7 @@ public class DumpClassCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "l", longName = "limit")
-    @Description("The limit of dump classes size, default value is 5")
+    @Description("The limit of dump classes size, default value is 50")
     @DefaultValue("50")
     public void setLimit(int limit) {
         this.limit = limit;
@@ -100,18 +96,11 @@ public class DumpClassCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        RowAffect effect = new RowAffect();
         try {
-            if (directory != null) {
-                File dir = new File(directory);
-                if (dir.isFile()) {
-                    process.end(-1, directory + " :is not a directory, please check it");
-                    return;
-                }
+            if (directory != null && !FileUtils.isDirectoryOrNotExist(directory)) {
+                process.end(-1, directory + " :is not a directory, please check it");
+                return;
             }
-
-            ExitStatus status = null;
-
             Instrumentation inst = process.session().getInstrumentation();
             if (code == null && classLoaderClass != null) {
                 List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
@@ -130,8 +119,9 @@ public class DumpClassCommand extends AnnotatedCommand {
                     return;
                 }
             }
-
             Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
+            final RowAffect effect = new RowAffect();
+            final ExitStatus status;
             if (matchedClasses == null || matchedClasses.isEmpty()) {
                 status = processNoMatch(process);
             } else if (matchedClasses.size() > limit) {

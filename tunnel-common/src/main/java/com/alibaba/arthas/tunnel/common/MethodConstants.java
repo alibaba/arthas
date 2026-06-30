@@ -52,7 +52,7 @@ public class MethodConstants {
     
     /**
      * <pre>
-     * tunnel server向 tunnel client请求 http中转，比如访问 http://localhost:3658/arthas-output/xxx.svg
+     * tunnel server向 tunnel client请求 http中转，比如访问 http://localhost:3658/arthas-output/xxx.html
      * </pre>
      */
     public static final String HTTP_PROXY = "httpProxy";

@@ -24,10 +24,10 @@ public class TimeTunnelModel extends ResultModel {
     //重放执行的次数
     private Integer replayNo;
 
-    private Object watchValue;
+    private ObjectVO watchValue;
 
     //search: tt -s {} -w {}
-    private Map<Integer, Object> watchResults;
+    private Map<Integer, ObjectVO> watchResults;
 
     private Integer expand;
 
@@ -75,20 +75,20 @@ public class TimeTunnelModel extends ResultModel {
         return this;
     }
 
-    public Object getWatchValue() {
+    public ObjectVO getWatchValue() {
         return watchValue;
     }
 
-    public TimeTunnelModel setWatchValue(Object watchValue) {
+    public TimeTunnelModel setWatchValue(ObjectVO watchValue) {
         this.watchValue = watchValue;
         return this;
     }
 
-    public Map<Integer, Object> getWatchResults() {
+    public Map<Integer, ObjectVO> getWatchResults() {
         return watchResults;
     }
 
-    public TimeTunnelModel setWatchResults(Map<Integer, Object> watchResults) {
+    public TimeTunnelModel setWatchResults(Map<Integer, ObjectVO> watchResults) {
         this.watchResults = watchResults;
         return this;
     }

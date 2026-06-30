@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.util;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.taobao.arthas.common.IOUtils;
 
 import java.io.BufferedReader;
@@ -83,7 +83,7 @@ public class NetUtils {
             int responseCode = con.getResponseCode();
 
             br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
@@ -138,7 +138,7 @@ public class NetUtils {
             pw.flush();
 
             br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String line = null;
             boolean start = false;
             while ((line = br.readLine()) != null) {

@@ -3,8 +3,6 @@ package com.taobao.arthas.core.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.taobao.arthas.core.util.ThreadLocalWatch.LongStack;
-
 /**
  * 
  * @author hengyunabc 2019-11-20
@@ -14,76 +12,76 @@ public class LongStackTest {
 
     @Test
     public void test() {
-        LongStack stack = new LongStack(100);
+        long[] stack = new long[101];
 
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
+        ThreadLocalWatch.push(stack, 1);
+        ThreadLocalWatch.push(stack, 2);
+        ThreadLocalWatch.push(stack, 3);
 
-        Assert.assertEquals(3, stack.pop());
-        Assert.assertEquals(2, stack.pop());
-        Assert.assertEquals(1, stack.pop());
+        Assert.assertEquals(3, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(2, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(1, ThreadLocalWatch.pop(stack));
     }
 
     @Test
     public void test2() {
-        LongStack stack = new LongStack(100);
+        long[] stack = new long[101];
 
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
+        ThreadLocalWatch.push(stack, 1);
+        ThreadLocalWatch.push(stack, 2);
+        ThreadLocalWatch.push(stack, 3);
 
-        Assert.assertEquals(3, stack.pop());
-        Assert.assertEquals(2, stack.pop());
-        Assert.assertEquals(1, stack.pop());
-        Assert.assertEquals(0, stack.pop());
+        Assert.assertEquals(3, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(2, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(1, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(0, ThreadLocalWatch.pop(stack));
     }
 
     @Test
     public void test3() {
-        LongStack stack = new LongStack(2);
+        long[] stack = new long[3];
 
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
+        ThreadLocalWatch.push(stack, 1);
+        ThreadLocalWatch.push(stack, 2);
+        ThreadLocalWatch.push(stack, 3);
 
-        Assert.assertEquals(3, stack.pop());
-        Assert.assertEquals(2, stack.pop());
-        Assert.assertEquals(3, stack.pop());
-        Assert.assertEquals(2, stack.pop());
+        Assert.assertEquals(3, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(2, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(3, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(2, ThreadLocalWatch.pop(stack));
     }
 
     @Test
     public void test4() {
-        LongStack stack = new LongStack(2);
+        long[] stack = new long[3];
 
-        stack.push(1);
-        stack.push(2);
+        ThreadLocalWatch.push(stack, 1);
+        ThreadLocalWatch.push(stack, 2);
 
-        Assert.assertEquals(2, stack.pop());
-        Assert.assertEquals(1, stack.pop());
-        Assert.assertEquals(2, stack.pop());
-        Assert.assertEquals(1, stack.pop());
+        Assert.assertEquals(2, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(1, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(2, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(1, ThreadLocalWatch.pop(stack));
     }
     
     @Test
     public void test5() {
-        LongStack stack = new LongStack(10);
+        long[] stack = new long[11];
 
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
-        stack.pop();
-        stack.pop();
-        stack.push(4);
-        stack.push(5);
+        ThreadLocalWatch.push(stack, 1);
+        ThreadLocalWatch.push(stack, 2);
+        ThreadLocalWatch.push(stack, 3);
+        ThreadLocalWatch.pop(stack);
+        ThreadLocalWatch.pop(stack);
+        ThreadLocalWatch.push(stack, 4);
+        ThreadLocalWatch.push(stack, 5);
         
-        stack.push(6);
-        stack.pop();
+        ThreadLocalWatch.push(stack, 6);
+        ThreadLocalWatch.pop(stack);
 
-        Assert.assertEquals(5, stack.pop());
-        Assert.assertEquals(4, stack.pop());
-        Assert.assertEquals(1, stack.pop());
-        Assert.assertEquals(0, stack.pop());
+        Assert.assertEquals(5, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(4, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(1, ThreadLocalWatch.pop(stack));
+        Assert.assertEquals(0, ThreadLocalWatch.pop(stack));
     }
 }

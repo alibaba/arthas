@@ -1,5 +1,7 @@
 package arthas;
 
+import java.util.Map;
+
 /**
  * @author ZhangZiCheng 2021-02-12
  * @author hengyunabc 2021-04-26
@@ -65,9 +67,30 @@ public class VmTool implements VmToolMXBean {
      */
     private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
+    /**
+     * 分析堆内存占用最大的对象与类。
+     */
+    private static synchronized native String heapAnalyze0(int classNum, int objectNum);
+
+    /**
+     * 分析指定类实例的引用回溯链。
+     */
+    private static synchronized native String referenceAnalyze0(Class<?> klass, int objectNum, int backtraceNum);
+
     @Override
     public void forceGc() {
         forceGc0();
+    }
+
+    @Override
+    public void interruptSpecialThread(int threadId) {
+        Map<Thread, StackTraceElement[]> allThread = Thread.getAllStackTraces();
+        for (Map.Entry<Thread, StackTraceElement[]> entry : allThread.entrySet()) {
+            if (entry.getKey().getId() == threadId) {
+                entry.getKey().interrupt();
+                return;
+            }
+        }
     }
 
     @Override
@@ -103,4 +126,29 @@ public class VmTool implements VmToolMXBean {
         return getAllLoadedClasses0(Class.class);
     }
 
+    @Override
+    public int mallocTrim() {
+        return mallocTrim0();
+    }
+
+    private static synchronized native int mallocTrim0();
+
+    @Override
+    public boolean mallocStats() {
+        return mallocStats0();
+    }
+    private static synchronized native boolean mallocStats0();
+
+    @Override
+    public String heapAnalyze(int classNum, int objectNum) {
+        return heapAnalyze0(classNum, objectNum);
+    }
+
+    @Override
+    public String referenceAnalyze(Class<?> klass, int objectNum, int backtraceNum) {
+        if (backtraceNum < -1) {
+            throw new IllegalArgumentException("backtraceNum must be -1 or greater");
+        }
+        return referenceAnalyze0(klass, objectNum, backtraceNum);
+    }
 }

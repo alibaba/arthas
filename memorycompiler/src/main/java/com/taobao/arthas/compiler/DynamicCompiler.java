@@ -33,6 +33,7 @@ public class DynamicCompiler {
         standardFileManager = javaCompiler.getStandardFileManager(null, null, null);
 
         options.add("-Xlint:unchecked");
+        options.add("-g");
         dynamicClassLoader = new DynamicClassLoader(classLoader);
     }
 

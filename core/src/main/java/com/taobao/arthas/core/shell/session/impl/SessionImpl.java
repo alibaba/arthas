@@ -7,9 +7,9 @@ import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 
 import java.lang.instrument.Instrumentation;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,7 +20,7 @@ public class SessionImpl implements Session {
     private final static int LOCK_TX_EMPTY = -1;
     private final AtomicInteger lock = new AtomicInteger(LOCK_TX_EMPTY);
 
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private Map<String, Object> data = new ConcurrentHashMap<String, Object>();
 
     public SessionImpl() {
         long now = System.currentTimeMillis();
@@ -94,7 +94,7 @@ public class SessionImpl implements Session {
 
     @Override
     public void setLastAccessTime(long time) {
-        data.put(LAST_ACCESS_TIME, time);
+        this.put(LAST_ACCESS_TIME, time);
     }
 
     @Override
@@ -109,7 +109,11 @@ public class SessionImpl implements Session {
 
     @Override
     public void setResultDistributor(SharingResultDistributor resultDistributor) {
-        data.put(RESULT_DISTRIBUTOR, resultDistributor);
+        if (resultDistributor == null) {
+            data.remove(RESULT_DISTRIBUTOR);
+        } else {
+            data.put(RESULT_DISTRIBUTOR, resultDistributor);
+        }
     }
 
     @Override
@@ -119,7 +123,11 @@ public class SessionImpl implements Session {
 
     @Override
     public void setForegroundJob(Job job) {
-        data.put(FOREGROUND_JOB, job);
+        if (job == null) {
+            data.remove(FOREGROUND_JOB);
+        } else {
+            data.put(FOREGROUND_JOB, job);
+        }
     }
 
     @Override
@@ -130,6 +138,20 @@ public class SessionImpl implements Session {
     @Override
     public boolean isTty() {
         return get(TTY) != null;
+    }
+
+    @Override
+    public String getUserId() {
+        return (String) data.get(USER_ID);
+    }
+
+    @Override
+    public void setUserId(String userId) {
+        if (userId == null) {
+            data.remove(USER_ID);
+        } else {
+            data.put(USER_ID, userId);
+        }
     }
 
 }

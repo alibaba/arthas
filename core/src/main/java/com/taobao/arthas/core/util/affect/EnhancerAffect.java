@@ -34,6 +34,8 @@ public final class EnhancerAffect extends Affect {
 
     private final List<String> methods = new ArrayList<String>();
 
+    private String overLimitMsg;
+
     public EnhancerAffect() {
     }
 
@@ -121,6 +123,14 @@ public final class EnhancerAffect extends Affect {
         return methods;
     }
 
+    public String getOverLimitMsg() {
+        return overLimitMsg;
+    }
+
+    public void setOverLimitMsg(String overLimitMsg) {
+        this.overLimitMsg = overLimitMsg;
+    }
+
     @Override
     public String toString() {
         //TODO removing EnhancerAffect.toString(), replace with ViewRenderUtil.renderEnhancerAffect()
@@ -144,7 +154,7 @@ public final class EnhancerAffect extends Affect {
                 cost(),
                 listenerId));
         if (this.throwable != null) {
-            infoSB.append("\nEnhance error! exception: " + this.throwable);
+            infoSB.append("\nEnhance error! exception: ").append(this.throwable);
         }
         return infoSB.toString();
     }

@@ -1,0 +1,188 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package io.arthas.api;
+
+service ObjectService {
+  rpc query(ObjectQuery) returns (ObjectQueryResult);
+}
+
+message ObjectRequest {
+  int32 jobId = 1;
+  int64 resultId = 2;
+  string type = 3;
+  string express = 4;
+  int32 expand = 5;
+}
+
+message BasicValue {
+  oneof value {
+    int32 int = 1;
+    int64 long = 2;
+    float float = 3;
+    double double = 4;
+    bool boolean = 5;
+    string string = 6;
+  }
+}
+
+message ArrayElement {
+  oneof element {
+    BasicValue basicValue = 1;
+    JavaObject objectValue = 2;
+    ArrayValue arrayValue = 3;
+    NullValue nullValue = 4;
+    UnexpandedObject unexpandedObject = 5;
+  }
+}
+
+message ArrayValue {
+  string className = 1;
+  repeated ArrayElement elements = 2;
+}
+
+message NullValue {
+  string className = 1;
+}
+
+message UnexpandedObject {
+  string className = 1;
+}
+
+message CollectionValue {
+  string className = 1;
+  repeated JavaObject elements = 2;
+}
+
+message MapEntry {
+  JavaObject key = 1;
+  JavaObject value = 2;
+}
+
+message MapValue {
+  string className = 1;
+  repeated MapEntry entries = 2;
+}
+
+message JavaField {
+  string name = 1;
+
+  oneof value {
+    JavaObject objectValue = 2;
+    BasicValue basicValue = 3;
+    ArrayValue arrayValue = 4;
+    NullValue nullValue = 5;
+    CollectionValue collection = 6;
+    MapValue map = 7;
+    UnexpandedObject unexpandedObject = 8;
+  }
+}
+
+
+message JavaFields {
+  repeated JavaField fields = 1;
+}
+
+message JavaObject {
+  string className = 1;
+
+  oneof value {
+    JavaObject objectValue = 2;
+    BasicValue basicValue = 3;
+    ArrayValue arrayValue = 4;
+    NullValue nullValue = 5;
+    CollectionValue collection = 6;
+    MapValue map = 7;
+    UnexpandedObject unexpandedObject = 8;
+    JavaFields fields = 9;
+  }
+}
+
+
+message ObjectQuery {
+  string className = 1;
+  string express = 2;
+  string ClassLoaderHash = 3;
+  string classLoaderClass = 4;
+  int32 limit = 5;
+  int32 depth = 6;
+  int32 jobId = 7;
+  int64 resultId = 8;
+  string resultExpress = 9;
+}
+
+message ObjectQueryResult {
+  bool success = 1;
+  string message = 2;
+  repeated JavaObject objects = 3;
+}
+
+service SystemProperty {
+  rpc get(google.protobuf.Empty) returns (ResponseBody);
+  rpc getByKey(StringKey) returns (ResponseBody);
+  rpc update(StringStringMapValue) returns (ResponseBody);
+}
+
+service Pwd{
+  rpc pwd(google.protobuf.Empty) returns (ResponseBody);
+}
+
+service Watch{
+  rpc watch(WatchRequest) returns (stream ResponseBody);
+}
+
+message StringKey {
+  string key = 1;
+}
+
+message StringValue {
+  string value = 1;
+}
+
+message StringStringMapValue {
+  map<string, string> stringStringMap = 1;
+}
+
+message WatchRequest {
+  string classPattern = 1;
+  string methodPattern = 2;
+  string express = 3;
+  string conditionExpress = 4;
+  bool isBefore = 5;
+  bool isFinish = 6;
+  bool isException = 7;
+  bool isSuccess = 8;
+  int32 expand = 9;
+  int32 sizeLimit = 10;
+  bool isRegEx = 11;
+  int32 numberOfLimit = 12;
+  string excludeClassPattern = 13;
+  int64 listenerId = 14;
+  bool verbose = 15;
+  int32 maxNumOfMatchedClass = 16;
+  int64 jobId = 17;
+}
+
+message WatchResponse {
+  string ts = 1;
+  double cost = 2;
+  JavaObject value = 3;
+  int32 sizeLimit = 4;
+  string className = 5;
+  string methodName = 6;
+  string accessPoint = 7;
+}
+
+message ResponseBody {
+  int32 jobId = 1;
+  string type = 2;
+  int64 resultId = 3;
+
+  oneof data {
+    StringStringMapValue stringStringMapValue = 4;
+    string stringValue = 5;
+    WatchResponse watchResponse = 6;
+    JavaObject javaObject = 7;
+  }
+}

@@ -25,7 +25,6 @@ public class AdviceWeaver {
     /**
      * 注册监听器
      *
-     * @param adviceId 通知ID
      * @param listener 通知监听器
      */
     public static void reg(AdviceListener listener) {
@@ -40,7 +39,7 @@ public class AdviceWeaver {
     /**
      * 注销监听器
      *
-     * @param adviceId 通知ID
+     * @param listener 通知监听器
      */
     public static void unReg(AdviceListener listener) {
         if (null != listener) {

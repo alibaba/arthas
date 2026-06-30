@@ -96,14 +96,14 @@ public class ProxyClient {
 
         SimpleHttpResponse httpResponse = new SimpleHttpResponse();
         try {
-            httpResponse.setContent(new String("error").getBytes("utf-8"));
+            httpResponse.setContent("error".getBytes("utf-8"));
         } catch (UnsupportedEncodingException e) {
             // ignore
         }
         return httpResponse;
     }
 
-    class HttpProxyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+    static class HttpProxyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 
         private Promise<SimpleHttpResponse> promise;
 
@@ -134,17 +134,25 @@ public class ProxyClient {
             if (msg instanceof HttpContent) {
                 HttpContent content = (HttpContent) msg;
 
-                ByteBuf byteBuf = content.content();
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.readBytes(bytes);
+                ByteBuf byteBuf = null;
+                try{
+                    byteBuf = content.content();
+                    byte[] bytes = new byte[byteBuf.readableBytes()];
+                    byteBuf.readBytes(bytes);
 
-                simpleHttpResponse.setContent(bytes);
+                    simpleHttpResponse.setContent(bytes);
 
-                promise.setSuccess(simpleHttpResponse);
+                    promise.setSuccess(simpleHttpResponse);
 
-                if (content instanceof LastHttpContent) {
-                    ctx.close();
+                    if (content instanceof LastHttpContent) {
+                        ctx.close();
+                    }
+                }finally {
+                    if (byteBuf != null) {
+                        byteBuf.release();
+                    }
                 }
+
             }
         }
 

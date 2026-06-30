@@ -4,18 +4,15 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -94,7 +91,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
         if (timer == null) {
             timer = new Timer("Timer-for-arthas-monitor-" + process.session().getSessionId(), true);
             timer.scheduleAtFixedRate(new MonitorTimer(monitorData, process, command.getNumberOfLimit()),
-                    0, command.getCycle() * 1000);
+                    0, command.getCycle() * 1000L);
         }
     }
 
@@ -122,7 +119,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
                                Object[] args, Object returnObject) throws Throwable {
-        finishing(clazz, method, false, Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject));
+        finishing(clazz, method, false, Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject));
     }
 
     @Override
@@ -164,6 +161,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
                 MonitorData oData = value.get();
                 MonitorData nData = new MonitorData();
                 nData.setCost(oData.getCost() + cost);
+                nData.setTimestamp(LocalDateTime.now());
                 if (isThrowing) {
                     nData.setFailed(oData.getFailed() + 1);
                     nData.setSuccess(oData.getSuccess());
@@ -256,8 +254,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
 
         @Override
         public boolean equals(Object obj) {
-            if (null == obj
-                    || !(obj instanceof Key)) {
+            if (!(obj instanceof Key)) {
                 return false;
             }
             Key okey = (Key) obj;

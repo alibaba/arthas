@@ -83,14 +83,16 @@ public class DirectoryBrowser {
     private static String linePart1Str = "<a href=\"%s\" title=\"%s\">";
     private static String linePart2Str = "%-60s";
 
-    static String renderDir(File dir) {
+    static String renderDir(File dir, boolean printParentLink) {
         File[] listFiles = dir.listFiles();
 
         StringBuilder sb = new StringBuilder(8192);
         String dirName = dir.getName() + "/";
         sb.append(String.format(pageHeader, dirName, dirName));
 
-        sb.append("<a href=\"../\" title=\"../\">../</a>\n");
+        if (printParentLink) {
+            sb.append("<a href=\"../\" title=\"../\">../</a>\n");
+        }
 
         if (listFiles != null) {
             Arrays.sort(listFiles);
@@ -147,7 +149,7 @@ public class DirectoryBrowser {
      */
     public static DefaultFullHttpResponse directView(File dir, String path, FullHttpRequest request, ChannelHandlerContext ctx) throws IOException {
         if (path.startsWith("/")) {
-            path = path.substring(1, path.length());
+            path = path.substring(1);
         }
 
         // path maybe: arthas-output/20201225-203454.svg 
@@ -161,8 +163,7 @@ public class DirectoryBrowser {
                 if (!path.endsWith("/")) {
                     fullResp.setStatus(HttpResponseStatus.FOUND).headers().set(HttpHeaderNames.LOCATION, "/" + path + "/");
                 }
-                
-                String renderResult = renderDir(file);
+                String renderResult = renderDir(file, !isSameFile(dir, file));
                 fullResp.content().writeBytes(renderResult.getBytes("utf-8"));
                 fullResp.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
                 ctx.write(fullResp);
@@ -175,13 +176,7 @@ public class DirectoryBrowser {
                     return null;
                 }
 
-                RandomAccessFile raf;
-                try {
-                    raf = new RandomAccessFile(file, "r");
-                } catch (Exception ignore) {
-                    return null;
-                }
-                long fileLength = raf.length();
+                long fileLength = file.length();
                 if (fileLength < MIN_NETTY_DIRECT_SEND_SIZE){
                     FileInputStream fileInputStream = new FileInputStream(file);
                     try {
@@ -191,9 +186,15 @@ public class DirectoryBrowser {
                     } finally {
                         IOUtils.close(fileInputStream);
                     }
-                    ctx.write(fullResp);
-                    ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-                    future.addListener(ChannelFutureListener.CLOSE);
+                    ChannelFuture channelFuture = ctx.writeAndFlush(fullResp);
+                    channelFuture.addListener((ChannelFutureListener) future -> {
+                        if (future.isSuccess()) {
+                            ChannelFuture lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                            lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+                        } else {
+                            future.channel().close();
+                        }
+                    });
                     return fullResp;
                 }
                 logger.info("file {} size bigger than {}, send by future.",file.getName(), MIN_NETTY_DIRECT_SEND_SIZE);
@@ -210,6 +211,7 @@ public class DirectoryBrowser {
                 // Write the content.
                 ChannelFuture sendFileFuture;
                 ChannelFuture lastContentFuture;
+                RandomAccessFile raf = new RandomAccessFile(file, "r"); // will closed by netty
                 if (ctx.pipeline().get(SslHandler.class) == null) {
                     sendFileFuture =
                             ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
@@ -280,4 +282,11 @@ public class DirectoryBrowser {
         return false;
     }
 
+    public static boolean isSameFile(File a, File b) {
+        try {
+            return a.getCanonicalPath().equals(b.getCanonicalPath());
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

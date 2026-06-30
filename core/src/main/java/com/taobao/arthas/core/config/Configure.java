@@ -70,9 +70,24 @@ public class Configure {
     private String disabledCommands;
 
     /**
+     * 外部 command jar 位置，支持 jar 路径或目录路径，多个值用英文 , 分隔
+     */
+    private String commandLocations;
+
+    /**
      * 本地连接不需要鉴权，即使配置了password。arthas.properties 里默认为true
      */
     private Boolean localConnectionNonAuth;
+
+    /**
+     * MCP (Model Context Protocol) endpoint path
+     */
+    private String mcpEndpoint;
+
+    /**
+     * MCP Server Protocol: STREAMABLE or STATELESS
+     */
+    private String mcpProtocol;
 
     public String getIp() {
         return ip;
@@ -202,12 +217,36 @@ public class Configure {
         this.disabledCommands = disabledCommands;
     }
 
+    public String getCommandLocations() {
+        return commandLocations;
+    }
+
+    public void setCommandLocations(String commandLocations) {
+        this.commandLocations = commandLocations;
+    }
+
     public boolean isLocalConnectionNonAuth() {
         return localConnectionNonAuth != null && localConnectionNonAuth;
     }
 
     public void setLocalConnectionNonAuth(boolean localConnectionNonAuth) {
         this.localConnectionNonAuth = localConnectionNonAuth;
+    }
+
+    public String getMcpEndpoint() {
+        return mcpEndpoint;
+    }
+
+    public void setMcpEndpoint(String mcpEndpoint) {
+        this.mcpEndpoint = mcpEndpoint;
+    }
+
+    public String getMcpProtocol() {
+        return mcpProtocol;
+    }
+
+    public void setMcpProtocol(String mcpProtocol) {
+        this.mcpProtocol = mcpProtocol;
     }
 
     /**

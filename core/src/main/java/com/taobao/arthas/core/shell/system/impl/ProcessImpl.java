@@ -52,7 +52,7 @@ public class ProcessImpl implements Process {
     private Handler<Void> foregroundHandler;
     private Handler<Integer> terminatedHandler;
     private boolean foreground;
-    private ExecStatus processStatus;
+    private volatile ExecStatus processStatus;
     private boolean processForeground;
     private Handler<String> stdinHandler;
     private Handler<Void> resizeHandler;
@@ -140,7 +140,7 @@ public class ProcessImpl implements Process {
 
     @Override
     public boolean interrupt(final Handler<Void> completionHandler) {
-        if (processStatus == ExecStatus.RUNNING || processStatus == ExecStatus.STOPPED) {
+        if (processStatus == ExecStatus.RUNNING || processStatus == ExecStatus.STOPPED || processStatus == ExecStatus.TERMINATED) {
             final Handler<Void> handler = interruptHandler;
             try {
                 if (handler != null) {
@@ -470,11 +470,9 @@ public class ProcessImpl implements Process {
 
         @Override
         public CommandProcess write(String data) {
-            synchronized (ProcessImpl.this) {
-                if (processStatus != ExecStatus.RUNNING) {
-                    throw new IllegalStateException(
-                            "Cannot write to standard output when " + status().name().toLowerCase());
-                }
+            if (processStatus != ExecStatus.RUNNING) {
+                throw new IllegalStateException(
+                        "Cannot write to standard output when " + status().name().toLowerCase());
             }
             processOutput.write(data);
             return this;

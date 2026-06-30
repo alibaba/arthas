@@ -29,7 +29,19 @@ public class TransformerManager {
      */
     private List<ClassFileTransformer> reTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
 
+    /**
+     * 懒加载模式的 Transformer，用于在类首次加载时增强
+     * 这些 transformer 需要用 addTransformer(transformer, false) 注册才能在类首次加载时工作
+     */
+    private List<ClassFileTransformer> lazyTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
+
     private ClassFileTransformer classFileTransformer;
+    
+    /**
+     * 用于处理类首次加载的 transformer（非 retransform-capable）
+     * 只有这种 transformer 才会在类首次定义时被调用
+     */
+    private ClassFileTransformer lazyClassFileTransformer;
 
     public TransformerManager(Instrumentation instrumentation) {
         this.instrumentation = instrumentation;
@@ -68,6 +80,33 @@ public class TransformerManager {
 
         };
         instrumentation.addTransformer(classFileTransformer, true);
+        
+        // 懒加载 transformer，用于在类首次加载时增强
+        // 注意：必须用 addTransformer(transformer, false) 才能在类首次定义时被调用
+        lazyClassFileTransformer = new ClassFileTransformer() {
+
+            @Override
+            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                    ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                // 只处理类首次加载的情况（classBeingRedefined == null）
+                if (classBeingRedefined != null) {
+                    return null;
+                }
+                
+                for (ClassFileTransformer transformer : lazyTransformers) {
+                    byte[] transformResult = transformer.transform(loader, className, classBeingRedefined,
+                            protectionDomain, classfileBuffer);
+                    if (transformResult != null) {
+                        classfileBuffer = transformResult;
+                    }
+                }
+
+                return classfileBuffer;
+            }
+
+        };
+        // 使用 false 参数，这样才会在类首次定义时被调用
+        instrumentation.addTransformer(lazyClassFileTransformer, false);
     }
 
     public void addTransformer(ClassFileTransformer transformer, boolean isTracing) {
@@ -76,6 +115,13 @@ public class TransformerManager {
         } else {
             watchTransformers.add(transformer);
         }
+    }
+    
+    /**
+     * 添加懒加载 transformer，用于在类首次加载时增强
+     */
+    public void addLazyTransformer(ClassFileTransformer transformer) {
+        lazyTransformers.add(transformer);
     }
 
     public void addRetransformer(ClassFileTransformer transformer) {
@@ -86,13 +132,16 @@ public class TransformerManager {
         reTransformers.remove(transformer);
         watchTransformers.remove(transformer);
         traceTransformers.remove(transformer);
+        lazyTransformers.remove(transformer);
     }
 
     public void destroy() {
         reTransformers.clear();
         watchTransformers.clear();
         traceTransformers.clear();
+        lazyTransformers.clear();
         instrumentation.removeTransformer(classFileTransformer);
+        instrumentation.removeTransformer(lazyClassFileTransformer);
     }
 
 }

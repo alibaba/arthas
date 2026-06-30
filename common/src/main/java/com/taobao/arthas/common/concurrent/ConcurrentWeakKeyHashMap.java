@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
@@ -619,10 +620,7 @@ public final class ConcurrentWeakKeyHashMap<K, V> extends AbstractMap<K, V> impl
             if (count != 0) {
                 lock();
                 try {
-                    HashEntry<K, V>[] tab = table;
-                    for (int i = 0; i < tab.length; i ++) {
-                        tab[i] = null;
-                    }
+                    Arrays.fill(table, null);
                     ++ modCount;
                     // replace the reference queue to avoid unnecessary stale
                     // cleanups
