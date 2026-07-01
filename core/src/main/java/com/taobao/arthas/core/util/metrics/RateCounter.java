@@ -68,6 +68,9 @@ public class RateCounter {
             sum += values.get(i);
         }
 
+        if (countLength == 0) {
+            return 0.0;
+        }
         return sum / (double) countLength;
     }
 
