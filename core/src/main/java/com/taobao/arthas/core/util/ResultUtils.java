@@ -23,7 +23,9 @@ public class ResultUtils {
             classNames.add(aClass.getName());
             //slice segment
             if(classNames.size() >= pageSize) {
-                handler.handle(classNames, segment++);
+                if (!handler.handle(classNames, segment++)) {
+                    return;
+                }
                 classNames = new ArrayList<String>(pageSize);
             }
         }
