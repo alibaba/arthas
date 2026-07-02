@@ -16,6 +16,35 @@ public class ArthasConstants {
 
     public static final int MAX_HTTP_CONTENT_LENGTH = 1024 * 1024 * 10;
 
+    /**
+     * System property to override the max HTTP content length used by the
+     * tunnel-client when proxying responses (e.g. JFR recording downloads)
+     * back to the tunnel-server. The value is in bytes; default is
+     * {@link #MAX_HTTP_CONTENT_LENGTH} (10 MB). See issue #3034.
+     */
+    public static final String TUNNEL_CLIENT_MAX_HTTP_CONTENT_LENGTH_PROPERTY = "arthas.tunnel.client.max-http-content-length";
+
+    /**
+     * Resolve the configured tunnel-client max HTTP content length. Falls back
+     * to {@link #MAX_HTTP_CONTENT_LENGTH} when the system property is unset,
+     * non-numeric, or non-positive.
+     */
+    public static int getTunnelClientMaxHttpContentLength() {
+        String value = System.getProperty(TUNNEL_CLIENT_MAX_HTTP_CONTENT_LENGTH_PROPERTY);
+        if (value == null || value.isEmpty()) {
+            return MAX_HTTP_CONTENT_LENGTH;
+        }
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            if (parsed > 0) {
+                return parsed;
+            }
+        } catch (NumberFormatException ignore) {
+            // fall through to default
+        }
+        return MAX_HTTP_CONTENT_LENGTH;
+    }
+
     public static final String ARTHAS_OUTPUT = "arthas-output";
 
     public static final String APP_NAME = "app-name";
