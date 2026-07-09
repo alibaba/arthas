@@ -71,12 +71,17 @@ public class AdviceListenerManager {
                                         ProcessAware processAware = (ProcessAware) listener;
                                         Process process = processAware.getProcess();
                                         if (process == null) {
+                                            // process not set yet — keep the listener, it will be set shortly
+                                            newResult.add(listener);
                                             continue;
                                         }
                                         ExecStatus status = process.status();
                                         if (!status.equals(ExecStatus.TERMINATED)) {
                                             newResult.add(listener);
                                         }
+                                    } else {
+                                        // non-ProcessAware listeners should be preserved
+                                        newResult.add(listener);
                                     }
                                 }
 
