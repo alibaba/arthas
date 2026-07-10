@@ -197,7 +197,10 @@ public class AdviceListenerManager {
 
         if (manager == null) {
             manager = new ClassLoaderAdviceListenerManager();
-            adviceListenerMap.put(classLoader, manager);
+            ClassLoaderAdviceListenerManager existing = adviceListenerMap.putIfAbsent(classLoader, manager);
+            if (existing != null) {
+                manager = existing;
+            }
         }
         manager.registerAdviceListener(className, methodName, methodDesc, listener);
     }
@@ -228,7 +231,10 @@ public class AdviceListenerManager {
 
         if (manager == null) {
             manager = new ClassLoaderAdviceListenerManager();
-            adviceListenerMap.put(classLoader, manager);
+            ClassLoaderAdviceListenerManager existing = adviceListenerMap.putIfAbsent(classLoader, manager);
+            if (existing != null) {
+                manager = existing;
+            }
         }
         manager.registerTraceAdviceListener(className, owner, methodName, methodDesc, listener);
     }
@@ -258,7 +264,10 @@ public class AdviceListenerManager {
 
         if (manager == null) {
             manager = new ClassLoaderAdviceListenerManager();
-            adviceListenerMap.put(classLoader, manager);
+            ClassLoaderAdviceListenerManager existing = adviceListenerMap.putIfAbsent(classLoader, manager);
+            if (existing != null) {
+                manager = existing;
+            }
         }
         manager.registerLineAdviceListener(className, methodName, methodDesc, lineNumber, listener);
     }
