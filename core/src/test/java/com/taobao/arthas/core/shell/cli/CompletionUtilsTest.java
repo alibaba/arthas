@@ -84,8 +84,10 @@ public class CompletionUtilsTest {
 
     @Test
     public void shouldCompleteEmptyListWhenClassPatternMatchesDifferentClassNames() throws Exception {
-        Class<?> first = compileTarget("test.arthas.FirstTarget", "public void alpha() {}");
-        Class<?> second = compileTarget("test.arthas.SecondTarget", "public void beta() {}");
+        Class<?> first = compileTargetWithMissingSignature("test.arthas.FirstTarget");
+        Class<?> second = compileTargetWithMissingSignature("test.arthas.SecondTarget");
+        assertMethodsUnresolvable(first);
+        assertMethodsUnresolvable(second);
         RecordingCompletion completion = completionFor(methodCompletionTokens("test.arthas.*Target", ""), first, second);
 
         Assert.assertTrue(CompletionUtils.completeMethodName(completion));
@@ -94,11 +96,42 @@ public class CompletionUtilsTest {
         Assert.assertNull(completion.value);
     }
 
+    @Test
+    public void shouldSkipClassWithUnresolvableMethodSignature() throws Exception {
+        Class<?> healthy = compileDuplicateTarget("public void alpha() {}");
+        Class<?> broken = compileTargetWithMissingSignature(DUPLICATE_TARGET);
+        assertMethodsUnresolvable(broken);
+        RecordingCompletion completion = completionFor(methodCompletionTokens(DUPLICATE_TARGET, ""), healthy, broken);
+
+        Assert.assertTrue(CompletionUtils.completeMethodName(completion));
+
+        Assert.assertTrue(completion.candidates.contains("alpha"));
+        Assert.assertTrue(completion.candidates.contains("<init>"));
+        Assert.assertFalse(completion.candidates.contains("broken"));
+    }
+
+    private static void assertMethodsUnresolvable(Class<?> target) {
+        try {
+            target.getDeclaredMethods();
+            Assert.fail("Expected an unresolved method signature for " + target.getName());
+        } catch (LinkageError expected) {
+            // expected
+        }
+    }
+
     private Class<?> compileDuplicateTarget(String methods) throws Exception {
         return compileTarget(DUPLICATE_TARGET, methods);
     }
 
     private Class<?> compileTarget(String className, String methods) throws Exception {
+        return compileTarget(className, methods, null);
+    }
+
+    private Class<?> compileTargetWithMissingSignature(String className) throws Exception {
+        return compileTarget(className, "public MissingType broken(MissingType value) { return value; }", "MissingType");
+    }
+
+    private Class<?> compileTarget(String className, String methods, String missingType) throws Exception {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         Assert.assertNotNull("JDK compiler is required to compile test classes", compiler);
 
@@ -110,6 +143,9 @@ public class CompletionUtilsTest {
         Assert.assertTrue(packageDir.mkdirs());
         File sourceFile = new File(packageDir, simpleName + ".java");
         String source = "package " + packageName + ";\npublic class " + simpleName + " {\n" + methods + "\n}\n";
+        if (missingType != null) {
+            source += "class " + missingType + " {}\n";
+        }
         Files.write(sourceFile.toPath(), source.getBytes(StandardCharsets.UTF_8));
 
         File outputRoot = temporaryFolder.newFolder();
@@ -118,10 +154,19 @@ public class CompletionUtilsTest {
 
         URLClassLoader classLoader = new URLClassLoader(new URL[] { outputRoot.toURI().toURL() }, null);
         try {
-            return Class.forName(className, true, classLoader);
+            Class<?> target = Class.forName(className, true, classLoader);
+            if (missingType != null) {
+                File missingClass = new File(packageDir(outputRoot, packageName), missingType + ".class");
+                Assert.assertTrue(missingClass.delete());
+            }
+            return target;
         } finally {
             classLoader.close();
         }
+    }
+
+    private static File packageDir(File root, String packageName) {
+        return new File(root, packageName.replace('.', File.separatorChar));
     }
 
     private static RecordingCompletion completionFor(List<CliToken> tokens, Class<?>... classes) {

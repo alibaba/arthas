@@ -4,6 +4,7 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.Option;
@@ -221,24 +222,38 @@ public class CompletionUtils {
             className = tokens.get(tokens.size() - 3).value();
         }
 
-        Set<Class<?>> results = SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className,
-                false);
-        if (results.isEmpty()) {
-            // no class found
-            completion.complete(Collections.<String>emptyList());
-            return true;
-        }
-
+        Matcher<String> classNameMatcher = SearchUtils.classNameMatcher(className, false);
+        Set<Class<?>> results = new LinkedHashSet<Class<?>>();
         String matchedClassName = null;
-        Set<String> res = new LinkedHashSet<String>();
-        for (Class<?> clazz : results) {
+        for (Class<?> clazz : completion.session().getInstrumentation().getAllLoadedClasses()) {
+            if (clazz == null || !classNameMatcher.matching(clazz.getName())) {
+                continue;
+            }
             if (matchedClassName == null) {
                 matchedClassName = clazz.getName();
             } else if (!matchedClassName.equals(clazz.getName())) {
                 completion.complete(Collections.<String>emptyList());
                 return true;
             }
-            for (Method method : clazz.getDeclaredMethods()) {
+            results.add(clazz);
+        }
+        if (results.isEmpty()) {
+            // no class found
+            completion.complete(Collections.<String>emptyList());
+            return true;
+        }
+
+        Set<String> res = new LinkedHashSet<String>();
+        for (Class<?> clazz : results) {
+            Method[] methods;
+            try {
+                methods = clazz.getDeclaredMethods();
+            } catch (LinkageError e) {
+                // A method signature may refer to a type that is not available to this class loader.
+                // Ignore that class and still offer methods from matching classes loaded elsewhere.
+                continue;
+            }
+            for (Method method : methods) {
                 if (StringUtils.isBlank(lastToken)) {
                     res.add(method.getName());
                 } else if (method.getName().startsWith(lastToken)) {
