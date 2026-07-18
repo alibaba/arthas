@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.testtool.TestUtils;
+import io.termd.core.util.Helper;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,6 +12,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.allOf;
@@ -104,6 +107,22 @@ public class FileUtilsTest {
         FileUtils.saveCommandHistory(TestUtils.newArrayList(command1), targetFile);
         List<int[]> content = FileUtils.loadCommandHistory(targetFile);
         Assert.assertArrayEquals(command1, content.get(0));
+    }
+
+    @Test
+    public void testSaveAndLoadUnicodeCommandHistory() throws IOException {
+        String command = "echo 中文 " + new String(Character.toChars(0x20000));
+        int[] codePoints = Helper.toCodePoints(command);
+        File targetFile = temporaryFolder.newFile("unicode-history.txt");
+
+        FileUtils.saveCommandHistory(TestUtils.newArrayList(codePoints), targetFile);
+
+        Assert.assertArrayEquals(
+                (command + '\n').getBytes(StandardCharsets.UTF_8),
+                Files.readAllBytes(targetFile.toPath()));
+        List<int[]> history = FileUtils.loadCommandHistory(targetFile);
+        Assert.assertEquals(1, history.size());
+        Assert.assertArrayEquals(codePoints, history.get(0));
     }
 
 
