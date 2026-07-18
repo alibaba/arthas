@@ -8,6 +8,7 @@ import com.taobao.arthas.mcp.server.tool.annotation.ToolParam;
 public class VMToolTool extends AbstractArthasTool {
 
     public static final String ACTION_GET_INSTANCES = "getInstances";
+    public static final String ACTION_REFERENCE_ANALYZE = "referenceAnalyze";
     public static final String ACTION_INTERRUPT_THREAD = "interruptThread";
 
     @Tool(
@@ -24,7 +25,7 @@ public class VMToolTool extends AbstractArthasTool {
             @ToolParam(description = "ClassLoader的完整类名，如sun.misc.Launcher$AppClassLoader，可替代hashcode", required = false)
             String classLoaderClass,
 
-            @ToolParam(description = "类名，全限定（getInstances 时使用）", required = false)
+            @ToolParam(description = "类名，全限定（getInstances/referenceAnalyze 时使用）", required = false)
             String className,
 
             @ToolParam(description = "返回实例限制数量 (-l)，getInstances 时使用，默认 10；<=0 表示不限制", required = false)
@@ -46,7 +47,8 @@ public class VMToolTool extends AbstractArthasTool {
         if (action == null || action.trim().isEmpty()) {
             throw new IllegalArgumentException("vmtool: action 参数不能为空");
         }
-        cmd.append(" --action ").append(action.trim());
+        String normalizedAction = action.trim();
+        cmd.append(" --action ").append(normalizedAction);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
             addParameter(cmd, "-c", classLoaderHash);
@@ -54,10 +56,14 @@ public class VMToolTool extends AbstractArthasTool {
             addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
 
-        if (ACTION_GET_INSTANCES.equals(action.trim())) {
-            if (className != null && !className.trim().isEmpty()) {
-                addParameter(cmd, "--className", className);
+        if (ACTION_GET_INSTANCES.equals(normalizedAction) || ACTION_REFERENCE_ANALYZE.equals(normalizedAction)) {
+            if (className == null || className.trim().isEmpty()) {
+                throw new IllegalArgumentException("vmtool " + normalizedAction + " 需要指定类名 (className)");
             }
+            addParameter(cmd, "--className", className);
+        }
+
+        if (ACTION_GET_INSTANCES.equals(normalizedAction)) {
             if (limit != null) {
                 cmd.append(" --limit ").append(limit);
             }
@@ -69,7 +75,7 @@ public class VMToolTool extends AbstractArthasTool {
             }
         }
 
-        if (ACTION_INTERRUPT_THREAD.equals(action.trim())) {
+        if (ACTION_INTERRUPT_THREAD.equals(normalizedAction)) {
             if (threadId != null && threadId > 0) {
                 cmd.append(" -t ").append(threadId);
             } else {
