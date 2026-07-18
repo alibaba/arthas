@@ -104,7 +104,9 @@ watch OuterClass$InnerClass
 
 ### 输入中文/Unicode 字符
 
-把中文/Unicode 字符转为`\u`表示方法：
+从 Arthas 4.3.2 开始，Terminal 支持直接输入和编辑中文及其他 Unicode 字符。
+
+Arthas 4.3.1 及更早版本不支持直接输入中文/Unicode 字符，可以将字符转换为`\u`表示：
 
 ```bash
 ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
