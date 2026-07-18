@@ -3,6 +3,7 @@ package com.taobao.arthas.core.mcp.tool.function.jvm300;
 import com.taobao.arthas.mcp.server.session.ArthasCommandContext;
 import com.taobao.arthas.mcp.server.tool.ToolContext;
 import com.taobao.arthas.mcp.server.tool.ToolContextKeys;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -41,5 +42,32 @@ public class VMToolToolTest {
                 "vmtool --action getInstances -c 1a2b --className java.lang.String"
                         + " --limit 5 -x 2 --express instances.length",
                 null, null);
+    }
+
+    @Test
+    public void referenceAnalyzeShouldRejectMissingOrBlankClassName() {
+        assertClassNameRequired("referenceAnalyze", null);
+        assertClassNameRequired("referenceAnalyze", "  ");
+    }
+
+    @Test
+    public void getInstancesShouldRejectMissingOrBlankClassName() {
+        assertClassNameRequired("getInstances", null);
+        assertClassNameRequired("getInstances", "  ");
+    }
+
+    private static void assertClassNameRequired(String action, String className) {
+        ArthasCommandContext commandContext = mock(ArthasCommandContext.class);
+        Map<String, Object> context = new HashMap<String, Object>();
+        context.put(ToolContextKeys.COMMAND_CONTEXT, commandContext);
+
+        try {
+            new VMToolTool().vmtool(
+                    action, null, null, className,
+                    null, null, null, null, new ToolContext(context));
+            Assert.fail("Expected className validation to fail");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("vmtool " + action + " 需要指定类名 (className)", e.getMessage());
+        }
     }
 }

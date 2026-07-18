@@ -47,7 +47,8 @@ public class VMToolTool extends AbstractArthasTool {
         if (action == null || action.trim().isEmpty()) {
             throw new IllegalArgumentException("vmtool: action 参数不能为空");
         }
-        cmd.append(" --action ").append(action.trim());
+        String normalizedAction = action.trim();
+        cmd.append(" --action ").append(normalizedAction);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
             addParameter(cmd, "-c", classLoaderHash);
@@ -55,13 +56,14 @@ public class VMToolTool extends AbstractArthasTool {
             addParameter(cmd, "--classLoaderClass", classLoaderClass);
         }
 
-        if (ACTION_GET_INSTANCES.equals(action.trim()) || ACTION_REFERENCE_ANALYZE.equals(action.trim())) {
-            if (className != null && !className.trim().isEmpty()) {
-                addParameter(cmd, "--className", className);
+        if (ACTION_GET_INSTANCES.equals(normalizedAction) || ACTION_REFERENCE_ANALYZE.equals(normalizedAction)) {
+            if (className == null || className.trim().isEmpty()) {
+                throw new IllegalArgumentException("vmtool " + normalizedAction + " 需要指定类名 (className)");
             }
+            addParameter(cmd, "--className", className);
         }
 
-        if (ACTION_GET_INSTANCES.equals(action.trim())) {
+        if (ACTION_GET_INSTANCES.equals(normalizedAction)) {
             if (limit != null) {
                 cmd.append(" --limit ").append(limit);
             }
@@ -73,7 +75,7 @@ public class VMToolTool extends AbstractArthasTool {
             }
         }
 
-        if (ACTION_INTERRUPT_THREAD.equals(action.trim())) {
+        if (ACTION_INTERRUPT_THREAD.equals(normalizedAction)) {
             if (threadId != null && threadId > 0) {
                 cmd.append(" -t ").append(threadId);
             } else {
