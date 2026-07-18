@@ -43,7 +43,11 @@ public class TelnetTermServer extends TermServer {
     @Override
     public TermServer listen(Handler<Future<TermServer>> listenHandler) {
         // TODO: charset and inputrc from options
-        bootstrap = new NettyTelnetTtyBootstrap().setHost(hostIp).setPort(port);
+        bootstrap = new NettyTelnetTtyBootstrap()
+                .setHost(hostIp)
+                .setPort(port)
+                .setInBinary(true)
+                .setOutBinary(true);
         try {
             bootstrap.start(new Consumer<TtyConnection>() {
                 @Override

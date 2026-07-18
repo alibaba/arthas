@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 /***
  * This is a utility class providing a reader/writer capability required by the
@@ -42,7 +43,7 @@ public final class IOUtil {
             @Override
             public void run() {
                 try {
-                    InputStreamReader reader = new InputStreamReader(remoteInput);
+                    InputStreamReader reader = new InputStreamReader(remoteInput, StandardCharsets.UTF_8);
                     while (true) {
                         int singleChar = reader.read();
                         if (singleChar == -1) {

@@ -4,11 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.net.telnet.InvalidTelnetOptionException;
+import org.apache.commons.net.telnet.SimpleOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
+import org.apache.commons.net.telnet.TelnetOption;
 import org.apache.commons.net.telnet.TelnetOptionHandler;
 import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 
@@ -147,7 +150,7 @@ public class TelnetConsole {
         List<String> list = new ArrayList<String>();
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(batchFile));
+            br = Files.newBufferedReader(batchFile.toPath(), StandardCharsets.UTF_8);
             String line = br.readLine();
             while (line != null) {
                 list.add(line);
@@ -285,6 +288,14 @@ public class TelnetConsole {
                     : new TelnetClient();
             telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
 
+            // Telnet BINARY 让 terminal 的 UTF-8 字节在两个方向都保持完整。
+            TelnetOptionHandler binaryOpt = new SimpleOptionHandler(TelnetOption.BINARY, true, true, true, true);
+            try {
+                telnet.addOptionHandler(binaryOpt);
+            } catch (InvalidTelnetOptionException e) {
+                // ignore
+            }
+
             // send init terminal size
             TelnetOptionHandler sizeOpt = new WindowSizeOptionHandler(width, height, true, true, false, false);
             try {
@@ -367,7 +378,7 @@ public class TelnetConsole {
             public void run() {
                 try {
                     StringBuilder line = new StringBuilder();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
                     int b = -1;
                     while (true) {
                         b = in.read();
@@ -377,7 +388,7 @@ public class TelnetConsole {
                         line.appendCodePoint(b);
 
                         // 检查到有 [arthas@ 时，意味着可以执行下一个命令了
-                        int index = line.indexOf(PROMPT);
+                        int index = findPromptAtLineStart(line);
                         if (index >= 0) {
                             line.delete(0, index + PROMPT.length());
                             receviedPromptQueue.put("");
@@ -406,17 +417,29 @@ public class TelnetConsole {
                 }
             }
             // send command to server
-            outputStream.write((command + " | plaintext\n").getBytes());
+            outputStream.write((command + " | plaintext\n").getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
         }
 
         // 读到最后一个命令执行后的 prompt ，可以直接发 quit命令了。
         receviedPromptQueue.take();
-        outputStream.write("quit\n".getBytes());
+        outputStream.write("quit\n".getBytes(StandardCharsets.UTF_8));
         outputStream.flush();
         System.out.println();
 
         return STATUS_OK;
+    }
+
+    private static int findPromptAtLineStart(StringBuilder output) {
+        int fromIndex = 0;
+        int index;
+        while ((index = output.indexOf(PROMPT, fromIndex)) >= 0) {
+            if (index == 0 || output.charAt(index - 1) == '\n') {
+                return index;
+            }
+            fromIndex = index + PROMPT.length();
+        }
+        return -1;
     }
 
     private static String usage(CLI cli) {
