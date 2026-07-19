@@ -8,6 +8,7 @@ import io.termd.core.util.Helper;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -94,7 +95,6 @@ public class FileUtils {
         return command != null && command.trim().startsWith(ArthasConstants.AUTH);
     }
 
-    private static final int[] AUTH_CODEPOINTS = Helper.toCodePoints(ArthasConstants.AUTH);
     /**
      * save the command history to the given file, data will be overridden.
      * @param history the command history, each represented by an int array
@@ -105,12 +105,10 @@ public class FileUtils {
             for (int[] command : history) {
                 String commandStr = Helper.fromCodePoints(command);
                 if (isAuthCommand(commandStr)) {
-                    command = AUTH_CODEPOINTS;
+                    commandStr = ArthasConstants.AUTH;
                 }
 
-                for (int i : command) {
-                    out.write(i);
-                }
+                out.write(commandStr.getBytes(StandardCharsets.UTF_8));
                 out.write('\n');
             }
         } catch (IOException e) {
@@ -123,7 +121,7 @@ public class FileUtils {
         BufferedReader br = null;
         List<int[]> history = new ArrayList<>();
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
             String line;
             while ((line = br.readLine()) != null) {
                 history.add(Helper.toCodePoints(line));
@@ -226,4 +224,3 @@ public class FileUtils {
         return !file.exists() || file.isDirectory();
     }
 }
-
