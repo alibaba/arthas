@@ -46,6 +46,31 @@ class TelnetConsoleBatchModeTest {
     }
 
     @Test
+    void batchModeShouldKeepBackgroundMarkerAfterPlaintextPipeline() throws Exception {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            Future<ServerResult> serverResult = executorService.submit(() -> runPromptFirstServer(serverSocket));
+
+            int status = TelnetConsole.process(new String[] {
+                    "--quiet",
+                    "-c",
+                    "version &",
+                    "-t",
+                    "1000",
+                    "127.0.0.1",
+                    String.valueOf(serverSocket.getLocalPort())
+            });
+
+            ServerResult result = serverResult.get(2, TimeUnit.SECONDS);
+            assertThat(status).isEqualTo(TelnetConsole.STATUS_OK);
+            assertThat(result.command).contains("version | plaintext &");
+            assertThat(result.quit).isEqualTo("quit");
+        } finally {
+            executorService.shutdownNow();
+        }
+    }
+
+    @Test
     void batchModeShouldNegotiateBinaryAndSendChineseCommandAsUtf8() throws Exception {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         try (ServerSocket serverSocket = new ServerSocket(0)) {
