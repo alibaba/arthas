@@ -881,10 +881,43 @@ public class ArthasBootstrap {
                 // ignore
             }
         }
+        // 跨 mount namespace attach 复制进来的临时 arthas home：见到标记文件则清理整个目录
+        cleanupCrossNsTempHome();
         logger().info("as-server destroy completed.");
         if (loggerContext != null) {
             loggerContext.stop();
         }
+    }
+
+    /**
+     * 跨 mount namespace attach 时会把 arthas home 复制进目标容器的临时目录，并写入标记文件
+     * {@link ArthasConstants#CROSS_NS_TEMP_HOME_MARKER}。stop/destroy 时见到该标记则清理整个临时目录；
+     * 正常安装(无标记)不受影响。
+     */
+    private void cleanupCrossNsTempHome() {
+        try {
+            File home = new File(arthasHome());
+            File marker = new File(home, ArthasConstants.CROSS_NS_TEMP_HOME_MARKER);
+            if (!marker.exists()) {
+                return; // 正常安装(非跨 ns 临时拷贝)，不清理
+            }
+            deleteRecursively(home);
+            logger().info("Cleaned up cross-ns temp arthas home: {}", home);
+        } catch (Throwable e) {
+            logger().warn("Failed to cleanup cross-ns temp arthas home: {}", e.toString());
+        }
+    }
+
+    private static void deleteRecursively(File file) {
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursively(child);
+                }
+            }
+        }
+        file.delete();
     }
 
     /**
