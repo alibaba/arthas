@@ -10,7 +10,7 @@ import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.view.Ansi;
 
-import java.util.List;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -44,7 +44,15 @@ public class TraceView extends ResultView<TraceModel> {
         final StringBuilder treeSB = new StringBuilder(2048);
 
         final Ansi highlighted = Ansi.ansi().fg(Ansi.Color.RED);
+        final Ansi tipsColor = Ansi.ansi().fg(Ansi.Color.GREEN);
 
+
+        final Map<Integer, MethodNode> depthMaxCostNodeMap = new TreeMap<Integer, MethodNode>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer left, Integer right) {
+                return left.compareTo(right);
+            }
+        });
         recursive(0, true, "", root, new Callback() {
 
             @Override
@@ -55,9 +63,29 @@ public class TraceView extends ResultView<TraceModel> {
                     treeSB.append(" [").append(node.getMark()).append(node.marks() > 1 ? "," + node.marks() : "").append("]");
                 }
                 treeSB.append("\n");
+                if(node instanceof MethodNode) {
+                    MethodNode newNode = (MethodNode) node;
+                    MethodNode oldNode = depthMaxCostNodeMap.get(deep);
+                    if(oldNode == null || oldNode.getCost() < newNode.getCost()){
+                        depthMaxCostNodeMap.put(deep, newNode);
+                    }
+                }
             }
 
         });
+
+        if(depthMaxCostNodeMap.size() != 0 ){
+            Set<String> classNameSet = new LinkedHashSet<String>();
+            Set<String> methodNameSet = new LinkedHashSet<String>();
+            for( MethodNode methodNode: depthMaxCostNodeMap.values()) {
+                classNameSet.add(methodNode.getClassName());
+                methodNameSet.add(methodNode.getMethodName());
+            }
+            treeSB.append(tipsColor.a(new StringBuilder("Tips: trace -E ")
+                .append(StringUtils.join(classNameSet.toArray(), "|")).append(' ')
+                .append(StringUtils.join(methodNameSet.toArray(), "|")).append('\n'))
+                .reset().toString());
+        }
 
         return treeSB.toString();
     }
