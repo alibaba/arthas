@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8-jdk-alpine
+FROM amazoncorretto:8-alpine-jdk
 
 ARG ARTHAS_VERSION="4.3.2"
 ARG MIRROR=false

@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM eclipse-temurin:8-jdk-alpine AS builder
+FROM amazoncorretto:8-alpine-jdk AS builder
 
 ARG ARTHAS_VERSION="4.3.2"
 ARG MIRROR=false
