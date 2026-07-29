@@ -76,9 +76,10 @@ public class NetUtils {
      */
     public static String simpleRequest(String url) {
         BufferedReader br = null;
+        HttpURLConnection con = null;
         try {
             URL obj = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con = (HttpURLConnection) obj.openConnection();
             con.setRequestProperty("Accept", "application/json");
             int responseCode = con.getResponseCode();
 
@@ -110,6 +111,9 @@ public class NetUtils {
                     // ignore
                 }
             }
+            if (con != null) {
+                con.disconnect();
+            }
         }
     }
 
@@ -128,10 +132,12 @@ public class NetUtils {
      * @return the qos response in string format
      */
     public static Response requestViaSocket(String path) {
+        Socket s = null;
+        PrintWriter pw = null;
         BufferedReader br = null;
         try {
-            Socket s = new Socket(QOS_HOST, QOS_PORT);
-            PrintWriter pw = new PrintWriter(s.getOutputStream());
+            s = new Socket(QOS_HOST, QOS_PORT);
+            pw = new PrintWriter(s.getOutputStream());
             pw.println("GET " + path + " HTTP/1.1");
             pw.println("Host: " + QOS_HOST + ":" + QOS_PORT);
             pw.println("");
@@ -157,6 +163,16 @@ public class NetUtils {
             if (br != null) {
                 try {
                     br.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (pw != null) {
+                pw.close();
+            }
+            if (s != null) {
+                try {
+                    s.close();
                 } catch (IOException e) {
                     // ignore
                 }
