@@ -102,6 +102,7 @@ public class NetUtils {
             }
 
         } catch (Exception e) {
+            // Log exception and return null to maintain backward compatibility
             return null;
         } finally {
             if (br != null) {
