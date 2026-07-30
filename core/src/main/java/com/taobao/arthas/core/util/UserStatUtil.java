@@ -68,7 +68,7 @@ public class UserStatUtil {
         try {
             executorService.execute(job);
         } catch (Throwable t) {
-            //
+            // Silently ignore - statistics reporting should not interrupt main workflow
         }
     }
 
@@ -90,7 +90,7 @@ public class UserStatUtil {
         try {
             executorService.execute(job);
         } catch (Throwable t) {
-            //
+            // Silently ignore - statistics reporting should not interrupt main workflow
         }
     }
 
