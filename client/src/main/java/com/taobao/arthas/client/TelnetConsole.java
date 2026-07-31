@@ -24,6 +24,7 @@ import org.apache.commons.net.telnet.TelnetOption;
 import org.apache.commons.net.telnet.TelnetOptionHandler;
 import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 
+import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.common.UsageRender;
 import com.taobao.middleware.cli.CLI;
@@ -157,7 +158,7 @@ public class TelnetConsole {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            AnsiLog.error(e);
         } finally {
             if (br != null) {
                 try {
@@ -181,7 +182,7 @@ public class TelnetConsole {
             });
             System.exit(status);
         } catch (Throwable e) {
-            e.printStackTrace();
+            AnsiLog.error(e);
             CLI cli = CLIConfigurator.define(TelnetConsole.class);
             System.out.println(usage(cli));
             System.exit(STATUS_ERROR);
@@ -313,7 +314,7 @@ public class TelnetConsole {
                         telnet.getOutputStream().write(CTRL_C);
                         telnet.getOutputStream().flush();
                     } catch (Exception e1) {
-                        e1.printStackTrace();
+                        AnsiLog.error(e1);
                     }
                 }
 
@@ -338,7 +339,7 @@ public class TelnetConsole {
                     return batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
                 } catch (Throwable e) {
                     System.out.println("Execute commands error: " + e.getMessage());
-                    e.printStackTrace();
+                    AnsiLog.error(e);
                     return STATUS_EXEC_ERROR;
                 } finally {
                     try {
@@ -356,7 +357,7 @@ public class TelnetConsole {
                 terminal.restore();
             } catch (Throwable e) {
                 System.out.println("Restore terminal settings failure: "+e.getMessage());
-                e.printStackTrace();
+                AnsiLog.error(e);
             }
         }
 

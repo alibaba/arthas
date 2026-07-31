@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
+import com.taobao.arthas.common.AnsiLog;
+
 /***
  * This is a utility class providing a reader/writer capability required by the
  * weatherTelnet, rexec, rshell, and rlogin example programs. The only point of
@@ -53,7 +55,7 @@ public final class IOUtil {
                         localOutput.flush();
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    AnsiLog.error(e);
                 }
             }
         };
