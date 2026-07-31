@@ -78,7 +78,7 @@ public class ArthasBanner {
                     label(LOGOS[5]).style(Decoration.bold.fg(Color.blue)));
             LOGO = RenderUtil.render(logoTable);
         } catch (Throwable e) {
-            e.printStackTrace();
+            logger.warn("Failed to load logo", e);
         }
     }
 

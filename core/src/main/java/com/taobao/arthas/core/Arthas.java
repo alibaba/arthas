@@ -164,7 +164,7 @@ public class Arthas {
             new Arthas(args);
         } catch (Throwable t) {
             AnsiLog.error("Start arthas failed, exception stack trace: ");
-            t.printStackTrace();
+            AnsiLog.error(t);
             System.exit(-1);
         }
     }
