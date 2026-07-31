@@ -338,7 +338,7 @@ public class Bootstrap {
         try {
             CLIConfigurator.inject(commandLine, bootstrap);
         } catch (Throwable e) {
-            e.printStackTrace();
+            AnsiLog.error("Failed to inject command line arguments: " + e.getMessage());
             System.out.println(usage(cli));
             System.exit(1);
         }
