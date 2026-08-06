@@ -154,7 +154,20 @@ arthas-output/startup/12345/
 示例：
 
 ```json
-{"sequence":4,"timestamp":"2026-07-23 15:30:14.201","commandIndex":2,"command":"line --class com.example.OrderService --line 128","event":"result","resultType":"line","result":{"type":"line","className":"com.example.OrderService","methodName":"createOrder","lineNumber":128}}
+{
+  "sequence": 4,
+  "timestamp": "2026-07-23 15:30:14.201",
+  "commandIndex": 2,
+  "command": "line --class com.example.OrderService --line 128",
+  "event": "result",
+  "resultType": "line",
+  "result": {
+    "type": "line",
+    "className": "com.example.OrderService",
+    "methodName": "createOrder",
+    "lineNumber": 128
+  }
+}
 ```
 
 结果分发使用每命令一个守护写线程和容量为 1024 的内存队列。业务线程只做非阻塞入队；
