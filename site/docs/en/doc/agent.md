@@ -10,4 +10,8 @@ java -javaagent:/tmp/test/arthas-agent.jar -jar math-game.jar
 
 The default configuration is in the `arthas.properties` file in the decompression directory. Reference: [Arthas Properties](arthas-properties.md)
 
+Set `arthas.startupScript` to execute one or more commands automatically during startup. Each command runs in an
+independent session, and enhancer commands such as `watch` and `line` wait for matching classes that have not been
+loaded yet. Results are written under `${arthas.outputPath}/startup/<pid>/<run-id>/`.
+
 Reference: https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html
