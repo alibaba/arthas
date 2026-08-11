@@ -1,6 +1,7 @@
 ---
 name: arthas-springcontext-issues-resolve
 description: 排查 Spring ApplicationContext / Bean / 配置注入等问题
+license: Apache-2.0
 ---
 
 # Spring Context / Bean 排查指南
