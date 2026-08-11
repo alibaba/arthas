@@ -103,6 +103,21 @@ public class UploadFileToolTest {
     }
 
     @Test
+    public void shouldRejectNonLowercaseFileExtensions() {
+        final String encoded = Base64.getEncoder().encodeToString(new byte[] {1});
+        String[] invalidNames = {"Demo.CLASS", "Demo.JAVA", "profile.JFC"};
+
+        for (final String invalidName : invalidNames) {
+            assertUploadError("UNSUPPORTED_FILE_TYPE", new UploadCall() {
+                @Override
+                public void run() {
+                    tool.uploadFile(invalidName, encoded, null);
+                }
+            });
+        }
+    }
+
+    @Test
     public void shouldRejectInvalidBase64() {
         assertUploadError("INVALID_BASE64", new UploadCall() {
             @Override

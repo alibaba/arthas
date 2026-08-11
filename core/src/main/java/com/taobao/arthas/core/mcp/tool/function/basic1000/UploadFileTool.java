@@ -32,7 +32,7 @@ import java.util.concurrent.Semaphore;
 import java.util.regex.Pattern;
 
 /**
- * Upload a small file to the target JVM filesystem for use by other Arthas MCP tools.
+ * 将小文件上传到目标 JVM 文件系统，供其他 Arthas MCP 工具使用。
  */
 public class UploadFileTool extends AbstractArthasTool {
 
@@ -82,7 +82,7 @@ public class UploadFileTool extends AbstractArthasTool {
     )
     public String uploadFile(
             @ToolParam(description = "文件叶子名称，仅允许字母、数字、点、下划线、连字符和 $；"
-                    + "首版支持 .class、.java、.jfc，不能包含目录。")
+                    + "首版支持小写扩展名 .class、.java、.jfc，不能包含目录。")
             String fileName,
 
             @ToolParam(description = "RFC 4648 标准 Base64 文件内容；解码后默认最大 1 MiB。")
@@ -130,8 +130,7 @@ public class UploadFileTool extends AbstractArthasTool {
         } else {
             assertQuotaAvailable(content.length);
             ensureArtifactDirectory(artifactDirectory);
-            commitAtomically(target, content, sha256);
-            reused = false;
+            reused = commitAtomically(target, content, sha256);
         }
 
         String artifactId = "art_" + sha256((fileName + "\u0000" + sha256).getBytes(StandardCharsets.UTF_8));
@@ -170,17 +169,17 @@ public class UploadFileTool extends AbstractArthasTool {
             throw uploadError("INVALID_FILE_NAME", "The file name must include a base name and extension");
         }
 
-        String lowerCaseName = fileName.toLowerCase(Locale.ROOT);
-        if (lowerCaseName.endsWith(".class")) {
+        if (fileName.endsWith(".class")) {
             return "CLASS";
         }
-        if (lowerCaseName.endsWith(".java")) {
+        if (fileName.endsWith(".java")) {
             return "JAVA_SOURCE";
         }
-        if (lowerCaseName.endsWith(".jfc")) {
+        if (fileName.endsWith(".jfc")) {
             return "JFC";
         }
-        throw uploadError("UNSUPPORTED_FILE_TYPE", "Only .class, .java, and .jfc files are supported");
+        throw uploadError("UNSUPPORTED_FILE_TYPE",
+                "Only lowercase .class, .java, and .jfc file extensions are supported");
     }
 
     private String normalizeExpectedSha256(String expectedSha256) {
@@ -253,7 +252,7 @@ public class UploadFileTool extends AbstractArthasTool {
         }
     }
 
-    private void commitAtomically(Path target, byte[] content, String expectedSha256) {
+    private boolean commitAtomically(Path target, byte[] content, String expectedSha256) {
         Path temp = null;
         try {
             temp = Files.createTempFile(target.getParent(), ".upload-", ".part");
@@ -270,8 +269,10 @@ public class UploadFileTool extends AbstractArthasTool {
             try {
                 Files.move(temp, target, StandardCopyOption.ATOMIC_MOVE);
                 temp = null;
+                return false;
             } catch (FileAlreadyExistsException e) {
                 verifyExistingArtifact(target, expectedSha256, content.length);
+                return true;
             } catch (AtomicMoveNotSupportedException e) {
                 throw uploadError("IO_ERROR", "The upload directory does not support atomic file commits", e);
             }
@@ -296,7 +297,7 @@ public class UploadFileTool extends AbstractArthasTool {
                 Files.createDirectory(artifactDirectory);
                 setDirectoryPermissions(artifactDirectory);
             } catch (FileAlreadyExistsException ignored) {
-                // A previous identical upload may have created the content directory.
+                // 另一个相同内容的上传可能已经创建了该目录。
             }
             verifyArtifactDirectory(artifactDirectory);
         } catch (UploadFileException e) {
@@ -380,7 +381,7 @@ public class UploadFileTool extends AbstractArthasTool {
         try {
             Files.setPosixFilePermissions(directory, DIRECTORY_PERMISSIONS);
         } catch (UnsupportedOperationException ignored) {
-            // POSIX permissions are not available on this filesystem.
+            // 当前文件系统不支持 POSIX 权限。
         }
     }
 
@@ -388,7 +389,7 @@ public class UploadFileTool extends AbstractArthasTool {
         try {
             Files.setPosixFilePermissions(file, FILE_PERMISSIONS);
         } catch (UnsupportedOperationException ignored) {
-            // POSIX permissions are not available on this filesystem.
+            // 当前文件系统不支持 POSIX 权限。
         }
     }
 
