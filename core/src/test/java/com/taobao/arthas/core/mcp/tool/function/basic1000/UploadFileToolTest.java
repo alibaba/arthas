@@ -35,7 +35,7 @@ public class UploadFileToolTest {
     @Before
     public void setUp() throws Exception {
         uploadRoot = temporaryFolder.newFolder("uploads").toPath().toRealPath();
-        tool = new UploadFileTool(uploadRoot, 64, 256, 4);
+        tool = new UploadFileTool(uploadRoot, 64, 256);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class UploadFileToolTest {
 
     @Test
     public void shouldRejectOversizedFile() {
-        final UploadFileTool smallTool = new UploadFileTool(uploadRoot, 3, 16, 4);
+        final UploadFileTool smallTool = new UploadFileTool(uploadRoot, 3, 16);
         final String encoded = Base64.getEncoder().encodeToString(new byte[] {1, 2, 3, 4});
 
         assertUploadError("FILE_TOO_LARGE", new UploadCall() {
@@ -168,16 +168,29 @@ public class UploadFileToolTest {
     }
 
     @Test
-    public void shouldEnforceArtifactQuota() {
-        final UploadFileTool quotaTool = new UploadFileTool(uploadRoot, 16, 16, 1);
-        quotaTool.uploadFile("One.class", Base64.getEncoder().encodeToString(new byte[] {1}), null);
+    public void shouldEnforceTotalSizeQuota() {
+        final UploadFileTool quotaTool = new UploadFileTool(uploadRoot, 16, 16);
+        quotaTool.uploadFile("One.class", Base64.getEncoder().encodeToString(new byte[8]), null);
 
         assertUploadError("QUOTA_EXCEEDED", new UploadCall() {
             @Override
             public void run() {
-                quotaTool.uploadFile("Two.class", Base64.getEncoder().encodeToString(new byte[] {2}), null);
+                quotaTool.uploadFile("Two.class", Base64.getEncoder().encodeToString(new byte[9]), null);
             }
         });
+    }
+
+    @Test
+    public void shouldNotLimitArtifactCount() {
+        for (int i = 0; i < 65; i++) {
+            tool.uploadFile("Artifact" + i + ".class",
+                    Base64.getEncoder().encodeToString(new byte[] {(byte) i}), null);
+        }
+    }
+
+    @Test
+    public void shouldUse200MiBDefaultTotalQuota() {
+        Assert.assertEquals(200L * 1024 * 1024, UploadFileTool.DEFAULT_MAX_TOTAL_BYTES);
     }
 
     @Test

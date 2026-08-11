@@ -37,8 +37,7 @@ import java.util.regex.Pattern;
 public class UploadFileTool extends AbstractArthasTool {
 
     static final int DEFAULT_MAX_FILE_BYTES = 1024 * 1024;
-    static final long DEFAULT_MAX_TOTAL_BYTES = 64L * 1024 * 1024;
-    static final int DEFAULT_MAX_ARTIFACTS = 64;
+    static final long DEFAULT_MAX_TOTAL_BYTES = 200L * 1024 * 1024;
 
     private static final int MAX_FILE_NAME_BYTES = 128;
     private static final Pattern SHA_256_PATTERN = Pattern.compile("[0-9a-fA-F]{64}");
@@ -53,24 +52,21 @@ public class UploadFileTool extends AbstractArthasTool {
     private final Path uploadRoot;
     private final int maxFileBytes;
     private final long maxTotalBytes;
-    private final int maxArtifacts;
     private final Semaphore uploadPermit = new Semaphore(1);
 
     public UploadFileTool() {
         this(DefaultUploadRootHolder.UPLOAD_ROOT,
                 DEFAULT_MAX_FILE_BYTES,
-                DEFAULT_MAX_TOTAL_BYTES,
-                DEFAULT_MAX_ARTIFACTS);
+                DEFAULT_MAX_TOTAL_BYTES);
     }
 
-    UploadFileTool(Path uploadRoot, int maxFileBytes, long maxTotalBytes, int maxArtifacts) {
-        if (maxFileBytes <= 0 || maxTotalBytes < maxFileBytes || maxArtifacts <= 0) {
+    UploadFileTool(Path uploadRoot, int maxFileBytes, long maxTotalBytes) {
+        if (maxFileBytes <= 0 || maxTotalBytes < maxFileBytes) {
             throw new IllegalArgumentException("Invalid upload limits");
         }
         this.uploadRoot = prepareUploadRoot(uploadRoot);
         this.maxFileBytes = maxFileBytes;
         this.maxTotalBytes = maxTotalBytes;
-        this.maxArtifacts = maxArtifacts;
     }
 
     @Tool(
@@ -221,7 +217,6 @@ public class UploadFileTool extends AbstractArthasTool {
 
     private void assertQuotaAvailable(long incomingBytes) {
         long totalBytes = 0;
-        int artifactCount = 0;
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(uploadRoot)) {
             for (Path artifactDirectory : stream) {
@@ -238,7 +233,6 @@ public class UploadFileTool extends AbstractArthasTool {
                                 || !Files.isRegularFile(artifact, LinkOption.NOFOLLOW_LINKS)) {
                             throw uploadError("UPLOAD_ROOT_UNSAFE", "The artifact directory contains an unsafe entry");
                         }
-                        artifactCount++;
                         totalBytes += Files.size(artifact);
                     }
                 }
@@ -247,7 +241,7 @@ public class UploadFileTool extends AbstractArthasTool {
             throw uploadError("IO_ERROR", "Failed to inspect the upload directory", e);
         }
 
-        if (artifactCount >= maxArtifacts || incomingBytes > maxTotalBytes - totalBytes) {
+        if (incomingBytes > maxTotalBytes - totalBytes) {
             throw uploadError("QUOTA_EXCEEDED", "The upload directory quota has been reached");
         }
     }
