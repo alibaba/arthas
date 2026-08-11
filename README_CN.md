@@ -76,6 +76,7 @@ curl -L https://arthas.aliyun.com/install.sh | sh
 * [快速入门](https://arthas.aliyun.com/doc/quick-start.html)
 * [进阶使用](https://arthas.aliyun.com/doc/advanced-use.html)
 * [命令列表](https://arthas.aliyun.com/doc/commands.html)
+* [AI Agent Skills 安装](plugins/arthas/README_CN.md)
 * [WebConsole](https://arthas.aliyun.com/doc/web-console.html)
 * [Docker](https://arthas.aliyun.com/doc/docker.html)
 * [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/spring-boot-starter.html)
