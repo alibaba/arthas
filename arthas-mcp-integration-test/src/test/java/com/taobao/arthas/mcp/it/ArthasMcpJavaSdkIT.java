@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,10 @@ class ArthasMcpJavaSdkIT {
     private static final String TARGET_CLASS_PATTERN = TargetJvmApp.class.getName();
 
     private static final String TARGET_METHOD_PATTERN = "hotMethod";
+
+    private static final String UPLOAD_FILE_NAME = "mcp-upload-it.class";
+
+    private static final String UPLOAD_FILE_CONTENT = "mcp-upload-it-content";
 
     private static final List<String> EXPECTED_TOOL_NAMES = Arrays.asList(
             "classloader",
@@ -80,6 +85,7 @@ class ArthasMcpJavaSdkIT {
             "thread",
             "trace",
             "tt",
+            "upload_file",
             "version",
             "vmoption",
             "vmtool",
@@ -184,6 +190,20 @@ class ArthasMcpJavaSdkIT {
             return;
         }
 
+        if ("upload_file".equals(toolName)) {
+            JsonNode node = OBJECT_MAPPER.readTree(body);
+            assertThat(node.path("status").asText()).isEqualTo("completed");
+            assertThat(node.path("fileName").asText()).isEqualTo(UPLOAD_FILE_NAME);
+            assertThat(node.path("reused").asBoolean()).isFalse();
+
+            Path uploadedFile = Paths.get(node.path("targetPath").asText());
+            assertThat(uploadedFile).isRegularFile();
+            assertThat(uploadedFile.getFileName().toString()).isEqualTo(UPLOAD_FILE_NAME);
+            assertThat(Files.readAllBytes(uploadedFile))
+                    .containsExactly(UPLOAD_FILE_CONTENT.getBytes(StandardCharsets.UTF_8));
+            return;
+        }
+
         if (isStreamableTool(toolName)) {
             JsonNode node = OBJECT_MAPPER.readTree(body);
             if (node != null && node.isObject()) {
@@ -265,6 +285,13 @@ class ArthasMcpJavaSdkIT {
             Files.createDirectories(outDir);
             args.put("javaFilePaths", sourceFile.toString());
             args.put("outputDir", outDir.toString());
+            return args;
+        }
+
+        if ("upload_file".equals(toolName)) {
+            args.put("fileName", UPLOAD_FILE_NAME);
+            args.put("contentBase64", Base64.getEncoder().encodeToString(
+                    UPLOAD_FILE_CONTENT.getBytes(StandardCharsets.UTF_8)));
             return args;
         }
 
