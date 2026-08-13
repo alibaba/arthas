@@ -25,6 +25,12 @@ public class ArthasConstants {
 
     public static final int TELNET_PORT = 3658;
 
+    /**
+     * 跨 mount namespace attach 时，复制进目标容器的临时 arthas home 目录里的标记文件名。
+     * ArthasBootstrap 在 stop/destroy 时见到该标记才会清理整个临时目录（正常安装没有该标记，不会被清理）。
+     */
+    public static final String CROSS_NS_TEMP_HOME_MARKER = ".arthas-cross-ns-temp-home";
+
     public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
     public static final int WEBSOCKET_IDLE_SECONDS = 10;
 

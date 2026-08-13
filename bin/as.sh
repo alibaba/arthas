@@ -926,14 +926,17 @@ sanity_check() {
 
     # 1 check the current user matches the process owner
     local current_user=$(id -u -n)
-    # the last '=' after 'user' eliminates the column header
-    local target_user=$(ps -p "${TARGET_PID}" -o user=)
-    if [ "$current_user" != "$target_user" ]; then
-        echo "The current user ($current_user) does not match with the owner of process ${TARGET_PID} ($target_user)."
-        echo "To solve this, choose one of the following command:"
-        echo "  1) sudo su $target_user && ./as.sh"
-        echo "  2) sudo -u $target_user -EH ./as.sh"
-        exit_on_err 1
+    # root 可以 attach 任意进程(例如 k8s 临时 debug 容器以 root 调试普通用户的应用)，跳过一致性检查
+    if [ "$(id -u)" != "0" ]; then
+        # the last '=' after 'user' eliminates the column header
+        local target_user=$(ps -p "${TARGET_PID}" -o user=)
+        if [ "$current_user" != "$target_user" ]; then
+            echo "The current user ($current_user) does not match with the owner of process ${TARGET_PID} ($target_user)."
+            echo "To solve this, choose one of the following command:"
+            echo "  1) sudo su $target_user && ./as.sh"
+            echo "  2) sudo -u $target_user -EH ./as.sh"
+            exit_on_err 1
+        fi
     fi
 }
 
