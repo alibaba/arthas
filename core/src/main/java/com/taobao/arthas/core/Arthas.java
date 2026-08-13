@@ -106,6 +106,7 @@ public class Arthas {
         boolean crossMountNamespace = inDifferentMountNamespace(targetPid);
         Path socketSymlink = null;
         if (crossMountNamespace) {
+            configure.setCrossMountNamespace(true);
             socketSymlink = exposeTargetAttachSocket(targetPid);
         }
 

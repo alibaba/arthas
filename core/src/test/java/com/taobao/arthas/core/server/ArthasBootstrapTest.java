@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.bytekit.utils.ReflectionUtils;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.core.bytecode.TestHelper;
@@ -104,5 +105,32 @@ public class ArthasBootstrapTest {
         String configName = ArthasBootstrap.reslove(arthasEnvironment, ArthasBootstrap.CONFIG_NAME_PROPERTY, "arthas");
         System.clearProperty(ArthasBootstrap.CONFIG_NAME_PROPERTY);
         assertThat(configName).isEqualTo("testName");
+    }
+
+    @Test
+    public void shouldLogSuccessfulCrossMountNamespaceAttach() {
+        Configure configure = new Configure();
+        configure.setJavaPid(123L);
+        configure.setCrossMountNamespace(true);
+        configure.setIp("127.0.0.1");
+        configure.setTelnetPort(3658);
+        configure.setHttpPort(8563);
+        Logger logger = Mockito.mock(Logger.class);
+
+        ArthasBootstrap.logCrossMountNamespaceAttachSuccess(configure, "/tmp/arthas-123", logger);
+
+        Mockito.verify(logger).info("event=arthas_attach status=success mode=cross-mount-namespace "
+                        + "targetPid={} arthasHome={} network={} telnet={} http={}",
+                123L, "/tmp/arthas-123", "127.0.0.1", 3658, 8563);
+    }
+
+    @Test
+    public void shouldNotLogSuccessfulSameMountNamespaceAttach() {
+        Configure configure = new Configure();
+        Logger logger = Mockito.mock(Logger.class);
+
+        ArthasBootstrap.logCrossMountNamespaceAttachSuccess(configure, "/opt/arthas", logger);
+
+        Mockito.verifyNoInteractions(logger);
     }
 }
