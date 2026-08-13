@@ -29,6 +29,11 @@ public class Configure {
     private String arthasCore;
     private String arthasAgent;
 
+    /**
+     * attach 进程和目标 JVM 是否处于不同的 mount namespace，仅用于传递内部 attach 元数据。
+     */
+    private Boolean crossMountNamespace;
+
     private String tunnelServer;
     private String agentId;
 
@@ -135,6 +140,14 @@ public class Configure {
 
     public void setArthasCore(String arthasCore) {
         this.arthasCore = arthasCore;
+    }
+
+    public boolean isCrossMountNamespace() {
+        return crossMountNamespace != null && crossMountNamespace;
+    }
+
+    public void setCrossMountNamespace(boolean crossMountNamespace) {
+        this.crossMountNamespace = crossMountNamespace;
     }
 
     public Long getSessionTimeout() {

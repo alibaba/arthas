@@ -510,11 +510,22 @@ public class ArthasBootstrap {
             }
 
             logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
+            logCrossMountNamespaceAttachSuccess(configure, arthasHome(), logger());
         } catch (Throwable e) {
             logger().error("Error during start as-server", e);
             destroy();
             throw e;
         }
+    }
+
+    static void logCrossMountNamespaceAttachSuccess(Configure configure, String arthasHome, Logger logger) {
+        if (!configure.isCrossMountNamespace()) {
+            return;
+        }
+        logger.info("event=arthas_attach status=success mode=cross-mount-namespace "
+                        + "targetPid={} arthasHome={} network={} telnet={} http={}",
+                configure.getJavaPid(), arthasHome, configure.getIp(), configure.getTelnetPort(),
+                configure.getHttpPort());
     }
 
     private CommandResolver loadExternalCommandResolver(ShellServer shellServer, BuiltinCommandPack builtinCommands)
