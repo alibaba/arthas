@@ -87,6 +87,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Quick start](https://arthas.aliyun.com/doc/en/quick-start.html)
 * [Advanced usage](https://arthas.aliyun.com/doc/en/advanced-use.html)
 * [Commands](https://arthas.aliyun.com/doc/en/commands.html)
+* [AI agent skills installation](plugins/arthas/README.md)
 * [WebConsole](https://arthas.aliyun.com/doc/en/web-console.html)
 * [Docker](https://arthas.aliyun.com/doc/en/docker.html)
 * [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/en/spring-boot-starter.html)

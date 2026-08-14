@@ -1,6 +1,7 @@
 ---
 name: arthas-cpu-high
 description: 排查 JVM / 应用 CPU 飙高（线程定位 + 代码路径分析）
+license: Apache-2.0
 ---
 
 # JVM CPU 飙高排查指南（Arthas）
@@ -36,4 +37,3 @@ description: 排查 JVM / 应用 CPU 飙高（线程定位 + 代码路径分析�
 - 现象与证据：dashboard 摘要 + topN 线程堆栈关键片段
 - 初步结论：CPU 主要消耗在什么类型的逻辑（计算/锁/GC/日志等）
 - 下一步：建议进一步 trace/watch 的目标方法（给出类名+方法名的精确范围），或建议用户提供主包名/关键接口信息以继续收敛
-
