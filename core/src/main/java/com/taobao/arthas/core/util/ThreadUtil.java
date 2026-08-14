@@ -5,6 +5,7 @@ import com.taobao.arthas.core.command.model.BusyThreadInfo;
 import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.command.model.ThreadNode;
 import com.taobao.arthas.core.command.model.ThreadVO;
+import com.taobao.arthas.core.command.model.DeadlockInfo;
 import com.taobao.arthas.core.view.Ansi;
 
 import java.arthas.SpyAPI;
@@ -158,6 +159,32 @@ abstract public class ThreadUtil {
         return blockingLockInfo;
     }
 
+    public static DeadlockInfo findDeadlock() {
+        DeadlockInfo deadlockInfo = new DeadlockInfo();
+        long[] ids = threadMXBean.findDeadlockedThreads();
+        if(ids == null){
+            return deadlockInfo;
+        }
+
+        ThreadInfo[] threads = threadMXBean.getThreadInfo(ids,
+                threadMXBean.isObjectMonitorUsageSupported(),threadMXBean.isSynchronizerUsageSupported());
+
+        for(ThreadInfo threadInfo : threads){
+            LockInfo lockInfo = threadInfo.getLockInfo();
+            if(!deadlockInfo.getOwnerThreadPerLock().containsKey(lockInfo.getIdentityHashCode())){
+                deadlockInfo.getThreads().add(threadInfo);
+            }
+
+            for (MonitorInfo monitorInfo : threadInfo.getLockedMonitors()) {
+                deadlockInfo.getOwnerThreadPerLock().putIfAbsent(monitorInfo.getIdentityHashCode(), threadInfo);
+            }
+
+            for (LockInfo lockedSync : threadInfo.getLockedSynchronizers()) {
+                deadlockInfo.getOwnerThreadPerLock().putIfAbsent(lockedSync.getIdentityHashCode(), threadInfo);
+            }
+        }
+        return deadlockInfo;
+    }
 
     public static String getFullStacktrace(ThreadInfo threadInfo) {
         return getFullStacktrace(threadInfo, -1, -1, -1, 0, 0);

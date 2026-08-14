@@ -5,6 +5,7 @@ import com.taobao.arthas.core.command.model.BlockingLockInfo;
 import com.taobao.arthas.core.command.model.BusyThreadInfo;
 import com.taobao.arthas.core.command.model.ThreadModel;
 import com.taobao.arthas.core.command.model.ThreadVO;
+import com.taobao.arthas.core.command.model.DeadlockInfo;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
@@ -58,6 +59,7 @@ public class ThreadCommand extends AnnotatedCommand {
     private boolean lockedSynchronizers = false;
     private boolean all = false;
 
+    private boolean findDeadlock = false;
     static {
         states = new HashSet<String>(State.values().length);
         for (State state : State.values()) {
@@ -113,6 +115,11 @@ public class ThreadCommand extends AnnotatedCommand {
         this.lockedSynchronizers = lockedSynchronizers;
     }
 
+    @Option(shortName = "d", longName = "deadlock", flag = true)
+    @Description("Find deadlock.")
+    public void setFindDeadlock(boolean findDeadlock) {
+        this.findDeadlock = findDeadlock;
+    }
     @Override
     public void process(CommandProcess process) {
         ExitStatus exitStatus;
@@ -122,6 +129,8 @@ public class ThreadCommand extends AnnotatedCommand {
             exitStatus = processTopBusyThreads(process);
         } else if (findMostBlockingThread) {
             exitStatus = processBlockingThread(process);
+        } else if(findDeadlock){
+            exitStatus = processDeadlock(process);
         } else {
             exitStatus = processAllThreads(process);
         }
@@ -178,6 +187,15 @@ public class ThreadCommand extends AnnotatedCommand {
             return ExitStatus.failure(1, "No most blocking thread found!");
         }
         process.appendResult(new ThreadModel(blockingLockInfo));
+        return ExitStatus.success();
+    }
+
+    private ExitStatus processDeadlock(CommandProcess process) {
+        DeadlockInfo deadlockInfo = ThreadUtil.findDeadlock();
+        if (deadlockInfo.getThreads().isEmpty()) {
+            return ExitStatus.failure(1, "No deadlock found!");
+        }
+        process.appendResult(new ThreadModel(deadlockInfo));
         return ExitStatus.success();
     }
 
