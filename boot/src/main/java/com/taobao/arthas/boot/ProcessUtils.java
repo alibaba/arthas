@@ -422,7 +422,7 @@ public class ProcessUtils {
 
         // find the shortest path, jre path longer than jdk path
         if (javaList.size() > 1) {
-            Collections.sort(javaList, new Comparator<File>() {
+            javaList.sort(new Comparator<File>() {
                 @Override
                 public int compare(File file1, File file2) {
                     try {
