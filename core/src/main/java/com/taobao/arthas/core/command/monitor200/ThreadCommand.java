@@ -65,6 +65,14 @@ public class ThreadCommand extends AnnotatedCommand {
         }
     }
 
+    private boolean hideInternalThreads;
+
+    @Option(longName = "hide-internal",  shortName = "hi", flag = true)
+    @Description("Hide internal threads")
+    public void setHideInternalThreads(final boolean hideInternalThreads) {
+        this.hideInternalThreads = hideInternalThreads;
+    }
+
     @Argument(index = 0, required = false, argName = "id")
     @Description("Show thread stack")
     public void setId(long id) {
@@ -143,7 +151,7 @@ public class ThreadCommand extends AnnotatedCommand {
             stateCountMap.put(threadState, count + 1);
         }
 
-        boolean includeInternalThreads = true;
+        boolean includeInternalThreads = !this.hideInternalThreads;
         Collection<ThreadVO> resultThreads = new ArrayList<ThreadVO>();
         if (!StringUtils.isEmpty(this.state)) {
             this.state = this.state.toUpperCase();
