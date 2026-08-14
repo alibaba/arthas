@@ -417,7 +417,11 @@ public class TelnetConsole {
                 }
             }
             // send command to server
-            outputStream.write((command + " | plaintext\n").getBytes(StandardCharsets.UTF_8));
+            String commandWithPlaintext = command.replaceFirst("\\s*&\\s*$", " | plaintext &");
+            if (commandWithPlaintext.equals(command)) {
+                commandWithPlaintext += " | plaintext";
+            }
+            outputStream.write((commandWithPlaintext + "\n").getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
         }
 
