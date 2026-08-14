@@ -75,14 +75,13 @@ public class NetUtils {
      * @return the response string of given url
      */
     public static String simpleRequest(String url) {
-        BufferedReader br = null;
         try {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestProperty("Accept", "application/json");
             int responseCode = con.getResponseCode();
 
-            br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -102,14 +101,6 @@ public class NetUtils {
 
         } catch (Exception e) {
             return null;
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
         }
     }
 
@@ -128,16 +119,14 @@ public class NetUtils {
      * @return the qos response in string format
      */
     public static Response requestViaSocket(String path) {
-        BufferedReader br = null;
-        try {
-            Socket s = new Socket(QOS_HOST, QOS_PORT);
+        try (Socket s = new Socket(QOS_HOST, QOS_PORT)) {
             PrintWriter pw = new PrintWriter(s.getOutputStream());
             pw.println("GET " + path + " HTTP/1.1");
             pw.println("Host: " + QOS_HOST + ":" + QOS_PORT);
             pw.println("");
             pw.flush();
 
-            br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line = null;
             boolean start = false;
@@ -153,14 +142,6 @@ public class NetUtils {
             return new Response(result);
         } catch (Exception e) {
             return new Response(e.getMessage(), false);
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
         }
     }
 

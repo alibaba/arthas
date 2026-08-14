@@ -126,8 +126,9 @@ public class Base64Command extends AnnotatedCommand {
 
             if (this.output != null) {
                 int readableBytes = convertResult.readableBytes();
-                OutputStream out = new FileOutputStream(this.output);
-                convertResult.readBytes(out, readableBytes);
+                try (OutputStream out = new FileOutputStream(this.output)) {
+                    convertResult.readBytes(out, readableBytes);
+                }
                 process.appendResult(new Base64Model(null));
             } else {
                 String base64Str = convertResult.toString(CharsetUtil.UTF_8);
