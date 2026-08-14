@@ -11,7 +11,7 @@ import java.util.List;
 public class PlainTextHandler extends StdoutHandler {
     public static String NAME = "plaintext";
 
-    public static StdoutHandler inject(List<CliToken> tokens) {
+    public static StdoutHandler inject() {
         return new PlainTextHandler();
     }
 
