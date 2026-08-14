@@ -31,3 +31,4 @@ pom.xml.versionsBackup
 
 # integration-test (python/expect)
 integration-test/telnet-stop-leak/work*/
+.codex/
