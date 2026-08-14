@@ -197,14 +197,14 @@ spec:
 
 目标 HotSpot 支持 root 客户端时，为了覆盖首次 attach、不同权限的临时目录和 `stop` 清理，建议显式保留下面四项 capability。
 
-| 配置或 capability | 用途 |
-| --- | --- |
-| `shareProcessNamespace: true` | 让 sidecar 能看到应用 JVM 的 PID 和 `/proc/<pid>` |
-| `runAsUser: 0` | 在目标 HotSpot 支持 root 客户端时通过跨 UID 校验 |
-| `SYS_PTRACE` | 通过 ptrace access check 读取 `/proc/<pid>`，并访问 `/proc/<pid>/root` 和 mount namespace 信息 |
-| `KILL` | UID 不同时向尚未启动 attach listener 的 JVM 发送 `SIGQUIT` |
-| `DAC_OVERRIDE` | 连接目标用户拥有的 `0600` attach socket，并写入目标容器的临时目录 |
-| `CHOWN` | 把复制到目标容器的 Arthas Home 交给目标用户，使 `stop` 可以清理该目录 |
+| 配置或 capability             | 用途                                                                                           |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `shareProcessNamespace: true` | 让 sidecar 能看到应用 JVM 的 PID 和 `/proc/<pid>`                                              |
+| `runAsUser: 0`                | 在目标 HotSpot 支持 root 客户端时通过跨 UID 校验                                               |
+| `SYS_PTRACE`                  | 通过 ptrace access check 读取 `/proc/<pid>`，并访问 `/proc/<pid>/root` 和 mount namespace 信息 |
+| `KILL`                        | UID 不同时向尚未启动 attach listener 的 JVM 发送 `SIGQUIT`                                     |
+| `DAC_OVERRIDE`                | 连接目标用户拥有的 `0600` attach socket，并写入目标容器的临时目录                              |
+| `CHOWN`                       | 把复制到目标容器的 Arthas Home 交给目标用户，使 `stop` 可以清理该目录                          |
 
 下面是跨 UID 场景的 `securityContext` 片段。它不需要 `privileged: true`、`SYS_ADMIN`、`hostPID` 或 `hostPath`。
 

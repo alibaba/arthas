@@ -197,14 +197,14 @@ If the sidecar and application JVM use different UIDs, the sidecar must run as U
 
 When the target HotSpot accepts a root client, explicitly retain the following four capabilities to support the initial attach, temporary directories with restrictive permissions, and cleanup by `stop`.
 
-| Setting or capability | Purpose |
-| --- | --- |
-| `shareProcessNamespace: true` | Makes the application JVM's PID and `/proc/<pid>` visible to the sidecar |
-| `runAsUser: 0` | Passes the cross-UID check when the target HotSpot accepts root clients |
-| `SYS_PTRACE` | Passes ptrace access checks for `/proc/<pid>`, `/proc/<pid>/root`, and mount namespace information |
-| `KILL` | Sends `SIGQUIT` across UIDs when the target JVM's attach listener has not started |
-| `DAC_OVERRIDE` | Connects to the target user's `0600` attach socket and writes to the target container's temporary directory |
-| `CHOWN` | Gives the copied Arthas Home to the target user so that `stop` can remove it |
+| Setting or capability         | Purpose                                                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `shareProcessNamespace: true` | Makes the application JVM's PID and `/proc/<pid>` visible to the sidecar                                    |
+| `runAsUser: 0`                | Passes the cross-UID check when the target HotSpot accepts root clients                                     |
+| `SYS_PTRACE`                  | Passes ptrace access checks for `/proc/<pid>`, `/proc/<pid>/root`, and mount namespace information          |
+| `KILL`                        | Sends `SIGQUIT` across UIDs when the target JVM's attach listener has not started                           |
+| `DAC_OVERRIDE`                | Connects to the target user's `0600` attach socket and writes to the target container's temporary directory |
+| `CHOWN`                       | Gives the copied Arthas Home to the target user so that `stop` can remove it                                |
 
 The following `securityContext` fragment is for a cross-UID sidecar. It does not require `privileged: true`, `SYS_ADMIN`, `hostPID`, or `hostPath`.
 
