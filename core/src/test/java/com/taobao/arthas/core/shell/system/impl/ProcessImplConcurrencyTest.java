@@ -1,12 +1,17 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import com.taobao.arthas.core.command.monitor200.MonitorCommand;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.command.view.ResultView;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
+import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.TermResultDistributorImpl;
+import com.taobao.arthas.core.shell.cli.CliTokens;
+import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
+import com.taobao.arthas.core.shell.handlers.NoOpHandler;
 import com.taobao.arthas.core.shell.term.Tty;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
@@ -16,12 +21,72 @@ import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ProcessImplConcurrencyTest {
+
+    private static final ResultDistributor DISCARD_RESULT_DISTRIBUTOR = new ResultDistributor() {
+        @Override
+        public void appendResult(ResultModel result) {
+        }
+
+        @Override
+        public void close() {
+        }
+    };
+
+    @Test
+    public void testRunShouldSerializeSharedCliParsing() throws Exception {
+        final Command sharedCommand = Command.create(MonitorCommand.class);
+        final int workerCount = 8;
+        final int iterations = 1000;
+        final CountDownLatch start = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(workerCount);
+        List<Future<?>> workers = new ArrayList<Future<?>>(workerCount);
+
+        try {
+            for (int worker = 0; worker < workerCount; worker++) {
+                workers.add(executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            start.await();
+                            for (int iteration = 0; iteration < iterations; iteration++) {
+                                Tty tty = new MockTty();
+                                ProcessImpl process = new ProcessImpl(sharedCommand,
+                                        Collections.singletonList(CliTokens.createText("-h")),
+                                        new NoOpHandler<CommandProcess>(),
+                                        new ProcessImpl.ProcessOutput(Collections.<Function<String, String>>emptyList(), null, tty),
+                                        DISCARD_RESULT_DISTRIBUTOR);
+                                process.setTty(tty);
+                                process.run(false);
+                                Assert.assertEquals(ExecStatus.TERMINATED, process.status());
+                            }
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw new AssertionError(e);
+                        }
+                    }
+                }));
+            }
+
+            start.countDown();
+            for (Future<?> worker : workers) {
+                worker.get(10, TimeUnit.SECONDS);
+            }
+        } finally {
+            executor.shutdownNow();
+            Assert.assertTrue(executor.awaitTermination(10, TimeUnit.SECONDS));
+        }
+    }
 
     @Test
     public void testAppendResultShouldNotDeadlockWithProcessMonitor() throws Exception {

@@ -21,6 +21,7 @@ import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.shell.term.Tty;
+import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
 import io.termd.core.function.Function;
@@ -346,15 +347,24 @@ public class ProcessImpl implements Process {
         }
 
         CommandLine cl = null;
+        ResultModel helpResult = null;
         try {
-            if (commandContext.cli() != null) {
-                if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
-                    appendResult(new HelpCommand().createHelpDetailModel(commandContext));
+            CLI cli = commandContext.cli();
+            if (cli != null) {
+                synchronized (cli) {
+                    if (cli.parse(args2, false).isAskingForHelp()) {
+                        helpResult = new HelpCommand().createHelpDetailModel(commandContext);
+                    } else {
+                        cl = cli.parse(args2);
+                    }
+                }
+
+                if (helpResult != null) {
+                    appendResult(helpResult);
                     terminate();
                     return;
                 }
 
-                cl = commandContext.cli().parse(args2);
                 process.setArgs2(args2);
                 process.setCommandLine(cl);
             }
