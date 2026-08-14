@@ -53,6 +53,7 @@ public class ResultViewResolver {
             registerView(ClassLoaderView.class);
             registerView(ClassLoaderMetaspaceView.class);
             registerView(DumpClassView.class);
+            registerView(ReflectAnalysisView.class);
             registerView(GetStaticView.class);
             registerView(JadView.class);
             registerView(MemoryCompilerView.class);
