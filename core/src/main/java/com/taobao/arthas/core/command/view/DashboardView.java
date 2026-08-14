@@ -47,10 +47,12 @@ public class DashboardView extends ResultView<DashboardModel> {
         }
 
         //runtime
-        TableElement runtimeInfoTable = drawRuntimeInfo(result.getRuntimeInfo());
+        RuntimeInfoVO runtimeInfo = result.getRuntimeInfo();
+        TableElement runtimeInfoTable = runtimeInfo  == null ? null : drawRuntimeInfo(runtimeInfo);
         //tomcat
         TableElement tomcatInfoTable = drawTomcatInfo(result.getTomcatInfo());
-        int runtimeInfoHeight = Math.max(runtimeInfoTable.getRows().size(), tomcatInfoTable == null ? 0 : tomcatInfoTable.getRows().size());
+        int runtimeInfoHeight = Math.max(runtimeInfoTable == null ? 0 : runtimeInfoTable.getRows().size(), 
+            tomcatInfoTable == null ? 0 : tomcatInfoTable.getRows().size());
         if (runtimeInfoHeight < lowerHalf - memoryInfoHeight) {
             //如果runtimeInfo高度有剩余，则增大MemoryInfo的高度
             memoryInfoHeight = lowerHalf - runtimeInfoHeight;
@@ -107,6 +109,9 @@ public class DashboardView extends ResultView<DashboardModel> {
         } else {
             resultTable = runtimeInfoTable;
         }
+        if (runtimeInfoTable == null) {
+            return "";
+         }
         return RenderUtil.render(resultTable, width, height);
     }
 
