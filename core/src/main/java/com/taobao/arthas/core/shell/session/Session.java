@@ -25,6 +25,10 @@ public interface Session {
      */
     String QUIET = "arthas-session-quiet";
     /**
+     * Marks a command submitted automatically while Arthas is starting.
+     */
+    String STARTUP_COMMAND = "arthas-session-startup-command";
+    /**
      * The tty this session related to.
      */
     String TTY = "tty";

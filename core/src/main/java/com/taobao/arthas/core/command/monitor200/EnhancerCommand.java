@@ -118,6 +118,10 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         return lazy;
     }
 
+    boolean isLazy(Session session) {
+        return lazy || session != null && Boolean.TRUE.equals(session.get(Session.STARTUP_COMMAND));
+    }
+
     /**
      * 类名匹配
      *
@@ -201,6 +205,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         EnhancerAffect effect = null;
         int lock = session.getLock();
         try {
+            boolean lazyEnhance = isLazy(session);
             Instrumentation inst = session.getInstrumentation();
             AdviceListener listener = getAdviceListenerWithId(process);
             if (listener == null) {
@@ -216,7 +221,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             }
 
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace,
-                    getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), this.lazy, this.hashCode);
+                    getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), lazyEnhance, this.hashCode);
             enhancer.setLineEnhanceOptions(getLineEnhanceOptions());
             // 注册通知监听器
             process.register(listener, enhancer);
@@ -238,7 +243,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 }
                 
                 // 懒加载模式：即使没有匹配的类也不立即结束，等待类加载
-                if (this.lazy) {
+                if (lazyEnhance) {
                     String lazyMsg = "Lazy mode is enabled, waiting for class to be loaded. Press Q or Ctrl+C to abort.\n"
                             + "When the target class is loaded, it will be automatically enhanced.";
                     process.write(lazyMsg + "\n");
