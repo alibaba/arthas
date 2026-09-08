@@ -1,5 +1,5 @@
 /**
  * This package is from https://github.com/async-profiler/async-profiler/
- * tag v4.4 commit 86adc1605af84a48fc6d78871927ced2e3c02f0f
+ * tag v4.5 commit 11aaea310cb75843f0e7532365d8cedc8d0e14c8
  */
 package one.profiler;
