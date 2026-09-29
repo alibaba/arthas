@@ -37,6 +37,22 @@ curl -L https://arthas.aliyun.com/install.sh | sh
 
 也可以执行`./as.sh -h`来获取更多参数信息。
 
+`as.sh` 按以下顺序查找可用的 Java，选中后停止查找：
+
+1. 环境变量 `JAVA_HOME`。
+2. `/opt/taobao/java`（目录存在时）。
+3. macOS 的 `/usr/libexec/java_home` 返回的目录。
+4. `PATH` 中的 `java`，解析软链接后确定安装目录。
+5. 运行中 Java 进程的安装目录（需要进程列表中包含完整的 `/bin/java` 路径）。
+
+每个候选目录都需要包含可执行的 `bin/java`，并且 `java -version` 执行成功、版本可以识别。Java 8 及以下还需要 `lib/tools.jar`；如果 `JAVA_HOME` 指向 JRE 子目录，脚本会向上查找最多两级，选择包含 `tools.jar` 和可执行 `bin/java` 的 JDK。Java 9 及以上不需要 `tools.jar`。
+
+有效的 `JAVA_HOME` 始终优先。已配置的目录失效时，脚本会输出原因并继续查找；全部候选不可用时，会在下载或 attach 之前退出。可以为单次启动指定 Java：
+
+```bash
+JAVA_HOME="/path/to/jdk" ./as.sh
+```
+
 ## 全量安装
 
 最新版本，点击下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version?mirror=aliyun)

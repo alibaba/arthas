@@ -229,6 +229,64 @@ check_permission()
 }
 
 
+# 验证候选 Java，成功后才更新 JAVA_HOME 和对应的启动参数。
+try_java_home()
+{
+    local java_home="$1"
+    [ -n "$java_home" ] || return 1
+    if [ ! -x "$java_home/bin/java" ]; then
+        echo "[WARN] Skip JAVA_HOME '$java_home': bin/java is missing or not executable." >&2
+        return 1
+    fi
+
+    local version_output
+    if ! version_output=$("$java_home/bin/java" -version 2>&1); then
+        echo "[WARN] Skip JAVA_HOME '$java_home': java -version failed." >&2
+        return 1
+    fi
+
+    local java_version= line version
+    local version_pattern='version[[:space:]]+"([^"]+)"'
+    while IFS= read -r line; do
+        if [[ "$line" =~ $version_pattern ]]; then
+            version=${BASH_REMATCH[1]}
+            [[ "$version" == 1.* ]] && version=${version#1.}
+            if [[ "$version" =~ ^([0-9]+)($|[-._+]) ]]; then
+                java_version=$((10#${BASH_REMATCH[1]}))
+                break
+            fi
+        fi
+    done <<< "$version_output"
+
+    if [ -z "$java_version" ] || [ "$java_version" -lt 1 ]; then
+        echo "[WARN] Skip JAVA_HOME '$java_home': unrecognized Java version." >&2
+        return 1
+    fi
+
+    java_home=$(rreadlink "$java_home") || return 1
+    local boot_classpath= candidate
+    # 仅 Java 8 及以下需要 tools.jar；保留从 JRE 子目录向父 JDK 查找的行为。
+    if [ "$java_version" -lt 9 ]; then
+        local java_homes=("$java_home" "$java_home/.." "$java_home/../..")
+        for candidate in "${java_homes[@]}"; do
+            if [ -x "$candidate/bin/java" ] && [ -f "$candidate/lib/tools.jar" ]; then
+                java_home=$(rreadlink "$candidate") || return 1
+                boot_classpath="-Xbootclasspath/a:$java_home/lib/tools.jar"
+                break
+            fi
+        done
+        if [ -z "$boot_classpath" ]; then
+            echo "[WARN] Skip JAVA_HOME '$java_home': Java $java_version requires a JDK with lib/tools.jar." >&2
+            return 1
+        fi
+    fi
+
+    JAVA_HOME=$java_home
+    BOOT_CLASSPATH=$boot_classpath
+    return 0
+}
+
+
 # reset arthas work environment
 # reset some options for env
 reset_for_env()
@@ -239,73 +297,38 @@ reset_for_env()
     mkdir -p "${ARTHAS_LIB_DIR}" \
         || exit_on_err 1 "create ${ARTHAS_LIB_DIR} fail."
 
-    # if env define the JAVA_HOME, use it first
-    # if is alibaba opts, use alibaba ops's default JAVA_HOME
-    [ -z "${JAVA_HOME}" ] && [ -d /opt/taobao/java ] && JAVA_HOME=/opt/taobao/java
+    local configured_java_home="${JAVA_HOME}"
+    JAVA_HOME=
+    BOOT_CLASSPATH=
 
-    if [[ (-z "${JAVA_HOME}") && ( -e "/usr/libexec/java_home") ]]; then
-        # for mac
-        JAVA_HOME=`/usr/libexec/java_home`
+    # 有效的显式配置优先；只有当前来源不可用时才查找下一个来源。
+    if ! try_java_home "$configured_java_home" && [ -d /opt/taobao/java ]; then
+        try_java_home /opt/taobao/java
+    fi
+
+    if [ -z "${JAVA_HOME}" ] && [ -x /usr/libexec/java_home ]; then
+        local mac_java_home
+        mac_java_home=$(/usr/libexec/java_home 2>/dev/null) && try_java_home "$mac_java_home"
     fi
 
     if [ -z "${JAVA_HOME}" ]; then
-        # try to find JAVA_HOME from java command
-        local JAVA_COMMAND_PATH=$( rreadlink $(type -p java) )
-        JAVA_HOME=$(echo "$JAVA_COMMAND_PATH" | sed -n 's/\/bin\/java$//p')
-    fi
-
-    # iterater through candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
-    if [ ! -d "${JAVA_HOME}" ]; then
-        JAVA_HOME_CANDIDATES=($(ps aux | grep java | grep -v 'grep java' | awk '{print $11}' | sed -n 's/\/bin\/java$//p'))
-        for JAVA_HOME_TEMP in ${JAVA_HOME_CANDIDATES[@]}; do
-            if [ -f "${JAVA_HOME_TEMP}/lib/tools.jar" ]; then
-                JAVA_HOME=`rreadlink "${JAVA_HOME_TEMP}"`
-                break
-            fi
-        done
-    fi
-
-    if [ -z "${JAVA_HOME}" ]; then
-        exit_on_err 1 "Can not find JAVA_HOME, please set \$JAVA_HOME bash env first."
-    fi
-
-    # maybe 1.8.0_162 , 11-ea
-    local JAVA_VERSION
-
-    local IFS=$'\n'
-    # remove \r for Cygwin
-    local lines=$("${JAVA_HOME}"/bin/java -version 2>&1 | tr '\r' '\n')
-    for line in $lines; do
-      if [[ (-z $JAVA_VERSION) && ($line = *"version \""*) ]]
-      then
-        local ver=$(echo $line | sed -e 's/.*version "\(.*\)"\(.*\)/\1/; 1q')
-        # on macOS, sed doesn't support '?'
-        if [[ $ver = "1."* ]]
-        then
-          JAVA_VERSION=$(echo $ver | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
-        else
-          JAVA_VERSION=$(echo $ver | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
+        local java_command_path
+        java_command_path=$(type -p java)
+        if [ -n "$java_command_path" ] && java_command_path=$(rreadlink "$java_command_path"); then
+            case "$java_command_path" in
+                */bin/java) try_java_home "${java_command_path%/bin/java}" ;;
+            esac
         fi
-      fi
-    done
-
-    # when java version less than 9, we can use tools.jar to confirm java home.
-    # when java version greater than 9, there is no tools.jar.
-    if [[ "$JAVA_VERSION" -lt 9 ]];then
-      # possible java homes
-      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
-      for javaHome in ${javaHomes[@]}
-      do
-          toolsJar="$javaHome/lib/tools.jar"
-          if [ -f $toolsJar ]; then
-              JAVA_HOME=$( rreadlink $javaHome )
-              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
-              break
-          fi
-      done
-      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
     fi
 
+    if [ -z "${JAVA_HOME}" ]; then
+        local candidate
+        while IFS= read -r candidate; do
+            try_java_home "$candidate" && break
+        done < <(ps aux | awk '$11 ~ /\/bin\/java$/ { sub(/\/bin\/java$/, "", $11); print $11 }')
+    fi
+
+    [ -n "${JAVA_HOME}" ] || exit_on_err 1 "Can not find a usable JAVA_HOME; see the candidate errors above."
     echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
 
     # reset CHARSET for alibaba opts, we use GBK
