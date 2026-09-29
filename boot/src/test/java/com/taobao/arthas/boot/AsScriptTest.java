@@ -40,6 +40,10 @@ public class AsScriptTest {
     private Path javaCalls;
     private Path curlCalls;
     private Path download;
+    private Path javaHome;
+    private Path platformJavaHome;
+    private Path macJavaHome;
+    private Path discoveryCalls;
     private Map<String, String> environment;
 
     @Before
@@ -50,6 +54,9 @@ public class AsScriptTest {
         javaCalls = temporaryFolder.newFile("java-calls").toPath();
         curlCalls = temporaryFolder.newFile("curl-calls").toPath();
         download = temporaryFolder.newFile("download.zip").toPath();
+        discoveryCalls = temporaryFolder.newFile("discovery-calls").toPath();
+        platformJavaHome = temporaryFolder.getRoot().toPath().resolve("platform-jdk");
+        macJavaHome = temporaryFolder.getRoot().toPath().resolve("mac-java-home");
         createArchive(true);
 
         // 只暴露启动器所需命令，避免宿主机的 telnet、lsof 和 Java 进程影响结果。
@@ -61,7 +68,16 @@ public class AsScriptTest {
             Files.createSymbolicLink(commands.resolve(command), Paths.get(new String(output, StandardCharsets.UTF_8).trim()));
         }
         writeExecutable(commands.resolve("telnet"), "exit 0\n");
-        writeExecutable(commands.resolve("ps"), "case \"$*\" in *user=*) id -u -n;; *) echo 1234;; esac\n");
+        writeExecutable(commands.resolve("ps"),
+                        "case \"$*\" in\n"
+                        + "  *user=*) id -u -n;;\n"
+                        + "  aux)\n"
+                        + "    printf 'ps\\n' >> \"$AS_TEST_DISCOVERY_CALLS\"\n"
+                        + "    if [[ -n $AS_TEST_PROCESS_JAVA_HOME ]]; then\n"
+                        + "      printf 'user 1234 0 0 0 0 ? Sl 00:00 0:00 %s/bin/java example.Main\\n' \"$AS_TEST_PROCESS_JAVA_HOME\"\n"
+                        + "    fi;;\n"
+                        + "  *) echo 1234;;\n"
+                        + "esac\n");
         writeExecutable(commands.resolve("curl"),
                         "printf '%s\\n' \"$*\" >> \"$AS_TEST_CURL_CALLS\"\n"
                         + "output=\n"
@@ -77,12 +93,7 @@ public class AsScriptTest {
                         + "  cp \"$AS_TEST_DOWNLOAD\" \"$output\"\n"
                         + "fi\n");
 
-        Path javaHome = temporaryFolder.newFolder("jdk").toPath();
-        Files.createDirectory(javaHome.resolve("bin"));
-        writeExecutable(javaHome.resolve("bin/java"),
-                        "if [[ $1 == -version ]]; then echo 'openjdk version \"17.0.2\"' >&2; exit 0; fi\n"
-                        + "printf '%s\\n' \"$*\" >> \"$AS_TEST_JAVA_CALLS\"\n");
-        writeExecutable(javaHome.resolve("bin/jps"), "echo '1234 example.Main'\n");
+        javaHome = createJavaHome(temporaryFolder.getRoot().toPath().resolve("jdk"), "17.0.2", false);
 
         Path project = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
         while (project != null && !Files.isRegularFile(project.resolve("bin/as.sh"))) {
@@ -90,6 +101,9 @@ public class AsScriptTest {
         }
         assertTrue("Cannot locate bin/as.sh", project != null);
         String script = new String(Files.readAllBytes(project.resolve("bin/as.sh")), StandardCharsets.UTF_8);
+        // 隔离固定平台路径，保留完整 Java 初始化和启动流程。
+        script = script.replace("/opt/taobao/java", platformJavaHome.toString())
+                        .replace("/usr/libexec/java_home", macJavaHome.toString());
         int mainCall = script.lastIndexOf("\nmain \"${@}\"");
         assertTrue("Cannot locate launcher entry point", mainCall >= 0);
         // 显式设置 umask，避免宿主设置影响权限断言；旧版本的 /tmp 仍隔离到测试目录。
@@ -108,7 +122,170 @@ public class AsScriptTest {
         environment.put("AS_TEST_DOWNLOAD", download.toString());
         environment.put("AS_TEST_JAVA_CALLS", javaCalls.toString());
         environment.put("AS_TEST_CURL_CALLS", curlCalls.toString());
+        environment.put("AS_TEST_DISCOVERY_CALLS", discoveryCalls.toString());
         environment.put("AS_TEST_TMP_DIR", temporaryFolder.newFolder("downloads").getAbsolutePath());
+    }
+
+    @Test
+    public void invalidExplicitJavaHomeFallsBackToPlatform() throws Exception {
+        Path fallback = createJavaHome(platformJavaHome, "11.0.27.26-AJDK", false);
+        Path missing = temporaryFolder.getRoot().toPath().resolve("missing-jdk");
+        Path empty = temporaryFolder.newFolder("empty-jdk").toPath();
+        Path nonExecutable = createJavaHome(temporaryFolder.getRoot().toPath().resolve("non-executable"), "17", false);
+        Files.setPosixFilePermissions(nonExecutable.resolve("bin/java"), PosixFilePermissions.fromString("rw-r--r--"));
+        for (Path invalid : Arrays.asList(missing, empty, nonExecutable)) {
+            environment.put("JAVA_HOME", invalid.toString());
+            String output = runHelp(0);
+            assertJavaHome(output, fallback);
+            assertTrue(output, output.contains("bin/java is missing or not executable"));
+        }
+        assertEquals("", read(discoveryCalls));
+    }
+
+    @Test
+    public void validExplicitJavaHomeAvoidsFallbackDiscovery() throws Exception {
+        Path fallback = createJavaHome(platformJavaHome, "11", false);
+        useMacJava(fallback);
+        Files.createSymbolicLink(commands.resolve("java"), fallback.resolve("bin/java"));
+        environment.put("AS_TEST_PROCESS_JAVA_HOME", fallback.toString());
+        String output = runHelp(0);
+        assertJavaHome(output, javaHome);
+        assertFalse(output, output.contains("[WARN]"));
+        assertEquals("", read(discoveryCalls));
+    }
+
+    @Test
+    public void platformJavaTakesPrecedenceOverMacAndPath() throws Exception {
+        environment.put("JAVA_HOME", "");
+        Path fallback = createJavaHome(platformJavaHome, "11", false);
+        useMacJava(javaHome);
+        Files.createSymbolicLink(commands.resolve("java"), javaHome.resolve("bin/java"));
+        assertJavaHome(runHelp(0), fallback);
+        assertEquals("", read(discoveryCalls));
+    }
+
+    @Test
+    public void macJavaTakesPrecedenceOverPath() throws Exception {
+        environment.put("JAVA_HOME", "");
+        useMacJava(javaHome);
+        Path pathJava = createJavaHome(temporaryFolder.getRoot().toPath().resolve("path-jdk"), "21", false);
+        Files.createSymbolicLink(commands.resolve("java"), pathJava.resolve("bin/java"));
+        assertJavaHome(runHelp(0), javaHome);
+        assertEquals("mac\n", read(discoveryCalls));
+    }
+
+    @Test
+    public void failedMacLookupFallsBackToPath() throws Exception {
+        environment.put("JAVA_HOME", "");
+        writeExecutable(macJavaHome, "exit 1\n");
+        Files.createSymbolicLink(commands.resolve("java"), javaHome.resolve("bin/java"));
+        assertJavaHome(runHelp(0), javaHome);
+    }
+
+    @Test
+    public void pathWithSpacesAndSymlinkWorksWithoutOptionalPlatformPaths() throws Exception {
+        environment.put("JAVA_HOME", "");
+        Path path = temporaryFolder.newFolder("path with spaces").toPath();
+        Files.createSymbolicLink(path.resolve("java"), javaHome.resolve("bin/java"));
+        environment.put("PATH", path + File.pathSeparator + commands);
+        String output = runHelp(0);
+        assertJavaHome(output, javaHome);
+        assertFalse(output, output.contains("[WARN]"));
+        assertEquals("", read(discoveryCalls));
+    }
+
+    @Test
+    public void processFallbackAcceptsModernJavaWithoutToolsJar() throws Exception {
+        environment.put("JAVA_HOME", temporaryFolder.getRoot().toPath().resolve("missing-jdk").toString());
+        Path processJava = createJavaHome(temporaryFolder.getRoot().toPath().resolve("process-jdk"), "11", false);
+        environment.put("AS_TEST_PROCESS_JAVA_HOME", processJava.toString());
+        assertJavaHome(runHelp(0), processJava);
+        assertEquals("ps\n", read(discoveryCalls));
+    }
+
+    @Test
+    public void failedVersionCommandIsRejectedEvenWithRecognizableOutput() throws Exception {
+        Path fallback = createJavaHome(platformJavaHome, "11", false);
+        writeJava(javaHome, "openjdk version \"17.0.2\"", 42);
+        String output = runHelp(0);
+        assertJavaHome(output, fallback);
+        assertTrue(output, output.contains("java -version failed"));
+    }
+
+    @Test
+    public void invalidVersionsFallBackInsteadOfAssumingJava8() throws Exception {
+        Path fallback = createJavaHome(platformJavaHome, "11", false);
+        for (String version : Arrays.asList("", "unrecognized vendor output", "openjdk version \"0\"",
+                        "openjdk version \"invalid\"")) {
+            writeJava(javaHome, version, 0);
+            String output = runHelp(0);
+            assertJavaHome(output, fallback);
+            assertTrue(output, output.contains("unrecognized Java version"));
+        }
+    }
+
+    @Test
+    public void modernJavaVersionsDoNotNeedToolsJar() throws Exception {
+        for (String version : Arrays.asList("9", "11.0.27.26-AJDK", "11-ea", "17.0.15", "21.0.7", "25")) {
+            writeJava(javaHome, "openjdk version \"" + version + "\"\r\nOpenJDK Runtime Environment\r", 0);
+            assertJavaHome(runHelp(0), javaHome);
+        }
+    }
+
+    @Test
+    public void java8AndNestedJreUseJdkToolsJarWithSpaces() throws Exception {
+        Path jdk = createJavaHome(temporaryFolder.getRoot().toPath().resolve("jdk8 with spaces"), "1.8.0_402", true);
+        Path jre = createJavaHome(jdk.resolve("jre"), "1.8.0_402", false);
+        Path nestedJre = createJavaHome(jre.resolve("nested"), "1.8.0_402", false);
+        Path arthas = cache("4.3.5");
+        for (Path candidate : Arrays.asList(jdk, jre, nestedJre)) {
+            Files.write(javaCalls, new byte[0]);
+            environment.put("JAVA_HOME", candidate.toString());
+            environment.put("BOOT_CLASSPATH", "-Xbootclasspath/a:/stale/tools.jar");
+            assertJavaHome(run(0, "--arthas-home", arthas.toString(), "--attach-only", "1234"), jdk);
+            String calls = read(javaCalls);
+            assertTrue(calls, calls.contains("-Xbootclasspath/a:" + jdk.resolve("lib/tools.jar")));
+            assertFalse(calls, calls.contains("/stale/tools.jar"));
+        }
+    }
+
+    @Test
+    public void java8WithoutUsableParentJdkFallsBack() throws Exception {
+        Path fallback = createJavaHome(platformJavaHome, "11", false);
+        Path parent = temporaryFolder.newFolder("jdk8-without-java").toPath();
+        Files.createDirectories(parent.resolve("lib"));
+        Files.createFile(parent.resolve("lib/tools.jar"));
+        Path jre = createJavaHome(parent.resolve("jre"), "1.8.0_402", false);
+        environment.put("JAVA_HOME", jre.toString());
+        String output = runHelp(0);
+        assertJavaHome(output, fallback);
+        assertTrue(output, output.contains("requires a JDK with lib/tools.jar"));
+    }
+
+    @Test
+    public void modernJavaClearsInheritedBootClasspathBeforeAttach() throws Exception {
+        environment.put("BOOT_CLASSPATH", "-Xbootclasspath/a:/stale/tools.jar");
+        Path arthas = cache("4.3.5");
+        assertJavaHome(run(0, "--arthas-home", arthas.toString(), "--attach-only", "1234"), javaHome);
+        assertFalse(read(javaCalls), read(javaCalls).contains("-Xbootclasspath"));
+    }
+
+    @Test
+    public void inheritedBootClasspathCannotMakeInvalidJavaUsable() throws Exception {
+        environment.put("JAVA_HOME", temporaryFolder.getRoot().toPath().resolve("missing-jdk").toString());
+        environment.put("BOOT_CLASSPATH", "-Xbootclasspath/a:/stale/tools.jar");
+        String output = runHelp(1);
+        assertTrue(output, output.contains("Can not find a usable JAVA_HOME"));
+        assertFalse(output, output.contains("tools.jar was not found, so arthas could not be launched!"));
+    }
+
+    @Test
+    public void unknownVersionReportsSelectionFailureBeforeDownloadOrAttach() throws Exception {
+        writeJava(javaHome, "unrecognized vendor output", 0);
+        String output = runHelp(1);
+        assertTrue(output, output.contains("unrecognized Java version"));
+        assertTrue(output, output.contains("Can not find a usable JAVA_HOME"));
+        assertFalse(output, output.contains("tools.jar was not found, so arthas could not be launched!"));
     }
 
     @Test
@@ -325,6 +502,10 @@ public class AsScriptTest {
         command.addAll(Arrays.asList(arguments));
         Path output = temporaryFolder.newFile().toPath();
         ProcessBuilder builder = new ProcessBuilder(command).directory(temporaryFolder.getRoot());
+        for (String variable : Arrays.asList("BOOT_CLASSPATH", "BASH_ENV", "ENV", "JAVA_TOOL_OPTIONS", "_JAVA_OPTIONS",
+                        "JDK_JAVA_OPTIONS")) {
+            builder.environment().remove(variable);
+        }
         builder.environment().putAll(environment);
         builder.redirectErrorStream(true).redirectOutput(output.toFile());
         Process process = builder.start();
@@ -335,6 +516,47 @@ public class AsScriptTest {
         String text = read(output);
         assertEquals(text, expectedExit, process.exitValue());
         return text;
+    }
+
+    private String runHelp(int expectedExit) throws Exception {
+        String output = run(expectedExit, "--help");
+        assertEquals("Java selection must not invoke download commands", "", read(curlCalls));
+        assertEquals("Java selection must not invoke attach or client commands", "", read(javaCalls));
+        if (expectedExit == 0) {
+            assertTrue(output, output.contains("Usage:"));
+        }
+        return output;
+    }
+
+    private void assertJavaHome(String output, Path expected) throws IOException {
+        assertTrue(output, output.contains("[INFO] JAVA_HOME: " + expected.toRealPath() + "\n"));
+    }
+
+    private Path createJavaHome(Path home, String version, boolean tools) throws IOException {
+        Files.createDirectories(home.resolve("bin"));
+        writeJava(home, "openjdk version \"" + version + "\"", 0);
+        writeExecutable(home.resolve("bin/jps"), "echo '1234 example.Main'\n");
+        if (tools) {
+            Files.createDirectories(home.resolve("lib"));
+            Files.createFile(home.resolve("lib/tools.jar"));
+        }
+        return home.toRealPath();
+    }
+
+    private void writeJava(Path home, String versionOutput, int exitCode) throws IOException {
+        writeExecutable(home.resolve("bin/java"),
+                        "if [[ $1 == -version ]]; then\n"
+                        + "  printf '%s\\n' '" + versionOutput.replace("'", "'\\''") + "' >&2\n"
+                        + "  exit " + exitCode + "\n"
+                        + "fi\n"
+                        + "printf '%s\\n' \"$*\" >> \"$AS_TEST_JAVA_CALLS\"\n");
+    }
+
+    private void useMacJava(Path home) throws IOException {
+        environment.put("AS_TEST_MAC_JAVA_HOME", home.toString());
+        writeExecutable(macJavaHome,
+                        "printf 'mac\\n' >> \"$AS_TEST_DISCOVERY_CALLS\"\n"
+                        + "printf '%s\\n' \"$AS_TEST_MAC_JAVA_HOME\"\n");
     }
 
     private void assertHome(String output, Path home) {
