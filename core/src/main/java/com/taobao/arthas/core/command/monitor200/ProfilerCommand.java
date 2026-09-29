@@ -590,7 +590,7 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     /**
-     * https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp
+     * https://github.com/async-profiler/async-profiler/blob/v4.5/src/arguments.cpp
      */
     public enum ProfilerAction {
         // start, resume, stop, dump, status, meminfo, list,
