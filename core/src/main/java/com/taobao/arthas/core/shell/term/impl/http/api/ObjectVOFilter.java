@@ -15,7 +15,10 @@ public class ObjectVOFilter implements ValueFilter {
     public Object apply(Object object, String name, Object value) {
         if (value instanceof ObjectVO) {
             ObjectVO vo = (ObjectVO) value;
-            String resultStr = StringUtils.objectToString(vo.needExpand() ? new ObjectView(vo).draw() : value);
+            if (vo.getRenderedValue() != null) {
+                return vo.getRenderedValue();
+            }
+            String resultStr = StringUtils.objectToString(vo.needExpand() ? new ObjectView(vo).draw() : vo.getObject());
             return resultStr;
         }
         return value;

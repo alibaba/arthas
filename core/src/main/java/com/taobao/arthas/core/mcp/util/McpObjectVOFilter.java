@@ -49,6 +49,10 @@ public class McpObjectVOFilter implements ValueFilter {
 
     private Object handleObjectVO(ObjectVO objectVO) {
         try {
+            if (objectVO.getRenderedValue() != null) {
+                return objectVO.getRenderedValue();
+            }
+
             Object innerObject = objectVO.getObject();
             Integer expand = objectVO.getExpand();
             
