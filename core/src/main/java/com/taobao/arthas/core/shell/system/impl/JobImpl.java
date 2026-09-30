@@ -88,11 +88,6 @@ public class JobImpl implements Job {
 
         runInBackground.set(!foreground);
 
-//        if (foreground) {
-//            if (foregroundUpdatedHandler != null) {
-//                foregroundUpdatedHandler.handle(this);
-//            }
-//        }
         if (statusUpdateHandler != null) {
             statusUpdateHandler.handle(process.status());
         }
@@ -114,14 +109,11 @@ public class JobImpl implements Job {
         } catch (IllegalStateException ignore) {
             return this;
         }
-//        if (!runInBackground.get() && foregroundUpdatedHandler != null) {
-//            foregroundUpdatedHandler.handle(null);
-//        }
+
         if (statusUpdateHandler != null) {
             statusUpdateHandler.handle(process.status());
         }
 
-//        shell.setForegroundJob(null);
         jobHandler.onSuspend(this);
         return this;
     }
@@ -142,10 +134,12 @@ public class JobImpl implements Job {
         return process;
     }
 
+    @Override
     public ExecStatus status() {
         return process.status();
     }
 
+    @Override
     public String line() {
         return line;
     }
@@ -168,8 +162,6 @@ public class JobImpl implements Job {
             }
         }
 
-//        shell.setForegroundJob(null);
-//        jobHandler.onBackground(this);
         return this;
     }
 
@@ -177,15 +169,11 @@ public class JobImpl implements Job {
     public Job toForeground() {
         if (this.runInBackground.get()) {
             if (runInBackground.compareAndSet(true, false)) {
-//                if (foregroundUpdatedHandler != null) {
-//                    foregroundUpdatedHandler.handle(this);
-//                }
                 process.toForeground();
                 if (statusUpdateHandler != null) {
                     statusUpdateHandler.handle(process.status());
                 }
 
-//                shell.setForegroundJob(this);
                 jobHandler.onForeground(this);
             }
         }
@@ -205,9 +193,6 @@ public class JobImpl implements Job {
 
     @Override
     public Job run(boolean foreground) {
-//        if (foreground && foregroundUpdatedHandler != null) {
-//            foregroundUpdatedHandler.handle(this);
-//        }
 
         actualStatus = ExecStatus.RUNNING;
         if (statusUpdateHandler != null) {
@@ -218,15 +203,6 @@ public class JobImpl implements Job {
         process.setSession(this.session);
         process.run(foreground);
 
-//        if (!foreground && foregroundUpdatedHandler != null) {
-//            foregroundUpdatedHandler.handle(null);
-//        }
-//
-//        if (foreground) {
-//            shell.setForegroundJob(this);
-//        } else {
-//            shell.setForegroundJob(null);
-//        }
         if (this.status() == ExecStatus.RUNNING) {
             if (foreground) {
                 jobHandler.onForeground(this);
@@ -247,25 +223,12 @@ public class JobImpl implements Job {
 
         @Override
         public void handle(Integer exitCode) {
-//            if (!runInBackground.get() && actualStatus.equals(ExecStatus.RUNNING)) {
-                // 只有前台在运行的任务，才需要调用foregroundUpdateHandler
-//                if (foregroundUpdatedHandler != null) {
-//                    foregroundUpdatedHandler.handle(null);
-//                }
-//            }
             jobHandler.onTerminated(JobImpl.this);
             controller.removeJob(JobImpl.this.id);
             if (statusUpdateHandler != null) {
                 statusUpdateHandler.handle(ExecStatus.TERMINATED);
             }
             terminateFuture.complete();
-
-            // save command history (move to JobControllerImpl.ShellJobHandler.onTerminated)
-//            Term term = shell.term();
-//            if (term instanceof TermImpl) {
-//                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
-//                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
-//            }
         }
     }
 
