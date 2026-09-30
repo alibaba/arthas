@@ -118,9 +118,11 @@ public class AgentBootstrap {
                 agentArgs = args;
             }
 
-            File arthasCoreJarFile = new File(arthasCoreJar);
-            if (!arthasCoreJarFile.exists()) {
-                ps.println("Can not find arthas-core jar file from args: " + arthasCoreJarFile);
+            File arthasCoreJarFile = arthasCoreJar.trim().isEmpty() ? null : new File(arthasCoreJar);
+            if (arthasCoreJarFile == null || !arthasCoreJarFile.exists()) {
+                if (arthasCoreJarFile != null) {
+                    ps.println("Can not find arthas-core jar file from args: " + arthasCoreJarFile);
+                }
                 // try to find from arthas-agent.jar directory
                 CodeSource codeSource = AgentBootstrap.class.getProtectionDomain().getCodeSource();
                 if (codeSource != null) {
@@ -136,7 +138,7 @@ public class AgentBootstrap {
                     }
                 }
             }
-            if (!arthasCoreJarFile.exists()) {
+            if (arthasCoreJarFile == null || !arthasCoreJarFile.exists()) {
                 return;
             }
 
