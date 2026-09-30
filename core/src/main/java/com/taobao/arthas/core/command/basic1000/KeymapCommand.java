@@ -47,7 +47,7 @@ public class KeymapCommand extends AnnotatedCommand {
                             label("Description").style(Decoration.bold.bold()),
                             label("Name").style(Decoration.bold.bold()));
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputrc));
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inputrc))) {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
