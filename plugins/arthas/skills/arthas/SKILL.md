@@ -1,6 +1,7 @@
 ---
 name: arthas
 description: arthas 诊断 java应用，jvm问题 skill
+license: Apache-2.0
 ---
 
 # Arthas 诊断 Skill
@@ -20,7 +21,7 @@ Arthas 是 Java 应用在线诊断工具，本 Skill 包含多个子场景的诊
 
 ### 1. CPU 飙高排查
 
-**文件：** `cpu-high/SKILL.md`
+**文件：** `../arthas-cpu-high/SKILL.md`
 
 适用场景：机器 CPU 飙高、应用响应变慢、负载异常升高。
 
@@ -35,7 +36,7 @@ Arthas 是 Java 应用在线诊断工具，本 Skill 包含多个子场景的诊
 
 ### 2. 获取 EagleEye traceId
 
-**文件：** `eagleeye-traceid/SKILL.md`
+**文件：** `../arthas-eagleeye-traceid/SKILL.md`
 
 适用场景：需要在不改代码的情况下，获取线上请求的 EagleEye traceId，用于关联日志 / 链路分析。
 
@@ -50,7 +51,7 @@ Arthas 是 Java 应用在线诊断工具，本 Skill 包含多个子场景的诊
 
 ### 3. Spring Context / Bean 排查
 
-**文件：** `spring-context/SKILL.md`
+**文件：** `../arthas-springcontext-issues-resolve/SKILL.md`
 
 适用场景：排查 Spring ApplicationContext / Bean / 配置注入等问题。
 
