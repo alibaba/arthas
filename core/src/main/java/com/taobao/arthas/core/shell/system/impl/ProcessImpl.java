@@ -25,6 +25,7 @@ import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
 import io.termd.core.function.Function;
 
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.util.Date;
 import java.util.LinkedList;
@@ -367,8 +368,10 @@ public class ProcessImpl implements Process {
             process.echoTips("job id  : " + this.jobId + "\n");
             process.echoTips("cache location  : " + cacheLocation() + "\n");
         }
+        ArthasBootstrap arthasBootstrap = ArthasBootstrap.getInstance();
+        process.setArthasOutput(arthasBootstrap.getOutputPath());
         Runnable task = new CommandProcessTask(process);
-        ArthasBootstrap.getInstance().execute(task);
+        arthasBootstrap.execute(task);
     }
 
     private class CommandProcessTask implements Runnable {
@@ -400,10 +403,21 @@ public class ProcessImpl implements Process {
         private AtomicInteger times = new AtomicInteger();
         private AdviceListener listener = null;
         private ClassFileTransformer transformer;
+        private File arthasOutput;
+
 
         public CommandProcessImpl(Process process, Tty tty) {
             this.process = process;
             this.tty = tty;
+        }
+
+        public void setArthasOutput(File arthasOutput){
+            this.arthasOutput = arthasOutput;
+        }
+
+        @Override
+        public File getArthasOutput(){
+            return this.arthasOutput;
         }
 
         @Override
