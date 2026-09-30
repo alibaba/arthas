@@ -61,11 +61,11 @@ public class ShellServerImpl extends ShellServer {
 
     public ShellServerImpl(ShellServerOptions options) {
         this.welcomeMessage = options.getWelcomeMessage();
-        this.termServers = new ArrayList<TermServer>();
+        this.termServers = new ArrayList<>();
         this.timeoutMillis = options.getSessionTimeout();
-        this.sessions = new ConcurrentHashMap<String, ShellImpl>();
+        this.sessions = new ConcurrentHashMap<>();
         this.reaperInterval = options.getReaperInterval();
-        this.resolvers = new CopyOnWriteArrayList<CommandResolver>();
+        this.resolvers = new CopyOnWriteArrayList<>();
         this.commandManager = new InternalCommandManager(resolvers);
         this.instrumentation = options.getInstrumentation();
         this.pid = options.getPid();
@@ -141,7 +141,7 @@ public class ShellServerImpl extends ShellServer {
 
     private void evictSessions() {
         long now = System.currentTimeMillis();
-        Set<ShellImpl> toClose = new HashSet<ShellImpl>();
+        Set<ShellImpl> toClose = new HashSet<>();
         for (ShellImpl session : sessions.values()) {
             // do not close if there is still job running,
             // e.g. trace command might wait for a long time before condition is met
@@ -229,7 +229,7 @@ public class ShellServerImpl extends ShellServer {
                     scheduledExecutorService.shutdownNow();
                 }
                 toStop = termServers;
-                toClose = new ArrayList<ShellImpl>(sessions.values());
+                toClose = new ArrayList<>(sessions.values());
                 if (toClose.isEmpty()) {
                     sessionsClosed.complete();
                 }
@@ -253,10 +253,12 @@ public class ShellServerImpl extends ShellServer {
         }
     }
 
+    @Override
     public JobControllerImpl getJobController() {
         return jobController;
     }
 
+    @Override
     public InternalCommandManager getCommandManager() {
         return commandManager;
     }
