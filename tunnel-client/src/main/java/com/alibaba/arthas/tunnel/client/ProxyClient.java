@@ -60,7 +60,8 @@ public class ProxyClient {
                 @Override
                 protected void initChannel(LocalChannel ch) {
                     ChannelPipeline p = ch.pipeline();
-                    p.addLast(new HttpClientCodec(), new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH),
+                    p.addLast(new HttpClientCodec(),
+                            new HttpObjectAggregator(ArthasConstants.getTunnelClientMaxHttpContentLength()),
                             new HttpProxyClientHandler(httpResponsePromise));
                 }
             });
