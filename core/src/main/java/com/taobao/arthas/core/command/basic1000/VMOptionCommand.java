@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.JMX;
+
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.sun.management.HotSpotDiagnosticMXBean;
@@ -42,6 +46,25 @@ import com.taobao.middleware.cli.annotations.Summary;
 public class VMOptionCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(VMOptionCommand.class);
 
+    private static final String HOTSPOT_DIAGNOSTIC_MXBEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
+
+    private static HotSpotDiagnosticMXBean getHotSpotDiagnosticMXBean() throws Exception {
+        // Primary path: direct ManagementFactory lookup
+        try {
+            HotSpotDiagnosticMXBean bean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
+            if (bean != null) {
+                return bean;
+            }
+        } catch (Throwable t) {
+            logger.debug("Primary HotSpotDiagnosticMXBean lookup failed, trying MBeanServer fallback", t);
+        }
+        // Fallback: look up via MBeanServer (better module compatibility on JDK 9+)
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        return JMX.newMXBeanProxy(server,
+                new ObjectName(HOTSPOT_DIAGNOSTIC_MXBEAN_NAME),
+                HotSpotDiagnosticMXBean.class);
+    }
+
     private String name;
     private String value;
 
@@ -64,8 +87,7 @@ public class VMOptionCommand extends AnnotatedCommand {
 
     private static void run(CommandProcess process, String name, String value) {
         try {
-            HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = ManagementFactory
-                            .getPlatformMXBean(HotSpotDiagnosticMXBean.class);
+            HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = getHotSpotDiagnosticMXBean();
 
             if (StringUtils.isBlank(name) && StringUtils.isBlank(value)) {
                 // show all options
@@ -92,19 +114,29 @@ public class VMOptionCommand extends AnnotatedCommand {
             process.end();
         } catch (Throwable t) {
             logger.error("Error during setting vm option", t);
-            process.end(-1, "Error during setting vm option: " + t.getMessage());
+            String msg = t.getMessage();
+            String hint = "";
+            if (msg != null && (msg.contains("sun.management") || msg.contains("sun/management"))) {
+                hint = " (JDK module access issue: try adding"
+                        + " --add-opens java.management/sun.management=ALL-UNNAMED"
+                        + " to the target JVM startup arguments)";
+            }
+            process.end(-1, "Error during setting vm option: " + msg + hint);
         }
     }
 
     @Override
     public void complete(Completion completion) {
-        HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = ManagementFactory
-                        .getPlatformMXBean(HotSpotDiagnosticMXBean.class);
-        List<VMOption> diagnosticOptions = hotSpotDiagnosticMXBean.getDiagnosticOptions();
-        List<String> names = new ArrayList<String>(diagnosticOptions.size());
-        for (VMOption option : diagnosticOptions) {
-            names.add(option.getName());
+        try {
+            HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = getHotSpotDiagnosticMXBean();
+            List<VMOption> diagnosticOptions = hotSpotDiagnosticMXBean.getDiagnosticOptions();
+            List<String> names = new ArrayList<String>(diagnosticOptions.size());
+            for (VMOption option : diagnosticOptions) {
+                names.add(option.getName());
+            }
+            CompletionUtils.complete(completion, names);
+        } catch (Throwable t) {
+            logger.error("Error during completing vmoption", t);
         }
-        CompletionUtils.complete(completion, names);
     }
 }
