@@ -107,7 +107,9 @@ public class ViewRenderUtil {
     }
 
     public static String drawThreadInfo(List<ThreadVO> threads, int width, int height) {
-        TableElement table = new TableElement(1, 6, 3, 2, 2, 2, 2, 2, 2, 2).overflow(Overflow.HIDDEN).rightCellPadding(1);
+        int[] columnWeights = threadColumnWeights(threads, width, height);
+        TableElement table = new TableElement(columnWeights[0], columnWeights[1], 3, 2, 2, 2, 2, 2, 2, 2)
+                .overflow(Overflow.HIDDEN).rightCellPadding(1);
 
         // Header
         table.add(
@@ -159,6 +161,35 @@ public class ViewRenderUtil {
             }
         }
         return RenderUtil.render(table, width, height);
+    }
+
+    /**
+     * Weight 1 leaves two visible characters at width 80, so Overflow.HIDDEN prints both
+     * 100 and 101 as "10". Borrow weight from NAME, which is already clipped, and leave
+     * the other columns alone.
+     */
+    private static int[] threadColumnWeights(List<ThreadVO> threads, int width, int height) {
+        int longest = 2;
+        int limit = Math.min(Math.max(height, 0), threads.size());
+        for (int i = 0; i < limit; i++) {
+            int len = String.valueOf(threads.get(i).getId()).length();
+            if (len > longest) {
+                longest = len;
+            }
+        }
+        int idWeight = 1;
+        int nameWeight = 6;
+        int otherWeight = 17;
+        int padding = 1;
+        while (nameWeight > 1) {
+            int allocated = width * idWeight / (idWeight + nameWeight + otherWeight);
+            if (allocated - padding >= longest) {
+                break;
+            }
+            idWeight++;
+            nameWeight--;
+        }
+        return new int[] {idWeight, nameWeight};
     }
 
     private static String formatTimeMills(long timeMills) {
