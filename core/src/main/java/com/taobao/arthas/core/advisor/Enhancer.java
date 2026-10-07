@@ -99,12 +99,12 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     /**
-     * @param adviceId          通知编号
-     * @param isTracing         可跟踪方法调用
-     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
-     * @param matchingClasses   匹配中的类
-     * @param methodNameMatcher 方法名匹配
-     * @param affect            影响统计
+     * @param listener                通知监听器
+     * @param isTracing               可跟踪方法调用
+     * @param skipJDKTrace            是否忽略对JDK内部方法的跟踪
+     * @param classNameMatcher        类名匹配
+     * @param classNameExcludeMatcher 排除的类名匹配
+     * @param methodNameMatcher       方法名匹配
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
@@ -113,13 +113,13 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     /**
-     * @param adviceId          通知编号
-     * @param isTracing         可跟踪方法调用
-     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
-     * @param matchingClasses   匹配中的类
-     * @param methodNameMatcher 方法名匹配
-     * @param affect            影响统计
-     * @param isLazy            是否懒加载模式
+     * @param listener                通知监听器
+     * @param isTracing               可跟踪方法调用
+     * @param skipJDKTrace            是否忽略对JDK内部方法的跟踪
+     * @param classNameMatcher        类名匹配
+     * @param classNameExcludeMatcher 排除的类名匹配
+     * @param methodNameMatcher       方法名匹配
+     * @param isLazy                  是否懒加载模式
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
