@@ -208,7 +208,7 @@ profiler execute 'start,framebuf=5000000'
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp#L52)
+具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.5/src/arguments.cpp#L52)
 
 ## 查看所有支持的 action
 
@@ -221,7 +221,7 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, exe
 
 ```bash
 $ profiler version
-async-profiler 4.4
+async-profiler 4.5
 Copyright The async-profiler authors
 ```
 
@@ -250,7 +250,7 @@ profiler stop --include 'java/*' --include 'com/demo/*' --exclude '*Unsafe.park*
 ```
 
 > `--include/--exclude` 都支持多次设置，但是需要配置在命令行的最后。也可使用短参数格式 `-I/-X`。
-> 注意`--include/--exclude`只支持在`stop`action或者带有`-d`/`--duration`参数的`start`action中指定，否则不生效。
+> 注意`--include/--exclude`只支持在`stop`action 或者带有`-d`/`--duration`参数的`start`action 中指定，否则不生效。
 
 ## 指定执行时间
 

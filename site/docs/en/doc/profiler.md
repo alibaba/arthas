@@ -208,7 +208,7 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp#L52)
+Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.5/src/arguments.cpp#L52)
 
 ## View all supported actions
 
@@ -221,7 +221,7 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, exe
 
 ```bash
 $ profiler version
-async-profiler 4.4
+async-profiler 4.5
 Copyright The async-profiler authors
 ```
 
