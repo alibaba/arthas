@@ -238,7 +238,7 @@ public class ShellServerImpl extends ShellServer {
         if (toStop.isEmpty() && toClose.isEmpty()) {
             completionHandler.handle(Future.<Void>succeededFuture());
         } else {
-            final AtomicInteger count = new AtomicInteger(1 + toClose.size());
+            final AtomicInteger count = new AtomicInteger(1 + toStop.size());
             Handler<Future<Void>> handler = new SessionsClosedHandler(count, completionHandler);
 
             for (ShellImpl shell : toClose) {
