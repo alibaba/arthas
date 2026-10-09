@@ -1,0 +1,20 @@
+{
+  "name": "arthas-plugins",
+  "interface": {
+    "displayName": "Arthas Plugins"
+  },
+  "plugins": [
+    {
+      "name": "arthas",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthas"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
