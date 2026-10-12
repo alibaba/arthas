@@ -10,7 +10,9 @@ import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
+import com.taobao.arthas.core.view.ObjectView;
 
 import java.time.LocalDateTime;
 
@@ -89,7 +91,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 WatchModel model = new WatchModel();
                 model.setTs(LocalDateTime.now());
                 model.setCost(cost);
-                model.setValue(new ObjectVO(value, command.getExpand()));
+                model.setValue(snapshot(value));
                 model.setSizeLimit(command.getSizeLimit());
                 model.setClassName(advice.getClazz().getName());
                 model.setMethodName(advice.getMethod().getName());
@@ -113,5 +115,16 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                     + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
                     + " for more details.");
         }
+    }
+
+    private ObjectVO snapshot(Object value) {
+        ObjectVO objectVO = new ObjectVO(value, command.getExpand());
+        int sizeLimit = ObjectView.normalizeMaxObjectLength(command.getSizeLimit());
+        String renderedValue = StringUtils.objectToString(
+                objectVO.needExpand() ? new ObjectView(sizeLimit, objectVO).draw() : objectVO.getObject());
+        objectVO.setRenderedValue(renderedValue);
+        // 快照完成后释放业务对象引用，避免 HTTP API 延迟消费时再次读取可变对象。
+        objectVO.setObject(null);
+        return objectVO;
     }
 }
