@@ -1,9 +1,10 @@
 package com.taobao.arthas.core.shell.command.internal;
 
+import com.taobao.arthas.core.command.basic1000.WordCountCommand;
 import com.taobao.arthas.core.shell.cli.CliToken;
-import com.taobao.middleware.cli.CLIs;
+import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
-import com.taobao.middleware.cli.Option;
+import com.taobao.middleware.cli.annotations.CLIConfigurator;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +16,8 @@ public class WordCountHandler extends StdoutHandler implements StatisticsFunctio
 
     public static final String NAME = "wc";
 
+    private static final CLI cli = CLIConfigurator.define(WordCountCommand.class, true);
+
     private boolean lineMode;
 
     private String result = null;
@@ -22,9 +25,7 @@ public class WordCountHandler extends StdoutHandler implements StatisticsFunctio
 
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
-        CommandLine commandLine = CLIs.create(NAME)
-                .addOption(new Option().setShortName("l").setFlag(true))
-                .parse(args);
+        CommandLine commandLine = cli.parse(args);
         boolean lineMode = commandLine.isFlagEnabled("l");
         return new WordCountHandler(lineMode);
     }
