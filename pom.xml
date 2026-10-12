@@ -264,7 +264,7 @@
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>4.9.9</version>
+                        <version>4.0.5</version><!-- do not upgrade to 4.9.9 as it does not work for rebuilds, see https://github.com/alibaba/arthas/pull/3001-->
                         <executions>
                             <execution>
                                 <goals>
