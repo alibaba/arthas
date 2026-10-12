@@ -22,6 +22,7 @@ import com.taobao.middleware.cli.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ import static java.lang.String.format;
 public class TimeTunnelCommand extends EnhancerCommand {
     // 时间隧道(时间碎片的集合)
     // TODO 并非线程安全？
-    private static final Map<Integer, TimeFragment> timeFragmentMap = new LinkedHashMap<Integer, TimeFragment>();
+    private static final Map<Integer, TimeFragment> timeFragmentMap = Collections.synchronizedMap(new LinkedHashMap<Integer, TimeFragment>());
     // 时间碎片序列生成器
     private static final AtomicInteger sequence = new AtomicInteger(1000);
     // TimeTunnel the method call
@@ -400,14 +401,19 @@ public class TimeTunnelCommand extends EnhancerCommand {
         try {
             // 匹配的时间片段
             Map<Integer, TimeFragment> matchingTimeSegmentMap = new LinkedHashMap<Integer, TimeFragment>();
-            for (Map.Entry<Integer, TimeFragment> entry : timeFragmentMap.entrySet()) {
-                int index = entry.getKey();
-                TimeFragment tf = entry.getValue();
-                Advice advice = tf.getAdvice();
+            // Collections.synchronizedMap requires the user to manually synchronize on
+            // the returned map when iterating its collection views, otherwise iteration
+            // can throw ConcurrentModificationException if another thread mutates the map.
+            synchronized (timeFragmentMap) {
+                for (Map.Entry<Integer, TimeFragment> entry : timeFragmentMap.entrySet()) {
+                    int index = entry.getKey();
+                    TimeFragment tf = entry.getValue();
+                    Advice advice = tf.getAdvice();
 
-                // 搜索出匹配的时间片段
-                if ((ExpressFactory.threadLocalExpress(advice)).is(searchExpress)) {
-                    matchingTimeSegmentMap.put(index, tf);
+                    // 搜索出匹配的时间片段
+                    if ((ExpressFactory.threadLocalExpress(advice)).is(searchExpress)) {
+                        matchingTimeSegmentMap.put(index, tf);
+                    }
                 }
             }
 
