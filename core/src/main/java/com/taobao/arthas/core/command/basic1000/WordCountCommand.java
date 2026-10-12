@@ -22,7 +22,7 @@ public class WordCountCommand extends AnnotatedCommand {
     private boolean lineMode;
 
     @Option(shortName = "l", longName = "lines", flag = true)
-    @Description("Count output lines")
+    @Description("Count newline characters")
     public void setLineMode(boolean lineMode) {
         this.lineMode = lineMode;
     }
