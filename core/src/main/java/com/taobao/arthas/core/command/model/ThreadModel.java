@@ -25,6 +25,7 @@ public class ThreadModel extends ResultModel {
     private Map<Thread.State, Integer> threadStateCount;
     private boolean all;
 
+    private DeadlockInfo deadlockInfo;
     public ThreadModel() {
     }
 
@@ -46,6 +47,9 @@ public class ThreadModel extends ResultModel {
         this.all = all;
     }
 
+    public ThreadModel(DeadlockInfo deadlockInfo){
+        this.deadlockInfo = deadlockInfo;
+    }
     @Override
     public String getType() {
         return "thread";
@@ -97,5 +101,13 @@ public class ThreadModel extends ResultModel {
 
     public void setAll(boolean all) {
         this.all = all;
+    }
+
+    public DeadlockInfo getDeadlockInfo() {
+        return deadlockInfo;
+    }
+
+    public void setDeadlockInfo(DeadlockInfo deadlockInfo) {
+        this.deadlockInfo = deadlockInfo;
     }
 }
