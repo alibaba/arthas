@@ -57,6 +57,11 @@ public class TelnetConsole {
 
     private static final byte CTRL_C = 0x03;
 
+    /**
+     * 让命令结果以纯文本输出的管道
+     */
+    private static final String PLAINTEXT_PIPE = "| plaintext";
+
     // ------- Status codes ------- //
     /**
      * Process success
@@ -417,7 +422,7 @@ public class TelnetConsole {
                 }
             }
             // send command to server
-            outputStream.write((command + " | plaintext\n").getBytes(StandardCharsets.UTF_8));
+            outputStream.write((toBatchCommandLine(command) + "\n").getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
         }
 
@@ -428,6 +433,111 @@ public class TelnetConsole {
         System.out.println();
 
         return STATUS_OK;
+    }
+
+    /**
+     * 生成批处理模式下发给服务端的命令行：按服务端的 token 规则找到最后一个文本 token，
+     * 需要时在它前面或命令末尾插入 plaintext 管道，让结果以纯文本返回。
+     */
+    private static String toBatchCommandLine(String command) {
+        String lastTokenValue = null;
+        int lastTokenStart = -1;
+        int lastTokenEnd = -1;
+        boolean hasRedirect = false;
+        // 最后一个文本 token 的后台标记是否来自 `|&` 拆分，这种写法需要按整个 token 改写
+        boolean pipeAndBackground = false;
+
+        int index = 0;
+        int length = command.length();
+        while (index < length) {
+            char c = command.charAt(index);
+            if (isBlank(c)) {
+                index++;
+                continue;
+            }
+            int start = index;
+            StringBuilder value = new StringBuilder();
+            int quote = 0; // 0 表示没有引号，否则是当前的引号字符
+            boolean pendingEscape = false;
+            while (index < length) {
+                c = command.charAt(index);
+                boolean isQuote = false;
+                boolean isEscapePrefix = false;
+                boolean isEscaped = false;
+                if (pendingEscape) {
+                    pendingEscape = false;
+                    isEscaped = true;
+                } else if (quote == 0) {
+                    if (c == '\'') {
+                        quote = '\'';
+                        isQuote = true;
+                    } else if (c == '"') {
+                        quote = '"';
+                        isQuote = true;
+                    } else if (c == '\\') {
+                        pendingEscape = true;
+                        isEscapePrefix = true;
+                    }
+                } else if (quote == '\'') {
+                    if (c == '\'') {
+                        quote = 0;
+                        isQuote = true;
+                    }
+                } else if (c == '"') {
+                    quote = 0;
+                    isQuote = true;
+                } else if (c == '\\') {
+                    pendingEscape = true;
+                    isEscapePrefix = true;
+                }
+                // 未被引号或转义保护的空白结束当前 token
+                if (quote == 0 && !isEscaped && isBlank(c)) {
+                    break;
+                }
+                if (!isQuote && !isEscapePrefix) {
+                    if (isEscaped && quote == '"' && c != '"') {
+                        value.append('\\');
+                    }
+                    value.append(c);
+                }
+                index++;
+            }
+
+            // 服务端 CliTokenImpl#correctPipeChar 只做一次纠正：token 结尾或开头的 `|` 会被拆成单独的 token，
+            // 拆分后与管道配对的那部分是重定向符或后台标记（`|>` 是管道加输出重定向，`|&` 是管道加后台标记）
+            String tokenValue = value.toString();
+            boolean pipeSuffix = tokenValue.length() > 1 && tokenValue.endsWith("|");
+            boolean pipePrefix = !pipeSuffix && tokenValue.length() > 1 && tokenValue.startsWith("|");
+            String otherPart = pipeSuffix ? tokenValue.substring(0, tokenValue.length() - 1)
+                    : pipePrefix ? tokenValue.substring(1) : tokenValue;
+            lastTokenStart = start;
+            lastTokenEnd = index;
+            if (">".equals(otherPart) || ">>".equals(otherPart)) {
+                hasRedirect = true;
+            }
+            // `x|` 拆分后最后一个文本 token 是管道本身，`|x` 才是 x
+            lastTokenValue = pipeSuffix ? "|" : otherPart;
+            pipeAndBackground = pipePrefix && "&".equals(otherPart);
+        }
+
+        if (!"&".equals(lastTokenValue)) {
+            // 前台命令：结果按纯文本输出
+            return command + " " + PLAINTEXT_PIPE;
+        }
+        if (hasRedirect) {
+            // 后台任务带重定向：重定向的输出已经是纯文本，原样发送
+            return command;
+        }
+        if (pipeAndBackground) {
+            // `|&` 会被服务端拆成管道和后台标记，整个 token 改写成 `| plaintext &`
+            return command.substring(0, lastTokenStart) + PLAINTEXT_PIPE + " &" + command.substring(lastTokenEnd);
+        }
+        // 后台任务：把 plaintext 管道插到后台标记之前，保留标记的原始字符和其后的空白
+        return command.substring(0, lastTokenStart) + PLAINTEXT_PIPE + " " + command.substring(lastTokenStart);
+    }
+
+    private static boolean isBlank(char c) {
+        return c == ' ' || c == '\t';
     }
 
     private static int findPromptAtLineStart(StringBuilder output) {

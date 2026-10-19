@@ -15,7 +15,6 @@
 - 目前需要每个命令占一行
 - dashboard 务必指定执行次数 (`-n`)，否则会导致批处理脚本无法终止
 - watch/tt/trace/monitor/stack 等命令务必指定执行次数 (`-n`)，否则会导致批处理脚本无法终止
-- 可以使用异步后台任务，如 `watch c.t.X test returnObj > &`，让命令一直在后台运行，通过日志获取结果，[获取更多异步任务的信息](async.md)
   :::
 
 ```
@@ -26,6 +25,18 @@ session
 thread
 sc -d org.apache.commons.lang.StringUtils
 ```
+
+批处理脚本也支持输出重定向和后台任务，`&` 写在命令末尾表示后台任务：
+
+```bash
+trace -n 1 Test t >> test.out
+trace Test t >> test.out &
+watch c.t.X test returnObj > &
+```
+
+第一条命令执行一次后结束，结果追加到 `test.out`。第二条命令在后台运行，结果同样追加到 `test.out`，批处理脚本继续执行下一条命令。第三条命令未指定重定向文件名，结果写入 `~/logs/arthas-cache/` 目录下的日志文件。
+
+指定重定向的后台任务将结果写入文件；未指定重定向时，结果仍会打印在批处理输出中。`&` 需要是命令行的最后一个参数，批处理脚本不支持行尾注释。更多信息参考 [后台异步任务](async.md)。
 
 ### 第二步：运行你的批处理脚本
 
