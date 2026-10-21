@@ -37,6 +37,7 @@ public class ProfilerTool extends AbstractArthasTool {
                     + "- start: 开始采样，如 action=start, event=cpu\n"
                     + "- stop: 停止并输出文件，如 action=stop, format=flamegraph, file=/tmp/result.html\n"
                     + "- status/list/actions: 查看状态/支持事件/支持动作\n"
+                    + "- meminfo: 查看 profiler 内存等指标，输出为 Prometheus 格式\n"
                     + "- execute: 直接传递 async-profiler agent 兼容参数，如 action=execute, actionArg=\"stop,file=/tmp/result.html\""
     )
     public String profiler(

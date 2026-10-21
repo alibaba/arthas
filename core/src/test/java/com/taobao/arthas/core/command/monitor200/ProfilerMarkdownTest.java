@@ -47,7 +47,7 @@ class ProfilerMarkdownTest {
     }
 
     @Test
-    void shouldExposeOnlySupportedAsyncProfiler44Actions() {
+    void shouldExposeOnlySupportedAsyncProfilerActions() {
         Assertions.assertThat(ProfilerCommand.ProfilerAction.values())
                 .extracting(Enum::name)
                 .contains("start", "resume", "stop", "dump", "status", "meminfo", "list", "version")

@@ -10,6 +10,8 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 
 The arguments of `profiler` command basically keeps consistent with upstream project [async-profiler](https://github.com/async-profiler/async-profiler), you can refer to its README, Github Discussions and other documentations for further information of usage.
 
+Arthas bundles async-profiler 4.6 native libraries for Linux x64, Linux arm64, and macOS x64/arm64. macOS 11 or later is required.
+
 ## Supported Options
 
 |        Name | Specification                                                                    |
@@ -50,13 +52,11 @@ Can view which `event` and sampling time.
 
 ## View profiler memory usage
 
+After starting profiling, use `meminfo` to invoke async-profiler's `metrics` action and return metrics in Prometheus format. Memory values are in KB, for example (excerpt):
+
 ```
 $ profiler meminfo
-Call trace storage:   10244 KB
-      Dictionaries:      72 KB
-        Code cache:   12890 KB
-------------------------------
-             Total:   23206 KB
+mem_calltracestorage_kb 10244
 ```
 
 ## Stop profiler
@@ -64,6 +64,8 @@ Call trace storage:   10244 KB
 ### Generating flame graph results
 
 By default, the result file is `html` file in [Flame Graph](https://github.com/BrendanGregg/FlameGraph) format. You can also specify other format with the `-o` or `--format` parameter, including flat, traces, collapsed, flamegraph, tree, jfr, md:
+
+In async-profiler 4.6, the HTML contains both a flame graph and a call tree, with a toggle to switch between them. `--format tree` displays the call tree initially.
 
 ### Generate LLM-friendly Markdown report
 
@@ -199,7 +201,7 @@ The `dump` action saves profiling result to default file or specified file, but 
 For example, start sampling:
 
 ```bash
-profiler execute 'start,framebuf=5000000'
+profiler execute 'start,event=cpu,interval=1ms'
 ```
 
 Stop sampling and save to the specified file:
@@ -208,7 +210,16 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp#L52)
+For the supported syntax, see the Agent options in [ProfilerOptions.md](https://github.com/async-profiler/async-profiler/blob/v4.6/docs/ProfilerOptions.md) and [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.6/src/arguments.cpp).
+
+Since async-profiler 4.6, `filter` no longer accepts thread IDs. For wall clock sampling, use `ithread`/`xthread` to include or exclude threads by name, for example:
+
+```bash
+profiler execute 'start,event=wall,ithread=http-*,xthread=*acceptor*'
+profiler stop
+```
+
+The bare `filter` option is intended for the Java API's `AsyncProfiler.addThread()`. Version 4.6 also removes async-profiler's embedded HTTP server; viewing results through Arthas on port 3658 continues to work.
 
 ## View all supported actions
 
@@ -221,8 +232,7 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, exe
 
 ```bash
 $ profiler version
-async-profiler 4.4
-Copyright The async-profiler authors
+4.6
 ```
 
 ## Configure Java stack depth

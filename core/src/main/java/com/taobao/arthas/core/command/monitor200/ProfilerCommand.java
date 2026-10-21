@@ -590,7 +590,7 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     /**
-     * https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp
+     * https://github.com/async-profiler/async-profiler/blob/v4.6/src/arguments.cpp
      */
     public enum ProfilerAction {
         // start, resume, stop, dump, status, meminfo, list,
@@ -833,8 +833,11 @@ public class ProfilerCommand extends AnnotatedCommand {
             } else if (ProfilerAction.version.equals(profilerAction)) {
                 String result = asyncProfiler.execute("version=full");
                 appendExecuteResult(process, result);
+            } else if (ProfilerAction.meminfo.equals(profilerAction)) {
+                // 上游已用 metrics 替代 meminfo，保留 Arthas action 以兼容终端、HTTP 和 MCP 调用方。
+                String result = asyncProfiler.execute("metrics");
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.status.equals(profilerAction)
-                    || ProfilerAction.meminfo.equals(profilerAction)
                     || ProfilerAction.list.equals(profilerAction)) {
                 String result = asyncProfiler.execute(profilerAction.toString());
                 appendExecuteResult(process, result);
