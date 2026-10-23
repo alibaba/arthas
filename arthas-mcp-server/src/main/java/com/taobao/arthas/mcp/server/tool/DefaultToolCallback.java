@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.taobao.arthas.mcp.server.tool.definition.ToolDefinition;
 import com.taobao.arthas.mcp.server.tool.execution.ToolCallResultConverter;
 import com.taobao.arthas.mcp.server.tool.execution.ToolExecutionException;
+import com.taobao.arthas.mcp.server.tool.util.JsonSchemaGenerator;
 import com.taobao.arthas.mcp.server.util.Assert;
 import com.taobao.arthas.mcp.server.util.JsonParser;
 import com.taobao.arthas.mcp.server.util.Utils;
@@ -102,7 +103,7 @@ public class DefaultToolCallback implements ToolCallback {
             
             ToolParam toolParam = parameter.getAnnotation(ToolParam.class);
             if (toolParam != null && toolParam.required()) {
-                String paramName = parameter.getName();
+                String paramName = JsonSchemaGenerator.getParameterName(parameter);
                 Object paramValue = toolArguments.get(paramName);
                 
                 // check if the parameter is empty or an empty string
@@ -127,7 +128,7 @@ public class DefaultToolCallback implements ToolCallback {
             if (parameter.getType().isAssignableFrom(ToolContext.class)) {
                 return toolContext;
             }
-            Object rawArgument = toolInputArguments.get(parameter.getName());
+            Object rawArgument = toolInputArguments.get(JsonSchemaGenerator.getParameterName(parameter));
             return buildTypedArgument(rawArgument, parameter.getParameterizedType());
         }).toArray();
     }
