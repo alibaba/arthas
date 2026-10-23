@@ -10,6 +10,8 @@
 
 `profiler` 命令的格式基本与上游项目 [async-profiler](https://github.com/async-profiler/async-profiler) 保持一致，详细的使用方式可参考上游项目的 README、Github Disscussions 以及其他文档资料。
 
+当前内置 async-profiler 4.6，提供 Linux x64、Linux arm64 和 macOS x64/arm64 原生库；macOS 需要 11 或更高版本。
+
 ## 参数说明
 
 |    参数名称 | 参数说明                                                        |
@@ -50,13 +52,11 @@ $ profiler status
 
 ## 查看 profiler 自身的内存占用
 
+启动采样后，`meminfo` 调用 async-profiler 的 `metrics` action，返回 Prometheus 格式的指标。内存指标以 KB 为单位，例如（节选）：
+
 ```
 $ profiler meminfo
-Call trace storage:   10244 KB
-      Dictionaries:      72 KB
-        Code cache:   12890 KB
-------------------------------
-             Total:   23206 KB
+mem_calltracestorage_kb 10244
 ```
 
 ## 停止 profiler
@@ -64,6 +64,8 @@ Call trace storage:   10244 KB
 ### 生成火焰图格式结果
 
 默认情况下，结果是 [Flame Graph](https://github.com/BrendanGregg/FlameGraph) 格式的 `html` 文件，也可以用 `-o` 或 `--format` 参数指定其他内容格式，包括 flat、traces、collapsed、flamegraph、tree、jfr、md。
+
+async-profiler 4.6 的 HTML 同时包含火焰图和调用树，可以在页面中切换；`--format tree` 默认显示调用树。
 
 ### 生成 LLM 友好的 Markdown 报告
 
@@ -199,7 +201,7 @@ OK
 比如开始采样：
 
 ```bash
-profiler execute 'start,framebuf=5000000'
+profiler execute 'start,event=cpu,interval=1ms'
 ```
 
 停止采样，并保存到指定文件里：
@@ -208,7 +210,16 @@ profiler execute 'start,framebuf=5000000'
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-具体的格式参考： [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.4/src/arguments.cpp#L52)
+具体的格式参考：[ProfilerOptions.md](https://github.com/async-profiler/async-profiler/blob/v4.6/docs/ProfilerOptions.md) 中的 Agent options，以及 [arguments.cpp](https://github.com/async-profiler/async-profiler/blob/v4.6/src/arguments.cpp)。
+
+从 async-profiler 4.6 开始，`filter` 不再接受线程 ID。wall 采样可通过 `ithread`/`xthread` 按线程名称包含或排除线程，例如：
+
+```bash
+profiler execute 'start,event=wall,ithread=http-*,xthread=*acceptor*'
+profiler stop
+```
+
+无参数的 `filter` 供 Java API 的 `AsyncProfiler.addThread()` 使用。4.6 也移除了 async-profiler 内嵌的 HTTP 服务；通过 Arthas 的 3658 端口查看结果的方式不变。
 
 ## 查看所有支持的 action
 
@@ -221,8 +232,7 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, version, exe
 
 ```bash
 $ profiler version
-async-profiler 4.4
-Copyright The async-profiler authors
+4.6
 ```
 
 ## 配置 Java 栈深度
