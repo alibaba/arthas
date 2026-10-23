@@ -36,10 +36,12 @@ public class CliTokenImpl implements CliToken {
         return !text;
     }
 
+    @Override
     public String raw() {
         return raw;
     }
 
+    @Override
     public String value() {
         return value;
     }
