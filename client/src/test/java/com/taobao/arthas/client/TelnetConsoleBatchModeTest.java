@@ -3,6 +3,9 @@ package com.taobao.arthas.client;
 import org.apache.commons.net.telnet.TelnetCommand;
 import org.apache.commons.net.telnet.TelnetOption;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,6 +14,9 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** 服务端按最后一个 token 的解码值识别后台标记；重定向输出本身就是纯文本。 */
 class TelnetConsoleBatchModeTest {
 
     @Test
@@ -93,6 +100,56 @@ class TelnetConsoleBatchModeTest {
             assertThat(status).isEqualTo(TelnetConsole.STATUS_OK);
             assertThat(result.command).isEqualTo("echo 中文 | plaintext");
             assertThat(result.quitSentBeforeCommandCompleted).isFalse();
+            assertThat(result.quit).isEqualTo("quit");
+        } finally {
+            executorService.shutdownNow();
+        }
+    }
+
+    @ParameterizedTest(name = "[{index}] {0}")
+    @EnumSource(BatchCommandCase.class)
+    void batchModeShouldPlacePlaintextBeforeBackgroundTokenOnTheWire(BatchCommandCase batchCommandCase)
+            throws Exception {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            Future<BinaryServerResult> serverResult = executorService.submit(() -> runBinaryServer(serverSocket));
+
+            int status = TelnetConsole.process(new String[] {
+                    "--quiet",
+                    "-c",
+                    batchCommandCase.command,
+                    "-t",
+                    "1000",
+                    "127.0.0.1",
+                    String.valueOf(serverSocket.getLocalPort())
+            });
+
+            BinaryServerResult result = serverResult.get(2, TimeUnit.SECONDS);
+            assertThat(status).isEqualTo(TelnetConsole.STATUS_OK);
+            assertThat(result.clientWillBinary).isTrue();
+            assertThat(result.clientDoBinary).isTrue();
+            assertThat(result.command).isEqualTo(batchCommandCase.expectedWireCommand);
+            assertThat(result.quit).isEqualTo("quit");
+        } finally {
+            executorService.shutdownNow();
+        }
+    }
+
+    @Test
+    void batchFileShouldPreserveBackgroundRedirectionAndTrailingWhitespace(@TempDir Path tempDir) throws Exception {
+        String command = "watch Foo m > & \t";
+        Path batchFile = tempDir.resolve("commands.as");
+        Files.write(batchFile, Arrays.asList("", command, " \t"), StandardCharsets.UTF_8);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            Future<BinaryServerResult> serverResult = executorService.submit(() -> runBinaryServer(serverSocket));
+            int status = TelnetConsole.process(new String[] {
+                    "--quiet", "-f", batchFile.toString(), "-t", "2000",
+                    "127.0.0.1", String.valueOf(serverSocket.getLocalPort())
+            });
+            BinaryServerResult result = serverResult.get(3, TimeUnit.SECONDS);
+            assertThat(status).isEqualTo(TelnetConsole.STATUS_OK);
+            assertThat(result.command).isEqualTo(command);
             assertThat(result.quit).isEqualTo("quit");
         } finally {
             executorService.shutdownNow();
@@ -222,6 +279,34 @@ class TelnetConsoleBatchModeTest {
                 boolean quitSentBeforeCommandCompleted) {
             super(command, quit);
             this.quitSentBeforeCommandCompleted = quitSentBeforeCommandCompleted;
+        }
+    }
+
+    private enum BatchCommandCase {
+        BARE_BACKGROUND_OPERATOR("trace Foo bar &", "trace Foo bar | plaintext &"),
+        REDIRECT_TO_CACHE_AND_BACKGROUND("watch c.t.X test returnObj > &", "watch c.t.X test returnObj > &"),
+        REDIRECT_FILE_AND_BACKGROUND("trace Foo bar > out.txt &", "trace Foo bar > out.txt &"),
+        APPEND_REDIRECT_FILE_AND_BACKGROUND("trace Test t >> test.out &", "trace Test t >> test.out &"),
+        FOREGROUND_COMMAND("version", "version | plaintext"),
+        FOREGROUND_PIPELINE("thread | grep x", "thread | grep x | plaintext"),
+        AMPERSAND_IN_QUOTED_ARGUMENT("ognl '\"a & b\"'", "ognl '\"a & b\"' | plaintext"),
+        QUOTED_REGEX_PIPE_WITH_BACKGROUND("trace -E 'A|B' method &", "trace -E 'A|B' method | plaintext &"),
+        QUOTED_BACKGROUND_OPERATOR("watch Foo m \"&\"", "watch Foo m | plaintext \"&\""),
+        ESCAPED_BACKGROUND_OPERATOR("watch Foo m \\&", "watch Foo m | plaintext \\&"),
+        ESCAPED_AMPERSAND_INSIDE_WORD("trace Foo foo\\&", "trace Foo foo\\& | plaintext"),
+        QUOTED_WORD_CONCATENATED_WITH_AMPERSAND("trace Foo 'foo'&", "trace Foo 'foo'& | plaintext"),
+        QUOTED_WORD_WITH_BLANK_AND_AMPERSAND("trace Foo 'foo &'", "trace Foo 'foo &' | plaintext"),
+        WEAKLY_QUOTED_ESCAPED_AMPERSAND("watch Foo m \"\\&\"", "watch Foo m \"\\&\" | plaintext"),
+        EMPTY_ARGUMENT_AFTER_AMPERSAND("trace Foo m & ''", "trace Foo m & '' | plaintext"),
+        PIPE_PREFIXED_BACKGROUND_OPERATOR("version |&", "version | plaintext &"),
+        QUOTED_PIPE_PREFIXED_BACKGROUND_OPERATOR("version \"|&\"", "version | plaintext &");
+
+        private final String command;
+        private final String expectedWireCommand;
+
+        private BatchCommandCase(String command, String expectedWireCommand) {
+            this.command = command;
+            this.expectedWireCommand = expectedWireCommand;
         }
     }
 
