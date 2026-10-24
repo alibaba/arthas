@@ -62,6 +62,7 @@ export const sidebarZH = {
             "/doc/vmoption.md",
             "/doc/vmtool.md",
             "/doc/watch.md",
+            "/doc/wc.md",
           ],
         },
         {
