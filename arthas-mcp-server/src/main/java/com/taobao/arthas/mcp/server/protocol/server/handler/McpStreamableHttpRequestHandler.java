@@ -197,13 +197,13 @@ public class McpStreamableHttpRequestHandler {
     }
 
     /**
-     * Handles GET requests to establish SSE connections and message replay.
+     * Handles GET requests to establish SSE listening streams.
+     * <p>
+     * Resume via {@code last-event-id} is not supported; reject immediately with 404 so
+     * clients re-initialize (#3118).
      */
     private void handleGetRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
-        // TODO support last-event-id #3118
-        // MCP 客户端在 SSE 断线重连时，可能会带上 last-event-id 尝试做消息回放。
-        // Arthas MCP Server 不支持基于 last-event-id 的恢复逻辑：直接返回 404，
-        // 让客户端触发完整重置并重新走 Initialize 握手申请新的会话。
+        // Unsupported resume: reject last-event-id immediately with 404.
         if (request.headers().get(HttpHeaders.LAST_EVENT_ID) != null) {
             sendError(ctx, HttpResponseStatus.NOT_FOUND,
                     new McpError("Session not found, please re-initialize"));
@@ -259,39 +259,15 @@ public class McpStreamableHttpRequestHandler {
             NettyStreamableMcpSessionTransport sessionTransport = new NettyStreamableMcpSessionTransport(
                     sessionId, ctx);
 
-            // Check if this is a replay request
-            String lastEventId = request.headers().get(HttpHeaders.LAST_EVENT_ID);
-            if (lastEventId != null) {
-                try {
-                    // Replay messages from the last event ID
-                    try {
-                        session.replay(lastEventId).forEach(message -> {
-                            try {
-                                sessionTransport.sendMessage(message).join();
-                            } catch (Exception e) {
-                                logger.error("Failed to replay message: {}", e.getMessage());
-                                ctx.close();
-                            }
-                        });
-                    } catch (Exception e) {
-                        logger.error("Failed to replay messages: {}", e.getMessage());
-                        ctx.close();
-                    }
-                } catch (Exception e) {
-                    logger.error("Failed to replay messages: {}", e.getMessage());
-                    ctx.close();
-                }
-            } else {
-                // Establish new listening stream
-                McpStreamableServerSession.McpStreamableServerSessionStream listeningStream = session
-                        .listeningStream(sessionTransport);
+            // Establish new listening stream
+            McpStreamableServerSession.McpStreamableServerSessionStream listeningStream = session
+                    .listeningStream(sessionTransport);
 
-                // Handle channel closure
-                ctx.channel().closeFuture().addListener(future -> {
-                    logger.debug("SSE connection closed for session: {}", sessionId);
-                    listeningStream.close();
-                });
-            }
+            // Handle channel closure
+            ctx.channel().closeFuture().addListener(future -> {
+                logger.debug("SSE connection closed for session: {}", sessionId);
+                listeningStream.close();
+            });
         } catch (Exception e) {
             logger.error("Failed to handle GET request for session {}: {}", sessionId, e.getMessage());
             sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, new McpError("Internal server error"));
