@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -60,6 +62,7 @@ public class McpStreamableHttpRequestHandler {
     public static final String UTF_8 = "UTF-8";
     public static final String APPLICATION_JSON = "application/json";
     public static final String TEXT_EVENT_STREAM = "text/event-stream";
+    private static final String SSE_KEEPALIVE_COMMENT = ": keepalive\n\n";
     private static final String FAILED_TO_SEND_ERROR_RESPONSE = "Failed to send error response: {}";
 
     /**
@@ -83,6 +86,8 @@ public class McpStreamableHttpRequestHandler {
     private final ConcurrentHashMap<String, McpStreamableServerSession> sessions = new ConcurrentHashMap<>();
 
     private McpTransportContextExtractor<FullHttpRequest> contextExtractor;
+
+    private final Duration keepAliveInterval;
 
     /**
      * Flag indicating if the transport is shutting down.
@@ -114,6 +119,7 @@ public class McpStreamableHttpRequestHandler {
         this.mcpEndpoint = mcpEndpoint;
         this.disallowDelete = disallowDelete;
         this.contextExtractor = contextExtractor;
+        this.keepAliveInterval = keepAliveInterval;
 
         if (keepAliveInterval != null) {
             this.keepAliveScheduler = KeepAliveScheduler
@@ -451,7 +457,7 @@ public class McpStreamableHttpRequestHandler {
                 ctx.writeAndFlush(response);
 
                 NettyStreamableMcpSessionTransport sessionTransport = new NettyStreamableMcpSessionTransport(
-                        sessionId, ctx);
+                        sessionId, ctx, this.keepAliveInterval);
 
                 try {
                     session.responseStream(jsonrpcRequest, sessionTransport, transportContext)
@@ -565,12 +571,22 @@ public class McpStreamableHttpRequestHandler {
 
         private final String sessionId;
         private final ChannelHandlerContext ctx;
+        private final Duration responseHeartbeatInterval;
         private final AtomicBoolean closed = new AtomicBoolean(false);
         private final ReentrantLock lock = new ReentrantLock();
+        private volatile ScheduledFuture<?> heartbeatTask;
 
         NettyStreamableMcpSessionTransport(String sessionId, ChannelHandlerContext ctx) {
+            this(sessionId, ctx, null);
+        }
+
+        NettyStreamableMcpSessionTransport(String sessionId, ChannelHandlerContext ctx,
+                                           Duration responseHeartbeatInterval) {
             this.sessionId = sessionId;
             this.ctx = ctx;
+            this.responseHeartbeatInterval = responseHeartbeatInterval;
+            startResponseHeartbeat();
+            this.ctx.channel().closeFuture().addListener(future -> cancelResponseHeartbeat());
             logger.debug("Streamable session transport {} initialized", sessionId);
         }
 
@@ -627,6 +643,7 @@ public class McpStreamableHttpRequestHandler {
         public void close() {
             lock.lock();
             try {
+                cancelResponseHeartbeat();
                 if (this.closed.get()) {
                     logger.debug("Session transport {} already closed", this.sessionId);
                     return;
@@ -663,6 +680,44 @@ public class McpStreamableHttpRequestHandler {
             
             logger.debug("SSE event sent - Type: {}, ID: {}, Data length: {}", 
                 eventType, id, data != null ? data.length() : 0);
+        }
+
+        private void startResponseHeartbeat() {
+            if (this.responseHeartbeatInterval == null || this.responseHeartbeatInterval.isZero()
+                    || this.responseHeartbeatInterval.isNegative()) {
+                return;
+            }
+            long intervalMillis = Math.max(1L, this.responseHeartbeatInterval.toMillis());
+            this.heartbeatTask = this.ctx.executor().scheduleAtFixedRate(
+                    this::sendResponseHeartbeat, intervalMillis, intervalMillis, TimeUnit.MILLISECONDS);
+        }
+
+        private void sendResponseHeartbeat() {
+            if (this.closed.get() || !this.ctx.channel().isActive()) {
+                return;
+            }
+            lock.lock();
+            try {
+                if (this.closed.get() || !this.ctx.channel().isActive()) {
+                    return;
+                }
+                ByteBuf buffer = Unpooled.copiedBuffer(SSE_KEEPALIVE_COMMENT, CharsetUtil.UTF_8);
+                this.ctx.writeAndFlush(new DefaultHttpContent(buffer));
+                logger.trace("SSE heartbeat sent for session {}", this.sessionId);
+            } catch (Exception e) {
+                logger.warn("Failed to send SSE heartbeat for session {}: {}", this.sessionId, e.getMessage());
+                this.ctx.close();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        private void cancelResponseHeartbeat() {
+            ScheduledFuture<?> task = this.heartbeatTask;
+            if (task != null) {
+                this.heartbeatTask = null;
+                task.cancel(false);
+            }
         }
     }
 
