@@ -455,6 +455,9 @@ class ArthasMcpToolsIT {
                     throw new IllegalStateException(request.getMethod() + " 失败: http=" + code + ", body=" + readBody(conn));
                 }
 
+                // 服务端发送完整的 SSE 响应后会关闭连接，不能让客户端缓存并复用该连接。
+                assertThat(conn.getHeaderField("Connection")).isEqualToIgnoringCase("close");
+
                 try (InputStream is = conn.getInputStream()) {
                     return readJsonRpcResponseFromSse(is, request.getId());
                 }
