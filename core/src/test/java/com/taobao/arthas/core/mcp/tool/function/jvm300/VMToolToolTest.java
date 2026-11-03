@@ -61,13 +61,10 @@ public class VMToolToolTest {
         Map<String, Object> context = new HashMap<String, Object>();
         context.put(ToolContextKeys.COMMAND_CONTEXT, commandContext);
 
-        try {
-            new VMToolTool().vmtool(
-                    action, null, null, className,
-                    null, null, null, null, new ToolContext(context));
-            Assert.fail("Expected className validation to fail");
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals("vmtool " + action + " 需要指定类名 (className)", e.getMessage());
-        }
+        IllegalArgumentException e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new VMToolTool().vmtool(
+                        action, null, null, className,
+                        null, null, null, null, new ToolContext(context)));
+        Assert.assertEquals("vmtool " + action + " 需要指定类名 (className)", e.getMessage());
     }
 }

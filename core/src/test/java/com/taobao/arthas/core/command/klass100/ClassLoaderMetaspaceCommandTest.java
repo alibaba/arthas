@@ -32,19 +32,13 @@ public class ClassLoaderMetaspaceCommandTest {
 
     @Test
     public void testParseTimeMillisRejectInvalidValue() {
-        try {
-            ClassLoaderMetaspaceCommand.parseTimeMillis("abc", "duration");
-            Assert.fail("invalid duration should fail");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(e.getMessage().contains("duration"));
-        }
+        IllegalArgumentException e1 = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ClassLoaderMetaspaceCommand.parseTimeMillis("abc", "duration"));
+        Assert.assertTrue(e1.getMessage().contains("duration"));
 
-        try {
-            ClassLoaderMetaspaceCommand.parseTimeMillis("0", "period");
-            Assert.fail("zero period should fail");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(e.getMessage().contains("period"));
-        }
+        IllegalArgumentException e2 = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ClassLoaderMetaspaceCommand.parseTimeMillis("0", "period"));
+        Assert.assertTrue(e2.getMessage().contains("period"));
     }
 
     @Test
