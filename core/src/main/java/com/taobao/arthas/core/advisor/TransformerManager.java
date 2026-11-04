@@ -51,6 +51,7 @@ public class TransformerManager {
             @Override
             public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                     ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                byte[] originalBuffer = classfileBuffer;
                 for (ClassFileTransformer classFileTransformer : reTransformers) {
                     byte[] transformResult = classFileTransformer.transform(loader, className, classBeingRedefined,
                             protectionDomain, classfileBuffer);
@@ -75,7 +76,8 @@ public class TransformerManager {
                     }
                 }
 
-                return classfileBuffer;
+                // 没有任何 transformer 修改字节码时返回 null，否则 JVM 会为每个类缓存一份原始字节码
+                return classfileBuffer == originalBuffer ? null : classfileBuffer;
             }
 
         };
@@ -92,7 +94,8 @@ public class TransformerManager {
                 if (classBeingRedefined != null) {
                     return null;
                 }
-                
+
+                byte[] originalBuffer = classfileBuffer;
                 for (ClassFileTransformer transformer : lazyTransformers) {
                     byte[] transformResult = transformer.transform(loader, className, classBeingRedefined,
                             protectionDomain, classfileBuffer);
@@ -101,7 +104,7 @@ public class TransformerManager {
                     }
                 }
 
-                return classfileBuffer;
+                return classfileBuffer == originalBuffer ? null : classfileBuffer;
             }
 
         };
