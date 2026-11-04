@@ -21,7 +21,7 @@ public class MathGame {
     public void run() throws InterruptedException {
         try {
             int number = random.nextInt()/10000;
-            List<Integer> primeFactors = primeFactors(number);
+            List<Integer> primeFactors = primeFactorsByPass3(number);
             print(number, primeFactors);
 
         } catch (Exception e) {
@@ -29,7 +29,7 @@ public class MathGame {
         }
     }
 
-    public static void print(int number, List<Integer> primeFactors) {
+    public static void print(final int number, final List<Integer> primeFactors) {
         StringBuffer sb = new StringBuffer(number + "=");
         for (int factor : primeFactors) {
             sb.append(factor).append('*');
@@ -40,7 +40,24 @@ public class MathGame {
         System.out.println(sb);
     }
 
+    public List<Integer> primeFactorsByPass3(final int number) {
+        return primeFactorsByPass2(number);
+    }
+
+    public List<Integer> primeFactorsByPass2(final int number) {
+        return primeFactorsByPass1(number);
+    }
+
+    public List<Integer> primeFactorsByPass1(final int number) {
+        return primeFactors(number);
+    }
+
     public List<Integer> primeFactors(int number) {
+        try {
+            Thread.sleep(5);
+        } catch (final InterruptedException ex) {
+           throw new IllegalStateException (ex);
+        }
         if (number < 2) {
             illegalArgumentCount++;
             throw new IllegalArgumentException("number is: " + number + ", need >= 2");
