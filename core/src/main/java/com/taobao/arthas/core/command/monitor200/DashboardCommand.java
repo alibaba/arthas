@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -59,6 +60,8 @@ public class DashboardCommand extends AnnotatedCommand {
     private final AtomicLong count = new AtomicLong(0);
     private volatile Timer timer;
 
+    private Pattern threadNamePattern;
+
     @Option(shortName = "n", longName = "number-of-execution")
     @Description("The number of times this command will be executed.")
     public void setNumOfExecutions(int numOfExecutions) {
@@ -71,6 +74,23 @@ public class DashboardCommand extends AnnotatedCommand {
         this.interval = interval;
     }
 
+    @Option(shortName = "p",longName = "threadNamePattern")
+    @Description("Include thread name by regex pattern.")
+    public void setThreadNamePattern(final String pattern) {
+        if (pattern != null && !pattern.isEmpty()) {
+            this.threadNamePattern = Pattern.compile(pattern);
+        } else {
+            this.threadNamePattern = null;
+        }
+    }
+
+    private boolean runtimeInfoOff;
+
+    @Option(longName = "runtimeInfoOff", flag = true, required = false)
+    @Description("Hiden runtimeInfo area.")
+    public void setRuntimeInfoOff(boolean off) {
+        this.runtimeInfoOff = off;
+    }
 
     @Override
     public void process(final CommandProcess process) {
@@ -239,6 +259,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
                 //thread sample
                 List<ThreadVO> threads = ThreadUtil.getThreads();
+                ThreadCommand.filterThreadByPattern(threads, threadNamePattern);
                 dashboardModel.setThreads(threadSampler.sample(threads));
 
                 //memory
@@ -247,9 +268,10 @@ public class DashboardCommand extends AnnotatedCommand {
                 //gc
                 addGcInfo(dashboardModel);
 
-                //runtime
-                addRuntimeInfo(dashboardModel);
-
+                if (!runtimeInfoOff) {
+                    //runtime
+                    addRuntimeInfo(dashboardModel);
+                }
                 //tomcat
                 try {
                     addTomcatInfo(dashboardModel);
