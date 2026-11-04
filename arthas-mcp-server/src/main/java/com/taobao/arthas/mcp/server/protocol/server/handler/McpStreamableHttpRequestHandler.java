@@ -444,7 +444,8 @@ public class McpStreamableHttpRequestHandler {
                 HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
                 response.headers().set(HttpHeaderNames.CONTENT_TYPE, TEXT_EVENT_STREAM);
                 response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache");
-                response.headers().set(HttpHeaderNames.CONNECTION, "keep-alive");
+                // 响应流结束后会关闭连接，避免客户端将连接缓存后复用。
+                response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
                 response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
                 response.headers().set(HttpHeaderNames.TRANSFER_ENCODING, HttpHeaderValues.CHUNKED);
 
