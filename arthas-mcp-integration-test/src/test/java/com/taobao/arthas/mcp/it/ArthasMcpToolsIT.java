@@ -75,7 +75,7 @@ class ArthasMcpToolsIT {
                 toolNames.add(tool.getName());
             }
             assertThat(toolNames).contains("jvm", "jad", "thread", "version");
-            assertThat(toolNames).contains("watch", "tt");
+            assertThat(toolNames).contains("watch", "tt", "line");
 
             McpSchema.Tool watchTool = toolsResult.getTools().stream()
                     .filter(t -> "watch".equals(t.getName()))
@@ -98,6 +98,30 @@ class ArthasMcpToolsIT {
             if (ttTool.getInputSchema().getRequired() != null) {
                 assertThat(ttTool.getInputSchema().getRequired()).doesNotContain("sizeLimit");
             }
+
+            McpSchema.Tool lineTool = toolsResult.getTools().stream()
+                    .filter(t -> "line".equals(t.getName()))
+                    .findFirst()
+                    .orElse(null);
+            assertThat(lineTool).as("line tool should exist in listTools").isNotNull();
+            assertThat(lineTool.getInputSchema()).isNotNull();
+            assertThat(lineTool.getInputSchema().getProperties()).containsKey("classPattern");
+            assertThat(lineTool.getInputSchema().getProperties()).containsKey("line");
+            assertThat(lineTool.getInputSchema().getProperties()).containsKey("listLines");
+
+            // list-lines 只读取 LineNumberTable，不增强目标类
+            Map<String, Object> listLinesArgs = new HashMap<>();
+            listLinesArgs.put("classPattern", "com.taobao.arthas.mcp.it.TargetJvmApp");
+            listLinesArgs.put("methodPattern", "hotMethod");
+            listLinesArgs.put("listLines", true);
+            McpSchema.CallToolResult listLinesResult = client.callTool(sessionId, "line", listLinesArgs);
+            assertThat(listLinesResult).isNotNull();
+            assertThat(listLinesResult.getIsError()).isNotEqualTo(Boolean.TRUE);
+            JsonNode listLinesBody = OBJECT_MAPPER.readTree(extractTextContent(listLinesResult));
+            JsonNode lineListNode = findResultByType(listLinesBody.path("results"), "line-list");
+            assertThat(lineListNode).as("line --list-lines should return line-list results").isNotNull();
+            assertThat(lineListNode.path("lines").isArray()).isTrue();
+            assertThat(lineListNode.path("lines").size()).isGreaterThan(0);
 
             McpSchema.CallToolResult callToolResult = client.callTool(sessionId, "jvm", Collections.emptyMap());
             assertThat(callToolResult).isNotNull();
