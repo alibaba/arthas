@@ -1,6 +1,7 @@
 ---
 name: arthas-eagleeye-traceid
 description: 使用 Arthas 的 watch/trace 获取 EagleEye traceId / 获取请求的 traceId
+license: Apache-2.0
 ---
 
 # 获取 EagleEye traceId（Arthas）
@@ -77,4 +78,3 @@ trace <类全名> <方法名> -n 5
 ## 扩展
 
 - 其他分布式追踪系统的 traceId、或 ThreadLocal 里的值，也可以用类似方式在 `watch` 的 OGNL 表达式中读取。
-

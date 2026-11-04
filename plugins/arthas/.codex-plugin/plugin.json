@@ -1,0 +1,28 @@
+{
+  "name": "arthas",
+  "version": "0.1.0",
+  "description": "Guided Arthas workflows for diagnosing Java and JVM issues.",
+  "author": {
+    "name": "Alibaba Arthas",
+    "url": "https://github.com/alibaba/arthas"
+  },
+  "homepage": "https://arthas.aliyun.com/",
+  "repository": "https://github.com/alibaba/arthas",
+  "license": "Apache-2.0",
+  "keywords": [
+    "arthas",
+    "java",
+    "jvm",
+    "diagnostics"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthas Diagnostics",
+    "shortDescription": "Diagnose Java and JVM issues with Arthas.",
+    "longDescription": "Use guided Arthas workflows to investigate CPU spikes, EagleEye trace IDs, and Spring context or bean issues.",
+    "developerName": "Alibaba Arthas",
+    "category": "Developer Tools",
+    "capabilities": [],
+    "defaultPrompt": "Help me diagnose a Java application with Arthas."
+  }
+}
