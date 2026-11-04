@@ -111,12 +111,8 @@ public class CompletionUtilsTest {
     }
 
     private static void assertMethodsUnresolvable(Class<?> target) {
-        try {
-            target.getDeclaredMethods();
-            Assert.fail("Expected an unresolved method signature for " + target.getName());
-        } catch (LinkageError expected) {
-            // expected
-        }
+        Assert.assertThrows("Expected an unresolved method signature for " + target.getName(),
+                LinkageError.class, target::getDeclaredMethods);
     }
 
     private Class<?> compileDuplicateTarget(String methods) throws Exception {

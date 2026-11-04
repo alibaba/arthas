@@ -249,13 +249,12 @@ public class UploadFileToolTest {
     }
 
     private static void assertUploadError(String expectedCode, UploadCall call) {
-        try {
-            call.run();
-            Assert.fail("Expected upload error " + expectedCode);
-        } catch (UploadFileTool.UploadFileException e) {
-            Assert.assertEquals(expectedCode, e.getCode());
-            Assert.assertTrue(e.getMessage().startsWith(expectedCode + ":"));
-        }
+        UploadFileTool.UploadFileException e = Assert.assertThrows(
+                "Expected upload error " + expectedCode,
+                UploadFileTool.UploadFileException.class,
+                call::run);
+        Assert.assertEquals(expectedCode, e.getCode());
+        Assert.assertTrue(e.getMessage().startsWith(expectedCode + ":"));
     }
 
     private static Map<String, Object> parse(String json) {
