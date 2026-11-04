@@ -120,6 +120,7 @@ public class ArthasBootstrap {
     private Instrumentation instrumentation;
     private InstrumentTransformer classLoaderInstrumentTransformer;
     private Thread shutdown;
+    private Thread versionCheckThread;
     private ShellServer shellServer;
     private ScheduledExecutorService executorService;
     private SessionManager sessionManager;
@@ -193,6 +194,15 @@ public class ArthasBootstrap {
 
         transformerManager = new TransformerManager(instrumentation);
         Runtime.getRuntime().addShutdownHook(shutdown);
+
+        startVersionCheck();
+    }
+
+    void startVersionCheck() {
+        logger().info("Current arthas version: {}", ArthasBanner.version());
+        if (configure.isCheckLatestVersion()) {
+            versionCheckThread = ArthasBanner.checkLatestVersionAsync();
+        }
     }
 
     private void initFastjson() {
@@ -840,6 +850,10 @@ public class ArthasBootstrap {
      * call reset() before destroy()
      */
     public void destroy() {
+        if (versionCheckThread != null) {
+            versionCheckThread.interrupt();
+            versionCheckThread = null;
+        }
         if (this.arthasMcpBootstrap != null) {
             try {
                 // stop 时需要主动关闭 mcp keep-alive 调度线程，避免 stop 后残留线程导致 ArthasClassLoader 无法回收
