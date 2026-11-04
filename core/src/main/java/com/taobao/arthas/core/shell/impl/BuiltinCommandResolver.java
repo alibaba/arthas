@@ -7,7 +7,6 @@ import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.command.ShellInternalCommandResolver;
 import com.taobao.arthas.core.shell.command.internal.GrepHandler;
 import com.taobao.arthas.core.shell.command.internal.PlainTextHandler;
-import com.taobao.arthas.core.shell.command.internal.WordCountHandler;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.NoOpHandler;
 
@@ -34,7 +33,6 @@ class BuiltinCommandResolver implements ShellInternalCommandResolver {
                              CommandBuilder.command("bg").processHandler(handler).build(),
                              CommandBuilder.command("kill").processHandler(handler).build(),
                              CommandBuilder.command(PlainTextHandler.NAME).processHandler(handler).build(),
-                             CommandBuilder.command(GrepHandler.NAME).processHandler(handler).build(),
-                             CommandBuilder.command(WordCountHandler.NAME).processHandler(handler).build());
+                             CommandBuilder.command(GrepHandler.NAME).processHandler(handler).build());
     }
 }
