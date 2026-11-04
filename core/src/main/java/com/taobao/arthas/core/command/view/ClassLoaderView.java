@@ -1,0 +1,255 @@
+package com.taobao.arthas.core.command.view;
+
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderStat;
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderUrlStat;
+import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.UrlClassStat;
+import com.taobao.arthas.core.command.model.ClassDetailVO;
+import com.taobao.arthas.core.command.model.ClassLoaderModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
+import com.taobao.arthas.core.command.model.ClassSetVO;
+import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.text.Decoration;
+import com.taobao.text.ui.*;
+import com.taobao.text.util.RenderUtil;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static com.taobao.arthas.core.util.ClassUtils.formatClassLoaderText;
+
+/**
+ * @author gongdewei 2020/4/21
+ */
+public class ClassLoaderView extends ResultView<ClassLoaderModel> {
+
+    @Override
+    public void draw(CommandProcess process, ClassLoaderModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
+        if (result.getClassSet() != null) {
+            drawAllClasses(process, result.getClassSet());
+        }
+        if (result.getResources() != null) {
+            drawResources(process, result.getResources());
+        }
+        if (result.getLoadClass() != null) {
+            drawLoadClass(process, result.getLoadClass());
+        }
+        if (result.getUrls() != null) {
+            drawClassLoaderUrls(process, result.getUrls());
+        }
+        if (result.getClassLoaders() != null){
+            drawClassLoaders(process, result.getClassLoaders(), result.getTree());
+        }
+        if (result.getClassLoaderStats() != null){
+            drawClassLoaderStats(process, result.getClassLoaderStats());
+        }
+        if (result.getUrlStats() != null) {
+            drawUrlStats(process, result.getUrlStats());
+        }
+        if (result.getUrlClassStats() != null) {
+            drawUrlClassStats(process, result.getClassLoader(), result.getUrlClassStats(),
+                    Boolean.TRUE.equals(result.getUrlClassStatsDetail()));
+        }
+    }
+
+    private void drawUrlClassStats(CommandProcess process, ClassLoaderVO classLoader, List<UrlClassStat> urlClassStats,
+            boolean detail) {
+        if (classLoader != null) {
+            process.write(formatClassLoaderText(classLoader.getName()) + ", hash:" + classLoader.getHash() + "\n");
+        }
+
+        boolean hasMatched = false;
+        for (UrlClassStat stat : urlClassStats) {
+            if (stat.getMatchedClassCount() != null) {
+                hasMatched = true;
+                break;
+            }
+        }
+
+        if (!detail) {
+            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+            RowElement header = new RowElement().style(Decoration.bold.bold());
+            if (hasMatched) {
+                header.add("url", "loadedClassCount", "matchedClassCount");
+            } else {
+                header.add("url", "loadedClassCount");
+            }
+            table.add(header);
+
+            for (UrlClassStat stat : urlClassStats) {
+                if (hasMatched) {
+                    table.row(stat.getUrl(), "" + stat.getLoadedClassCount(), "" + stat.getMatchedClassCount());
+                } else {
+                    table.row(stat.getUrl(), "" + stat.getLoadedClassCount());
+                }
+            }
+            process.write(RenderUtil.render(table, process.width()))
+                    .write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
+            return;
+        }
+
+        for (UrlClassStat stat : urlClassStats) {
+            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+
+            StringBuilder title = new StringBuilder();
+            title.append(stat.getUrl())
+                    .append(" (loaded: ").append(stat.getLoadedClassCount());
+            if (hasMatched) {
+                title.append(", matched: ").append(stat.getMatchedClassCount());
+            }
+            title.append(")");
+            table.row(new LabelElement(title.toString()).style(Decoration.bold.bold()));
+
+            List<String> classes = stat.getClasses();
+            if (classes != null) {
+                for (String className : classes) {
+                    table.row(className);
+                }
+            }
+
+            if (stat.isTruncated() && classes != null) {
+                int total = hasMatched ? stat.getMatchedClassCount() : stat.getLoadedClassCount();
+                table.row(new LabelElement("... (showing first " + classes.size() + " of " + total
+                        + ", use -n/--limit to change limit)"));
+            }
+
+            process.write(RenderUtil.render(table, process.width()))
+                    .write("\n");
+        }
+    }
+
+    private void drawUrlStats(CommandProcess process, Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats) {
+        for (Entry<ClassLoaderVO, ClassLoaderUrlStat> entry : urlStats.entrySet()) {
+            ClassLoaderVO classLoaderVO = entry.getKey();
+            ClassLoaderUrlStat urlStat = entry.getValue();
+
+            // 忽略 sun.reflect.DelegatingClassLoader 等动态ClassLoader
+            if (urlStat.getUsedUrls().isEmpty() && urlStat.getUnUsedUrls().isEmpty()) {
+                continue;
+            }
+
+            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+            table.row(new LabelElement(formatClassLoaderText(classLoaderVO.getName()) + ", hash:" + classLoaderVO.getHash())
+                    .style(Decoration.bold.bold()));
+            Collection<String> usedUrls = urlStat.getUsedUrls();
+            table.row(new LabelElement("Used URLs:").style(Decoration.bold.bold()));
+            for (String url : usedUrls) {
+                table.row(url);
+            }
+            Collection<String> UnnsedUrls = urlStat.getUnUsedUrls();
+            table.row(new LabelElement("Unused URLs:").style(Decoration.bold.bold()));
+            for (String url : UnnsedUrls) {
+                table.row(url);
+            }
+            process.write(RenderUtil.render(table, process.width()))
+                    .write("\n");
+        }
+    }
+    
+    private void drawClassLoaderStats(CommandProcess process, Map<String, ClassLoaderStat> classLoaderStats) {
+        Element element = renderStat(classLoaderStats);
+        process.write(RenderUtil.render(element, process.width()))
+                .write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
+
+    }
+
+    private static TableElement renderStat(Map<String, ClassLoaderStat> classLoaderStats) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.add(new RowElement().style(Decoration.bold.bold()).add("name", "numberOfInstances", "loadedCountTotal"));
+        for (Map.Entry<String, ClassLoaderStat> entry : classLoaderStats.entrySet()) {
+            table.row(entry.getKey(), "" + entry.getValue().getNumberOfInstance(), "" + entry.getValue().getLoadedCount());
+        }
+        return table;
+    }
+
+    public static void drawClassLoaders(CommandProcess process, Collection<ClassLoaderVO> classLoaders, boolean isTree) {
+        Element element = isTree ? renderTree(classLoaders) : renderTable(classLoaders);
+        process.write(RenderUtil.render(element, process.width()))
+                .write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
+    }
+
+    private void drawClassLoaderUrls(CommandProcess process, List<String> urls) {
+        process.write(RenderUtil.render(renderClassLoaderUrls(urls), process.width()));
+        process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
+    }
+
+    private void drawLoadClass(CommandProcess process, ClassDetailVO loadClass) {
+        process.write(RenderUtil.render(ClassUtils.renderClassInfo(loadClass), process.width()) + "\n");
+    }
+
+    private void drawAllClasses(CommandProcess process, ClassSetVO classSetVO) {
+        process.write(RenderUtil.render(renderClasses(classSetVO), process.width()));
+        process.write("\n");
+    }
+
+    private void drawResources(CommandProcess process, List<String> resources) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        for (String resource : resources) {
+            table.row(resource);
+        }
+        process.write(RenderUtil.render(table, process.width()) + "\n");
+        process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
+    }
+
+    private Element renderClasses(ClassSetVO classSetVO) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        if (classSetVO.getSegment() == 0) {
+            table.row(new LabelElement("hash:" + classSetVO.getClassloader().getHash() + ", "
+                    + formatClassLoaderText(classSetVO.getClassloader().getName()))
+                    .style(Decoration.bold.bold()));
+        }
+        for (String className : classSetVO.getClasses()) {
+            table.row(new LabelElement(className));
+        }
+        return table;
+    }
+
+    private static Element renderClassLoaderUrls(List<String> urls) {
+        StringBuilder sb = new StringBuilder();
+        for (String url : urls) {
+            sb.append(url).append("\n");
+        }
+        return new LabelElement(sb.toString());
+    }
+
+    // 统计所有的ClassLoader的信息
+    private static TableElement renderTable(Collection<ClassLoaderVO> classLoaderInfos) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.add(new RowElement().style(Decoration.bold.bold()).add("name", "loadedCount", "hash", "parent"));
+        for (ClassLoaderVO classLoaderVO : classLoaderInfos) {
+            table.row(formatClassLoaderText(classLoaderVO.getName()), "" + classLoaderVO.getLoadedCount(),
+                    classLoaderVO.getHash(), formatClassLoaderText(classLoaderVO.getParent()));
+        }
+        return table;
+    }
+
+    // 以树状列出ClassLoader的继承结构
+    private static Element renderTree(Collection<ClassLoaderVO> classLoaderInfos) {
+        TreeElement root = new TreeElement();
+        for (ClassLoaderVO classLoader : classLoaderInfos) {
+            TreeElement child = new TreeElement(formatClassLoaderText(classLoader.getName()));
+            root.addChild(child);
+            renderSubtree(child, classLoader);
+        }
+        return root;
+    }
+
+    private static void renderSubtree(TreeElement parent, ClassLoaderVO parentClassLoader) {
+        if (parentClassLoader.getChildren() == null){
+            return;
+        }
+        for (ClassLoaderVO childClassLoader : parentClassLoader.getChildren()) {
+            TreeElement child = new TreeElement(formatClassLoaderText(childClassLoader.getName()));
+            parent.addChild(child);
+            renderSubtree(child, childClassLoader);
+        }
+    }
+}

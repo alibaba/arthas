@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="ARTHAS_LOG_PATH" value="${ARTHAS_LOG_PATH:-${user.home}/logs/arthas}" />
+    <property name="ARTHAS_LOG_FILE" value="${ARTHAS_LOG_FILE:-${ARTHAS_LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/arthas.log}" />
+
+    <property name="RESULT_LOG_FILE" value="${RESULT_LOG_FILE:-${ARTHAS_LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/../arthas-cache/result.log}" />
+
+    <!-- arthas.log -->
+    <appender name="ARTHAS" class="com.alibaba.arthas.deps.ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ARTHAS_LOG_FILE}</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} -%msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="com.alibaba.arthas.deps.ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ARTHAS_LOG_FILE}.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <maxFileSize>1MB</maxFileSize>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- result.log -->
+    <appender name="RESULT" class="com.alibaba.arthas.deps.ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${RESULT_LOG_FILE}</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} -%msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="com.alibaba.arthas.deps.ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${RESULT_LOG_FILE}.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <maxFileSize>1MB</maxFileSize>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="result" level="INFO" additivity="false">
+        <appender-ref ref="RESULT" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="ARTHAS" />
+    </root>
+
+</configuration>

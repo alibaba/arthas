@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.taobao.arthas</groupId>
+        <artifactId>arthas-all</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>arthas-model</artifactId>
+    <name>arthas-model</name>
+    <description>Arthas command result models - pure data transfer objects</description>
+    <url>https://github.com/alibaba/arthas</url>
+
+    <!-- This module should not add any dependencies to keep it lightweight -->
+
+    <build>
+        <finalName>arthas-model</finalName>
+    </build>
+
+</project>

@@ -1,0 +1,2 @@
+zookeeper=com.alibaba.arthas.nat.agent.management.web.discovery.impl.ZookeeperNativeAgentProxyDiscovery
+etcd=com.alibaba.arthas.nat.agent.management.web.discovery.impl.EtcdNativeAgentProxyDiscovery

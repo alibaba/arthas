@@ -1,0 +1,96 @@
+#!/usr/bin/env expect -f
+
+# 用法:
+#   arthas_telnet.exp <host> <port> <commands_file> <timeout_seconds> <transcript_file>
+#
+# 说明：
+# - 通过 telnet 连接 Arthas，按行执行 commands_file 里的命令，最后执行 stop 并等待连接关闭。
+# - 为避免 CI 卡死，每条命令都设置超时；超时会尝试发送 Ctrl+C 进行中断并继续。
+
+proc usage {} {
+    puts stderr "usage: arthas_telnet.exp <host> <port> <commands_file> <timeout_seconds> <transcript_file>"
+    exit 1
+}
+
+if {[llength $argv] < 5} {
+    usage
+}
+
+set host [lindex $argv 0]
+set port [lindex $argv 1]
+set commands_file [lindex $argv 2]
+set timeout_seconds [lindex $argv 3]
+set transcript_file [lindex $argv 4]
+
+log_file -noappend $transcript_file
+set timeout $timeout_seconds
+
+spawn telnet $host $port
+
+# Arthas 默认 prompt 为 "$ "（可能带 ANSI 颜色），匹配子串即可。
+set prompt_re {\$ }
+
+expect {
+    -re $prompt_re {}
+    timeout {
+        puts stderr "ERROR: 等待 Arthas prompt 超时"
+        exit 2
+    }
+    eof {
+        puts stderr "ERROR: 未出现 prompt 连接已关闭"
+        exit 3
+    }
+}
+
+set fp [open $commands_file r]
+while {[gets $fp line] >= 0} {
+    set line [string trim $line]
+    if {$line eq ""} { continue }
+    if {[string match "#*" $line]} { continue }
+
+    send -- "$line\r"
+
+    expect {
+        -re $prompt_re {}
+        -re {Session has been terminated} {
+            close $fp
+            exit 0
+        }
+        timeout {
+            # 命令可能是持续输出/等待触发，尝试 Ctrl+C 打断后继续。
+            send -- "\003"
+            expect {
+                -re $prompt_re {}
+                timeout {
+                    puts stderr "ERROR: 命令超时且 Ctrl+C 未恢复到 prompt: $line"
+                    close $fp
+                    exit 4
+                }
+                eof {
+                    puts stderr "ERROR: Ctrl+C 后连接关闭: $line"
+                    close $fp
+                    exit 5
+                }
+            }
+        }
+        eof {
+            puts stderr "ERROR: 命令执行后连接关闭: $line"
+            close $fp
+            exit 6
+        }
+    }
+}
+close $fp
+
+send -- "stop\r"
+expect {
+    -re {Session has been terminated} {}
+    eof {}
+    timeout {
+        puts stderr "ERROR: stop 超时"
+        exit 7
+    }
+}
+
+exit 0
+

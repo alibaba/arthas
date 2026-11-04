@@ -1,0 +1,83 @@
+# Arthas Properties
+
+The `arthas.properties` file is in the arthas directory.
+
+- If it is automatically downloaded arthas, the directory is under `~/.arthas/lib/3.x.x/arthas/`
+- If it is a downloaded complete package, under the decompression directory of arthas
+
+## Supported configuration items
+
+::: warning
+Note that the configuration must be `camel case`, which is different from the `-` style of spring boot. Only the spring boot application supports both `camel case` and `-` style configuration.
+:::
+
+```
+#arthas.config.overrideAll=true
+arthas.telnetPort=3658
+arthas.httpPort=8563
+arthas.ip=127.0.0.1
+
+# seconds
+arthas.sessionTimeout=10800
+
+#arthas.appName=demoapp
+#arthas.tunnelServer=ws://127.0.0.1:7777/ws
+#arthas.agentId=mmmmmmyiddddd
+#arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
+# Arthas will also try to load *.jar from ${arthas.home}/commands if the directory exists
+```
+
+- If the configuration of `arthas.telnetPort` is -1, the telnet port will not be listened. `arthas.httpPort` is similar.
+- If you configure `arthas.telnetPort` to 0, then random listen telnet port, you can find the random port log in `~/logs/arthas/arthas.log`. `arthas.httpPort` is similar.
+
+::: tip
+If you want to prevent multiple arthas port conflicts on a machine. It can be configured as a random port, or configured as -1, and use arthas through the tunnel server.
+:::
+
+### disable specify commands
+
+::: tip
+since 3.5.2
+:::
+
+Such as configuration:
+
+```
+arthas.disabledCommands=stop,dump
+```
+
+It can also be configured on the command line: `--disabled-commands stop,dump`.
+
+::: tip
+By default, arthas-spring-boot-starter will disable the `stop` command.
+:::
+
+### Load external commands
+
+You can load external command jars when Arthas starts:
+
+```
+arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
+```
+
+- Each entry can be a jar file path or a directory path, separated by commas.
+- Directory entries only scan `*.jar` in the current directory and do not recurse.
+- If `${arthas.home}/commands` exists, Arthas also tries to load `*.jar` from that directory at startup. Explicit `arthas.commandLocations` are loaded first, then the default directory.
+- The external jar should expose a `CommandResolver` via `META-INF/services/com.taobao.arthas.core.shell.command.CommandResolver`.
+- Arthas keeps built-in commands first; when an external command conflicts with a built-in command name, the external command is skipped and a log is written.
+
+It can also be configured on the command line:
+`--command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'`.
+
+For a complete external command development and loading example, see [Load External Commands](external-command.md).
+
+## Configured order
+
+The order of configuration is: command line parameters > System Env > System Properties > arthas.properties.
+
+such as:
+
+- `./as.sh --telnet-port 9999` command line configuration will overwrite the default value `arthas.telnetPort=3658` in `arthas.properties`.
+- If the application itself sets system properties `arthas.telnetPort=8888`, it will override the default value `arthas.telnetPort=3658` in `arthas.properties`.
+
+If you want `arthas.properties` to have the highest order, you can configure `arthas.config.overrideAll=true`.

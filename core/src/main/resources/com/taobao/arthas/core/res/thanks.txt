@@ -1,0 +1,34 @@
+#from https://github.com/oldmanpushcart/greys-anatomy
+PLATINUM DEVELOPERS
+
+    vlinux
+        email : oldmanpushcart@gmail.com
+        weibo : http://weibo.com/vlinux
+
+    chengtd
+        email : chengtongda@163.com
+        weibo : http://weibo.com/chengtd
+
+    JieChenCN
+        weibo : http://weibo.com/471760204
+
+    JamesPan
+        email : panjiabang@gmail.com
+
+    jotcmd
+       github : https://github.com/jotcmd
+
+    hengyunabc
+       github : https://github.com/hengyunabc
+
+    huxing.zhang
+        email : huxing.zhang@gmail.com
+
+    zhuyong
+        email : diecui1202@gmail.com
+
+
+ABOUT
+
+    Thank you very much.
+

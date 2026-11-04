@@ -1,0 +1,83 @@
+name: JavaCI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  ubuntu_build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8, 11, 17, 21, 25]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: "zulu"
+          cache: "maven"
+      - name: Build with Maven
+        run: ./mvnw -V -ntp clean install -P full verify
+
+  windows_build:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        java: [8, 11]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: "zulu"
+          cache: "maven"
+      - name: Build with Maven
+        run: ./mvnw.cmd -V -ntp clean install -P full
+
+  macos_build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        java: [8, 11]
+        os:
+          - macos-latest
+          - macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: "zulu"
+          cache: "maven"
+      - name: Build with Maven
+        run: ./mvnw -V -ntp clean install -P full
+
+  telnet_stop_leak_it:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: "zulu"
+          cache: "maven"
+      - name: Install expect/telnet
+        run: sudo apt-get update && sudo apt-get install -y expect telnet
+      - name: Build packaging
+        run: ./mvnw -V -ntp clean install -P full -DskipTests
+      - name: Run telnet stop leak test
+        run: python3 integration-test/telnet-stop-leak/run_telnet_stop_leak_test.py --iterations 10 --warmup 2 --threshold 5 --work-dir integration-test/telnet-stop-leak/work
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: telnet-stop-leak-logs
+          path: integration-test/telnet-stop-leak/work
