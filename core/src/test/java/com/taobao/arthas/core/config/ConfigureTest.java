@@ -13,6 +13,29 @@ import com.taobao.arthas.core.env.MapPropertySource;
 public class ConfigureTest {
 
     @Test
+    public void shouldEnableVersionCheckByDefault() {
+        Configure configure = new Configure();
+        assertThat(configure.isCheckLatestVersion()).isTrue();
+        assertThat(FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(configure.toString()))
+                .doesNotContainKey("checkLatestVersion");
+    }
+
+    @Test
+    public void shouldBindAndSerializeVersionCheckSetting() throws Exception {
+        for (boolean enabled : new boolean[] { false, true }) {
+            Map<String, Object> properties = new HashMap<String, Object>();
+            properties.put("arthas.checkLatestVersion", String.valueOf(enabled));
+            ArthasEnvironment environment = new ArthasEnvironment();
+            environment.addFirst(new MapPropertySource("test", properties));
+            Configure configure = new Configure();
+            BinderUtils.inject(environment, configure);
+
+            assertThat(configure.isCheckLatestVersion()).isEqualTo(enabled);
+            assertThat(Configure.toConfigure(configure.toString()).isCheckLatestVersion()).isEqualTo(enabled);
+        }
+    }
+
+    @Test
     public void shouldTransmitCrossMountNamespaceMetadataThroughAgentArgs() {
         Configure source = new Configure();
         source.setJavaPid(123L);

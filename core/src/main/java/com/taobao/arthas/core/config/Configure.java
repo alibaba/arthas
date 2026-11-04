@@ -64,6 +64,11 @@ public class Configure {
     private String statUrl;
 
     /**
+     * Check for the latest version in the background. Enabled when unspecified.
+     */
+    private Boolean checkLatestVersion;
+
+    /**
      * session timeout seconds
      * @see ShellServerOptions#DEFAULT_SESSION_TIMEOUT
      */
@@ -180,6 +185,14 @@ public class Configure {
 
     public void setStatUrl(String statUrl) {
         this.statUrl = statUrl;
+    }
+
+    public boolean isCheckLatestVersion() {
+        return !Boolean.FALSE.equals(checkLatestVersion);
+    }
+
+    public void setCheckLatestVersion(boolean checkLatestVersion) {
+        this.checkLatestVersion = checkLatestVersion;
     }
 
     public String getAppName() {
