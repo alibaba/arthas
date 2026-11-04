@@ -52,6 +52,7 @@ import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.command.CommandExecutorImpl;
+import com.taobao.arthas.core.command.startup.StartupCommandManager;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
@@ -145,6 +146,7 @@ public class ArthasBootstrap {
 
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
+    private StartupCommandManager startupCommandManager;
 
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
@@ -840,6 +842,15 @@ public class ArthasBootstrap {
      * call reset() before destroy()
      */
     public void destroy() {
+        if (startupCommandManager != null) {
+            try {
+                startupCommandManager.close();
+            } catch (Throwable e) {
+                logger().error("stop startup commands error", e);
+            } finally {
+                startupCommandManager = null;
+            }
+        }
         if (this.arthasMcpBootstrap != null) {
             try {
                 // stop 时需要主动关闭 mcp keep-alive 调度线程，避免 stop 后残留线程导致 ArthasClassLoader 无法回收
@@ -961,9 +972,29 @@ public class ArthasBootstrap {
      */
     public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         if (arthasBootstrap == null) {
-            arthasBootstrap = new ArthasBootstrap(instrumentation, args);
+            ArthasBootstrap bootstrap = new ArthasBootstrap(instrumentation, args);
+            arthasBootstrap = bootstrap;
+            bootstrap.startStartupCommands();
         }
         return arthasBootstrap;
+    }
+
+    private void startStartupCommands() {
+        String startupScript = configure.getStartupScript();
+        if (!StringUtils.hasText(startupScript)) {
+            return;
+        }
+
+        StartupCommandManager manager = new StartupCommandManager(sessionManager, shellServer.getJobController(),
+                        shellServer.getCommandManager(), executorService, outputPath);
+        startupCommandManager = manager;
+        try {
+            manager.start(new File(startupScript));
+        } catch (Throwable e) {
+            logger().error("Start startup commands failed, script: {}", startupScript, e);
+            manager.close();
+            startupCommandManager = null;
+        }
     }
 
     /**
