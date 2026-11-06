@@ -31,6 +31,72 @@ public class GrepHandlerTest {
     }
 
     @Test
+    public void test4grep_before_context_with_several_matches() { // -B
+        // leading context stays in front of its own match
+        assertContext("ABC\n1\n2\nABC\n3", 1, 0, "ABC\n2\nABC\n");
+        assertContext("ABC\n1\n2\n3\nABC", 2, 0, "ABC\n2\n3\nABC\n");
+        // a line that is already printed is not printed again
+        assertContext("ABC\n1\nABC", 2, 0, "ABC\n1\nABC\n");
+        assertContext("ABC\nABC\n1", 2, 0, "ABC\nABC\n");
+        assertContext("ABC\nABC\nABC", 5, 0, "ABC\nABC\nABC\n");
+        assertContext("1\nABC\nABC\n2\nABC", 2, 0, "1\nABC\nABC\n2\nABC\n");
+    }
+
+    @Test
+    public void test4grep_after_context_with_several_matches() { // -A
+        // a match inside trailing context starts its own trailing context
+        assertContext("ABC\n1\nABC\n2\n3", 0, 1, "ABC\n1\nABC\n2\n");
+        assertContext("ABC\nABC\n1\n2", 0, 1, "ABC\nABC\n1\n");
+        assertContext("ABC\n1\nABC\n2\n3\n4", 0, 2, "ABC\n1\nABC\n2\n3\n");
+        // -B and -A together
+        assertContext("0\nABC\n1\nABC\n2\n3\n4\nABC", 1, 1, "0\nABC\n1\nABC\n2\n4\nABC\n");
+    }
+
+    private static void assertContext(String input, int beforeLines, int afterLines, String expected) {
+        GrepHandler handler = new GrepHandler("ABC", false, false, true, false, true, beforeLines, afterLines, 0);
+        Assert.assertEquals(expected, handler.apply(input));
+    }
+
+    @Test
+    public void test4grep_context_with_invert_match() { // -v -B -A
+        GrepHandler handler = new GrepHandler("ABC", false, true, true, false, true, 1, 0, 0);
+        Assert.assertEquals("ABC\n1\nABC\n2\n", handler.apply("ABC\n1\nABC\n2\nABC"));
+
+        handler = new GrepHandler("ABC", false, true, true, false, true, 0, 1, 0);
+        Assert.assertEquals("1\nABC\n2\nABC\n", handler.apply("ABC\n1\nABC\n2\nABC"));
+    }
+
+    @Test
+    public void test4grep_max_count_with_context() { // -m -A
+        // every match counts, also the ones inside trailing context
+        GrepHandler handler = new GrepHandler("ABC", false, false, true, false, true, 0, 1, 2);
+        Assert.assertEquals("ABC\nABC\n", handler.apply("ABC\nABC\nABC\n1"));
+
+        // trailing context of the last match is still printed
+        handler = new GrepHandler("ABC", false, false, true, false, true, 0, 2, 1);
+        Assert.assertEquals("ABC\n1\n2\n", handler.apply("ABC\n1\n2\n3"));
+
+        // and it ends at the next match, like GNU grep
+        handler = new GrepHandler("ABC", false, false, true, false, true, 0, 2, 1);
+        Assert.assertEquals("ABC\n1\n", handler.apply("ABC\n1\nABC\n3"));
+    }
+
+    @Test
+    public void test4grep_line_number_with_context() { // -n -B -A
+        GrepHandler handler = new GrepHandler("ABC", false, false, true, true, true, 1, 1, 0);
+        Assert.assertEquals("1:0\n2:ABC\n3:1\n4:ABC\n5:2\n", handler.apply("0\nABC\n1\nABC\n2\n3"));
+    }
+
+    @Test
+    public void test4grep_trim_end_with_context() { // --trim-end
+        GrepHandler handler = new GrepHandler("ABC", false, false, true, false, true, 1, 1, 0);
+        Assert.assertEquals("0\nABC\n1\n", handler.apply("0  \nABC  \n1  "));
+
+        handler = new GrepHandler("ABC", false, false, true, false, false, 1, 1, 0);
+        Assert.assertEquals("0  \nABC  \n1  \n", handler.apply("0  \nABC  \n1  "));
+    }
+
+    @Test
     public void test4grep_v() {// -v
         Object[][] samples = new Object[][] { { "ABC\n1\n2\nc", "ABC", 0, 4, "1\n2\nc" },
                         { "ABC\n1\n2\n", "ABC", 0, 0, "1\n2" }, { "ABC\n1\n2\nc", "ABC", 0, 1, "1\n2\nc" } };
