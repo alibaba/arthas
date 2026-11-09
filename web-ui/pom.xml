@@ -21,7 +21,7 @@
         <yarn.registry.url>https://registry.npmmirror.com/</yarn.registry.url>
         <yarn.download.url>http://npmmirror.com</yarn.download.url>
         <node.download.url>https://npmmirror.com/mirrors/node/</node.download.url>
-        <node.version>v16.16.0</node.version>
+        <node.version>v20.19.0</node.version>
         <yarn.version>v1.22.19</yarn.version>
     </properties>
 

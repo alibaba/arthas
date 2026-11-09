@@ -59,9 +59,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [vue({
-      reactivityTransform: path.resolve(__dirname, "all/ui"),
-    })],
+    plugins: [vue()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "all/ui/ui/src"),
