@@ -38,6 +38,8 @@ arthas.sessionTimeout=10800
 
 `arthas.checkLatestVersion` 默认为 `true`。Arthas 启动完成后，会在独立的后台守护线程中查询一次最新版本，并将结果写入 `arthas.log`。启动和客户端连接不会等待查询完成，生成欢迎信息也不会重复查询。查询失败只记录 debug 日志，不会重试。
 
+仅接受最终 HTTP 状态为 200 的响应；未被自动跟随的重定向等其他状态按查询失败处理。停止 Arthas 时会中断查询线程，响应读取会在两次读取之间检查中断并释放资源。连接和读取超时不是整个查询的总超时，也不能保证中断卡住的原生 DNS 调用。
+
 如果不希望目标 JVM 为版本检查发起网络请求，可以在 `arthas.properties` 中配置：
 
 ```properties

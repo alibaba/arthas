@@ -9,8 +9,10 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -172,8 +174,21 @@ public class ArthasBanner {
             connection.setReadTimeout(READ_TIMEOUT);
             // Use the JDK's bounded redirect handling instead of recursive requests.
             connection.setInstanceFollowRedirects(true);
+            int status = connection.getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK) {
+                throw new IOException("Unexpected version check HTTP status: " + status);
+            }
             try (InputStream inputStream = connection.getInputStream()) {
-                return com.taobao.arthas.common.IOUtils.toString(inputStream).trim();
+                ByteArrayOutputStream result = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                while (!Thread.currentThread().isInterrupted()) {
+                    int length = inputStream.read(buffer);
+                    if (length == -1) {
+                        return result.toString("UTF-8").trim();
+                    }
+                    result.write(buffer, 0, length);
+                }
+                throw new InterruptedIOException("Version check interrupted");
             }
         } finally {
             connection.disconnect();
