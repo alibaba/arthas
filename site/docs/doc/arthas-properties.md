@@ -34,6 +34,28 @@ arthas.sessionTimeout=10800
 如果是防止一个机器上启动多个 arthas 端口冲突。可以配置为随机端口，或者配置为 -1，并且通过 tunnel server 来使用 arthas。
 :::
 
+### 最新版本检查
+
+`arthas.checkLatestVersion` 默认为 `true`。Arthas 启动完成后，会在独立的后台守护线程中查询一次最新版本，并将结果写入 `arthas.log`。启动和客户端连接不会等待查询完成，生成欢迎信息也不会重复查询。查询失败只记录 debug 日志，不会重试。
+
+仅接受最终 HTTP 状态为 200 的响应；未被自动跟随的重定向等其他状态按查询失败处理。停止 Arthas 时会中断查询线程，响应读取会在两次读取之间检查中断并释放资源。连接和读取超时不是整个查询的总超时，也不能保证中断卡住的原生 DNS 调用。
+
+如果不希望目标 JVM 为版本检查发起网络请求，可以在 `arthas.properties` 中配置：
+
+```properties
+arthas.checkLatestVersion=false
+```
+
+也可以在**目标应用**启动时添加 JVM 参数 `-Darthas.checkLatestVersion=false`。通过 API 初始化时，可以传入：
+
+```java
+ArthasBootstrap.getInstance(instrumentation, "checkLatestVersion=false");
+```
+
+使用 `Map<String, String>` 重载时，对应的 key 是 `arthas.checkLatestVersion`，value 是 `false`。配置需要在 Arthas 初始化前生效。
+
+后台查询仍然在目标 JVM 内执行，不能隔离 DNS 等原生代码的进程级崩溃。如果版本查询会触发此类问题，应关闭检查；关闭后不会创建版本检查线程，也不会访问 `/api/latest_version`。此配置只控制目标 JVM 内的版本检查，不影响 `arthas-boot` 为选择或下载版本发起的请求。
+
 ### 禁止指定命令
 
 ::: tip

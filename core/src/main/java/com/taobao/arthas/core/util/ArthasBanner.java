@@ -9,12 +9,12 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,7 +106,6 @@ public class ArthasBanner {
     }
 
     public static String welcome(Map<String, String> infos) {
-        logger.info("Current arthas version: {}, recommend latest version: {}", version(), latestVersion());
         String appName = System.getProperty("project.name");
         if (appName == null) {
             appName = System.getProperty("app.name");
@@ -132,56 +131,67 @@ public class ArthasBanner {
         return logo() + "\n" + RenderUtil.render(table);
     }
 
-    static String latestVersion() {
-        final String[] version = { "" };
+    /**
+     * Start a single, best-effort version check without waiting for network I/O.
+     * The caller owns the thread and should interrupt it when Arthas stops.
+     */
+    public static Thread checkLatestVersionAsync() {
+        try {
+            return checkLatestVersionAsync(new URL(ARTHAS_LATEST_VERSIONS_URL));
+        } catch (Throwable e) {
+            logger.debug("start latest version check error", e);
+            return null;
+        }
+    }
+
+    static Thread checkLatestVersionAsync(final URL url) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                if (Thread.currentThread().isInterrupted()) {
+                    return;
+                }
                 try {
-                    URLConnection urlConnection = openURLConnection(ARTHAS_LATEST_VERSIONS_URL);
-                    InputStream inputStream = urlConnection.getInputStream();
-                    version[0] = com.taobao.arthas.common.IOUtils.toString(inputStream).trim();
+                    String latestVersion = latestVersion(url);
+                    if (!Thread.currentThread().isInterrupted()) {
+                        logger.info("Current arthas version: {}, recommend latest version: {}", version(), latestVersion);
+                    }
                 } catch (Throwable e) {
                     logger.debug("get latest version error", e);
                 }
             }
-        });
-
+        }, "arthas-version-check");
         thread.setDaemon(true);
+        thread.setContextClassLoader(ArthasBanner.class.getClassLoader());
         thread.start();
-        try {
-            thread.join(2000); // Wait up to 2 seconds for the version check
-        } catch (Throwable e) {
-            // Ignore
-        }
-
-        return version[0];
+        return thread;
     }
 
-    /**
-     * support redirect
-     *
-     * @param url
-     * @return
-     * @throws MalformedURLException
-     * @throws IOException
-     */
-    private static URLConnection openURLConnection(String url) throws MalformedURLException, IOException {
-        URLConnection connection = new URL(url).openConnection();
-        if (connection instanceof HttpURLConnection) {
+    private static String latestVersion(URL url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        try {
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
             connection.setReadTimeout(READ_TIMEOUT);
-            // normally, 3xx is redirect
-            int status = ((HttpURLConnection) connection).getResponseCode();
+            // Use the JDK's bounded redirect handling instead of recursive requests.
+            connection.setInstanceFollowRedirects(true);
+            int status = connection.getResponseCode();
             if (status != HttpURLConnection.HTTP_OK) {
-                if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
-                    String newUrl = connection.getHeaderField("Location");
-                    logger.debug("Try to open url: {}, redirect to: {}", url, newUrl);
-                    return openURLConnection(newUrl);
-                }
+                throw new IOException("Unexpected version check HTTP status: " + status);
             }
+            try (InputStream inputStream = connection.getInputStream()) {
+                ByteArrayOutputStream result = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                while (!Thread.currentThread().isInterrupted()) {
+                    int length = inputStream.read(buffer);
+                    if (length == -1) {
+                        return result.toString("UTF-8").trim();
+                    }
+                    result.write(buffer, 0, length);
+                }
+                throw new InterruptedIOException("Version check interrupted");
+            }
+        } finally {
+            connection.disconnect();
         }
-        return connection;
     }
 }
