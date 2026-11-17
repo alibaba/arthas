@@ -37,7 +37,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  ognl '#value1=@System@getProperty(\"java.home\"), #value2=@System@getProperty(\"java.runtime.name\"), {#value1, #value2}'\n"
                 + "  ognl -c 5d113a51 '@com.taobao.arthas.core.GlobalOptions@isDump' \n"
                 + Constants.WIKI + Constants.WIKI_HOME + "ognl\n"
-                + "  https://commons.apache.org/proper/commons-ognl/language-guide.html")
+                + "  https://commons.apache.org/dormant/commons-ognl/language-guide.html")
 public class OgnlCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(OgnlCommand.class);
 
