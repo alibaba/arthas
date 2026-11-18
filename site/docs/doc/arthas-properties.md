@@ -24,6 +24,7 @@ arthas.sessionTimeout=10800
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd
 #arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
+#arthas.startupScript=/opt/arthas/startup.as
 # 默认还会尝试加载 ${arthas.home}/commands 目录下的 *.jar
 ```
 
@@ -69,6 +70,19 @@ arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
 也可以在命令行配置： `--command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'` 。
 
 完整的外部命令开发和加载示例请参考：[加载外部命令](external-command.md)。
+
+### Java Agent 启动命令
+
+通过 `arthas.startupScript` 可以在 Arthas 启动时自动执行 UTF-8 命令脚本：
+
+```properties
+arthas.startupScript=/opt/arthas/startup.as
+```
+
+脚本一行一条命令。每条命令使用独立 session/job，`watch`、`line` 等增强命令会在
+启动 session 中自动启用 lazy 模式，因此目标类尚未加载时也可以在首次加载时生效。
+结果默认保存到 `${arthas.outputPath}/startup/<pid>/<run-id>/`。详见
+[Java Agent 启动命令机制设计](javaagent-startup-command.md)。
 
 ## 配置的优先级
 

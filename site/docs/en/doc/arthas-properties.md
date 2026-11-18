@@ -24,6 +24,7 @@ arthas.sessionTimeout=10800
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd
 #arthas.commandLocations=/opt/arthas/ext-command.jar,/opt/arthas/ext-commands
+#arthas.startupScript=/opt/arthas/startup.as
 # Arthas will also try to load *.jar from ${arthas.home}/commands if the directory exists
 ```
 
@@ -70,6 +71,18 @@ It can also be configured on the command line:
 `--command-locations '/opt/arthas/ext-command.jar,/opt/arthas/ext-commands'`.
 
 For a complete external command development and loading example, see [Load External Commands](external-command.md).
+
+### Java Agent startup commands
+
+Set `arthas.startupScript` to a UTF-8 script containing one Arthas command per line:
+
+```properties
+arthas.startupScript=/opt/arthas/startup.as
+```
+
+Each command runs in an independent session/job. Enhancer commands such as `watch` and `line` automatically use lazy
+mode in startup sessions, so they can instrument a matching class when it is first loaded. Results are written to
+`${arthas.outputPath}/startup/<pid>/<run-id>/` by default.
 
 ## Configured order
 
