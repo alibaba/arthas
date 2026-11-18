@@ -106,58 +106,33 @@ public class GrepHandler extends StdoutHandler {
     public String apply(String input) {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
-        int continueCount = 0;
-        int lastStartPos = 0;
-        int lastContinueLineNum = -1;
+        int lastPrintedLineNum = 0;
+        int pendingAfterLines = 0;
         int matchCount = 0;
-        for (int lineNum = 0; lineNum < lines.length;) {
-            String line = null;
-            if (this.trimEnd) {
-                line = StringUtils.stripEnd(lines[lineNum], null);
-            } else {
-                line = lines[lineNum];
-            }
-            lineNum++;
+        for (int lineNum = 1; lineNum <= lines.length; lineNum++) {
+            String line = prepareLine(lines[lineNum - 1]);
 
             if (isSelectedLine(line)) {
-                matchCount++;
-                if (beforeLines > continueCount) {
-                    int n = lastContinueLineNum == -1 ? (beforeLines >= lineNum ? 1 : lineNum - beforeLines)
-                                    : lineNum - beforeLines - continueCount;
-                    if (n >= lastContinueLineNum || lastContinueLineNum == -1) {
-                        StringBuilder beforeSb = new StringBuilder();
-                        for (int i = n; i < lineNum; i++) {
-                            appendLine(beforeSb, i, lines[i - 1]);
-                        }
-                        output.insert(lastStartPos, beforeSb);
-                    }
-                } // end handle before lines
-
-                lastStartPos = output.length();
-                appendLine(output, lineNum, line);
-
-                if (afterLines > continueCount) {
-                    int last = lineNum + afterLines - continueCount;
-                    if (last > lines.length) {
-                        last = lines.length;
-                    }
-                    for (int i = lineNum; i < last; i++) {
-                        appendLine(output, i + 1, lines[i]);
-                        lineNum++;
-                        continueCount++;
-                        lastStartPos = output.length();
-                    }
-                } // end handle afterLines
-
-                continueCount++;
                 if (maxCount > 0 && matchCount >= maxCount) {
+                    // trailing context of the last selected line ends at the next match
                     break;
                 }
-            } else { // not match
-                if (continueCount > 0) {
-                    lastContinueLineNum = lineNum - 1;
-                    continueCount = 0;
+                matchCount++;
+                int firstBeforeLineNum = Math.max(lastPrintedLineNum + 1, lineNum - beforeLines);
+                for (int i = firstBeforeLineNum; i < lineNum; i++) {
+                    appendLine(output, i, prepareLine(lines[i - 1]));
                 }
+                appendLine(output, lineNum, line);
+                lastPrintedLineNum = lineNum;
+                pendingAfterLines = afterLines;
+            } else if (pendingAfterLines > 0) {
+                appendLine(output, lineNum, line);
+                lastPrintedLineNum = lineNum;
+                pendingAfterLines--;
+            }
+
+            if (maxCount > 0 && matchCount >= maxCount && pendingAfterLines == 0) {
+                break;
             }
         }
         final String str = output.toString();
