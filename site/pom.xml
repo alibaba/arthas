@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <yarn.registry.url>https://registry.npmmirror.com/</yarn.registry.url>
         <node.download.url>https://npmmirror.com/mirrors/node/</node.download.url>
-        <node.version>v16.13.2</node.version>
+        <node.version>v20.19.0</node.version>
         <yarn.version>v1.22.15</yarn.version>
         <arthas.site.frontend.skip>false</arthas.site.frontend.skip>
     </properties>

@@ -22,5 +22,8 @@
     "node-fetch": "^3.2.10",
     "vue-count-to": "^1.0.13",
     "xml-js": "^1.6.11"
+  },
+  "resolutions": {
+    "vite": "^5.4.21"
   }
 }
