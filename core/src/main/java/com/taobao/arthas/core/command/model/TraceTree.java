@@ -70,10 +70,16 @@ public class TraceTree {
         }
     }
 
-    public void end(Throwable throwable, int lineNumber) {
+     public void end(Throwable throwable, int lineNumber) {
         ThrowNode throwNode = new ThrowNode();
+        final StackTraceElement[] stackTrace = throwable.getStackTrace();
         throwNode.setException(throwable.getClass().getName());
-        throwNode.setMessage(throwable.getMessage());
+        if (current instanceof MethodNode) {
+            throwNode.setMessage(throwable.getMessage());
+        } else {
+            throwNode.setMessage(stackTrace[0].getClassName()
+                    + ":" + stackTrace[0].getMethodName());
+        }
         throwNode.setLineNumber(lineNumber);
         current.addChild(throwNode);
         this.end(true);
