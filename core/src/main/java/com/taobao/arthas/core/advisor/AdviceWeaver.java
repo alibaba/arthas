@@ -51,7 +51,10 @@ public class AdviceWeaver {
         }
     }
 
-    public static AdviceListener listener(long id) {
+    public static AdviceListener listener(final long id) {
+        if (id == -1 && advices.size() > 0) {
+            return advices.entrySet().iterator().next().getValue();
+        }
         return advices.get(id);
     }
 
