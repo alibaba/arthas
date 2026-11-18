@@ -62,6 +62,7 @@ export const sidebarEN = {
             "/en/doc/vmoption.md",
             "/en/doc/vmtool.md",
             "/en/doc/watch.md",
+            "/en/doc/wc.md",
           ],
         },
         {
