@@ -50,15 +50,15 @@ Arthas MCP Server integrates 33 diagnostic tools, categorized by functionality:
 
 ### Monitoring and Diagnostic Tools (7)
 
-| Tool         | Description                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Tool         | Description                                                                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | **line**     | Insert a probe at specified source lines to observe parameters, local variables, and expression results; supports listing instrumentable lines |
-| **monitor**  | Monitor invocation of specified methods in real-time, outputs call count, success rate, average RT, and other statistics        |
-| **stack**    | Output call path of current method, helps analyze method call chains                                                            |
-| **trace**    | Trace internal method call paths, output time cost for each node, supports condition filtering                                  |
-| **tt**       | Time tunnel for method execution data, records parameters and return values for each invocation, supports replay and inspection |
-| **watch**    | Observe method invocations including parameters, return values, and exceptions, supports real-time streaming output             |
-| **profiler** | Async Profiler diagnostic tool, samples CPU/alloc/lock events and outputs flamegraph, JFR, and other formats                    |
+| **monitor**  | Monitor invocation of specified methods in real-time, outputs call count, success rate, average RT, and other statistics                       |
+| **stack**    | Output call path of current method, helps analyze method call chains                                                                           |
+| **trace**    | Trace internal method call paths, output time cost for each node, supports condition filtering                                                 |
+| **tt**       | Time tunnel for method execution data, records parameters and return values for each invocation, supports replay and inspection                |
+| **watch**    | Observe method invocations including parameters, return values, and exceptions, supports real-time streaming output                            |
+| **profiler** | Async Profiler diagnostic tool, samples CPU/alloc/lock events and outputs flamegraph, JFR, and other formats                                   |
 
 ### Arthas Utility Tools (5)
 
@@ -68,7 +68,7 @@ Arthas MCP Server integrates 33 diagnostic tools, categorized by functionality:
 | **options**     | View or modify Arthas global options                                                                                                            |
 | **version**     | View the Arthas version running in the current JVM                                                                                              |
 | **stop**        | Stop the Arthas process completely                                                                                                              |
-| **upload_file** | Upload a `.class`, `.java`, or `.jfc` file to the target JVM's controlled temp directory for mc, retransform, or hotswap                         |
+| **upload_file** | Upload a `.class`, `.java`, or `.jfc` file to the target JVM's controlled temp directory for mc, retransform, or hotswap                        |
 
 ::: tip
 Before an AI agent supplies expression parameters to `ognl`, `getstatic`, `vmtool`, `watch`, `trace`, `line`, `monitor`, `stack`, or `tt`, read [Tips for complex OGNL expressions](ognl-express.md). It explains raw expression parameters versus complete commands, variables available in each context, and incremental validation.
