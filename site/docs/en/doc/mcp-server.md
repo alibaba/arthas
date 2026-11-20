@@ -50,15 +50,15 @@ Arthas MCP Server integrates 33 diagnostic tools, categorized by functionality:
 
 ### Monitoring and Diagnostic Tools (7)
 
-| Tool         | Description                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Tool         | Description                                                                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | **line**     | Insert a probe at specified source lines to observe parameters, local variables, and expression results; supports listing instrumentable lines |
-| **monitor**  | Monitor invocation of specified methods in real-time, outputs call count, success rate, average RT, and other statistics        |
-| **stack**    | Output call path of current method, helps analyze method call chains                                                            |
-| **trace**    | Trace internal method call paths, output time cost for each node, supports condition filtering                                  |
-| **tt**       | Time tunnel for method execution data, records parameters and return values for each invocation, supports replay and inspection |
-| **watch**    | Observe method invocations including parameters, return values, and exceptions, supports real-time streaming output             |
-| **profiler** | Async Profiler diagnostic tool, samples CPU/alloc/lock events and outputs flamegraph, JFR, and other formats                    |
+| **monitor**  | Monitor invocation of specified methods in real-time, outputs call count, success rate, average RT, and other statistics                       |
+| **stack**    | Output call path of current method, helps analyze method call chains                                                                           |
+| **trace**    | Trace internal method call paths, output time cost for each node, supports condition filtering                                                 |
+| **tt**       | Time tunnel for method execution data, records parameters and return values for each invocation, supports replay and inspection                |
+| **watch**    | Observe method invocations including parameters, return values, and exceptions, supports real-time streaming output                            |
+| **profiler** | Async Profiler diagnostic tool, samples CPU/alloc/lock events and outputs flamegraph, JFR, and other formats                                   |
 
 ### Arthas Utility Tools (5)
 
@@ -68,7 +68,7 @@ Arthas MCP Server integrates 33 diagnostic tools, categorized by functionality:
 | **options**     | View or modify Arthas global options                                                                                                            |
 | **version**     | View the Arthas version running in the current JVM                                                                                              |
 | **stop**        | Stop the Arthas process completely                                                                                                              |
-| **upload_file** | Upload a `.class`, `.java`, or `.jfc` file to the target JVM's controlled temp directory for mc, retransform, or hotswap                         |
+| **upload_file** | Upload a `.class`, `.java`, or `.jfc` file to the target JVM's controlled temp directory for mc, retransform, or hotswap                        |
 
 ::: tip
 Before an AI agent supplies expression parameters to `ognl`, `getstatic`, `vmtool`, `watch`, `trace`, `line`, `monitor`, `stack`, or `tt`, read [Tips for complex OGNL expressions](ognl-express.md). It explains raw expression parameters versus complete commands, variables available in each context, and incremental validation.
@@ -79,7 +79,12 @@ Before an AI agent supplies expression parameters to `ognl`, `getstatic`, `vmtoo
 Pass raw values to MCP tools. Expressions, regular expressions, individual file paths, and property values do not need extra command-line quotes or manual escaping of single quotes or backslashes. When using JSON, apply only JSON escaping. For example:
 
 ```json
-{"classPattern":"demo.MathGame","methodPattern":"hot\\w+","regex":true,"express":"params[0]['name']"}
+{
+  "classPattern": "demo.MathGame",
+  "methodPattern": "hot\\w+",
+  "regex": true,
+  "express": "params[0]['name']"
+}
 ```
 
 These arguments can be passed to `watch`. Omitting `methodPattern` in `watch`, `trace`, `stack`, or `monitor` matches all methods: `*` in wildcard mode, or `.*` in regex mode. Observation and condition expressions retain their respective argument positions.
@@ -87,7 +92,10 @@ These arguments can be passed to `watch`. Omitting `methodPattern` in `watch`, `
 `mc.javaFilePaths`, `redefine.classFilePaths`, and `retransform.classFilePaths` remain string fields containing file lists. Separate paths with whitespace and enclose each path containing spaces in single or double quotes. Backslashes in paths remain literal; use double quotes around a path containing a single quote. For example:
 
 ```json
-{"javaFilePaths":"'/tmp/source dir/A.java' /tmp/B.java","outputDir":"/tmp/classes dir"}
+{
+  "javaFilePaths": "'/tmp/source dir/A.java' /tmp/B.java",
+  "outputDir": "/tmp/classes dir"
+}
 ```
 
 Quotes inside a file list delimit paths; single-value arguments such as `outputDir` do not need these extra quotes. Callers that previously passed an unquoted single file path containing spaces must quote that path to distinguish it from multiple files.
