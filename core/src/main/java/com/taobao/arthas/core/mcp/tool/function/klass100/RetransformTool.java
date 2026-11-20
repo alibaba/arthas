@@ -12,7 +12,7 @@ public class RetransformTool extends AbstractArthasTool {
             description = "热加载类的字节码，允许对已加载的类进行字节码修改并使其生效"
     )
     public String retransform(
-            @ToolParam(description = "要操作的.class文件路径，支持多个文件，用空格分隔")
+            @ToolParam(description = "要操作的.class文件路径列表，用空格分隔；含空格的路径须用单引号或双引号包裹，反斜杠按原字符保留")
             String classFilePaths,
 
             @ToolParam(description = "ClassLoader的hashcode（16进制），用于指定特定的ClassLoader", required = false)
@@ -24,7 +24,7 @@ public class RetransformTool extends AbstractArthasTool {
             ToolContext toolContext) {
         StringBuilder cmd = buildCommand("retransform");
 
-        addParameter(cmd, classFilePaths);
+        addFileParameters(cmd, classFilePaths);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
             addParameter(cmd, "-c", classLoaderHash);

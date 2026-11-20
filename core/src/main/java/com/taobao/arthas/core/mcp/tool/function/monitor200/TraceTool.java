@@ -26,7 +26,7 @@ public class TraceTool extends AbstractArthasTool {
             @ToolParam(description = "类名表达式匹配，支持通配符，如demo.MathGame")
             String classPattern,
 
-            @ToolParam(description = "方法名表达式匹配，支持通配符，如primeFactors", required = false)
+            @ToolParam(description = "方法名表达式匹配，如primeFactors；省略时匹配所有方法（通配符模式为*，正则模式为.*）", required = false)
             String methodPattern,
 
             @ToolParam(description = "OGNL条件表达式，包括#cost耗时过滤，如'#cost>100'表示耗时超过100ms", required = false)
@@ -60,9 +60,7 @@ public class TraceTool extends AbstractArthasTool {
 
         addParameter(cmd, classPattern);
 
-        if (methodPattern != null && !methodPattern.trim().isEmpty()) {
-            cmd.append(" ").append(methodPattern.trim());
-        }
+        addParameter(cmd, getDefaultValue(methodPattern, Boolean.TRUE.equals(regex) ? ".*" : "*"));
 
         addQuotedParameter(cmd, condition);
 

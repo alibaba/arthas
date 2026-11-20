@@ -12,7 +12,7 @@ public class RedefineTool extends AbstractArthasTool {
             description = "重新加载类的字节码，允许在JVM运行时，重新加载已存在的类的字节码，实现热更新"
     )
     public String redefine(
-            @ToolParam(description = "要重新定义的.class文件路径，支持多个文件，用空格分隔")
+            @ToolParam(description = "要重新定义的.class文件路径列表，用空格分隔；含空格的路径须用单引号或双引号包裹，反斜杠按原字符保留")
             String classFilePaths,
 
             @ToolParam(description = "ClassLoader的hashcode（16进制），用于指定特定的ClassLoader", required = false)
@@ -24,7 +24,7 @@ public class RedefineTool extends AbstractArthasTool {
             ToolContext toolContext) {
         StringBuilder cmd = buildCommand("redefine");
 
-        addParameter(cmd, classFilePaths);
+        addFileParameters(cmd, classFilePaths);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
             addParameter(cmd, "-c", classLoaderHash);

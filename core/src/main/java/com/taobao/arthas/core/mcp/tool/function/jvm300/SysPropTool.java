@@ -22,10 +22,8 @@ public class SysPropTool extends AbstractArthasTool {
     ) {
         StringBuilder cmd = buildCommand("sysprop");
         if (propertyName != null && !propertyName.trim().isEmpty()) {
-            cmd.append(" ").append(propertyName.trim());
-            if (propertyValue != null && !propertyValue.trim().isEmpty()) {
-                cmd.append(" ").append(propertyValue.trim());
-            }
+            addParameter(cmd, propertyName);
+            addParameter(cmd, propertyValue);
         }
         return executeSync(toolContext, cmd.toString());
     }

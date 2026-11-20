@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.taobao.arthas.core.mcp.tool.function.StreamableToolUtils.*;
 
@@ -26,6 +28,8 @@ public abstract class AbstractArthasTool {
 
     private static final long DEFAULT_ASYNC_START_RETRY_INTERVAL_MS = 100L;
     private static final long DEFAULT_ASYNC_START_MAX_WAIT_MS = 3000L;
+
+    private static final Pattern FILE_PATH = Pattern.compile("\"([^\"]*)\"|'([^']*)'|([^\\s\"'][^\\s]*)");
     
     /**
      * 工具执行上下文，包含所有必要的上下文信息
@@ -284,14 +288,15 @@ public abstract class AbstractArthasTool {
 
     protected void addParameter(StringBuilder cmd, String flag, String value) {
         if (value != null && !value.trim().isEmpty()) {
-            cmd.append(" ").append(flag).append(" ").append(value.trim());
+            cmd.append(" ").append(flag);
+            addParameter(cmd, value);
         }
     }
 
     protected void addParameter(StringBuilder cmd, String value) {
         if (value != null && !value.trim().isEmpty()) {
-            // Safely quote the value to prevent command injection
-            cmd.append(" '").append(value.trim().replace("'", "'\\''")).append("'");
+            // Preserve one argument through the Arthas command-line tokenizer.
+            cmd.append(" '").append(value.replace("'", "'\\''")).append("'");
         }
     }
 
@@ -305,8 +310,36 @@ public abstract class AbstractArthasTool {
      * 添加引用参数到命令中（用于包含空格的参数）
      */
     protected void addQuotedParameter(StringBuilder cmd, String value) {
-        if (value != null && !value.trim().isEmpty()) {
-            cmd.append(" '").append(value.trim()).append("'");
+        addParameter(cmd, value);
+    }
+
+    /**
+     * Append a whitespace-separated file list, allowing single or double quotes
+     * around each path. Backslashes remain literal, including in Windows paths.
+     */
+    protected void addFileParameters(StringBuilder cmd, String paths) {
+        if (paths == null || paths.trim().isEmpty()) {
+            return;
+        }
+        Matcher matcher = FILE_PATH.matcher(paths);
+        int index = 0;
+        while (index < paths.length()) {
+            if (Character.isWhitespace(paths.charAt(index))) {
+                index++;
+                continue;
+            }
+            matcher.region(index, paths.length());
+            if (!matcher.lookingAt()
+                    || (matcher.end() < paths.length() && !Character.isWhitespace(paths.charAt(matcher.end())))) {
+                throw new IllegalArgumentException("File paths must be separated by whitespace and have matching quotes");
+            }
+            String path = matcher.group(1) != null ? matcher.group(1)
+                    : matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
+            if (path.isEmpty()) {
+                throw new IllegalArgumentException("File path must not be empty");
+            }
+            addParameter(cmd, path);
+            index = matcher.end();
         }
     }
 

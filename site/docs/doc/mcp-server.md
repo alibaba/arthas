@@ -74,6 +74,24 @@ Arthas MCP Server 集成了 33 个诊断工具，按功能分类如下：
 AI Agent 调用 `ognl`、`getstatic`、`vmtool`、`watch`、`trace`、`line`、`monitor`、`stack` 或 `tt` 的表达式参数前，建议先阅读 [OGNL 复杂表达式使用技巧](ognl-express.md)。其中说明了原始表达式参数与完整命令的区别、各命令可用变量以及逐步验证方法。
 :::
 
+## 工具参数的传递方式
+
+MCP 参数传入原始值即可：表达式、正则、单个文件路径和属性值不需要额外添加命令行引号，也不需要手动转义单引号或反斜杠。通过 JSON 传输时只需遵循 JSON 的转义规则。例如：
+
+```json
+{"classPattern":"demo.MathGame","methodPattern":"hot\\w+","regex":true,"express":"params[0]['name']"}
+```
+
+上例可作为 `watch` 工具的参数。`watch`、`trace`、`stack`、`monitor` 省略 `methodPattern` 时匹配所有方法：通配符模式使用 `*`，正则模式使用 `.*`；观察表达式和条件表达式仍保留各自的位置。
+
+`mc.javaFilePaths`、`redefine.classFilePaths`、`retransform.classFilePaths` 是文件路径列表，仍使用字符串字段。多个路径以空白分隔；单个路径包含空格时，须用单引号或双引号包裹。路径中的反斜杠按原字符保留；路径含单引号时可使用双引号包裹。例如：
+
+```json
+{"javaFilePaths":"'/tmp/source dir/A.java' /tmp/B.java","outputDir":"/tmp/classes dir"}
+```
+
+文件列表中的引号用于区分路径；`outputDir` 等单值参数不需要这种额外引号。原先直接传入含空格的单个文件路径时，需要将该路径包裹在引号中，以免被解释成多个文件。
+
 ## 快速开始
 
 ### 1. 配置 MCP 服务

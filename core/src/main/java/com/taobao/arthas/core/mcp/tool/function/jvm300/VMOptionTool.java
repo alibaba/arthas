@@ -22,10 +22,8 @@ public class VMOptionTool extends AbstractArthasTool {
     ) {
         StringBuilder cmd = buildCommand("vmoption");
         if (key != null && !key.trim().isEmpty()) {
-            cmd.append(" ").append(key.trim());
-            if (value != null && !value.trim().isEmpty()) {
-                cmd.append(" ").append(value.trim());
-            }
+            addParameter(cmd, key);
+            addParameter(cmd, value);
         }
         return executeSync(toolContext, cmd.toString());
     }

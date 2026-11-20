@@ -35,7 +35,7 @@ public class MonitorTool extends AbstractArthasTool {
             @ToolParam(description = "类名表达式匹配，支持通配符，如demo.MathGame")
             String classPattern,
 
-            @ToolParam(description = "方法名表达式匹配，支持通配符，如primeFactors", required = false)
+            @ToolParam(description = "方法名表达式匹配，如primeFactors；省略时匹配所有方法（通配符模式为*，正则模式为.*）", required = false)
             String methodPattern,
 
             @ToolParam(description = "OGNL条件表达式，满足条件的调用才会被监控，如params[0]<0", required = false)
@@ -73,9 +73,7 @@ public class MonitorTool extends AbstractArthasTool {
         addFlag(cmd, "-E", regex);
         addParameter(cmd, classPattern);
         
-        if (methodPattern != null && !methodPattern.trim().isEmpty()) {
-            cmd.append(" ").append(methodPattern.trim());
-        }
+        addParameter(cmd, getDefaultValue(methodPattern, Boolean.TRUE.equals(regex) ? ".*" : "*"));
         
         addQuotedParameter(cmd, condition);
 

@@ -29,7 +29,7 @@ public class WatchTool extends AbstractArthasTool {
             @ToolParam(description = "类名表达式匹配，支持通配符，如demo.MathGame")
             String classPattern,
 
-            @ToolParam(description = "方法名表达式匹配，支持通配符，如primeFactors", required = false)
+            @ToolParam(description = "方法名表达式匹配，如primeFactors；省略时匹配所有方法（通配符模式为*，正则模式为.*）", required = false)
             String methodPattern,
 
             @ToolParam(description = "观察表达式，默认为{params, target, returnObj}，支持OGNL表达式", required = false)
@@ -97,9 +97,7 @@ public class WatchTool extends AbstractArthasTool {
 
         addParameter(cmd, classPattern);
 
-        if (methodPattern != null && !methodPattern.trim().isEmpty()) {
-            cmd.append(" ").append(methodPattern.trim());
-        }
+        addParameter(cmd, getDefaultValue(methodPattern, Boolean.TRUE.equals(regex) ? ".*" : "*"));
 
         addQuotedParameter(cmd, watchExpress);
 

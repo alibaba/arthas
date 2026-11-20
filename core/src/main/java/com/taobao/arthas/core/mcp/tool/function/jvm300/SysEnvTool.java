@@ -18,7 +18,7 @@ public class SysEnvTool extends AbstractArthasTool {
     ) {
         StringBuilder cmd = buildCommand("sysenv");
         if (envName != null && !envName.trim().isEmpty()) {
-            cmd.append(" ").append(envName.trim());
+            addParameter(cmd, envName);
         }
         return executeSync(toolContext, cmd.toString());
     }
