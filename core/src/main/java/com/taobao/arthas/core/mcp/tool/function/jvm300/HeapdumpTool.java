@@ -54,7 +54,7 @@ public class HeapdumpTool extends AbstractArthasTool {
 
         StringBuilder cmd = buildCommand("heapdump");
         addFlag(cmd, "--live", live);
-        cmd.append(" ").append(finalFilePath);
+        addParameter(cmd, finalFilePath);
 
         return executeSync(toolContext, cmd.toString());
     }

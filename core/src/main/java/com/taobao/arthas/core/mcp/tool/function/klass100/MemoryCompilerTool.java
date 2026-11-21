@@ -16,7 +16,7 @@ public class MemoryCompilerTool extends AbstractArthasTool {
             description = "Memory Compiler/内存编译器，编译.java文件生成.class"
     )
     public String mc(
-            @ToolParam(description = "要编译的.java文件路径，支持多个文件，用空格分隔")
+            @ToolParam(description = "要编译的.java文件路径列表，用空格分隔；含空格的路径须用单引号或双引号包裹，反斜杠按原字符保留")
             String javaFilePaths,
 
             @ToolParam(description = "ClassLoader的hashcode（16进制），用于指定特定的ClassLoader", required = false)
@@ -31,7 +31,7 @@ public class MemoryCompilerTool extends AbstractArthasTool {
             ToolContext toolContext) {
         StringBuilder cmd = buildCommand("mc");
 
-        addParameter(cmd, javaFilePaths);
+        addFileParameters(cmd, javaFilePaths);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
             addParameter(cmd, "-c", classLoaderHash);
@@ -42,7 +42,7 @@ public class MemoryCompilerTool extends AbstractArthasTool {
         if (outputDir != null && !outputDir.trim().isEmpty()) {
             addParameter(cmd, "-d", outputDir);
         } else {
-            cmd.append(" -d ").append(DEFAULT_DUMP_DIR);
+            addParameter(cmd, "-d", DEFAULT_DUMP_DIR);
         }
 
         return executeSync(toolContext, cmd.toString());

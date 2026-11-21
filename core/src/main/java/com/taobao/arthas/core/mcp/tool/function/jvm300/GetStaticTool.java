@@ -41,9 +41,7 @@ public class GetStaticTool extends AbstractArthasTool {
         addParameter(cmd, className);
         addParameter(cmd, fieldName);
 
-        if (ognlExpression != null && !ognlExpression.trim().isEmpty()) {
-            cmd.append(" ").append(ognlExpression.trim());
-        }
+        addParameter(cmd, ognlExpression);
 
         return executeSync(toolContext, cmd.toString());
     }
