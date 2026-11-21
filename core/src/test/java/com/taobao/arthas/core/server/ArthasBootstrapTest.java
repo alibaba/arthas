@@ -133,4 +133,21 @@ public class ArthasBootstrapTest {
 
         Mockito.verifyNoInteractions(logger);
     }
+
+    @Test
+    public void shouldNotStartVersionCheckWhenDisabled() throws Exception {
+        Configure configure = new Configure();
+        configure.setCheckLatestVersion(false);
+        ArthasBootstrap bootstrap = Mockito.mock(ArthasBootstrap.class);
+        Mockito.doCallRealMethod().when(bootstrap).startVersionCheck();
+        Field configureField = ArthasBootstrap.class.getDeclaredField("configure");
+        configureField.setAccessible(true);
+        configureField.set(bootstrap, configure);
+
+        bootstrap.startVersionCheck();
+
+        Field versionCheckThreadField = ArthasBootstrap.class.getDeclaredField("versionCheckThread");
+        versionCheckThreadField.setAccessible(true);
+        assertThat(versionCheckThreadField.get(bootstrap)).isNull();
+    }
 }
