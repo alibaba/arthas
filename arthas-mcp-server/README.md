@@ -101,3 +101,33 @@ arthas.mcpEndpoint=/mcp
       }
     }
 ```
+
+## 回调参数别名（公开 API）
+
+使用 `ToolDefinitions.from(Method)` 和 `DefaultToolCallback.builder()` 自行构建 `ToolCallback` 时，输入 schema 中对外暴露的参数名与 `call(String)` 接受的 JSON 参数名保持一致：参数上的 `@JsonProperty` 值非空时原样使用该值，未标注或值为空时回退到 Java 参数名；保留 Java 源码中的参数名需要使用 `-parameters` 编译选项。必填参数缺失时的报错信息同样使用对外暴露的名字。该说明只涉及公开的回调构建 API，不涉及 Arthas agent 内置工具集的配置（内置工具没有声明参数别名）。
+
+```java
+public class EchoTool {
+
+    @Tool(name = "echo", description = "Echo the given text.")
+    public String echo(
+            @ToolParam(description = "text to echo")
+            @JsonProperty("message_text") String message) {
+        return message;
+    }
+}
+
+Method method = EchoTool.class.getMethod("echo", String.class);
+ToolCallback callback = DefaultToolCallback.builder()
+        .toolDefinition(ToolDefinitions.from(method))
+        .toolMethod(method)
+        .toolObject(new EchoTool())
+        .toolCallResultConverter(new DefaultToolCallResultConverter())
+        .build();
+
+// 输入 schema 暴露并必填 "message_text"：
+// {"type":"object","properties":{"message_text":{"type":"string",...}},"required":["message_text"],...}
+callback.call("{\"message_text\":\"hello\"}"); // 返回 JSON 字符串 "hello"
+```
+
+**English summary:** when you build a `ToolCallback` yourself with `ToolDefinitions.from(Method)` and `DefaultToolCallback`, a non-empty `@JsonProperty` on a method parameter is used verbatim as that parameter's name in both the advertised input schema and the accepted JSON arguments, and falls back to the Java parameter name when the annotation is absent or empty; retaining source parameter names requires compilation with `-parameters`. Errors for missing required parameters use that same advertised name. This documents the public callback construction API only; it does not configure the built-in Arthas agent tool set, whose tools declare no parameter aliases.
