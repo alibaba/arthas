@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +11,6 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSession;
 import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -37,10 +37,23 @@ public class ExtHttpTtyConnection extends HttpTtyConnection {
 
     @Override
     protected void write(byte[] buffer) {
-        ByteBuf byteBuf = Unpooled.buffer();
-        byteBuf.writeBytes(buffer);
-        if (context != null) {
-            context.writeAndFlush(new TextWebSocketFrame(byteBuf));
+        final ChannelHandlerContext ctx = context;
+        if (ctx == null) {
+            return;
+        }
+        // Write on the event loop, as termd's TtyWebSocketFrameHandler does: a writeAndFlush from another
+        // thread (watch/trace output comes from business threads) leaves Netty's pooled WriteTask in that
+        // thread's InternalThreadLocalMap, which keeps ArthasClassLoader alive after stop.
+        final byte[] copy = Arrays.copyOf(buffer, buffer.length);
+        Runnable writeTask = () -> {
+            if (ctx.channel().isActive()) {
+                ctx.writeAndFlush(new TextWebSocketFrame(Unpooled.wrappedBuffer(copy)));
+            }
+        };
+        if (ctx.executor().inEventLoop()) {
+            writeTask.run();
+        } else {
+            ctx.executor().execute(writeTask);
         }
     }
 
