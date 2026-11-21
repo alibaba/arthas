@@ -66,6 +66,7 @@ class ArthasMcpJavaSdkIT {
             "heapdump",
             "jad",
             "jvm",
+            "line",
             "mc",
             "mbean",
             "memory",
@@ -165,6 +166,24 @@ class ArthasMcpJavaSdkIT {
     }
 
     private static void assertToolSideEffects(String toolName, Environment env, String body) throws Exception {
+        if ("line".equals(toolName)) {
+            JsonNode results = OBJECT_MAPPER.readTree(body).path("results");
+            assertThat(results.isArray()).as("line results, body=%s", body).isTrue();
+            JsonNode lineList = null;
+            for (JsonNode result : results) {
+                if ("line-list".equals(result.path("type").asText())) {
+                    lineList = result;
+                    break;
+                }
+            }
+            assertThat(lineList).as("line --list-lines result, body=%s", body).isNotNull();
+            assertThat(lineList.path("className").asText()).isEqualTo(TARGET_CLASS_PATTERN);
+            assertThat(lineList.path("methodName").asText()).isEqualTo(TARGET_METHOD_PATTERN);
+            assertThat(lineList.path("lines").isArray()).isTrue();
+            assertThat(lineList.path("lines").size()).isGreaterThan(0);
+            return;
+        }
+
         if ("heapdump".equals(toolName)) {
             Path heapdumpFile = env.tempHome.resolve("heapdump.hprof");
             assertThat(heapdumpFile).exists();
@@ -267,6 +286,13 @@ class ArthasMcpJavaSdkIT {
         if ("sm".equals(toolName)) {
             args.put("classPattern", TARGET_CLASS_PATTERN);
             args.put("methodPattern", TARGET_METHOD_PATTERN);
+            return args;
+        }
+
+        if ("line".equals(toolName)) {
+            args.put("classPattern", TARGET_CLASS_PATTERN);
+            args.put("methodPattern", TARGET_METHOD_PATTERN);
+            args.put("listLines", true);
             return args;
         }
 
