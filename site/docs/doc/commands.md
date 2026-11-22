@@ -5,6 +5,7 @@
 - [dashboard](dashboard.md) - 当前系统的实时数据面板
 - [getstatic](getstatic.md) - 查看类的静态属性
 - [heapdump](heapdump.md) - dump java heap, 类似 jmap 命令的 heap dump 功能
+- [jcmd](jcmd.md) - 执行 JVM 诊断命令
 - [jvm](jvm.md) - 查看当前 JVM 的信息
 - [logger](logger.md) - 查看和修改 logger
 - [mbean](mbean.md) - 查看 Mbean 的信息
