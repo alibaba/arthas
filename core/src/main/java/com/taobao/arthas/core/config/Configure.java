@@ -80,6 +80,11 @@ public class Configure {
     private String commandLocations;
 
     /**
+     * UTF-8 script containing commands to execute when Arthas starts.
+     */
+    private String startupScript;
+
+    /**
      * 本地连接不需要鉴权，即使配置了password。arthas.properties 里默认为true
      */
     private Boolean localConnectionNonAuth;
@@ -236,6 +241,14 @@ public class Configure {
 
     public void setCommandLocations(String commandLocations) {
         this.commandLocations = commandLocations;
+    }
+
+    public String getStartupScript() {
+        return startupScript;
+    }
+
+    public void setStartupScript(String startupScript) {
+        this.startupScript = startupScript;
     }
 
     public boolean isLocalConnectionNonAuth() {
