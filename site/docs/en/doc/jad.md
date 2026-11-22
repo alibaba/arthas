@@ -17,8 +17,20 @@ Decompile the specified classes.
 |                `[c:]` | hashcode of the class loader that loads the class               |
 | `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression. |
 |                 `[E]` | turn on regex match while the default is wildcard match         |
+|            `[--file]` | Decompile the first argument as a `.class` file path            |
 
 ## Usage
+
+### Decompile a `.class` file
+
+Use `--file` to decompile an existing `.class` file without loading the class into the target JVM. The path refers to a file on the machine running the target JVM. Quote paths that contain spaces.
+
+```bash
+$ jad --file /tmp/demo/MathGame.class
+$ jad --file --source-only /tmp/demo/MathGame.class main
+```
+
+File mode supports a method name and the `--source-only`, `--lineNumber` and `--hideUnicode` options. Class loader selection, class name regex matching and dump directory options (`-c`, `--classLoaderClass`, `-E`, `-d`) cannot be combined with `--file`.
 
 ### Decompile `java.lang.String`
 
