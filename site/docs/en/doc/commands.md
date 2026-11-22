@@ -5,6 +5,7 @@
 - [dashboard](dashboard.md) - dashboard for the system's real-time data
 - [getstatic](getstatic.md) - examine class's static properties
 - [heapdump](heapdump.md) - dump java heap in hprof binary format, like `jmap`
+- [jcmd](jcmd.md) - execute JVM diagnostic commands
 - [jvm](jvm.md) - show JVM information
 - [logger](logger.md) - print the logger information, update the logger level
 - [mbean](mbean.md) - show Mbean information
