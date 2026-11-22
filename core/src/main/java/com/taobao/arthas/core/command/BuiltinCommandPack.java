@@ -23,6 +23,7 @@ import com.taobao.arthas.core.command.klass100.SearchMethodCommand;
 import com.taobao.arthas.core.command.logger.LoggerCommand;
 import com.taobao.arthas.core.command.monitor200.DashboardCommand;
 import com.taobao.arthas.core.command.monitor200.HeapDumpCommand;
+import com.taobao.arthas.core.command.monitor200.JcmdCommand;
 import com.taobao.arthas.core.command.monitor200.JvmCommand;
 import com.taobao.arthas.core.command.monitor200.LineCommand;
 import com.taobao.arthas.core.command.monitor200.MBeanCommand;
@@ -76,6 +77,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(LineCommand.class);
         commandClassList.add(TimeTunnelCommand.class);
         commandClassList.add(JvmCommand.class);
+        commandClassList.add(JcmdCommand.class);
         commandClassList.add(MemoryCommand.class);
         commandClassList.add(PerfCounterCommand.class);
         // commandClassList.add(GroovyScriptCommand.class);
