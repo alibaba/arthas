@@ -28,6 +28,7 @@ export const sidebarEN = {
             "/en/doc/help.md",
             "/en/doc/history.md",
             "/en/doc/jad.md",
+            "/en/doc/jcmd.md",
             "/en/doc/jfr.md",
             "/en/doc/jvm.md",
             "/en/doc/keymap.md",
