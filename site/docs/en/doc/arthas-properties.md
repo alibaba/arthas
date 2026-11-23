@@ -34,6 +34,28 @@ arthas.sessionTimeout=10800
 If you want to prevent multiple arthas port conflicts on a machine. It can be configured as a random port, or configured as -1, and use arthas through the tunnel server.
 :::
 
+### Latest version check
+
+`arthas.checkLatestVersion` defaults to `true`. After Arthas starts, a dedicated background daemon thread checks for the latest version once and writes the result to `arthas.log`. Startup and client connections do not wait for the check, and rendering the welcome message does not trigger additional checks. A failed check is logged at debug level without retries.
+
+Only a final HTTP status of 200 is accepted. Other responses, including redirects that are not followed automatically, are treated as failed checks. Stopping Arthas interrupts the worker, which checks for interruption between response reads and releases its resources. Connection and read timeouts do not impose a deadline on the entire check or guarantee interruption of a stuck native DNS call.
+
+To prevent the target JVM from making this version-check request, configure the following in `arthas.properties`:
+
+```properties
+arthas.checkLatestVersion=false
+```
+
+Alternatively, add `-Darthas.checkLatestVersion=false` to the JVM options of the **target application**. When initializing Arthas through the API, use:
+
+```java
+ArthasBootstrap.getInstance(instrumentation, "checkLatestVersion=false");
+```
+
+For the `Map<String, String>` overload, use the key `arthas.checkLatestVersion` with the value `false`. The setting must take effect before Arthas is initialized.
+
+The background check still runs inside the target JVM and cannot isolate process crashes in native code such as DNS resolution. Disable the check if it triggers such a problem. When disabled, no version-check thread is created and `/api/latest_version` is not requested. This setting only controls the check in the target JVM; it does not affect requests made by `arthas-boot` to select or download a version.
+
 ### disable specify commands
 
 ::: tip
