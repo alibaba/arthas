@@ -46,7 +46,7 @@ jobs:
         java: [8, 11]
         os:
           - macos-latest
-          - macos-14
+          - macos-15
     steps:
       - uses: actions/checkout@v4
       - name: Setup java
