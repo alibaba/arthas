@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.JadModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -23,7 +24,9 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.instrument.Instrumentation;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +47,7 @@ import java.util.regex.Pattern;
         "  jad java.lang.String toString\n" +
         "  jad java.lang.String -d /tmp/jad/dump\n" +
         "  jad --source-only java.lang.String\n" +
+        "  jad --file /tmp/demo/MathGame.class\n" +
         "  jad -c 39eb305e org/apache/log4j/Logger\n" +
         "  jad -c 39eb305e -E org\\\\.apache\\\\.*\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jad")
@@ -59,6 +63,7 @@ public class JadCommand extends AnnotatedCommand {
     private boolean hideUnicode = false;
     private boolean lineNumber;
     private String directory;
+    private boolean file;
 
     /**
      * jad output source code only
@@ -66,9 +71,9 @@ public class JadCommand extends AnnotatedCommand {
     private boolean sourceOnly = false;
 
     @Argument(argName = "class-pattern", index = 0)
-    @Description("Class name pattern, use either '.' or '/' as separator")
+    @Description("Class name pattern, use either '.' or '/' as separator; class file path when --file is specified")
     public void setClassPattern(String classPattern) {
-        this.classPattern = StringUtils.normalizeClassName(classPattern);
+        this.classPattern = classPattern;
     }
 
     @Argument(argName = "method-name", index = 1, required = false)
@@ -121,8 +126,19 @@ public class JadCommand extends AnnotatedCommand {
         this.directory = directory;
     }
 
+    @Option(longName = "file", flag = true)
+    @Description("Decompile a class file without loading it into the JVM")
+    public void setFile(boolean file) {
+        this.file = file;
+    }
+
     @Override
     public void process(CommandProcess process) {
+        if (file) {
+            processFile(process);
+            return;
+        }
+        classPattern = StringUtils.normalizeClassName(classPattern);
         if (directory != null && !FileUtils.isDirectoryOrNotExist(directory)) {
             process.end(-1, directory + " :is not a directory, please check it");
             return;
@@ -174,6 +190,41 @@ public class JadCommand extends AnnotatedCommand {
         }
     }
 
+    private void processFile(CommandProcess process) {
+        if (code != null || classLoaderClass != null || isRegEx || directory != null) {
+            process.end(-1, "--file cannot be combined with -c, --classLoaderClass, --regex or --directory");
+            return;
+        }
+        File classFile = new File(classPattern);
+        if (!classFile.isFile()) {
+            process.end(-1, "Not a class file: " + classFile.getAbsolutePath());
+            return;
+        }
+        try {
+            try (DataInputStream input = new DataInputStream(new FileInputStream(classFile))) {
+                if (input.readInt() != 0xCAFEBABE) {
+                    process.end(-1, "Not a class file: " + classFile.getAbsolutePath());
+                    return;
+                }
+            }
+            JadModel jadModel = decompile(classFile);
+            if (!sourceOnly) {
+                jadModel.setLocation(classFile.getAbsolutePath());
+            }
+            process.appendResult(jadModel);
+            if (!sourceOnly) {
+                RowAffect affect = new RowAffect();
+                affect.rCnt(1);
+                process.appendResult(new RowAffectModel(affect));
+            }
+            process.end();
+        } catch (Throwable t) {
+            logger.error("jad: fail to decompile file: " + classFile.getAbsolutePath(), t);
+            process.end(-1, "jad: fail to decompile file: " + classFile.getAbsolutePath()
+                    + ", please check $HOME/logs/arthas/arthas.log for more details.");
+        }
+    }
+
     private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
         Set<Class<?>> allClasses = new HashSet<>(withInnerClasses);
@@ -193,16 +244,7 @@ public class JadCommand extends AnnotatedCommand {
                 "\" or try with \"-d/--directory\" to specify the directory of dump files");
             }
             File classFile = classFiles.get(c);
-            Pair<String,NavigableMap<Integer,Integer>> decompileResult = Decompiler.decompileWithMappings(classFile.getAbsolutePath(), methodName, hideUnicode, lineNumber);
-            String source = decompileResult.getFirst();
-            if (source != null) {
-                source = pattern.matcher(source).replaceAll("");
-            } else {
-                source = "unknown";
-            }
-            JadModel jadModel = new JadModel();
-            jadModel.setSource(source);
-            jadModel.setMappings(decompileResult.getSecond());
+            JadModel jadModel = decompile(classFile);
             if (!this.sourceOnly) {
                 jadModel.setClassInfo(ClassUtils.createSimpleClassInfo(c));
                 jadModel.setLocation(ClassUtils.getCodeSource(c.getProtectionDomain().getCodeSource()));
@@ -214,6 +256,16 @@ public class JadCommand extends AnnotatedCommand {
             logger.error("jad: fail to decompile class: " + c.getName(), t);
             return ExitStatus.failure(-1, "jad: fail to decompile class: " + c.getName() + ", please check $HOME/logs/arthas/arthas.log for more details.");
         }
+    }
+
+    private JadModel decompile(File classFile) {
+        Pair<String, NavigableMap<Integer, Integer>> result = Decompiler.decompileWithMappings(
+                classFile.getAbsolutePath(), methodName, hideUnicode, lineNumber);
+        String source = result.getFirst();
+        JadModel jadModel = new JadModel();
+        jadModel.setSource(source == null ? "unknown" : pattern.matcher(source).replaceAll(""));
+        jadModel.setMappings(result.getSecond());
+        return jadModel;
     }
 
     private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
@@ -237,6 +289,14 @@ public class JadCommand extends AnnotatedCommand {
     @Override
     public void complete(Completion completion) {
         int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
+        for (CliToken token : completion.lineTokens()) {
+            if ("--file".equals(token.value())) {
+                if (argumentIndex != 1 || !CompletionUtils.completeFilePath(completion)) {
+                    super.complete(completion);
+                }
+                return;
+            }
+        }
 
         if (argumentIndex == 1) {
             if (!CompletionUtils.completeClassName(completion)) {

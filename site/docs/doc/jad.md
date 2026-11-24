@@ -17,8 +17,20 @@
 |                `[c:]` | 类所属 ClassLoader 的 hashcode             |
 | `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
 |                   [E] | 开启正则表达式匹配，默认为通配符匹配       |
+|            `[--file]` | 将第一个参数作为 `.class` 文件路径反编译   |
 
 ## 使用参考
+
+### 反编译 `.class` 文件
+
+使用 `--file` 可以直接反编译已导出的 `.class` 文件，无需把类加载到目标 JVM。路径是运行目标 JVM 的机器上的文件路径；包含空格时需要加引号。
+
+```bash
+$ jad --file /tmp/demo/MathGame.class
+$ jad --file --source-only /tmp/demo/MathGame.class main
+```
+
+文件模式支持指定方法以及 `--source-only`、`--lineNumber` 和 `--hideUnicode`。类加载器选择、类名正则匹配和 dump 目录选项（`-c`、`--classLoaderClass`、`-E`、`-d`）不能与 `--file` 同时使用。
 
 ### 反编译`java.lang.String`
 
