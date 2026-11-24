@@ -48,7 +48,7 @@ public class VMToolTool extends AbstractArthasTool {
             throw new IllegalArgumentException("vmtool: action 参数不能为空");
         }
         String normalizedAction = action.trim();
-        cmd.append(" --action ").append(normalizedAction);
+        addParameter(cmd, "--action", normalizedAction);
 
         if (classLoaderHash != null && !classLoaderHash.trim().isEmpty()) {
             addParameter(cmd, "-c", classLoaderHash);

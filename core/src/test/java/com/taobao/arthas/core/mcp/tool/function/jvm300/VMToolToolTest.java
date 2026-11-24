@@ -25,7 +25,7 @@ public class VMToolToolTest {
                 Integer.valueOf(5), null, null, null, new ToolContext(context));
 
         verify(commandContext).executeSync(
-                "vmtool --action referenceAnalyze --className java.lang.String", null, null);
+                "vmtool --action 'referenceAnalyze' --className 'java.lang.String'", null, null);
     }
 
     @Test
@@ -39,8 +39,8 @@ public class VMToolToolTest {
                 Integer.valueOf(5), Integer.valueOf(2), "instances.length", null, new ToolContext(context));
 
         verify(commandContext).executeSync(
-                "vmtool --action getInstances -c 1a2b --className java.lang.String"
-                        + " --limit 5 -x 2 --express instances.length",
+                "vmtool --action 'getInstances' -c '1a2b' --className 'java.lang.String'"
+                        + " --limit 5 -x 2 --express 'instances.length'",
                 null, null);
     }
 

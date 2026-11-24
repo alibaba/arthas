@@ -61,12 +61,8 @@ public class MBeanTool extends AbstractArthasTool {
             cmd.append(" -n ").append(execCount);
         }
         
-        if (namePattern != null && !namePattern.trim().isEmpty()) {
-            cmd.append(" ").append(namePattern.trim());
-        }
-        if (attributePattern != null && !attributePattern.trim().isEmpty()) {
-            cmd.append(" ").append(attributePattern.trim());
-        }
+        addParameter(cmd, namePattern);
+        addParameter(cmd, attributePattern);
 
         logger.info("Starting mbean execution: {}", cmd.toString());
         return executeSync(toolContext, cmd.toString());

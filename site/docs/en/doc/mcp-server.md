@@ -74,6 +74,32 @@ Arthas MCP Server integrates 33 diagnostic tools, categorized by functionality:
 Before an AI agent supplies expression parameters to `ognl`, `getstatic`, `vmtool`, `watch`, `trace`, `line`, `monitor`, `stack`, or `tt`, read [Tips for complex OGNL expressions](ognl-express.md). It explains raw expression parameters versus complete commands, variables available in each context, and incremental validation.
 :::
 
+## Passing Tool Arguments
+
+Pass raw values to MCP tools. Expressions, regular expressions, individual file paths, and property values do not need extra command-line quotes or manual escaping of single quotes or backslashes. When using JSON, apply only JSON escaping. For example:
+
+```json
+{
+  "classPattern": "demo.MathGame",
+  "methodPattern": "hot\\w+",
+  "regex": true,
+  "express": "params[0]['name']"
+}
+```
+
+These arguments can be passed to `watch`. Omitting `methodPattern` in `watch`, `trace`, `stack`, or `monitor` matches all methods: `*` in wildcard mode, or `.*` in regex mode. Observation and condition expressions retain their respective argument positions.
+
+`mc.javaFilePaths`, `redefine.classFilePaths`, and `retransform.classFilePaths` remain string fields containing file lists. Separate paths with whitespace and enclose each path containing spaces in single or double quotes. Backslashes in paths remain literal; use double quotes around a path containing a single quote. For example:
+
+```json
+{
+  "javaFilePaths": "'/tmp/source dir/A.java' /tmp/B.java",
+  "outputDir": "/tmp/classes dir"
+}
+```
+
+Quotes inside a file list delimit paths; single-value arguments such as `outputDir` do not need these extra quotes. Callers that previously passed an unquoted single file path containing spaces must quote that path to distinguish it from multiple files.
+
 ## Quick Start
 
 ### 1. Configure MCP Service

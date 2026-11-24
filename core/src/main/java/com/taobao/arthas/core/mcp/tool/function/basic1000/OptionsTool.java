@@ -34,10 +34,8 @@ public class OptionsTool extends AbstractArthasTool {
     ) {
         StringBuilder cmd = buildCommand("options");
         if (name != null && !name.trim().isEmpty()) {
-            cmd.append(" ").append(name.trim());
-            if (value != null && !value.trim().isEmpty()) {
-                cmd.append(" ").append(value.trim());
-            }
+            addParameter(cmd, name);
+            addParameter(cmd, value);
         }
         return executeSync(toolContext, cmd.toString());
     }

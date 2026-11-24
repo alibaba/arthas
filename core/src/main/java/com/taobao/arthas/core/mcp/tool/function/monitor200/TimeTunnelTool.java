@@ -81,7 +81,7 @@ public class TimeTunnelTool extends AbstractArthasTool {
                 cmd.append(" -i ").append(index);
                 break;
             case "search":
-                cmd.append(" -s '").append(searchExpression.trim()).append("'");
+                addParameter(cmd, "-s", searchExpression);
                 break;
             case "replay":
                 cmd.append(" -i ").append(index).append(" -p");
@@ -204,12 +204,9 @@ public class TimeTunnelTool extends AbstractArthasTool {
             cmd.append(" -E");
         }
 
-        cmd.append(" '").append(classPattern.trim()).append("'");
-        cmd.append(" '").append(methodPattern.trim()).append("'");
-
-        if (condition != null && !condition.trim().isEmpty()) {
-            cmd.append(" '").append(condition.trim()).append("'");
-        }
+        addParameter(cmd, classPattern);
+        addParameter(cmd, methodPattern);
+        addParameter(cmd, condition);
 
         return cmd;
     }
@@ -217,7 +214,7 @@ public class TimeTunnelTool extends AbstractArthasTool {
     private StringBuilder buildListCommand(StringBuilder cmd, String searchExpression) {
         cmd.append(" -l");
         if (searchExpression != null && !searchExpression.trim().isEmpty()) {
-            cmd.append(" '").append(searchExpression.trim()).append("'");
+            addParameter(cmd, searchExpression);
         }
         return cmd;
     }
