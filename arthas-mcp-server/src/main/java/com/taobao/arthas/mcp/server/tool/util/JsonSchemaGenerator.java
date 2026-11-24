@@ -80,7 +80,15 @@ public final class JsonSchemaGenerator {
         return new McpSchema.JsonSchema("object", convertToMap(properties), required, false);
     }
 
-    private static String getParameterName(Parameter parameter) {
+    /**
+     * Resolve the name a tool method parameter is exposed as. A non-empty {@link JsonProperty} value
+     * is used verbatim, otherwise the Java parameter name is used (requiring {@code -parameters}
+     * to retain source names). Schema generation and argument binding share this resolution for
+     * parameters annotated with {@link ToolParam}.
+     * @param parameter tool method parameter
+     * @return the parameter name used in the tool input schema and in JSON arguments
+     */
+    public static String getParameterName(Parameter parameter) {
         JsonProperty jsonProperty = parameter.getAnnotation(JsonProperty.class);
         if (jsonProperty != null && !jsonProperty.value().isEmpty()) {
             return jsonProperty.value();
