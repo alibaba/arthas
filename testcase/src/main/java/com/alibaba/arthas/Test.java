@@ -11,10 +11,9 @@ import java.util.Random;
  */
 public class Test {
 
-    public static final Map m = new HashMap();
-    public static final Map n = new HashMap();
-
-    public static final Map p = null;
+    public static final Map<String, String> m = new HashMap<>();
+    public static final Map<Type, String> n = new HashMap<>();
+    public static final Map<?, ?> p = new HashMap<>();
 
     static {
         m.put("a", "aaa");
@@ -24,10 +23,10 @@ public class Test {
         n.put(Type.STOP, "bbb");
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        List<Pojo> list = new ArrayList<Pojo>();
+    public static void main(String[] args) {
+        List<Pojo> list = new ArrayList<>();
 
-        for (int i = 0; i < 40; i ++) {
+        for (int i = 0; i < 40; i++) {
             Pojo pojo = new Pojo();
             pojo.setName("name " + i);
             pojo.setAge(i + 2);
@@ -37,13 +36,19 @@ public class Test {
 
         System.out.println(p);
 
+        Random random = new Random();
         while (true) {
-            int random = new Random().nextInt(40);
-            String name = list.get(random).getName();
-            list.get(random).setName(null);
+            int randomNumber = random.nextInt(40);
+            String name = list.get(randomNumber).getName();
+            list.get(randomNumber).setName(null);
             test(list);
-            list.get(random).setName(name);
-            Thread.sleep(1000L);
+            list.get(randomNumber).setName(name);
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break; // handle InterruptedException and exit
+            }
         }
     }
 
